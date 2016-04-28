@@ -231,4 +231,41 @@ public class Game {
 			return -1f;
 		}
 	}
+	
+	public Float getMovesDone()
+	{
+		if(currentPlayer == null)
+		{
+			return null;
+		}
+		
+		Integer total = 0;
+		Integer voted = 0;
+		
+		try
+		{	
+			if(getRequirementsMatrixData() != null)
+			{
+				for(RequirementsMatrixData data : getRequirementsMatrixData())
+				{
+					for(PlayerMove pm : data.getPlayerMoves())
+					{
+						if(pm.getPlayer().getUserId().equals(currentPlayer.getUserId()))
+						{
+							total++;
+							if(pm.getPlayed() == true && pm.getValue() != null && !pm.getValue().equals(-1l))
+							{
+								voted++;
+							}
+						}
+					}
+				}
+			}
+			return total.equals(0) ? 0f : new Float(voted);
+		}
+		catch(Exception ex)
+		{
+			return -1f;
+		}
+	}
 }
