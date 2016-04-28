@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import demo.jpa.CriteriasMatricesDataJpa;
 import demo.jpa.GamesJpa;
+import demo.jpa.GamesPlayersPointsJpa;
 import demo.jpa.JudgeActsJpa;
 import demo.jpa.PlayerMovesJpa;
 import demo.jpa.ProfilesJpa;
@@ -39,6 +40,7 @@ import demo.jpa.UsersJpa;
 import demo.jpa.ValutationCriteriaJpa;
 import demo.model.CriteriasMatrixData;
 import demo.model.Game;
+import demo.model.GamePlayerPoint;
 import demo.model.JudgeAct;
 import demo.model.PlayerMove;
 import demo.model.Requirement;
@@ -59,7 +61,8 @@ public class GameRest {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
 	private static final String ZERO_TIME = dateFormat.format(new Date(0));
 
-	
+	@Autowired
+	private GamesPlayersPointsJpa gamesPlayersPoints;
 	@Autowired
 	private PointsLogic pointsLogic;
 	@Autowired
@@ -351,6 +354,16 @@ public class GameRest {
 		for(User u : us)
 		{
 			notificationUtil.createNotificationForUser(u.getUserId(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			
+			// ######################################################
+			// create a GamePlayerPoint for this game and for all the players in the game
+			GamePlayerPoint gpp = new GamePlayerPoint();
+			gpp.setGame(game);
+			gpp.setUser(u);
+			gpp.setPoints(0l);
+			gamesPlayersPoints.save(gpp);
+			
+			// ######################################################
 		}
 		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
 		
