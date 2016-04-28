@@ -1,0 +1,18 @@
+<script src="game-requirements/js/player_games.js"></script>
+<div class="container" ng-controller="player_games">
+	<div>Here there is the list of your decision making processes, click for see your actions.</div>
+	<br>
+	<div class="row">
+		<div align="center" ng-show="!playerGames.length">You have no decision making processes.</div>
+   		<div class="panel panel-default" ng-repeat="playerGame in playerGames">
+			<div class="panel-body">
+				{{playerGame.title}}
+				<div style="float: right;">
+	  				Progress: <b>{{ (Math.round(playerGame.playerProgress * 1000) / 1000) }} %</b>
+	  				<span style="margin-left: 5em;">
+					<a href="#/game-requirements/player_moves?gameId={{playerGame.gameId}}" class="btn btn-lg btn-success" role="button">Enter</a>
+				</div>
+			</div>
+		</div>
+	</div>		  	
+</div>  

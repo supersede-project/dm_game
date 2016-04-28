@@ -1,0 +1,77 @@
+buildscript {
+    ext {
+        springBootVersion = '1.3.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+        classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot' 
+apply plugin: 'io.spring.dependency-management' 
+apply plugin: 'war'
+apply plugin: 'maven'
+
+version = '0.0.1-SNAPSHOT'
+group = 'eu.supersede'
+
+war {
+    baseName = 'game-requirements'
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+	maven {url 'http://repo.spring.io/milestone' }
+	maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
+}
+
+configurations {
+    providedRuntime
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+	compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.postgresql:postgresql:9.4.1208.jre7")
+    
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+    
+	compile("org.springframework.session:spring-session:1.2.0.RC1")
+	compile("org.springframework.boot:spring-boot-starter-redis")
+	
+	
+	compile files('../../libs/ahpanalyser-0.0.1-SNAPSHOT.jar')
+	compile('org.python:jython-standalone:2.7.0')
+	
+	compile files('../../libs/newAHP.jar')
+	compile('org.apache.commons:commons-math3:3.6.1')
+	
+	compile files('../supersede-client/build/libs/supersede-client-0.0.1-SNAPSHOT.jar')
+}
+
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.7'
+}

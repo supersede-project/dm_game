@@ -1,0 +1,114 @@
+<script src="game-requirements/js/create_game.js"></script>
+<link href="game-requirements/css/create_game.css" rel="stylesheet">
+
+<div ng-controller="create_game">
+	<h1>Decision Making Process</h1>
+	
+	<div id="page1" ng-show="currentPage == 'page1'">
+		<div align="center">
+			<div style="width: 400px;display:block;">
+				<input type="text" ng-model="game.title" placeholder="Title" style="width: 100%;"/>
+			</div>
+			<div style="width: 400px;display:block;">
+				<textarea rows="6" ng-model="game.description" placeholder="Description"
+				style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea>
+			</div>
+			<br>
+			<div style="width: 100%; text-align: center;">
+				<button class="btn btn-lg btn-success" ng-click="toPage(2)">Continue</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="page2" ng-show="currentPage == 'page2'">
+		<p>Select the requirements to prioritize (at least two):</p>
+		<div class="selection">
+			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" 
+				ng-mouseenter="$parent.currentRequirement = requirement"
+				ng-mouseleave="$parent.currentRequirement = undefined">
+				<input
+				    type="checkbox"
+				    name="selectedRequirements"
+				    value="{{requirement}}"
+				    ng-checked="game.requirements.indexOf(requirement) > -1"
+				    ng-click="toggleSelection(game.requirements, requirement)"
+			  	/> {{requirement.name}}
+			</label>
+		</div>
+		<div ng-show="currentRequirement" class="selection-summary">
+			<div class="summary-row">{{currentRequirement.description}}</div>
+		</div>
+		<div class="clear-div"></div>
+		
+		<p>Select the criterias to prioritize (at least two):</p>
+		<div class="selection">
+			<label ng-repeat="criteria in criterias | orderBy: 'name'"  class="selection-choice" 
+				ng-mouseenter="$parent.currentCriteria = criteria"
+				ng-mouseleave="$parent.currentCriteria = undefined">
+				<input
+				    type="checkbox"
+				    name="selectedCriterias"
+				    value="{{criteria}}"
+				    ng-checked="game.criterias.indexOf(criteria) > -1"
+				    ng-click="toggleSelection(game.criterias, criteria)"
+			  	/> {{criteria.name}}
+			</label>
+		</div>
+		<div ng-show="currentCriteria" class="selection-summary">
+			<div class="summary-row">{{currentCriteria.description}}</div>
+		</div>
+		<div class="clear-div"></div>
+		
+		
+		<p>Select the players to prioritize (at least one):</p>
+		<div class="selection">
+			<label ng-repeat="player in players | orderBy: 'name'"  class="selection-choice" 
+				ng-mouseenter="$parent.currentPlayer = player"
+				ng-mouseleave="$parent.currentPlayer = undefined">
+				<input
+				    type="checkbox"
+				    name="selectedPlayers"
+				    value="{{player}}"
+				    ng-checked="game.players.indexOf(player) > -1"
+				    ng-click="toggleSelection(game.players, player)"
+			  	/> {{player.name}}
+			</label>
+		</div>
+		<div ng-show="currentPlayer"  class="selection-summary">		
+			<div class="summary-row">{{currentPlayer.name}}</div>
+			<div class="summary-row">Score: {{currentPlayer.points}}</div>
+			
+			<!-- <pre>{{currentPlayer || JSON}}</pre> -->
+		</div>
+		<div class="clear-div"></div>
+		
+		<div style="width: 100%; text-align: center;">
+			<button class="btn btn-lg btn-danger" ng-click="toPage(1)">Back</button>
+			<button class="btn btn-lg btn-success" ng-click="toPage(3)">Continue</button>
+		</div>
+	</div>
+	<br>
+	<div id="page3" ng-show="currentPage == 'page3'">
+		<p>Here you can set the priority between the choosen criteria:</p>
+		<div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
+			<div ng-repeat="other_criteria in game.criterias" ng-if="$index > $parent.$index">
+				<div>
+					<div style="float: left; width: 15%">{{criteria.name}}</div>
+					<div style="float: left; width: 70%; text-align: center;">
+					    <label ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
+					    	<input type="radio" ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
+					    </label>
+					</div>
+				    <div style="float: right; width: 15%; text-align: right;">{{other_criteria.name}}</div>
+				    <div style="clear: both;"></div>
+			    </div>
+			</div>
+		</div>
+		<br>
+		<br>
+		<div style="width: 100%; text-align: center;">
+			<button class="btn btn-lg btn-danger" ng-click="toPage(2)">Back</button>
+			<button class="btn btn-lg btn-success" ng-click="createGame()">Create</button>
+		</div>
+	</div>
+</div>

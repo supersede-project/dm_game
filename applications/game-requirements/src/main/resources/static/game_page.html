@@ -1,0 +1,91 @@
+    <script src="game-requirements/js/game.js"></script>		            
+	<div class="container">			
+		<div class="row" ng-controller="game">
+			<div class="col-md-6">
+				<h1>Decision making process details</h1>
+				<p>Progress (Negotiators votes): <b>{{ (Math.round(game.progress * 100) / 100) }} %</b></p>
+				<p>Progress (Opinion Providers votes): <b>{{ (Math.round(game.usersProgress * 100) / 100) }} %</b></p>
+				<p>Title: <b>{{game.title}}</b></p>	
+				<p ng-show="game.description">Description: <b>{{game.description}}</b></p>				
+				<p>Criterias: <b ng-repeat="criteria in game.criterias">{{criteria.name  + ($index +1 != game.criterias.length ? ', ' : '')}}</b></p>
+				<p>Requirements: <b ng-repeat="requirement in game.requirements">{{requirement.name + ($index +1 != game.requirements.length ? ', ' : '')}}</b></p>
+				<p>Players: <b ng-repeat="player in game.players">{{player.name + ($index +1 != game.players.length ? ', ' : '') }}</b></p>
+				<!-- 
+				<p>Change criterias weight:
+					<button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#{{game.gameId}}">
+					  CHANGE
+					</button>
+				</p>
+				 -->
+				<p>Export actions: 
+					<a ng-click="exportGameData()">
+						<img src="game-requirements/img/csv.png" title="Data" height="42" width="42">
+					</a>
+				</p>
+				<p>Export results: 
+					<a ng-click="exportGameResults()">
+						<img src="game-requirements/img/csv.png" title="Results" height="42" width="42">
+					</a>
+				</p>
+			</div>			
+			<div class="col-md-6">
+				<h1>Calculate requirements ranks</h1>
+				<div align="center">
+					<button type="button" ng-click="computeAHP(game.gameId)" class="btn btn-lg btn-success">Compute rank</button>
+				</div>
+				<br>
+				<div class="col-md-12">
+					<div ng-repeat="(key, data) in ahpResult">
+						<div class="col-md-9">
+							<p>{{requirementName(key)}}</p>
+						</div>
+						<div class="col-md-3" align="right">
+						 <b>{{ (Math.round(data * 1000) / 1000) }}</b>
+						</div>
+					</div>
+				</div>							
+			</div>
+			<div class="col-md-12" ng-hide="game.finished">
+				<div align="center">
+					<a href="#/game-requirements/games" ng-click="gameEnd(game.gameId)" class="btn btn-lg btn-danger">Close decision making process</a>
+				</div>	
+			</div>
+			
+			<div class="modal fade" id="{{game.gameId}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+				    	<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Set the new vote for the criterias:</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-12">
+										<div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
+											<div ng-repeat="other_criteria in game.criterias" ng-if="$index > $parent.$index">
+												<div>
+													<div style="float: left; width: 15%">{{criteria.name}}</div>
+													<div style="float: left; width: 70%; text-align: center;">
+													    <label ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
+													    	<input type="radio" ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
+													    </label>
+													</div>
+												    <div style="float: right; width: 15%; text-align: right;">{{other_criteria.name}}</div>
+												    <div style="clear: both;"></div>
+											    </div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>		        
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+					
+		</div>
+	</div>

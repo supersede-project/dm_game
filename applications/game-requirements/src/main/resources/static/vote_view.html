@@ -1,0 +1,51 @@
+    <script src="game-requirements/js/vote_view.js"></script>        
+    <div class="container" ng-controller="vote_view">
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <br>
+                <div align="center">
+                    <h3>Evaluation criteria selected: <b>{{playerMove.requirementsMatrixData.criteria.name}}</b></h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">    
+                <div class="panel panel-primary">
+                  <div class="panel-heading">First requirement</div>
+                  <div class="panel-body">
+                        <p><b>Requirement name:</b> {{playerMove.requirementsMatrixData.rowRequirement.name}}</p>
+                        <p><b>Requirement description:</b> {{playerMove.requirementsMatrixData.rowRequirement.description}}</p>
+                  </div>
+                </div>                
+            </div>    
+            <div class="col-md-6">    
+                <div class="panel panel-primary">
+                  <div class="panel-heading">Second requirement</div>
+                  <div class="panel-body">
+                        <p><b>Requirement name:</b> {{playerMove.requirementsMatrixData.columnRequirement.name}}</p>
+                        <p><b>Requirement description:</b> {{playerMove.requirementsMatrixData.columnRequirement.description}}</p>               
+                  </div>
+                </div>            
+            </div>
+       	</div>
+      	<div class="row">
+	        <div class="col-md-12">
+		        <div class="panel panel-primary">
+		        	<div class="panel-heading">Insert your vote</div>
+		        	<div class="panel-body">
+			            <div align="center">
+			                <p>Select a grade of preference between <b>{{playerMove.requirementsMatrixData.rowRequirement.name}}</b> and <b>{{playerMove.requirementsMatrixData.columnRequirement.name}}</b>.</p>
+			                <label class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
+			                  <input type="radio" ng-model="selectedRequirementsChoice.selected" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices">{{requirementsChoice.value}}
+			                </label>
+			            </div>		            
+		            </div>
+	            </div>
+	            <br>          	            
+	        </div>
+	        <div align="center">
+            	<a ng-click="insertPlayerVote(selectedRequirementsChoice.selected)" class="btn btn-lg btn-success">Submit preference</a>
+        	</div>                 
+    	</div>                                               
+    </div>
