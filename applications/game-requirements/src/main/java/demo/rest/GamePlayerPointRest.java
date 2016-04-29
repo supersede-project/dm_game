@@ -81,9 +81,6 @@ public class GamePlayerPointRest {
 		
 		Double sum = 0.0;
 		
-		System.out.println("START SUM ##################################################################");
-
-		
 		for(int i=0; i < resultTotal.size(); i++){
 			Double requirementValueTotal = resultTotal.get(gameRequirements.get(i).getRequirementId().toString());
 			Double requirementValuePersonal = resultPersonal.get(gameRequirements.get(i).getRequirementId().toString());
@@ -98,6 +95,4 @@ public class GamePlayerPointRest {
 		
 		return agreementIndex;
 	}
-	
-
 }

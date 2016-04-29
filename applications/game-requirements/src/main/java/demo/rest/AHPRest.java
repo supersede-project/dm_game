@@ -52,9 +52,6 @@ public class AHPRest {
 	
 	public static Map<String,Double> CalculateAHP(List<ValutationCriteria> criterias, List<Requirement> requirements, List<CriteriasMatrixData> criteriasMatrixDataList, List<RequirementsMatrixData> requirementsMatrixDataList)
 	{
-		
-		System.out.println("START AHP ##################################################################");
-
 		AHPStructure input = new AHPStructure();
 		
 		//##################################################################
@@ -160,7 +157,6 @@ public class AHPRest {
 	
 	public static Map<String,Double> CalculatePersonalAHP(Long userId, List<ValutationCriteria> criterias, List<Requirement> requirements, List<CriteriasMatrixData> criteriasMatrixDataList, List<RequirementsMatrixData> requirementsMatrixDataList)
 	{
-		System.out.println("START PERSONAL AHP ##################################################################");
 		AHPStructure input = new AHPStructure();
 		
 		//##################################################################
