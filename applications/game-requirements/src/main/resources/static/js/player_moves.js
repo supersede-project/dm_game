@@ -219,6 +219,11 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	$scope.user = undefined;
 	
 	$scope.game = undefined;
+	
+	$scope.gamePlayerPoints = undefined;
+	
+	$scope.agreementIndex = undefined;
+	
 	var update;
 	
 	update = $interval(function() {
@@ -232,6 +237,33 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 			$scope.user = data;
 		});
 		
+		$http.get('game-requirements/gameplayerpoint/game/' + $scope.selectedGame)
+		.success(function(data) {
+			$scope.gamePlayerPoints = data;
+		});
+		
+		$http.get('game-requirements/gameplayerpoint/agreementindex/' + $scope.selectedGame)
+		.success(function(data) {
+			$scope.agreementIndex = data;
+		});
+		
     	}, 1000);
+	
+	
+	 // stops the interval
+    $scope.stop = function() {
+      $interval.cancel(update);
+    };
+    
+    // stops the interval when the scope is destroyed,
+    // this usually happens when a route is changed and 
+    // the ItemsController $scope gets destroyed. The
+    // destruction of the ItemsController scope does not
+    // guarantee the stopping of any intervals, you must
+    // be responsible of stopping it when the scope is
+    // is destroyed.
+    $scope.$on('$destroy', function() {
+      $scope.stop();
+    });
 	
 });
