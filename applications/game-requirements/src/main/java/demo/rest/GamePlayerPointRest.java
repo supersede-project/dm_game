@@ -84,9 +84,6 @@ public class GamePlayerPointRest {
 		for(int i=0; i < resultTotal.size(); i++){
 			Double requirementValueTotal = resultTotal.get(gameRequirements.get(i).getRequirementId().toString());
 			Double requirementValuePersonal = resultPersonal.get(gameRequirements.get(i).getRequirementId().toString());
-			System.out.println("TOTAL: "+ requirementValueTotal);
-			System.out.println("PERSONAL: "+ requirementValuePersonal);
-
 			
 			sum = sum + (Math.abs(requirementValueTotal-requirementValuePersonal)*(1.0-requirementValueTotal));
 		}
