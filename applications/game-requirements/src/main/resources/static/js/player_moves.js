@@ -213,6 +213,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		});
 	};
 	
+	// ##################################################################################
 	// polling methods (every second)
 	
 	$scope.loggedUser = $rootScope.user;
@@ -224,12 +225,36 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	
 	$scope.agreementIndex = undefined;
 	
+	$scope.positionInVoting = undefined;
+	
+	// there are the variables for the different sets of points
+	$scope.movesPoints = 0;
+	$scope.gameProgressPoints = 0;
+	$scope.positionInVotingPoints = 0;
+	$scope.gameStatusPoints = 0;
+	$scope.agreementIndexPoints = 0;
+	$scope.totalPoints = 0;
+	$scope.gameCompleted = false;
+	$scope.criteriaCompleted = false;
+	$scope.numberCompletedCriterias = 0;
+		
 	var update;
 	
 	update = $interval(function() {
 		$http.get('game-requirements/game/' + $scope.selectedGame)
 		.success(function(data) {
-			$scope.game = data;
+			$scope.game = data;	
+			
+			if(data.playerProgress < 100){
+				$scope.gameProgressPoints = -20;
+				$scope.gameCompleted = false;
+			}else{
+				$scope.gameProgressPoints = 0;
+				$scope.gameCompleted = true;
+			}
+			
+			$scope.gameProgressPoints = $scope.Math.floor((data.playerProgress / 10) % 10);	
+			$scope.movesPoints = data.movesDone;
 		});
 		
 		$http.get('game-requirements/user/' + $scope.loggedUser.userId)
@@ -245,7 +270,23 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		$http.get('game-requirements/gameplayerpoint/agreementindex/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.agreementIndex = data;
+			$scope.agreementIndexPoints = $scope.Math.floor(data);
 		});
+		
+		$http.get('game-requirements/gameplayerpoint/positioninvoting/' + $scope.selectedGame)
+		.success(function(data) {
+			$scope.positionInVoting = data;
+			if(data == 1){
+				$scope.positionInVotingPoints = 5;
+			}else if(data == 2){
+				$scope.positionInVotingPoints = 3;
+			}else if(data == 3){
+				$scope.positionInVotingPoints = 2;
+			}		
+		});
+		
+		$scope.totalPoints = $scope.movesPoints + $scope.gameProgressPoints + $scope.positionInVotingPoints + $scope.gameStatusPoints + $scope.agreementIndexPoints;
+
 		
     	}, 1000);
 	
@@ -265,5 +306,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     $scope.$on('$destroy', function() {
       $scope.stop();
     });
+    
+    // ##################################################################################
 	
 });

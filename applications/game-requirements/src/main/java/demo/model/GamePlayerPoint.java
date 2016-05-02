@@ -30,6 +30,7 @@ public class GamePlayerPoint{
 	private Game game;
 	
     private Long points;
+    private Long agreementIndex;
      
     public Long getGamePlayerPointId(){
     	return gamePlayerPointId;
@@ -66,4 +67,12 @@ public class GamePlayerPoint{
     public void setGame(Game game){
     	this.game = game;
     }
+
+	public Long getAgreementIndex() {
+		return agreementIndex;
+	}
+
+	public void setAgreementIndex(Long agreementIndex) {
+		this.agreementIndex = agreementIndex;
+	}
 }
