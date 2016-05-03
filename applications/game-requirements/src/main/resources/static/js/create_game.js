@@ -23,7 +23,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     
     $scope.choices = {};
     
-    $http.get('game-requirements-gamification/user?profile=OPINION_PROVIDER')
+    $http.get('game-requirements-gamification/user?profile=OPINION_PROVIDER_GAMIFICATION')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
