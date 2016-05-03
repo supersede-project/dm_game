@@ -5,9 +5,12 @@
 				<h1>Profile details</h1>
 				<p>Name: <b>{{user.name}}</b></p>
 				<p>Email: <b>{{user.email}}</b></p>
+				<!-- 
 				<p>Global points: <b ng-if="user.userGlobalPoints.userPoints != null">{{user.userGlobalPoints.userPoints}}</b>
 									<b ng-if="user.userGlobalPoints.userPoints == null">0</b></p>
 				<p>Total points: <b>{{user.points}}</b></p>
+				
+				 -->
 				<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
 					<div class="col-md-6">
 						<p>Go to Decision making processes:</p>
@@ -35,6 +38,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- 
 			<div class="col-md-6">
 				<h1>Criterias points</h1>
 				<ul class="list-group" ng-show="user.userCriteriaPoints.length">
@@ -42,7 +46,9 @@
 				</ul>
 				<p ng-show="!user.userCriteriaPoints.length">User doesn't have points per criterias.</p>
 			</div>	
+			 -->
 		</div>
+		<!-- 
 		<div class="row">
 			<div class="col-md-12">
 				<h1>Personal collection</h1>
@@ -56,4 +62,5 @@
 				<img src="/game-requirements/img/specialist.png" height="120" width="120" title="Earned for be a specialist in a criteria.">
 			</div>
 		</div>
+		 -->
 	</div>
