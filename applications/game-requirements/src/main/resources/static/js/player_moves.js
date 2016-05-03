@@ -224,19 +224,13 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	$scope.gamePlayerPoints = undefined;
 	
 	$scope.agreementIndex = undefined;
-	
-	$scope.positionInVoting = undefined;
-	
+		
 	// there are the variables for the different sets of points
 	$scope.movesPoints = 0;
 	$scope.gameProgressPoints = 0;
 	$scope.positionInVotingPoints = 0;
 	$scope.gameStatusPoints = 0;
-	$scope.agreementIndexPoints = 0;
-	$scope.totalPoints = 0;
 	$scope.gameCompleted = false;
-	$scope.criteriaCompleted = false;
-	$scope.numberCompletedCriterias = 0;
 		
 	var update;
 	
@@ -246,14 +240,14 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 			$scope.game = data;	
 			
 			if(data.playerProgress < 100){
-				$scope.gameProgressPoints = -20;
+				$scope.gameStatusPoints = -20;
 				$scope.gameCompleted = false;
 			}else{
-				$scope.gameProgressPoints = 0;
+				$scope.gameStatusPoints = 0;
 				$scope.gameCompleted = true;
 			}
 			
-			$scope.gameProgressPoints = $scope.Math.floor((data.playerProgress / 10) % 10);	
+			$scope.gameProgressPoints = $scope.Math.floor((data.playerProgress / 10));	
 			$scope.movesPoints = data.movesDone;
 		});
 		
@@ -265,31 +259,17 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		$http.get('game-requirements/gameplayerpoint/game/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.gamePlayerPoints = data;
-		});
-		
-		$http.get('game-requirements/gameplayerpoint/agreementindex/' + $scope.selectedGame)
-		.success(function(data) {
-			$scope.agreementIndex = data;
-			$scope.agreementIndexPoints = $scope.Math.floor(data);
-		});
-		
-		$http.get('game-requirements/gameplayerpoint/positioninvoting/' + $scope.selectedGame)
-		.success(function(data) {
-			$scope.positionInVoting = data;
-			if(data == 1){
+			
+			if(data.positionInVoting == 1){
 				$scope.positionInVotingPoints = 5;
-			}else if(data == 2){
+			}else if(data.positionInVoting == 2){
 				$scope.positionInVotingPoints = 3;
-			}else if(data == 3){
+			}else if(data.positionInVoting == 3){
 				$scope.positionInVotingPoints = 2;
-			}		
+			}
 		});
 		
-		$scope.totalPoints = $scope.movesPoints + $scope.gameProgressPoints + $scope.positionInVotingPoints + $scope.gameStatusPoints + $scope.agreementIndexPoints;
-
-		
-    	}, 1000);
-	
+		}, 1000);
 	
 	 // stops the interval
     $scope.stop = function() {

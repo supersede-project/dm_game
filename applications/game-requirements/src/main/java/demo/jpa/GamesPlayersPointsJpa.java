@@ -14,4 +14,6 @@ public interface GamesPlayersPointsJpa extends JpaRepository<GamePlayerPoint, Lo
 
 	GamePlayerPoint findByUserAndGame(User user, Game game);
 
+	List<GamePlayerPoint> findByGame(Game g);
+
 }

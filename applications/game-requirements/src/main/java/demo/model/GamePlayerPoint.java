@@ -31,6 +31,8 @@ public class GamePlayerPoint{
 	
     private Long points;
     private Long agreementIndex;
+    private Long positionInVoting;
+    private Long virtualPosition;
      
     public Long getGamePlayerPointId(){
     	return gamePlayerPointId;
@@ -74,5 +76,21 @@ public class GamePlayerPoint{
 
 	public void setAgreementIndex(Long agreementIndex) {
 		this.agreementIndex = agreementIndex;
+	}
+
+	public Long getPositionInVoting() {
+		return positionInVoting;
+	}
+
+	public void setPositionInVoting(Long positionInVoting) {
+		this.positionInVoting = positionInVoting;
+	}
+
+	public Long getVirtualPosition() {
+		return virtualPosition;
+	}
+
+	public void setVirtualPosition(Long virtualPosition) {
+		this.virtualPosition = virtualPosition;
 	}
 }

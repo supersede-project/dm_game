@@ -43,19 +43,25 @@
 						{{ (Math.round(game.playerProgress * 1000) / 1000) }} %
 					</td>
 					<td>
-						{{positionInVoting}}
+						{{gamePlayerPoints.positionInVoting}}
 					</td>	
 					<td>
-						free	
+						<p ng-show="gameCompleted == true">Game complete!</p>
+						<p ng-show="gameCompleted == false">Game not complete!</p>	
 					</td>
 					<td>
-						{{agreementIndex}}
+						{{gamePlayerPoints.agreementIndex}}
 					</td>	
 					<td>
 						
 					</td>
 					<td rowspan="2">
-						badge
+						<div align="center"> 
+							<p ng-show="gamePlayerPoints.virtualPosition == 1">FIRST!</p>
+							<p ng-show="gamePlayerPoints.virtualPosition == 2">SECOND!</p>
+							<p ng-show="gamePlayerPoints.virtualPosition == 3">THIRD!</p>
+							<p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP...</p>
+						</div>
 					</td>		
 				</tr>
 				<tr>
@@ -69,16 +75,15 @@
 						<b>+{{positionInVotingPoints}}pt</b>
 					</td>	
 					<td>
-						{{gameProgressPoints}}
-						<br>
-						points for criterias finished
+						<b>{{gameStatusPoints}}pt</b>
 					</td>
 					<td>
-						<b>+{{agreementIndexPoints}}pt</b>
+						<b>+{{gamePlayerPoints.agreementIndex}}pt</b>
 					</td>
 					<td>
-						{{totalPoints}}
-						{{gamePlayerPoints.points}}
+						<div align="center">
+							<h2><b>{{gamePlayerPoints.points}}</b></h2>
+						</div>				
 					</td>			
 				</tr>
 			</tbody>
