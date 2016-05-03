@@ -66,7 +66,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
     }
     
     getActs = function() {
-	    $http.get('game-requirements/judgeact', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
+	    $http.get('game-requirements-gamification/judgeact', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
 		.success(function(data) {
 			reset();
 			
@@ -155,7 +155,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
     	oc.currentPage = this.n -1;
     };
     
-	$http.get('game-requirements/requirementchoice')
+	$http.get('game-requirements-gamification/requirementchoice')
 		.success(function(data) {
 			$scope.requirementsChoices.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -165,7 +165,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 		});
     
 	$scope.setVote = function(judgeVote, judgeActId){
-		$http.put('game-requirements/judgeact/' + judgeActId + '/vote/' + judgeVote)
+		$http.put('game-requirements-gamification/judgeact/' + judgeActId + '/vote/' + judgeVote)
 	    	.success(function(data) {
 	    		for(var i = 0; i < $scope.open_acts.length; i++)
 				{

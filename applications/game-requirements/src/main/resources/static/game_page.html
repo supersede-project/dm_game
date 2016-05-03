@@ -1,4 +1,4 @@
-    <script src="game-requirements/js/game.js"></script>		            
+    <script src="game-requirements-gamification/js/game.js"></script>		            
 	<div class="container">			
 		<div class="row" ng-controller="game">
 			<div class="col-md-6">
@@ -19,12 +19,12 @@
 				 -->
 				<p>Export actions: 
 					<a ng-click="exportGameData()">
-						<img src="game-requirements/img/csv.png" title="Data" height="42" width="42">
+						<img src="game-requirements-gamification/img/csv.png" title="Data" height="42" width="42">
 					</a>
 				</p>
 				<p>Export results: 
 					<a ng-click="exportGameResults()">
-						<img src="game-requirements/img/csv.png" title="Results" height="42" width="42">
+						<img src="game-requirements-gamification/img/csv.png" title="Results" height="42" width="42">
 					</a>
 				</p>
 			</div>			
@@ -47,7 +47,7 @@
 			</div>
 			<div class="col-md-12" ng-hide="game.finished">
 				<div align="center">
-					<a href="#/game-requirements/games" ng-click="gameEnd(game.gameId)" class="btn btn-lg btn-danger">Close decision making process</a>
+					<a href="#/game-requirements-gamification/games" ng-click="gameEnd(game.gameId)" class="btn btn-lg btn-danger">Close decision making process</a>
 				</div>	
 			</div>
 			

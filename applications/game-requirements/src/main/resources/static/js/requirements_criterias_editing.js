@@ -18,7 +18,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	$scope.editRequirementDescription = undefined;
 	
 	getCriterias = function () {
-	 $http.get('game-requirements/criteria')
+	 $http.get('game-requirements-gamification/criteria')
 		.success(function(data) {
 			for(var i = 0; i < data.length; i++)
 			{
@@ -28,7 +28,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	};
 	
 	getRequirements = function () {
-		$http.get('game-requirements/requirement')
+		$http.get('game-requirements-gamification/requirement')
 		.success(function(data) {
 			for(var i = 0; i < data.length; i++)
 			{
@@ -46,14 +46,14 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$scope.editCriteriaName = undefined;
 		$scope.editCriteriaDescription = undefined;
 		
-		$http.get('game-requirements/criteria/' + criteriaId)
+		$http.get('game-requirements-gamification/criteria/' + criteriaId)
 		.success(function(data) {
 			$scope.editCriteria = data;
 		});	
 	};
 	
 	$scope.saveEditedCriteria = function () {
-		$http.put('game-requirements/criteria/edit/' + $scope.editCriteria.criteriaId + '/name/' + $scope.editCriteriaName + '/description/' + $scope.editCriteriaDescription)
+		$http.put('game-requirements-gamification/criteria/edit/' + $scope.editCriteria.criteriaId + '/name/' + $scope.editCriteriaName + '/description/' + $scope.editCriteriaDescription)
 		.success(function(data) {
 			$scope.valutationCriterias = [];
 			getCriterias();
@@ -66,14 +66,14 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$scope.editRequirementName = undefined;
 		$scope.editRequirementDescription = undefined;
 		
-		$http.get('game-requirements/requirement/' + requirementId)
+		$http.get('game-requirements-gamification/requirement/' + requirementId)
 		.success(function(data) {
 			$scope.editRequirement = data;
 		});	
 	};
 	
 	$scope.saveEditedRequirement = function () {
-		$http.put('game-requirements/requirement/edit/' + $scope.editRequirement.requirementId + '/name/' + $scope.editRequirementName + '/description/' + $scope.editRequirementDescription)
+		$http.put('game-requirements-gamification/requirement/edit/' + $scope.editRequirement.requirementId + '/name/' + $scope.editRequirementName + '/description/' + $scope.editRequirementDescription)
 		.success(function(data) {
 			$scope.requirements = [];
 			getRequirements();
@@ -85,7 +85,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	
 	// NEW PART ##################################################################################	
 	$scope.createCriteria = function () {
-		 $http.put('game-requirements/criteria/create/' + $scope.criteriaName + '/description/' + $scope.criteriaDescription)
+		 $http.put('game-requirements-gamification/criteria/create/' + $scope.criteriaName + '/description/' + $scope.criteriaDescription)
 			.success(function(data) {
 				$scope.valutationCriterias = [];
 				getCriterias();
@@ -95,7 +95,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
     };
     
     $scope.createRequirement = function () {
-		 $http.put('game-requirements/requirement/create/' + $scope.requirementName + '/description/' + $scope.requirementDescription)
+		 $http.put('game-requirements-gamification/requirement/create/' + $scope.requirementName + '/description/' + $scope.requirementDescription)
 			.success(function(data) {
 				$scope.requirements = [];
 				getRequirements();
@@ -108,7 +108,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
    
    // DELETE PART ##################################################################################
    $scope.deleteCriteria = function (criteriaId) {
-		 $http.put('game-requirements/criteria/delete/' + criteriaId)
+		 $http.put('game-requirements-gamification/criteria/delete/' + criteriaId)
 			.success(function(data) {
 				if(data == true){
 					$scope.valutationCriterias = [];
@@ -118,7 +118,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
   };
   
   $scope.deleteRequirement = function (requirementId) {
-		 $http.put('game-requirements/requirement/delete/' + requirementId)
+		 $http.put('game-requirements-gamification/requirement/delete/' + requirementId)
 			.success(function(data) {
 				if(data == true){
 					$scope.requirements = [];

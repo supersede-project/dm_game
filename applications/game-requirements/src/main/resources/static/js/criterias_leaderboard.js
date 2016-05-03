@@ -6,7 +6,7 @@ app.controllerProvider.register('criterias_leaderboard', function($scope, $http)
     $scope.criteriaUsers = []; 
     $scope.selectedCriteria = undefined;
     
-    $http.get('game-requirements/criteria')
+    $http.get('game-requirements-gamification/criteria')
 	.success(function(data) {
 		$scope.valutationCriterias.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -16,7 +16,7 @@ app.controllerProvider.register('criterias_leaderboard', function($scope, $http)
 	});
     	
     $scope.selectedCriteriaChanged = function(){   	
-    	$http.get('game-requirements/user/criteria/' + $scope.selectedCriteria.criteriaId)
+    	$http.get('game-requirements-gamification/user/criteria/' + $scope.selectedCriteria.criteriaId)
 		.success(function(data) {
 			$scope.criteriaUsers.length = 0;
 			for(var i = 0; i < data.length; i++)

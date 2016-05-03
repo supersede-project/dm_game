@@ -70,7 +70,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     }
     
     getActions = function() {
-    	$http.get('game-requirements/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
+    	$http.get('game-requirements-gamification/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
     	.success(function(data) {
     		reset();
     		
@@ -159,7 +159,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     	oc.currentPage = this.n -1;
     };
     
-	$http.get('game-requirements/requirementchoice')
+	$http.get('game-requirements-gamification/requirementchoice')
 		.success(function(data) {
 			$scope.requirementsChoices.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -169,7 +169,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		});
 	 
 	$scope.setVote = function(playerVote, playerMoveId){
-		$http.put('game-requirements/playermove/' + playerMoveId + '/vote/' + playerVote)
+		$http.put('game-requirements-gamification/playermove/' + playerMoveId + '/vote/' + playerVote)
 			.success(function(data) {
 				for(var i = 0; i < $scope.open_moves.length; i++)
 				{
@@ -207,7 +207,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	 }
 	 
 	$scope.openMove = function(playerMoveId){
-		$http.put('game-requirements/playermove/open/' + playerMoveId)
+		$http.put('game-requirements-gamification/playermove/open/' + playerMoveId)
 			.success(function(data) {
 				getActions();
 		});
@@ -235,7 +235,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	var update;
 	
 	update = $interval(function() {
-		$http.get('game-requirements/game/' + $scope.selectedGame)
+		$http.get('game-requirements-gamification/game/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.game = data;	
 			
@@ -251,12 +251,12 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 			$scope.movesPoints = data.movesDone;
 		});
 		
-		$http.get('game-requirements/user/' + $scope.loggedUser.userId)
+		$http.get('game-requirements-gamification/user/' + $scope.loggedUser.userId)
 		.success(function(data) {
 			$scope.user = data;
 		});
 		
-		$http.get('game-requirements/gameplayerpoint/game/' + $scope.selectedGame)
+		$http.get('game-requirements-gamification/gameplayerpoint/game/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.gamePlayerPoints = data;
 			

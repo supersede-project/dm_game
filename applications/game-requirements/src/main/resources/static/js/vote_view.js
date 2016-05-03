@@ -7,12 +7,12 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
     $scope.requirementsChoices = [];
     $scope.selectedRequirementsChoice = {selected:4};
     
-    $http.get('game-requirements/playermove/' + $scope.playerMoveId)
+    $http.get('game-requirements-gamification/playermove/' + $scope.playerMoveId)
     .success(function(data) {
         $scope.playerMove = data;
     });
     
-     $http.get('game-requirements/requirementchoice')
+     $http.get('game-requirements-gamification/requirementchoice')
         .success(function(data) {
             $scope.requirementsChoices.length = 0;
             for(var i = 0; i < data.length; i++)
@@ -22,9 +22,9 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
         });
      
      $scope.insertPlayerVote = function(playerVote){
-         $http.put('game-requirements/playermove/' + $scope.playerMoveId + '/vote/' + playerVote)
+         $http.put('game-requirements-gamification/playermove/' + $scope.playerMoveId + '/vote/' + playerVote)
             .success(function(data) {
-                $location.url('/game-requirements/player_moves?gameId=' + data);
+                $location.url('/game-requirements-gamification/player_moves?gameId=' + data);
         });
      };
 });

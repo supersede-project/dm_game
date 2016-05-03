@@ -18,7 +18,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
     $scope.pagination.closed.itemsPerPage = 5;
     $scope.pagination.closed.currentPage = 0;
 	
-	$http.get('game-requirements/game')
+	$http.get('game-requirements-gamification/game')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -80,11 +80,11 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
     };
 
     $scope.goGame = function (gameId) {
-    	$location.path('/game-requirements/game_page').search('gameId', gameId);
+    	$location.path('/game-requirements-gamification/game_page').search('gameId', gameId);
 	};
 	
 
     $scope.goCreateGame = function (gameId) {
-    	$location.path('/game-requirements/create_game');
+    	$location.path('/game-requirements-gamification/create_game');
 	};
 });
