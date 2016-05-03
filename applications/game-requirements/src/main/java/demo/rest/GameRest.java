@@ -130,7 +130,7 @@ public class GameRest {
 	
 	private boolean userIsGameMaster(User user)
 	{
-		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
+		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER_GAMIFICATION"));
 	}
 	
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
@@ -365,7 +365,7 @@ public class GameRest {
 			
 			// ######################################################
 		}
-		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
+		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR_GAMIFICATION", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
 		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setLocation(ServletUriComponentsBuilder
