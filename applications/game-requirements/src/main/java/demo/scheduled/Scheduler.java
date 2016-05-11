@@ -38,7 +38,9 @@ import eu.supersede.fe.multitenant.MultiJpaProvider;
  	@Scheduled(fixedRate = 1000)
  	private void gameScheduler()
  	{
+ 		// used for clear the cache
  		multiJpaProvider.clearTenants();
+ 		
  		Map<String, GamesPlayersPointsJpa> gamesPlayersPointsRepositories = multiJpaProvider.getRepositories(GamesPlayersPointsJpa.class);
  		Map<String, CriteriasMatricesDataJpa> criteriasMatricesDataRepositories = multiJpaProvider.getRepositories(CriteriasMatricesDataJpa.class);
  		Map<String, GamesJpa> gamesRepositories = multiJpaProvider.getRepositories(GamesJpa.class);

@@ -353,7 +353,7 @@ public class GameRest {
 		
 		for(User u : us)
 		{
-			notificationUtil.createNotificationForUser(u.getUserId(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			notificationUtil.createNotificationForUser(u.getUserId(), "A new decision making process has been created, are you ready to vote?", "game-requirements-gamification/player_games");
 			
 			// ######################################################
 			// create a GamePlayerPoint for this game and for all the players in the game
@@ -365,7 +365,7 @@ public class GameRest {
 			
 			// ######################################################
 		}
-		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR_GAMIFICATION", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
+		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR_GAMIFICATION", "A new decision making process has been created, you are in charge to take decisions", "game-requirements-gamification/judge_acts");
 		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setLocation(ServletUriComponentsBuilder

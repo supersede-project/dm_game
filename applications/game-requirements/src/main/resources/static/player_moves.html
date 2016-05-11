@@ -27,7 +27,7 @@
 					<th class="name">Votes&nbsp;</th>							
 					<th class="name">Accomplishment Percentage&nbsp;</th>
 					<th class="name">Position in voting&nbsp;</th>	
-					<th class="name">Game Status&nbsp;</th>
+					<th class="name">Status&nbsp;</th>
 					<th class="name">Agreement Index&nbsp;</th>		
 					<th class="name">Points&nbsp;</th>
 					<th class="name">Virtual Position&nbsp;</th>													
@@ -46,8 +46,8 @@
 						{{gamePlayerPoints.positionInVoting}}
 					</td>	
 					<td>
-						<p ng-show="gameCompleted == true">Game complete!</p>
-						<p ng-show="gameCompleted == false">Game not complete!</p>	
+						<p ng-show="gameCompleted == true">Complete!</p>
+						<p ng-show="gameCompleted == false">Not complete!</p>	
 					</td>
 					<td>
 						{{gamePlayerPoints.agreementIndex}}
@@ -67,18 +67,24 @@
 				<tr>
 					<td>
 						<b>+{{movesPoints}}pt</b>
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related to your moves."></span>
 					</td>													
 					<td>
 						<b>+{{gameProgressPoints}}pt</b>
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the accomplishment of this DMP."></span>
 					</td>
 					<td>
 						<b>+{{positionInVotingPoints}}pt</b>
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points collected by your position in voting."></span>
 					</td>	
 					<td>
-						<b>{{gameStatusPoints}}pt</b>
+						<b ng-show="gameStatusPoints != 0">{{gameStatusPoints}}pt</b>
+						<b ng-show="gameStatusPoints == 0">Completed</b>
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="The Status of this DMP."></span>
 					</td>
 					<td>
 						<b>+{{gamePlayerPoints.agreementIndex}}pt</b>
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the Agreement Index."></span>
 					</td>
 					<td>
 						<div align="center">
@@ -135,7 +141,7 @@
 					<td>{{playerMove.requirementsMatrixData.columnRequirement.name}}</td>
 					<td>
 						<div align="center">
-							<a href="#/game-requirements/vote_view?playerMoveId={{playerMove.playerMoveId}}" class="btn btn-lg btn-success" role="button">Vote</a>
+							<a href="#/game-requirements-gamification/vote_view?playerMoveId={{playerMove.playerMoveId}}" class="btn btn-lg btn-success" role="button">Vote</a>
 						</div>
 					</td>
 					<td>
