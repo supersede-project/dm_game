@@ -49,6 +49,7 @@ import demo.utility.PointsLogic;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.fe.mail.SupersedeMailSender;
 
 @RestController
 @RequestMapping("/game")
@@ -59,7 +60,8 @@ public class GameRest {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
 	private static final String ZERO_TIME = dateFormat.format(new Date(0));
 
-	
+	@Autowired
+    private SupersedeMailSender supersedeMailSender;
 	@Autowired
 	private PointsLogic pointsLogic;
 	@Autowired
@@ -350,6 +352,11 @@ public class GameRest {
 		
 		for(User u : us)
 		{
+			
+			 // creation of email for the players when a game is started
+            supersedeMailSender.sendEmail("New Decision Making Process", 
+                            "Hi " + u.getName() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", u.getEmail());
+			
 			notificationUtil.createNotificationForUser(u.getUserId(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
 		}
 		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
