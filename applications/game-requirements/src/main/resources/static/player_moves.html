@@ -24,11 +24,21 @@
     	<table class="table table-striped table-condensed table-hover">
 			<thead>
 				<tr>
-					<th class="name">Votes&nbsp;</th>							
-					<th class="name">Accomplishment Percentage&nbsp;</th>
-					<th class="name">Position in voting&nbsp;</th>	
-					<th class="name">Status&nbsp;</th>
-					<th class="name">Agreement Index&nbsp;</th>		
+					<th class="name">Votes&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related to your moves."></span>
+					</th>							
+					<th class="name">Accomplishment Percentage&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the accomplishment of this DMP."></span>
+					</th>
+					<th class="name">Position in voting&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points collected by your position in voting."></span>
+					</th>	
+					<th class="name">Status&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="The Status of this DMP."></span>
+					</th>
+					<th class="name">Agreement Index&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the Agreement Index."></span>
+					</th>		
 					<th class="name">Points&nbsp;</th>
 					<th class="name">Virtual Position&nbsp;</th>													
 				</tr>
@@ -67,24 +77,19 @@
 				<tr>
 					<td>
 						<b>+{{movesPoints}}pt</b>
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related to your moves."></span>
 					</td>													
 					<td>
 						<b>+{{gameProgressPoints}}pt</b>
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the accomplishment of this DMP."></span>
 					</td>
 					<td>
 						<b>+{{positionInVotingPoints}}pt</b>
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points collected by your position in voting."></span>
 					</td>	
 					<td>
 						<b ng-show="gameStatusPoints != 0">{{gameStatusPoints}}pt</b>
 						<b ng-show="gameStatusPoints == 0">Completed</b>
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="The Status of this DMP."></span>
 					</td>
 					<td>
 						<b>+{{gamePlayerPoints.agreementIndex}}pt</b>
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="These are the points related with the Agreement Index."></span>
 					</td>
 					<td>
 						<div align="center">
@@ -112,7 +117,7 @@
 	
 			<tbody>
 				<tr	ng-repeat="playerMove in open_moves | limitTo:5:pagination.open.currentPage*pagination.open.itemsPerPage">
-					<td>{{playerMove.requirementsMatrixData.criteria.name}} 
+					<td>{{playerMove.requirementsMatrixData.criteria.name}}
 						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="{{playerMove.requirementsMatrixData.criteria.description}}"></span>
 						<script>
 							$(document).ready(function(){

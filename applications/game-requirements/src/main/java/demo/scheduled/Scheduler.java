@@ -175,6 +175,11 @@ import eu.supersede.fe.multitenant.MultiJpaProvider;
  	 			
  	 			totalPoints = movesPoints.longValue() + gameProgressPoints + positionInVotingPoints + gameStatusPoints + agreementIndexPoints;
  	 			
+ 	 			// set totalPoints 0 if the totalPoints are negative
+ 	 			if(totalPoints < 0){
+ 	 				totalPoints = 0l;
+ 	 			}
+ 	 			
  	 			gamesPlayersPoints.get(i).setPoints(totalPoints);
  	 			gamesPlayersPointsRepository.save(gamesPlayersPoints.get(i));
  			}	

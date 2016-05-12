@@ -54,6 +54,7 @@ dependencies {
 	compile("org.springframework.session:spring-session:1.2.0.RC1")
 	compile("org.springframework.boot:spring-boot-starter-redis")
 	
+	compile("org.springframework.boot:spring-boot-starter-mail")
 	
 	compile files('../../libs/ahpanalyser-0.0.1-SNAPSHOT.jar')
 	compile('org.python:jython-standalone:2.7.0')
