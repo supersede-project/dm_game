@@ -48,7 +48,7 @@
 						<div align="center">
 							<div style="display: inline-block; margin-left: 2px; margin-right: 2px;" ng-repeat="requirementsChoice in requirementsChoices" align="center">
 								<div align="center">
-									<label>{{requirementsChoice.value}}</label>
+									<label>{{requirementsChoice.label}}</label>
 								</div>
 					            <div align="center">
 									<input data-placement="bottom" data-toggle="tooltip" title="{{requirementsChoice.description}}" type="radio" ng-click="setVote(requirementsChoice.value, judgeAct.judgeActId)" ng-value="{{requirementsChoice.value}}" name="{{judgeAct.judgeActId}}">
