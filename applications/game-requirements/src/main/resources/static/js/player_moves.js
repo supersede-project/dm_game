@@ -224,7 +224,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	$scope.gamePlayerPoints = undefined;
 	
 	$scope.agreementIndex = undefined;
-		
+			
 	// there are the variables for the different sets of points
 	$scope.movesPoints = 0;
 	$scope.gameProgressPoints = 0;
@@ -259,6 +259,8 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		$http.get('game-requirements-gamification/gameplayerpoint/game/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.gamePlayerPoints = data;
+			
+			$scope.agreementIndex = data.agreementIndex / 20.000;
 			
 			if(data.positionInVoting == 1){
 				$scope.positionInVotingPoints = 5;
