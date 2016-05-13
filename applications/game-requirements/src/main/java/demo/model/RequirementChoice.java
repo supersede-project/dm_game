@@ -15,6 +15,7 @@ public class RequirementChoice {
     private Long requirementsChoiceId;
     private String description;
     private Long value;
+    private String label;
     
     public RequirementChoice(){   	
     }
@@ -36,5 +37,11 @@ public class RequirementChoice {
 	}
 	public void setRequirementsChoiceId(Long requirementsChoiceId) {
 		this.requirementsChoiceId = requirementsChoiceId;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
 	}   
 }
