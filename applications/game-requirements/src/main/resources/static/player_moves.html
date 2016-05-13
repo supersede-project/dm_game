@@ -116,7 +116,7 @@
 		<table class="table table-striped table-condensed table-hover">
 			<thead>
 				<tr>
-					<th class="name">Criteria&nbsp;</th>							
+					<th class="name" colspan="2">Criteria&nbsp;</th>							
 					<th class="name">First Requirement&nbsp;</th>
 					<th class="name">Select your vote&nbsp;</th>
 					<th class="name">Second Requirement&nbsp;</th>
@@ -127,6 +127,7 @@
 	
 			<tbody>
 				<tr	ng-repeat="playerMove in open_moves | limitTo:5:pagination.open.currentPage*pagination.open.itemsPerPage">
+					<td bgcolor="{{ criteriaColor(playerMove.requirementsMatrixData.criteria.name + playerMove.requirementsMatrixData.criteria.criteriaId) }}"></td>
 					<td>{{playerMove.requirementsMatrixData.criteria.name}}
 						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="{{playerMove.requirementsMatrixData.criteria.description}}"></span>
 						<script>
