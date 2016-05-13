@@ -66,11 +66,16 @@
 						
 					</td>
 					<td rowspan="2">
-						<div align="center"> 
+						<div align="center">
+							<img ng-show="gamePlayerPoints.virtualPosition == 1" src="/game-requirements-gamification/img/medal_gold.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 2" src="/game-requirements-gamification/img/medal_silver.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 3" src="/game-requirements-gamification/img/medal_bronze.png" height="100" width="100"> 
+							<!--  
 							<p ng-show="gamePlayerPoints.virtualPosition == 1">FIRST!</p>
 							<p ng-show="gamePlayerPoints.virtualPosition == 2">SECOND!</p>
 							<p ng-show="gamePlayerPoints.virtualPosition == 3">THIRD!</p>
-							<p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP...</p>
+							-->
+							<p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP</p>
 						</div>
 					</td>		
 				</tr>

@@ -25,6 +25,7 @@ import demo.model.RequirementsMatrixData;
 import demo.model.User;
 import demo.rest.AHPRest;
 import demo.utility.CustomComparator;
+import demo.utility.UserComparator;
 import eu.supersede.fe.multitenant.MultiJpaProvider;
  
  @Component
@@ -192,7 +193,7 @@ import eu.supersede.fe.multitenant.MultiJpaProvider;
 	    List<User> mapKeys = new ArrayList<>(gamePlayerVotes.keySet());
 	    List<Float> mapValues = new ArrayList<>(gamePlayerVotes.values());
 	    Collections.sort(mapValues);
-	    //Collections.sort(mapKeys);
+	    Collections.sort(mapKeys, new UserComparator());
 
 	    LinkedHashMap<User, Float> sortedMap =
 	        new LinkedHashMap<>();
