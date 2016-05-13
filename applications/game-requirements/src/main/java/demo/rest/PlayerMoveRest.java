@@ -163,6 +163,8 @@ public class PlayerMoveRest {
 	public void openPlayerMove(@PathVariable Long playerMoveId){	
 		
 		PlayerMove playerMove = playerMoves.findOne(playerMoveId);
+		playerMove.setValue(null);
+		playerMove.setPlayedTime(null);
 		playerMove.setPlayed(false);
 		playerMoves.save(playerMove);	
 	}
