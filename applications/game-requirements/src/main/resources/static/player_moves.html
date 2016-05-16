@@ -117,7 +117,18 @@
 					<td>{{playerMove.requirementsMatrixData.criteria.name}}</td>								
 					<td>{{playerMove.requirementsMatrixData.rowRequirement.name}}</td>
 					<td>{{playerMove.requirementsMatrixData.columnRequirement.name}}</td>
-					<td ng-if="playerMove.value != null">{{playerMove.value}}</td>
+					<td ng-if="playerMove.value != null">
+						<!-- {{playerMove.value}}-->
+                        <p ng-show="playerMove.value == 0">9 for first</p>
+                        <p ng-show="playerMove.value == 1">7 for first</p>
+                        <p ng-show="playerMove.value == 2">5 for first</p>
+                        <p ng-show="playerMove.value == 3">3 for first</p>
+                        <p ng-show="playerMove.value == 4">1</p>
+                        <p ng-show="playerMove.value == 5">3 for second</p>
+                        <p ng-show="playerMove.value == 6">5 for second</p>
+                        <p ng-show="playerMove.value == 7">7 for second</p>
+                        <p ng-show="playerMove.value == 8">9 for second</p>
+					</td>
 					<td ng-if="playerMove.value == null">not voted</td>
 					<td>
 						<button ng-show="playerMove.requirementsMatrixData.game.finished != true && playerMove.requirementsMatrixData.value == -1" type="button" ng-click="openMove(playerMove.playerMoveId)" class="btn btn-lg btn-success">Re-Open</button>
