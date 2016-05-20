@@ -1,3 +1,21 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+/**
+* @author Andrea Sosi
+**/
+
 package demo.rest;
 
 import java.util.ArrayList;
@@ -18,10 +36,6 @@ import demo.model.PlayerMove;
 import demo.model.Requirement;
 import demo.model.RequirementsMatrixData;
 import demo.model.ValutationCriteria;
-//import eu.supersede.algos.AHPAnalyser;
-//import eu.supersede.algos.AHPStructure;
-//import eu.supersede.fe.exception.NotFoundException;
-
 import eu.supersede.dm.algorithms.Ahp;
 import eu.supersede.dm.algorithms.AHPStructure;
 import eu.supersede.fe.exception.NotFoundException;
@@ -88,8 +102,7 @@ public class AHPRest {
 		//##################################################################
 		// set the preferences between two requirements of a specific criteria
 		for(int i=0; i<requirementsMatrixDataList.size();i++){
-			
-			
+					
 			/*
 			//This part allows to find the requirements ranks for a specific player (you have to insert the user_id)
 			  
@@ -107,8 +120,7 @@ public class AHPRest {
 			}
 			
 			
-			*/
-			
+			*/			
 			
 			if(requirementsMatrixDataList.get(i).getValue() != null && requirementsMatrixDataList.get(i).getValue() != -1L){
 				input.setOptionPreference(requirementsMatrixDataList.get(i).getRowRequirement().getRequirementId().toString(), 
@@ -143,12 +155,6 @@ public class AHPRest {
 			
 		}		
 		//##################################################################
-
-		/*
-		AHPAnalyser analyser = new AHPAnalyser();	
-		Map<String,Double> map = analyser.eval( input );
-		*/
-		
 		Ahp objCalculateRank = new Ahp(input);				
 		Map<String,Double> map = objCalculateRank.execute();
 		
