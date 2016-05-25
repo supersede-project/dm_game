@@ -42,6 +42,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for Game.
+*/
+
 @Entity
 @Table(name="games")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

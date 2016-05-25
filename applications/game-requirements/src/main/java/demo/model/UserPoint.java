@@ -29,6 +29,10 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for UserPoint.
+*/
+
 @Entity
 @Table(name="users_points")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

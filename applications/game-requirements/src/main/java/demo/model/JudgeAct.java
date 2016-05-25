@@ -35,6 +35,10 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for JudgeAct.
+*/
+
 @Entity
 @Table(name="judge_acts")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

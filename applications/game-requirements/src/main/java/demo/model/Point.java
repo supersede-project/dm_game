@@ -24,6 +24,10 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for Point.
+*/
+
 @Entity
 @Table(name="points")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

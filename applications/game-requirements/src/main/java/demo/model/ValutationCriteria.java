@@ -31,6 +31,10 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for ValutationCriteria.
+*/
+
 @Entity
 @Table(name="valutation_criterias")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

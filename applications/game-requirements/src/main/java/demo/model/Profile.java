@@ -32,6 +32,10 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for Profile.
+*/
+
 @Entity
 @Table(name="profiles")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

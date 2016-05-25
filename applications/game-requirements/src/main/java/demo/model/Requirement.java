@@ -26,6 +26,10 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/*
+	Model class for Requirement.
+*/
+
 @Entity
 @Table(name="requirements")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
