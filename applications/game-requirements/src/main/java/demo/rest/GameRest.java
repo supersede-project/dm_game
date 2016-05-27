@@ -50,7 +50,6 @@ import demo.jpa.CriteriasMatricesDataJpa;
 import demo.jpa.GamesJpa;
 import demo.jpa.JudgeActsJpa;
 import demo.jpa.PlayerMovesJpa;
-import demo.jpa.ProfilesJpa;
 import demo.jpa.RequirementsJpa;
 import demo.jpa.RequirementsMatricesDataJpa;
 import demo.jpa.UsersJpa;
@@ -65,9 +64,9 @@ import demo.model.User;
 import demo.model.ValutationCriteria;
 import demo.utility.PointsLogic;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.fe.mail.SupersedeMailSender;
 
 @RestController
 @RequestMapping("/game")
@@ -85,11 +84,9 @@ public class GameRest {
 	@Autowired
     private GamesJpa games;
 	@Autowired
-    private ProfilesJpa profiles;
+    private UsersJpa users;
 	@Autowired
     private RequirementsJpa requirements;
-	@Autowired
-    private UsersJpa users;
 	@Autowired
     private ValutationCriteriaJpa criterias;
 	@Autowired
@@ -147,7 +144,9 @@ public class GameRest {
 	
 	private boolean userIsGameMaster(User user)
 	{
-		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
+		//TODO: fix for integration
+		//return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
+		return true;
 	}
 	
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)

@@ -21,30 +21,30 @@ package demo.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import demo.jpa.ProfilesJpa;
 import demo.jpa.UserCriteriaPointsJpa;
 import demo.jpa.UsersJpa;
 import demo.jpa.ValutationCriteriaJpa;
-import demo.model.Profile;
 import demo.model.User;
 import demo.model.ValutationCriteria;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
+import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
 @RequestMapping("/user")
 public class UserRest {
 
 	@Autowired
-    private UsersJpa users;
+	private ProxyWrapper proxy;
 	
 	@Autowired
-    private ProfilesJpa profiles;
+    private UsersJpa users;
 	
 	@Autowired
     private ValutationCriteriaJpa valutationCriterias;
@@ -53,36 +53,34 @@ public class UserRest {
     private UserCriteriaPointsJpa userCriteriaPoints;
 	
 	// get a specific user by the Id
-	@RequestMapping("/{userId}")
-	public User getUser(@PathVariable Long userId)
+	@RequestMapping("/current")
+	public User getUser(Authentication authentication)
 	{
-		User u = users.findOne(userId);
-		if(u == null)
+		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+		Long userId = currentUser.getUserId();
+		
+		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
+				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), userId.intValue(), false, currentUser.getToken());
+		
+		if(proxyUser == null)
 		{
 			throw new NotFoundException();
 		}
 		
+		User u = users.findOne(userId);
+		if(u == null)
+		{
+			u = new User(userId);
+			users.save(u);
+			u = users.findOne(userId);
+		}
+		
+		u.setName(proxyUser.getName());
+		u.setEmail(proxyUser.getEmail());
+		
 		return u;
 	}
-	
-	// get all the users
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<User> getUsers(@RequestParam(required = false) String profile) 
-	{
-		List<User> us = null;
-		if(profile != null)
-		{
-			Profile p = profiles.findByName(profile);
-			us = p.getUsers();
-			
-		}
-		else
-		{
-			us = users.findAll();
-		}
-		return us;
-	}
-	
+		
 	// Get all users that have a specific ValutationCriteria
 	@RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
 	public List<User> getCriteriaUsers(@PathVariable Long criteriaId)

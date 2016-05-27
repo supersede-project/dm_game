@@ -20,22 +20,15 @@ package demo.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
 	Model class for User.
@@ -47,14 +40,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
+	@Transient
     private String name;
+	@Transient
     private String email;
-    private String password;
-    @ManyToMany(cascade=CascadeType.ALL)  
-    @JoinTable(name="users_profiles", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="profile_id"))  
-    private List<Profile> profiles;
     
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<UserCriteriaPoint> userCriteriaPoints;
@@ -62,14 +52,14 @@ public class User {
 	@OneToOne(mappedBy = "user", optional = true)
 	private UserPoint userGlobalPoints;
 	
-    public User() {
+    public User(Long userId) {
+    	this.userId = userId;
     }
  
-    public User(String name, String email, String password, List<Profile> profiles) {
+    public User(Long userId, String name, String email) {
+    	this(userId);
         this.name = name;
         this.email = email;
-        this.password = password;
-        this.profiles = profiles;
     }
  
     public Long getUserId() {
@@ -95,16 +85,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
- 
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
- 
-    @JsonProperty("password")
-    public void setPassword(String password) {
-        this.password = password;
-    }
     
     public Long getPoints() {
     	long tmpPoints = 0;
@@ -117,14 +97,6 @@ public class User {
     		tmpPoints+= userGlobalPoints.getUserPoints();
     	}
     	return tmpPoints;
-    }
- 
-    public List<Profile> getProfiles() {
-        return profiles;
-    }
- 
-    public void setProfiles(List<Profile> profiles) {
-        this.profiles = profiles;
     }
     
     public List<UserCriteriaPoint> getUserCriteriaPoints(){
