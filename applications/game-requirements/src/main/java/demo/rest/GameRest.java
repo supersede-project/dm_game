@@ -64,9 +64,11 @@ import demo.model.User;
 import demo.model.ValutationCriteria;
 import demo.utility.PointsLogic;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
 @RequestMapping("/game")
@@ -99,6 +101,9 @@ public class GameRest {
     private JudgeActsJpa judgeActs;
 	
 	@Autowired
+	private ProxyWrapper proxy;
+	
+	@Autowired
 	private NotificationUtil notificationUtil;
 	
 	
@@ -110,7 +115,7 @@ public class GameRest {
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());
 		
-		if(!byUser && userIsGameMaster(user))
+		if(!byUser && userIsGameMaster(currentUser))
 		{
 			if(finished == null)
 			{
@@ -142,11 +147,26 @@ public class GameRest {
 		
 	}
 	
-	private boolean userIsGameMaster(User user)
+	private boolean userIsGameMaster(DatabaseUser currentUser)
 	{
 		//TODO: fix for integration
-		//return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
-		return true;
+
+		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
+				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), currentUser.getUserId().intValue(), false, currentUser.getToken());
+		
+		if(proxyUser == null)
+		{
+			throw new NotFoundException();
+		}
+		
+		for(Profile p : proxyUser.getProfiles())
+		{
+			if(p.getName().equals("DECISION_SCOPE_PROVIDER"))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
@@ -367,14 +387,15 @@ public class GameRest {
 			}
 		}
 		
+		DatabaseUser currentUser = (DatabaseUser) auth.getPrincipal();
 		for(User u : us)
 		{
-			
+			eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
 			 // creation of email for the players when a game is started
             supersedeMailSender.sendEmail("New Decision Making Process", 
-                            "Hi " + u.getName() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", u.getEmail());
+                            "Hi " + proxyUser.getFirst_name() + " " + proxyUser.getLast_name() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", proxyUser.getEmail());
 			
-			notificationUtil.createNotificationForUser(u.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
 		}
 		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
 		

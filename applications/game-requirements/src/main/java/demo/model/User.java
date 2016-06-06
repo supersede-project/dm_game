@@ -52,6 +52,9 @@ public class User {
 	@OneToOne(mappedBy = "user", optional = true)
 	private UserPoint userGlobalPoints;
 	
+	public User()
+	{}
+	
     public User(Long userId) {
     	this.userId = userId;
     }
@@ -89,9 +92,13 @@ public class User {
     public Long getPoints() {
     	long tmpPoints = 0;
     	
-    	for(int i=0;i<userCriteriaPoints.size();i++){
-    		tmpPoints += userCriteriaPoints.get(i).getPoints();
+    	if(userCriteriaPoints != null)
+    	{
+	    	for(int i=0;i<userCriteriaPoints.size();i++){
+	    		tmpPoints += userCriteriaPoints.get(i).getPoints();
+	    	}
     	}
+    	
     	if(userGlobalPoints != null)
     	{
     		tmpPoints+= userGlobalPoints.getUserPoints();

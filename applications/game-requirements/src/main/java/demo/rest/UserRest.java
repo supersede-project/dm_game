@@ -18,6 +18,7 @@
 
 package demo.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import demo.jpa.UserCriteriaPointsJpa;
@@ -35,6 +37,7 @@ import demo.model.ValutationCriteria;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
 @RequestMapping("/user")
@@ -60,7 +63,7 @@ public class UserRest {
 		Long userId = currentUser.getUserId();
 		
 		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
-				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), userId.intValue(), false, currentUser.getToken());
+				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), userId.intValue(), true, currentUser.getToken());
 		
 		if(proxyUser == null)
 		{
@@ -75,12 +78,61 @@ public class UserRest {
 			u = users.findOne(userId);
 		}
 		
-		u.setName(proxyUser.getName());
+		u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
 		u.setEmail(proxyUser.getEmail());
 		
 		return u;
 	}
+	
+	// get all the users
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public List<User> getUsers(Authentication authentication,
+			@RequestParam(required = false) String profile) 
+	{
+		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+		List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
 		
+		List<User> us = new ArrayList<>();
+		if(profile != null)
+		{
+			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+			{
+				if(userIs(proxyUser, profile))
+				{
+					us.add(new User(new Long(proxyUser.getUser_id()),
+							proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
+							proxyUser.getEmail()));
+				}
+			}
+		}
+		else
+		{
+			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+			{
+				us.add(new User(new Long(proxyUser.getUser_id()),
+						proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
+						proxyUser.getEmail()));
+			}
+		}
+		
+		return us;
+	}
+	
+	private boolean userIs(eu.supersede.integration.api.datastore.fe.types.User proxyUser, String profile)
+	{
+		if(proxyUser.getProfiles() != null)
+		{
+			for(Profile p : proxyUser.getProfiles())
+			{
+				if(p.getName().equals(profile))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	// Get all users that have a specific ValutationCriteria
 	@RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
 	public List<User> getCriteriaUsers(@PathVariable Long criteriaId)
