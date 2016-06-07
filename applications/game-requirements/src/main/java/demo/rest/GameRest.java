@@ -115,36 +115,57 @@ public class GameRest {
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());
 		
+		List<Game> gs;
 		if(!byUser && userIsGameMaster(currentUser))
 		{
 			if(finished == null)
 			{
-				return games.findAll();
+				gs = games.findAll();
 			}
 			else
 			{
-				return games.findByFinished(finished);
+				gs = games.findByFinished(finished);
 			}
 		}
 		else
 		{	
-			List<Game> gs;
+			
 			if(finished == null)
 			{
-				 gs = games.findByPlayerContains(user);
+				gs = games.findByPlayerContains(user);
 			}
 			else
 			{
-				gs =  games.findByPlayerContainsAndFinished(user, finished);
+				gs = games.findByPlayerContainsAndFinished(user, finished);
 			}
 			
 			for(Game g : gs)
 			{
 				g.setCurrentPlayer(user);
 			}
-			return gs;
 		}
 		
+		Map<Long, User> usersCache = new HashMap<>();
+		for(Game g : gs)
+		{
+			if(usersCache.containsKey(g.getCreator().getUserId()))
+			{
+				g.getCreator().setName(usersCache.get(g.getCreator().getUserId()).getName());
+				g.getCreator().setEmail(usersCache.get(g.getCreator().getUserId()).getEmail());
+			}
+			else
+			{
+				User u = g.getCreator();
+				eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(
+						currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
+				u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+				u.setEmail(proxyUser.getEmail());
+				
+				usersCache.put(u.getUserId(), u);
+			}
+		}
+		
+		return gs;
 	}
 	
 	private boolean userIsGameMaster(DatabaseUser currentUser)
@@ -181,6 +202,15 @@ public class GameRest {
 			throw new NotFoundException();
 		}
 		g.setCurrentPlayer(user);
+		
+		for(User u : g.getPlayers())
+		{
+			eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(
+					currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
+			u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+			u.setEmail(proxyUser.getEmail());
+		}
+		
 		return g;
 	}
 	
