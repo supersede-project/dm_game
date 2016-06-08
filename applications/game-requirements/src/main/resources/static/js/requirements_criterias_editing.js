@@ -17,129 +17,127 @@ var app = angular.module('w5app');
 app.controllerProvider.register('requirements_criterias_editing', function($scope, $http) {
 		
 	$scope.valutationCriterias = [];
-	$scope.requirements = [];
-	$scope.criteriaName = undefined;
-	$scope.criteriaDescription = undefined;
-	$scope.requirementName = undefined;
-	$scope.requirementDescription = undefined;
-	
-	$scope.editCriteria = undefined;
-	$scope.editCriteriaName = undefined;
-	$scope.editCriteriaDescription = undefined;
-	
-	$scope.editRequirement = undefined;
-	$scope.editRequirementName = undefined;
-	$scope.editRequirementDescription = undefined;
+	$scope.criteria = {};
 	
 	getCriterias = function () {
-	 $http.get('game-requirements/criteria')
+		 $http.get('game-requirements/criteria')
+		 	.success(function(data) {
+				$scope.valutationCriterias.length = 0;
+				for(var i = 0; i < data.length; i++)
+				{
+					$scope.valutationCriterias.push(data[i]);
+				}
+			});
+	};
+	getCriterias();
+	
+	$scope.getCriteria = function (criteriaId) {
+		$http.get('game-requirements/criteria/' + criteriaId)
 		.success(function(data) {
-			for(var i = 0; i < data.length; i++)
-			{
-				$scope.valutationCriterias.push(data[i]);
-			}
+			$scope.criteria = data;
+		});	
+	};
+	
+	$scope.createCriteria = function () {
+		$http({
+			url: "game-requirements/criteria/",
+			data: $scope.criteria,
+			method: 'POST'
+		}).success(function(data){
+			$scope.criteria = {};
+			getCriterias();
+		}).error(function(err){
+		});
+    };
+	
+	$scope.editCriteria = function () {
+		$http({
+			url: "game-requirements/criteria/",
+			data: $scope.criteria,
+			method: 'PUT'
+		}).success(function(data){
+			$scope.criteria = {};
+			getCriterias();
+		}).error(function(err){
 		});
 	};
+	
+	$scope.deleteCriteria = function (criteriaId) {
+		 $http.delete('game-requirements/criteria/' + criteriaId)
+			.success(function(data) {
+				if(data == true){
+					$scope.valutationCriterias = [];
+					getCriterias();
+				}
+				else
+				{
+					alert("Can not delete criteria");
+				}
+			});
+	};
+	
+	
+	
+	
+	$scope.requirements = [];
+	$scope.requirement = {};
 	
 	getRequirements = function () {
 		$http.get('game-requirements/requirement')
 		.success(function(data) {
+			$scope.requirements.length = 0;
 			for(var i = 0; i < data.length; i++)
 			{
 				$scope.requirements.push(data[i]);
 			}
 		});	
 	};
-	
-	getCriterias();
-	getRequirements();	 
 	 
-	// EDIT PART ##################################################################################
-	$scope.editFunCriteria = function (criteriaId) {	
-		$scope.editCriteria = undefined;
-		$scope.editCriteriaName = undefined;
-		$scope.editCriteriaDescription = undefined;
-		
-		$http.get('game-requirements/criteria/' + criteriaId)
-		.success(function(data) {
-			$scope.editCriteria = data;
-		});	
-	};
+	getRequirements();
 	
-	$scope.saveEditedCriteria = function () {
-		$http.put('game-requirements/criteria/edit/' + $scope.editCriteria.criteriaId + '/name/' + $scope.editCriteriaName + '/description/' + $scope.editCriteriaDescription)
-		.success(function(data) {
-			$scope.valutationCriterias = [];
-			getCriterias();
-		});
-	};
-	
-	
-	$scope.editFunRequirement = function (requirementId) {	
-		$scope.editRequirement = undefined;
-		$scope.editRequirementName = undefined;
-		$scope.editRequirementDescription = undefined;
-		
+	$scope.getRequirement = function (requirementId) {
 		$http.get('game-requirements/requirement/' + requirementId)
 		.success(function(data) {
-			$scope.editRequirement = data;
+			$scope.requirement = data;
 		});	
 	};
 	
-	$scope.saveEditedRequirement = function () {
-		$http.put('game-requirements/requirement/edit/' + $scope.editRequirement.requirementId + '/name/' + $scope.editRequirementName + '/description/' + $scope.editRequirementDescription)
-		.success(function(data) {
-			$scope.requirements = [];
+	$scope.createRequirement = function () {
+		$http({
+			url: "game-requirements/requirement/",
+			data: $scope.requirement,
+			method: 'POST'
+		}).success(function(data){
+			$scope.requirement = {};
 			getRequirements();
+		}).error(function(err){
 		});
 	};
 	
-	// ##################################################################################
+	$scope.editRequirement = function () {
+		$http({
+			url: "game-requirements/requirement/",
+			data: $scope.requirement,
+			method: 'PUT'
+		}).success(function(data){
+			$scope.requirement = {};
+			getRequirements();
+		}).error(function(err){
+		});
+	};
 	
-	
-	// NEW PART ##################################################################################	
-	$scope.createCriteria = function () {
-		 $http.put('game-requirements/criteria/create/' + $scope.criteriaName + '/description/' + $scope.criteriaDescription)
-			.success(function(data) {
-				$scope.valutationCriterias = [];
-				getCriterias();
-				$scope.criteriaName = undefined;
-				$scope.criteriaDescription = undefined;
-			});
-    };
-    
-    $scope.createRequirement = function () {
-		 $http.put('game-requirements/requirement/create/' + $scope.requirementName + '/description/' + $scope.requirementDescription)
-			.success(function(data) {
-				$scope.requirements = [];
-				getRequirements();
-				$scope.requirementName = undefined;
-				$scope.requirementDescription = undefined;
-			});
-   };
-   
-   // ##################################################################################
-   
-   // DELETE PART ##################################################################################
-   $scope.deleteCriteria = function (criteriaId) {
-		 $http.put('game-requirements/criteria/delete/' + criteriaId)
-			.success(function(data) {
-				if(data == true){
-					$scope.valutationCriterias = [];
-					getCriterias();
-				}
-			});
-  };
-  
-  $scope.deleteRequirement = function (requirementId) {
-		 $http.put('game-requirements/requirement/delete/' + requirementId)
+	$scope.deleteRequirement = function (requirementId) {
+		 $http.delete('game-requirements/requirement/' + requirementId)
 			.success(function(data) {
 				if(data == true){
 					$scope.requirements = [];
 					getRequirements();
 				}
+				else
+				{
+					alert("Can not delete requirement");
+				}
 			});
-};
+	};
   
-  //##################################################################################
 });
