@@ -16,18 +16,17 @@
 * @author Alberto Siena
 **/
 
-package demo.rest;
+package demo.unsecured.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-
-import demo.utility.Alert;
+import demo.unsecured.model.Alert;
 import eu.supersede.fe.notification.NotificationUtil;
 
 @RestController
@@ -37,17 +36,15 @@ public class IFListenerRest {
 	@Autowired
 	private NotificationUtil notificationUtil;
 	
-	@RequestMapping(value = "/alert", method = RequestMethod.POST, consumes = MediaType.ALL_VALUE )
-	public boolean notifyAlert( @RequestBody String string ) {
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	@RequestMapping(value = "/alert", method = RequestMethod.POST)
+	public void notifyAlert(@RequestBody Alert alert) {
+		log.debug("Alert received: " + alert);
 		
-		Alert alert = new Gson().fromJson( string, Alert.class );
+		notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", alert.getMessage(), "");
 		
-		System.out.println( "Alert received: " + alert );
-		
-		notificationUtil.createNotificationsForProfile( "DECISION_SCOPE_PROVIDER", alert.getMessage(), "" );
-		
-		return true;
-		
+		return;
 	}
 	
 }

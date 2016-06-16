@@ -1,4 +1,4 @@
-package demo.utility;
+package demo.unsecured.model;
 
 public enum AlertType {
 	
