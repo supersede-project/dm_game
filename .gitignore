@@ -8,3 +8,4 @@
 **/gradle/wrapper/
 **/build/
 dist/
+**/gradle.properties
