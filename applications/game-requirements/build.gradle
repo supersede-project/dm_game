@@ -89,11 +89,11 @@ dependencies {
     compile ("org.apache.axis2:axis2-transport-http:1.6.1")
     compile ("org.apache.axis2:axis2-transport-local:1.6.1")
 
-    compile(group: 'org.wso2.carbon', name: 'org.wso2.carbon.um.ws.api.stub', version: '4.2.2')
-    compile(group: 'org.wso2.carbon', name: 'org.wso2.carbon.um.ws.api', version: '4.2.2')
-    compile(group: 'org.wso2.carbon', name: 'org.wso2.carbon.user.api', version: '4.2.0')
-    compile(group: 'org.wso2.carbon', name: 'org.wso2.carbon.user.core', version: '4.2.0')
-    compile(group: 'org.wso2.carbon', name: 'org.wso2.carbon.utils', version: '4.2.0')
+    compile("org.wso2.carbon:org.wso2.carbon.um.ws.api.stub:4.2.2")
+    compile("org.wso2.carbon:org.wso2.carbon.um.ws.api:4.2.2")
+    compile("org.wso2.carbon:org.wso2.carbon.user.api:4.2.0")
+    compile("org.wso2.carbon.org.wso2.carbon.user.core:4.2.0")
+    compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
 }
