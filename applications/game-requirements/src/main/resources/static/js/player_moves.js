@@ -84,7 +84,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     }
     
     getActions = function() {
-    	$http.get('game-requirements/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
+    	$http.get('game-requirements-gamification/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
     	.success(function(data) {
     		reset();
     		
@@ -173,7 +173,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     	oc.currentPage = this.n -1;
     };
     
-	$http.get('game-requirements/requirementchoice')
+	$http.get('game-requirements-gamification/requirementchoice')
 		.success(function(data) {
 			$scope.requirementsChoices.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -183,7 +183,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		});
 	 
 	$scope.setVote = function(playerVote, playerMoveId){
-		$http.put('game-requirements/playermove/' + playerMoveId + '/vote/' + playerVote)
+		$http.put('game-requirements-gamification/playermove/' + playerMoveId + '/vote/' + playerVote)
 			.success(function(data) {
 				for(var i = 0; i < $scope.open_moves.length; i++)
 				{
@@ -221,10 +221,112 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	 }
 	 
 	$scope.openMove = function(playerMoveId){
-		$http.put('game-requirements/playermove/open/' + playerMoveId)
+		$http.put('game-requirements-gamification/playermove/open/' + playerMoveId)
 			.success(function(data) {
 				getActions();
 		});
 	};
+	
+	// ##################################################################################
+	// polling methods (every second)
+	
+	$scope.loggedUser = $rootScope.user;
+	$scope.user = undefined;
+	
+	$scope.game = undefined;
+	
+	$scope.gamePlayerPoints = undefined;
+	
+	$scope.agreementIndex = undefined;
+			
+	// there are the variables for the different sets of points
+	$scope.movesPoints = 0;
+	$scope.gameProgressPoints = 0;
+	$scope.positionInVotingPoints = 0;
+	$scope.gameStatusPoints = 0;
+	$scope.gameCompleted = false;
+		
+	var update;
+	
+	update = $interval(function() {
+		$http.get('game-requirements-gamification/game/' + $scope.selectedGame)
+		.success(function(data) {
+			$scope.game = data;	
+			
+			if(data.playerProgress < 100){
+				$scope.gameStatusPoints = -20;
+				$scope.gameCompleted = false;
+			}else{
+				$scope.gameStatusPoints = 0;
+				$scope.gameCompleted = true;
+			}
+			
+			$scope.gameProgressPoints = $scope.Math.floor((data.playerProgress / 10));	
+			$scope.movesPoints = data.movesDone;
+		});
+		
+		$http.get('game-requirements-gamification/user/' + $scope.loggedUser.userId)
+		.success(function(data) {
+			$scope.user = data;
+		});
+		
+		$http.get('game-requirements-gamification/gameplayerpoint/game/' + $scope.selectedGame)
+		.success(function(data) {
+			$scope.gamePlayerPoints = data;
+			
+			$scope.agreementIndex = data.agreementIndex / 20.000;
+			
+			if(data.positionInVoting == 1){
+				$scope.positionInVotingPoints = 5;
+			}else if(data.positionInVoting == 2){
+				$scope.positionInVotingPoints = 3;
+			}else if(data.positionInVoting == 3){
+				$scope.positionInVotingPoints = 2;
+			}
+		});
+		
+		}, 1000);
+	
+	 // stops the interval
+    $scope.stop = function() {
+      $interval.cancel(update);
+    };
+    
+    // stops the interval when the scope is destroyed,
+    // this usually happens when a route is changed and 
+    // the ItemsController $scope gets destroyed. The
+    // destruction of the ItemsController scope does not
+    // guarantee the stopping of any intervals, you must
+    // be responsible of stopping it when the scope is
+    // is destroyed.
+    $scope.$on('$destroy', function() {
+      $scope.stop();
+    });
+    
+    // ##################################################################################
+    
+    $scope.hashCode = function(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return hash;
+    };
+    
+    $scope.intToARGB = function(i) {
+        var hex = ((i>>24)&0xFF).toString(16) +
+                ((i>>16)&0xFF).toString(16) +
+                ((i>>8)&0xFF).toString(16) +
+                (i&0xFF).toString(16);
+        // Sometimes the string returned will be too short so we 
+        // add zeros to pad it out, which later get removed if
+        // the length is greater than six.
+        hex += '000000';
+        return hex.substring(0, 6);
+    };
+    
+    $scope.criteriaColor = function(data){
+    	return $scope.intToARGB($scope.hashCode(data));
+    };
 	
 });

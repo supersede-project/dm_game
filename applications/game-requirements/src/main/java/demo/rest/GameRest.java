@@ -48,6 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import demo.jpa.CriteriasMatricesDataJpa;
 import demo.jpa.GamesJpa;
+import demo.jpa.GamesPlayersPointsJpa;
 import demo.jpa.JudgeActsJpa;
 import demo.jpa.PlayerMovesJpa;
 import demo.jpa.ProfilesJpa;
@@ -57,6 +58,7 @@ import demo.jpa.UsersJpa;
 import demo.jpa.ValutationCriteriaJpa;
 import demo.model.CriteriasMatrixData;
 import demo.model.Game;
+import demo.model.GamePlayerPoint;
 import demo.model.JudgeAct;
 import demo.model.PlayerMove;
 import demo.model.Requirement;
@@ -65,6 +67,7 @@ import demo.model.User;
 import demo.model.ValutationCriteria;
 import demo.utility.PointsLogic;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.fe.mail.SupersedeMailSender;
@@ -79,7 +82,10 @@ public class GameRest {
 	private static final String ZERO_TIME = dateFormat.format(new Date(0));
 
 	@Autowired
-    private SupersedeMailSender supersedeMailSender;
+	private SupersedeMailSender supersedeMailSender;
+
+	@Autowired
+	private GamesPlayersPointsJpa gamesPlayersPoints;
 	@Autowired
 	private PointsLogic pointsLogic;
 	@Autowired
@@ -147,7 +153,7 @@ public class GameRest {
 	
 	private boolean userIsGameMaster(User user)
 	{
-		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
+		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER_GAMIFICATION"));
 	}
 	
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
@@ -370,14 +376,23 @@ public class GameRest {
 		
 		for(User u : us)
 		{
+			// creation of email for the players when a game is started
+			supersedeMailSender.sendEmail("New Decision Making Process", 
+							"Hi " + u.getName() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", u.getEmail());
 			
-			 // creation of email for the players when a game is started
-            supersedeMailSender.sendEmail("New Decision Making Process", 
-                            "Hi " + u.getName() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", u.getEmail());
+			notificationUtil.createNotificationForUser(u.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements-gamification/player_games");
 			
-			notificationUtil.createNotificationForUser(u.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			// ######################################################
+			// create a GamePlayerPoint for this game and for all the players in the game
+			GamePlayerPoint gpp = new GamePlayerPoint();
+			gpp.setGame(game);
+			gpp.setUser(u);
+			gpp.setPoints(0l);
+			gamesPlayersPoints.save(gpp);
+			
+			// ######################################################
 		}
-		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
+		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR_GAMIFICATION", "A new decision making process has been created, you are in charge to take decisions", "game-requirements-gamification/judge_acts");
 		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setLocation(ServletUriComponentsBuilder

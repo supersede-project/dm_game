@@ -37,7 +37,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     
     $scope.choices = {};
     
-    $http.get('game-requirements/user?profile=OPINION_PROVIDER')
+    $http.get('game-requirements-gamification/user?profile=OPINION_PROVIDER_GAMIFICATION')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -45,7 +45,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('game-requirements/requirement')
+    $http.get('game-requirements-gamification/requirement')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -53,7 +53,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('game-requirements/criteria')
+    $http.get('game-requirements-gamification/criteria')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -61,7 +61,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
 
-    $http.get('game-requirements/requirementchoice')
+    $http.get('game-requirements-gamification/requirementchoice')
 	.success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -101,7 +101,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	$scope.createGame = function()
 	{
 		$http({
-			url: "game-requirements/game",
+			url: "game-requirements-gamification/game",
 	        data: $scope.game,
 	        method: 'POST',
 	        params: {criteriaValues : $scope.choices}
@@ -109,7 +109,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
 	    	$scope.choices = {};
 	    	$scope.currentPage = 'page1';
-	    	$location.url('game-requirements/game_page').search('gameId', data);
+	    	$location.url('game-requirements-gamification/game_page').search('gameId', data);
 	    }).error(function(err){
 	    	console.log(err);
 	    });

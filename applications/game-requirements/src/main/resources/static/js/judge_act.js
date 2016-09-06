@@ -22,11 +22,11 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 	$scope.selectedRequirementsChoice = {selected:4};
 	$scope.playerMoves = [];
 	
-	$http.get('game-requirements/judgeact/' + $scope.judgeActId)
+	$http.get('game-requirements-gamification/judgeact/' + $scope.judgeActId)
 	.success(function(data) {
 		$scope.judgeAct = data;
 		
-		 $http.get('game-requirements/playermove/requirementsmatrixdata/' + $scope.judgeAct.requirementsMatrixData.requirementsMatrixDataId)
+		 $http.get('game-requirements-gamification/playermove/requirementsmatrixdata/' + $scope.judgeAct.requirementsMatrixData.requirementsMatrixDataId)
 			.success(function(data) {
 				for(var i = 0; i < data.length; i++)
 				{
@@ -35,7 +35,7 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 			});
 	});
     
-	 $http.get('game-requirements/requirementchoice')
+	 $http.get('game-requirements-gamification/requirementchoice')
 		.success(function(data) {
 			$scope.requirementsChoices.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -45,9 +45,9 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 		});
 	 
 	 $scope.insertJudgeVote = function(judgeVote){
-		 $http.put('game-requirements/judgeact/' + $scope.judgeActId + '/vote/' + judgeVote)
+		 $http.put('game-requirements-gamification/judgeact/' + $scope.judgeActId + '/vote/' + judgeVote)
 	    	.success(function(data) {
-	    		$location.url('/game-requirements/judge_acts');
+	    		$location.url('/game-requirements-gamification/judge_acts');
     	});
 	 };	
 });

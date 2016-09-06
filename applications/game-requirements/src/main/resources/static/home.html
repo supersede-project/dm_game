@@ -1,4 +1,4 @@
-    <script src="game-requirements/js/home.js"></script>  
+    <script src="game-requirements-gamification/js/home.js"></script>  
 	<div class="container">
 		<div class="row" ng-controller="home">
 			<div class="col-md-6">
@@ -11,34 +11,37 @@
 				<p>Total points: <b>{{user.points}}</b></p>
 				
 				 -->
-				<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
+
+				<div ng-show="hasRole('DECISION_SCOPE_PROVIDER_GAMIFICATION')" class="row">
+
 					<div class="col-md-6">
 						<p>Go to Decision making processes:</p>
 					</div>
 					<div class="col-md-6">
-						<a href="#/game-requirements/games" class="btn btn-lg btn-success">Decision making processes</a>
+						<a href="#/game-requirements-gamification/games" class="btn btn-lg btn-success">Decision making processes</a>
 					</div>
 				</div>
 				
-				<div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">
+				<div ng-show="hasRole('OPINION_NEGOTIATOR_GAMIFICATION')" class="row">
 					<div class="col-md-6">
 						<p>Go to Negotiator actions:</p>
 					</div>
 					<div class="col-md-6">
-						<a href="#/game-requirements/judge_acts" class="btn btn-lg btn-success">Negotiator actions</a>
+						<a href="#/game-requirements-gamification/judge_acts" class="btn btn-lg btn-success">Negotiator actions</a>
 					</div>
 				</div>
 				
-				<div ng-show="hasRole('OPINION_PROVIDER')" class="row">
+				<div ng-show="hasRole('OPINION_PROVIDER_GAMIFICATION')" class="row">
 					<div class="col-md-6">
 						<p>Go to Opinion provider actions:</p>
 					</div>
 					<div class="col-md-6">
-						<a href="#/game-requirements/player_games" class="btn btn-lg btn-success">Opinion provider actions</a>
+						<a href="#/game-requirements-gamification/player_games" class="btn btn-lg btn-success">Opinion provider actions</a>
 					</div>
 				</div>
 			</div>
-			<!-- 
+
+			<!--  
 			<div class="col-md-6">
 				<h1>Criterias points</h1>
 				<ul class="list-group" ng-show="user.userCriteriaPoints.length">
@@ -46,6 +49,23 @@
 				</ul>
 				<p ng-show="!user.userCriteriaPoints.length">User doesn't have points per criterias.</p>
 			</div>	
-			 -->
+
+			-->
 		</div>
+		<!-- 
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Personal collection</h1>
+				<img src="/game-requirements/img/1.png" height="120" width="120" title="Earned with 1 vote.">
+				<img src="/game-requirements/img/5.png" height="120" width="120" title="Earned with 5 votes.">
+				<img src="/game-requirements/img/50.png" height="120" width="120" title="Earned with 50 votes.">
+				<img src="/game-requirements/img/100.png" height="120" width="120" title="Earned with 100 votes.">
+				<img src="/game-requirements/img/200.png" height="120" width="120" title="Earned with 200 votes.">
+				<img src="/game-requirements/img/500.png" height="120" width="120" title="Earned with 500 votes.">
+				<img src="/game-requirements/img/first.png" height="120" width="120" title="Earned for voting for the first.">
+				<img src="/game-requirements/img/specialist.png" height="120" width="120" title="Earned for be a specialist in a criteria.">
+			</div>
+		</div>
+		
+		 -->
 	</div>
