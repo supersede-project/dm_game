@@ -70,7 +70,6 @@ import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.fe.mail.SupersedeMailSender;
 
 @RestController
 @RequestMapping("/game")
