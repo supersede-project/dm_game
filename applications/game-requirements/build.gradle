@@ -78,7 +78,7 @@ dependencies {
 	compile("org.springframework.session:spring-session:1.2.0.RELEASE")
 	compile("org.springframework.boot:spring-boot-starter-redis")
 	
-	compile files('../../libs/newAHP.jar')
+	compile("eu.supersede:AHP:0.0.1-SNAPSHOT")
 	compile('org.apache.commons:commons-math3:3.6.1')
 	
 	compile("eu.supersede:supersede-client:0.0.1-SNAPSHOT")
@@ -92,7 +92,7 @@ dependencies {
     compile("org.wso2.carbon:org.wso2.carbon.um.ws.api.stub:4.2.2")
     compile("org.wso2.carbon:org.wso2.carbon.um.ws.api:4.2.2")
     compile("org.wso2.carbon:org.wso2.carbon.user.api:4.2.0")
-    compile("org.wso2.carbon.org.wso2.carbon.user.core:4.2.0")
+    compile("org.wso2.carbon:org.wso2.carbon.user.core:4.2.0")
     compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
