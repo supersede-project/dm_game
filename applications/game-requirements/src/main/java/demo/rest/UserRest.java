@@ -18,33 +18,36 @@
 
 package demo.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import demo.jpa.ProfilesJpa;
 import demo.jpa.UserCriteriaPointsJpa;
 import demo.jpa.UsersJpa;
 import demo.jpa.ValutationCriteriaJpa;
-import demo.model.Profile;
 import demo.model.User;
 import demo.model.ValutationCriteria;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
+import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
 @RequestMapping("/user")
 public class UserRest {
 
 	@Autowired
-    private UsersJpa users;
+	private ProxyWrapper proxy;
 	
 	@Autowired
-    private ProfilesJpa profiles;
+    private UsersJpa users;
 	
 	@Autowired
     private ValutationCriteriaJpa valutationCriterias;
@@ -53,34 +56,81 @@ public class UserRest {
     private UserCriteriaPointsJpa userCriteriaPoints;
 	
 	// get a specific user by the Id
-	@RequestMapping("/{userId}")
-	public User getUser(@PathVariable Long userId)
+	@RequestMapping("/current")
+	public User getUser(Authentication authentication)
 	{
-		User u = users.findOne(userId);
-		if(u == null)
+		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+		Long userId = currentUser.getUserId();
+		
+		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
+				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), userId.intValue(), true, currentUser.getToken());
+		
+		if(proxyUser == null)
 		{
 			throw new NotFoundException();
 		}
+		
+		User u = users.findOne(userId);
+		if(u == null)
+		{
+			u = new User(userId);
+			users.save(u);
+			u = users.findOne(userId);
+		}
+		
+		u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+		u.setEmail(proxyUser.getEmail());
 		
 		return u;
 	}
 	
 	// get all the users
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<User> getUsers(@RequestParam(required = false) String profile) 
+	public List<User> getUsers(Authentication authentication,
+			@RequestParam(required = false) String profile) 
 	{
-		List<User> us = null;
+		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+		List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
+		
+		List<User> us = new ArrayList<>();
 		if(profile != null)
 		{
-			Profile p = profiles.findByName(profile);
-			us = p.getUsers();
-			
+			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+			{
+				if(userIs(proxyUser, profile))
+				{
+					us.add(new User(new Long(proxyUser.getUser_id()),
+							proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
+							proxyUser.getEmail()));
+				}
+			}
 		}
 		else
 		{
-			us = users.findAll();
+			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+			{
+				us.add(new User(new Long(proxyUser.getUser_id()),
+						proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
+						proxyUser.getEmail()));
+			}
 		}
+		
 		return us;
+	}
+	
+	private boolean userIs(eu.supersede.integration.api.datastore.fe.types.User proxyUser, String profile)
+	{
+		if(proxyUser.getProfiles() != null)
+		{
+			for(Profile p : proxyUser.getProfiles())
+			{
+				if(p.getName().equals(profile))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	// Get all users that have a specific ValutationCriteria

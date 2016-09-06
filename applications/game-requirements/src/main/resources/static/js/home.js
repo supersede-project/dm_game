@@ -17,19 +17,18 @@ var app = angular.module('w5app');
 app.controllerProvider.register('home', function($scope, $http, $rootScope) {
 	
 	$scope.loggedUser = $rootScope.user;
-	$scope.user = undefined;
 	
-	$http.get('game-requirements/user/' + $scope.loggedUser.userId)
+	$http.get('game-requirements/user/current')
 	.success(function(data) {
 		$scope.user = data;
 	});
 	
 	$scope.hasRole = function(role){
-		if($scope.user)
+		if($scope.loggedUser)
 		{
-			for(var i = 0; i < $scope.user.profiles.length; i++)
+			for(var i = 0; i < $scope.loggedUser.authorities.length; i++)
 			{
-				if($scope.user.profiles[i].name == role)
+				if($scope.loggedUser.authorities[i].authority == "ROLE_" + role)
 				{
 					return true;
 				}

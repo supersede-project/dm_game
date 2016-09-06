@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +57,7 @@ public class CriteriaRest {
 	}
 	
 	// get all the ValutationCriterias
-	@RequestMapping("")
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public List<ValutationCriteria> getCriterias() 
 	{
 		return valutationCriterias.findAll();
@@ -69,25 +70,23 @@ public class CriteriaRest {
 	}
 	
 	// create new criteria
-	@RequestMapping(value = "/create/{name}/description/{description}", method = RequestMethod.PUT)
-	public void createCriteria(@PathVariable String name, @PathVariable String description)
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public void createCriteria(@RequestBody ValutationCriteria vc)
 	{
-		ValutationCriteria vc = new ValutationCriteria();
-		vc.setName(name);
-		vc.setDescription(description);
+		vc.setCriteriaId(null);
 		valutationCriterias.save(vc);
 	}
 	
 	// TODO check because is not perfectly correct (because maybe it's better check the existence of the criteria in the criteria's game table) ##################################################
 	// delete criteria
-	@RequestMapping(value = "/delete/{criteriaId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{criteriaId}", method = RequestMethod.DELETE)
 	public boolean deleteCriteria(@PathVariable Long criteriaId)
 	{
 		ValutationCriteria criteria = valutationCriterias.findOne(criteriaId);
 		
 		List<RequirementsMatrixData> list = requirementsMatricesData.findByCriteria(criteria);
 		
-		if(list.size() < 1){
+		if(list.isEmpty()){
 			valutationCriterias.delete(criteriaId);
 			return true;
 		}	
@@ -95,12 +94,12 @@ public class CriteriaRest {
 	}
 	
 	// edit criteria
-	@RequestMapping(value = "/edit/{criteriaId}/name/{name}/description/{description}", method = RequestMethod.PUT)
-	public void editCriteria(@PathVariable Long criteriaId, @PathVariable String name, @PathVariable String description)
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	public void editCriteria(@RequestBody ValutationCriteria vc)
 	{
-		ValutationCriteria criteria = valutationCriterias.findOne(criteriaId);
-		criteria.setName(name);
-		criteria.setDescription(description);
+		ValutationCriteria criteria = valutationCriterias.findOne(vc.getCriteriaId());
+		criteria.setName(vc.getName());
+		criteria.setDescription(vc.getDescription());
 		valutationCriterias.save(criteria);
 	}
 }

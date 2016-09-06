@@ -51,7 +51,6 @@ import demo.jpa.GamesJpa;
 import demo.jpa.GamesPlayersPointsJpa;
 import demo.jpa.JudgeActsJpa;
 import demo.jpa.PlayerMovesJpa;
-import demo.jpa.ProfilesJpa;
 import demo.jpa.RequirementsJpa;
 import demo.jpa.RequirementsMatricesDataJpa;
 import demo.jpa.UsersJpa;
@@ -67,9 +66,11 @@ import demo.model.User;
 import demo.model.ValutationCriteria;
 import demo.utility.PointsLogic;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
 @RequestMapping("/game")
@@ -90,11 +91,9 @@ public class GameRest {
 	@Autowired
     private GamesJpa games;
 	@Autowired
-    private ProfilesJpa profiles;
+    private UsersJpa users;
 	@Autowired
     private RequirementsJpa requirements;
-	@Autowired
-    private UsersJpa users;
 	@Autowired
     private ValutationCriteriaJpa criterias;
 	@Autowired
@@ -105,6 +104,9 @@ public class GameRest {
     private PlayerMovesJpa playerMoves;
 	@Autowired
     private JudgeActsJpa judgeActs;
+	
+	@Autowired
+	private ProxyWrapper proxy;
 	
 	@Autowired
 	private NotificationUtil notificationUtil;
@@ -118,41 +120,79 @@ public class GameRest {
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());
 		
-		if(!byUser && userIsGameMaster(user))
+		List<Game> gs;
+		if(!byUser && userIsGameMaster(currentUser))
 		{
 			if(finished == null)
 			{
-				return games.findAll();
+				gs = games.findAll();
 			}
 			else
 			{
-				return games.findByFinished(finished);
+				gs = games.findByFinished(finished);
 			}
 		}
 		else
 		{	
-			List<Game> gs;
+			
 			if(finished == null)
 			{
-				 gs = games.findByPlayerContains(user);
+				gs = games.findByPlayerContains(user);
 			}
 			else
 			{
-				gs =  games.findByPlayerContainsAndFinished(user, finished);
+				gs = games.findByPlayerContainsAndFinished(user, finished);
 			}
 			
 			for(Game g : gs)
 			{
 				g.setCurrentPlayer(user);
 			}
-			return gs;
 		}
 		
+		Map<Long, User> usersCache = new HashMap<>();
+		for(Game g : gs)
+		{
+			if(usersCache.containsKey(g.getCreator().getUserId()))
+			{
+				g.getCreator().setName(usersCache.get(g.getCreator().getUserId()).getName());
+				g.getCreator().setEmail(usersCache.get(g.getCreator().getUserId()).getEmail());
+			}
+			else
+			{
+				User u = g.getCreator();
+				eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(
+						currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
+				u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+				u.setEmail(proxyUser.getEmail());
+				
+				usersCache.put(u.getUserId(), u);
+			}
+		}
+		
+		return gs;
 	}
 	
-	private boolean userIsGameMaster(User user)
+	private boolean userIsGameMaster(DatabaseUser currentUser)
 	{
-		return user.getProfiles().contains(profiles.findByName("DECISION_SCOPE_PROVIDER"));
+		//TODO: fix for integration
+
+		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
+				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), currentUser.getUserId().intValue(), false, currentUser.getToken());
+		
+		if(proxyUser == null)
+		{
+			throw new NotFoundException();
+		}
+		
+		for(Profile p : proxyUser.getProfiles())
+		{
+			if(p.getName().equals("DECISION_SCOPE_PROVIDER"))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
@@ -167,6 +207,15 @@ public class GameRest {
 			throw new NotFoundException();
 		}
 		g.setCurrentPlayer(user);
+		
+		for(User u : g.getPlayers())
+		{
+			eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(
+					currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
+			u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+			u.setEmail(proxyUser.getEmail());
+		}
+		
 		return g;
 	}
 	
@@ -373,13 +422,15 @@ public class GameRest {
 			}
 		}
 		
+		DatabaseUser currentUser = (DatabaseUser) auth.getPrincipal();
 		for(User u : us)
 		{
+			eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), u.getUserId().intValue(), true, currentUser.getToken());
 			// creation of email for the players when a game is started
 			supersedeMailSender.sendEmail("New Decision Making Process", 
-							"Hi " + u.getName() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", u.getEmail());
+							"Hi " + proxyUser.getFirst_name() + " " + proxyUser.getLast_name() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", proxyUser.getEmail());
 			
-			notificationUtil.createNotificationForUser(u.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
 			
 			// ######################################################
 			// create a GamePlayerPoint for this game and for all the players in the game
