@@ -1,12 +1,12 @@
-    <script src="game-requirements-gamification/js/game.js"></script>		            
-	<div class="container">			
+    <script src="game-requirements/js/game.js"></script>
+	<div class="container">
 		<div class="row" ng-controller="game">
 			<div class="col-md-6">
 				<h1>Decision making process details</h1>
 				<p>Progress (Negotiators votes): <b>{{ (Math.round(game.progress * 100) / 100) }} %</b></p>
 				<p>Progress (Opinion Providers votes): <b>{{ (Math.round(game.usersProgress * 100) / 100) }} %</b></p>
-				<p>Title: <b>{{game.title}}</b></p>	
-				<p ng-show="game.description">Description: <b>{{game.description}}</b></p>				
+				<p>Title: <b>{{game.title}}</b></p>
+				<p ng-show="game.description">Description: <b>{{game.description}}</b></p>
 				<p>Criterias: <b ng-repeat="criteria in game.criterias">{{criteria.name  + ($index +1 != game.criterias.length ? ', ' : '')}}</b></p>
 				<p>Requirements: <b ng-repeat="requirement in game.requirements">{{requirement.name + ($index +1 != game.requirements.length ? ', ' : '')}}</b></p>
 				<p>Players: <b ng-repeat="player in game.players">{{player.name + ($index +1 != game.players.length ? ', ' : '') }}</b></p>
@@ -19,12 +19,12 @@
 				 -->
 				<p>Export actions: 
 					<a ng-click="exportGameData()">
-						<img src="game-requirements-gamification/img/csv.png" title="Data" height="42" width="42">
+						<img src="game-requirements/img/csv.png" title="Data" height="42" width="42">
 					</a>
 				</p>
 				<p>Export results: 
 					<a ng-click="exportGameResults()">
-						<img src="game-requirements-gamification/img/csv.png" title="Results" height="42" width="42">
+						<img src="game-requirements/img/csv.png" title="Results" height="42" width="42">
 					</a>
 				</p>
 			</div>			
@@ -47,7 +47,7 @@
 			</div>
 			<div class="col-md-12" ng-hide="game.finished">
 				<div align="center">
-					<a href="#/game-requirements-gamification/games" ng-click="gameEnd(game.gameId)" class="btn btn-lg btn-danger">Close decision making process</a>
+					<a href="#/game-requirements/games" ng-click="gameEnd(game.gameId)" class="btn btn-lg btn-danger">Close decision making process</a>
 				</div>	
 			</div>
 			

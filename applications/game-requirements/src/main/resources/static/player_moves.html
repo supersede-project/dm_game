@@ -1,4 +1,4 @@
-<script src="game-requirements-gamification/js/player_moves.js"></script>
+<script src="game-requirements/js/player_moves.js"></script>
 <div class="container" ng-controller="player_moves">
 
 	<div class="row">
@@ -72,9 +72,9 @@
 					</td>
 					<td rowspan="2">
 						<div align="center">
-							<img ng-show="gamePlayerPoints.virtualPosition == 1" src="/game-requirements-gamification/img/medal_gold.png" height="100" width="100"> 
-							<img ng-show="gamePlayerPoints.virtualPosition == 2" src="/game-requirements-gamification/img/medal_silver.png" height="100" width="100"> 
-							<img ng-show="gamePlayerPoints.virtualPosition == 3" src="/game-requirements-gamification/img/medal_bronze.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 1" src="/game-requirements/img/medal_gold.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 2" src="/game-requirements/img/medal_silver.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 3" src="/game-requirements/img/medal_bronze.png" height="100" width="100"> 
 							<!--  
 							<p ng-show="gamePlayerPoints.virtualPosition == 1">FIRST!</p>
 							<p ng-show="gamePlayerPoints.virtualPosition == 2">SECOND!</p>
@@ -157,7 +157,7 @@
 					<td>{{playerMove.requirementsMatrixData.columnRequirement.name}}</td>
 					<td>
 						<div align="center">
-							<a href="#/game-requirements-gamification/vote_view?playerMoveId={{playerMove.playerMoveId}}" class="btn btn-lg btn-success" role="button">Vote</a>
+							<a href="#/game-requirements/vote_view?playerMoveId={{playerMove.playerMoveId}}" class="btn btn-lg btn-success" role="button">Vote</a>
 						</div>
 					</td>
 					<td>
@@ -264,7 +264,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="col-md-12">
-								<img src="/game-requirements-gamification/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
+								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
 								<b>First requirement:</b> {{playerMove.requirementsMatrixData.rowRequirement.name}}
 							</div>
 							<div class="col-md-12">
@@ -276,7 +276,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="col-md-12">
-								<img src="/game-requirements-gamification/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
+								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
 								<b>Second requirement:</b> {{playerMove.requirementsMatrixData.columnRequirement.name}}
 							</div>
 							<div class="col-md-12">

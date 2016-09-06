@@ -1,10 +1,10 @@
-<script src="game-requirements-gamification/js/criterias_leaderboard.js"></script>      	    
+<script src="game-requirements/js/criterias_leaderboard.js"></script>
 <div class="container">
  	<div class="row" ng-controller="criterias_leaderboard">
 		<h1>Leaderboard for {{selectedCriteria.name}}</h1>
- 	   	<select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChanged()" ng-options="selectedCriteria as selectedCriteria.name for selectedCriteria in valutationCriterias" >
+		<select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChanged()" ng-options="selectedCriteria as selectedCriteria.name for selectedCriteria in valutationCriterias" >
  	   	 	<option style="display:none" value="">Select a criteria</option>
-    	</select>		 
+		</select>
 		<div ng-hide="!criteriaUsers.length">
 			<br>	
 			<table class="table table-striped table-condensed table-hover">		

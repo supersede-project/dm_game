@@ -37,7 +37,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     
     $scope.choices = {};
     
-    $http.get('game-requirements-gamification/user?profile=OPINION_PROVIDER_GAMIFICATION')
+    $http.get('game-requirements/user?profile=OPINION_PROVIDER_GAMIFICATION')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -45,7 +45,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('game-requirements-gamification/requirement')
+    $http.get('game-requirements/requirement')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -53,7 +53,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('game-requirements-gamification/criteria')
+    $http.get('game-requirements/criteria')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -61,7 +61,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
 
-    $http.get('game-requirements-gamification/requirementchoice')
+    $http.get('game-requirements/requirementchoice')
 	.success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -101,7 +101,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	$scope.createGame = function()
 	{
 		$http({
-			url: "game-requirements-gamification/game",
+			url: "game-requirements/game",
 	        data: $scope.game,
 	        method: 'POST',
 	        params: {criteriaValues : $scope.choices}
@@ -109,7 +109,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
 	    	$scope.choices = {};
 	    	$scope.currentPage = 'page1';
-	    	$location.url('game-requirements-gamification/game_page').search('gameId', data);
+	    	$location.url('game-requirements/game_page').search('gameId', data);
 	    }).error(function(err){
 	    	console.log(err);
 	    });
