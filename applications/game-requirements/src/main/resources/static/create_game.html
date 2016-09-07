@@ -1,21 +1,21 @@
 <script src="game-requirements/js/create_game.js"></script>
-<link href="game-requirements/css/create_game.css" rel="stylesheet">
 
 <div ng-controller="create_game">
+	
 	<h1>Decision Making Process</h1>
 	
 	<div id="page1" ng-show="currentPage == 'page1'">
 		<div align="center">
 			<div style="width: 400px;display:block;">
-				<input type="text" ng-model="game.title" placeholder="Title" style="width: 100%;"/>
+				<jqx-input type="text" ng-model="game.title" placeholder="Title" jqx-width="'98%'"/>
 			</div>
+			<br>
 			<div style="width: 400px;display:block;">
-				<textarea rows="6" ng-model="game.description" placeholder="Description"
-				style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea>
+				<jqx-text-area rows="6" ng-model="game.description" jqx-place-holder="Description" jqx-width="'100%'" jqx-height="100"></jqx-text-area>
 			</div>
 			<br>
 			<div style="width: 100%; text-align: center;">
-				<button class="btn btn-lg btn-success" ng-click="toPage(2)">Continue</button>
+				<jqx-button ng-click="toPage(2)">Continue</jqx-button>
 			</div>
 		</div>
 	</div>
@@ -76,19 +76,15 @@
 		</div>
 		<div ng-show="currentPlayer"  class="selection-summary">		
 			<div class="summary-row">{{currentPlayer.name}}</div>
-			
-			<!-- <div class="summary-row">Score: {{currentPlayer.points}}</div>  -->
-			
-			<!-- <pre>{{currentPlayer || JSON}}</pre> -->
 		</div>
 		<div class="clear-div"></div>
 		
 		<div style="width: 100%; text-align: center;">
-			<button class="btn btn-lg btn-danger" ng-click="toPage(1)">Back</button>
-			<button class="btn btn-lg btn-success" ng-click="toPage(3)">Continue</button>
+			<jqx-button ng-click="toPage(1)">Back</jqx-button>
+			<jqx-button ng-click="toPage(3)">Continue</jqx-button>
 		</div>
 	</div>
-	<br>
+	
 	<div id="page3" ng-show="currentPage == 'page3'">
 		<p>Here you can set the priority between the choosen criteria:</p>
 		<div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
@@ -108,8 +104,8 @@
 		<br>
 		<br>
 		<div style="width: 100%; text-align: center;">
-			<button class="btn btn-lg btn-danger" ng-click="toPage(2)">Back</button>
-			<button class="btn btn-lg btn-success" ng-click="createGame()">Create</button>
+			<jqx-button ng-click="toPage(2)">Back</jqx-button>
+			<jqx-button ng-click="createGame()">Create</jqx-button>
 		</div>
 	</div>
 </div>
