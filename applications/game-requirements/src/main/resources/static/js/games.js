@@ -16,8 +16,6 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('games', function($scope, $http, $location) {
 	
-	
-	
 	$scope.open_games = [];
 	$scope.closed_games = [];
 
@@ -54,11 +52,10 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		$scope.openSettings =
 		{
 			width: '100%',
+			height: 500,
 			pageable: true,
-			autoheight: true,
 			autorowheight: true,
 			source: dataAdapterOpen,
-			columnsresize: true,
 			columns: [
 			    { text: 'Title', width: '40%', datafield: 'title' },
 			    { text: 'Created By', width: '25%', datafield: 'creator' },
@@ -69,7 +66,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 					return r.concat("</div>");
 					}
 			    },
-			    { text: 'Detail', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
+			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
 					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/game-requirements/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
 					return r.concat("</div>");
@@ -97,11 +94,10 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		$scope.closedSettings =
 		{
 			width: '100%',
+			height: 500,
 			pageable: true,
-			autoheight: true,
 			autorowheight: true,
 			source: dataAdapterClosed,
-			columnsresize: true,
 			columns: [
 			    { text: 'Title', width: '40%', datafield: 'title' },
 			    { text: 'Created By', width: '25%', datafield: 'creator' },
@@ -112,7 +108,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 					return r.concat("</div>");
 					}
 			    },
-			    { text: 'Detail', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
+			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
 					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/game-requirements/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
 					return r.concat("</div>");
@@ -122,7 +118,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		};
 		$scope.createWidgetClosed = true;
 		
-		$('#jqxTabs').jqxTabs({ height: 500, width: '100%' });
+		$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
 	    var index = 0;
 	    $('#jqxTabs').on('tabclick', function (event) {
 	        if (event.args.item == $('#unorderedList').find('li').length - 1) {
