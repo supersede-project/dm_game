@@ -119,7 +119,6 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		$scope.createWidgetClosed = true;
 		
 		$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
-	    var index = 0;
 	    $('#jqxTabs').on('tabclick', function (event) {
 	        if (event.args.item == $('#unorderedList').find('li').length - 1) {
 	            //go to create game page

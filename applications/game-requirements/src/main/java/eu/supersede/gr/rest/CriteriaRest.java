@@ -21,11 +21,15 @@ package eu.supersede.gr.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
@@ -71,10 +75,15 @@ public class CriteriaRest {
 	
 	// create new criteria
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public void createCriteria(@RequestBody ValutationCriteria vc)
+	public ResponseEntity<?> createCriteria(@RequestBody ValutationCriteria vc)
 	{
 		vc.setCriteriaId(null);
 		valutationCriterias.save(vc);
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(vc.getCriteriaId()).toUri());
+		return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
 	}
 	
 	// TODO check because is not perfectly correct (because maybe it's better check the existence of the criteria in the criteria's game table) ##################################################

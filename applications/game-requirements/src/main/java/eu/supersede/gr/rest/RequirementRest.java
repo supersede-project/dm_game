@@ -21,11 +21,15 @@ package eu.supersede.gr.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
@@ -70,10 +74,15 @@ public class RequirementRest {
 	
 	// create new requirement
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public void createRequirement(@RequestBody Requirement r)
+	public ResponseEntity<?> createRequirement(@RequestBody Requirement r)
 	{
 		r.setRequirementId(null);
 		requirements.save(r);
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(r.getRequirementId()).toUri());
+		return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
 	}
 	
 	// TODO check because is not perfectly correct ##################################################
