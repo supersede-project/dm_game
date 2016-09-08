@@ -41,7 +41,6 @@ public class User {
 	
 	@Id
     private Long userId;
-	@Transient
     private String name;
 	@Transient
     private String email;

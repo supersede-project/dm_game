@@ -74,11 +74,11 @@ public class UserRest {
 		if(u == null)
 		{
 			u = new User(userId);
+			u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
 			users.save(u);
 			u = users.findOne(userId);
 		}
 		
-		u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
 		u.setEmail(proxyUser.getEmail());
 		
 		return u;

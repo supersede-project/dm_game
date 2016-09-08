@@ -44,8 +44,8 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 			}
 		});
 	 
-	 $scope.insertJudgeVote = function(judgeVote){
-		 $http.put('game-requirements/judgeact/' + $scope.judgeActId + '/vote/' + judgeVote)
+	 $scope.insertJudgeVote = function(){
+		 $http.put('game-requirements/judgeact/' + $scope.judgeActId + '/vote/' + $scope.selectedRequirementsChoice.selected)
 	    	.success(function(data) {
 	    		$location.url('/game-requirements/judge_acts');
     	});
