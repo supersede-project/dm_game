@@ -1,186 +1,34 @@
 <script src="game-requirements/js/judge_acts.js"></script>
-<div class="container" ng-controller="judge_acts">
+<div ng-controller="judge_acts">
 	
-	<div class="row">
-    	<div class="col-md-6">	
-			<h3>Filter by criteria: </h3>
-			<select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
-				<option value="{{undefined}}"></option>
-				<option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
-		    </select>
-	   	 </div>
-    
-	    <div class="col-md-6">
-		    <h3>Filter by process name: </h3>
-			<select class="form-control" name="selectGame" id="selectGame" ng-model="selectedGame" ng-change="changeGame()">
-				<option value="{{undefined}}"></option>
-				<option ng-repeat="game in games" value="{{game.gameId}}">{{game.title}}</option>
-		    </select>
-	    </div>
-    </div>
-    
-	<div class="row">
-		<h1>Available actions</h1>			
-		<table class="table table-striped table-condensed table-hover">
-			<thead>
-				<tr>
-					<th class="name">Comparison Criteria&nbsp;</th>
-					<th class="name">First Requirement&nbsp;</th>
-					<th class="name">Select your vote&nbsp;</th>
-					<th class="name">Second Requirement&nbsp;</th>
-					<th class="name">Decide&nbsp;</th>
-					<th class="name">Info&nbsp;</th>																												
-				</tr>
-			</thead>
-		
-			<tbody>
-				<tr	ng-repeat="judgeAct in open_acts | limitTo:5:pagination.open.currentPage*pagination.open.itemsPerPage">
-					<td>{{judgeAct.requirementsMatrixData.criteria.name}}
-						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="{{judgeAct.requirementsMatrixData.criteria.description}}"></span>
-						<script>
-							$(document).ready(function(){
-							    $('[data-toggle="tooltip"]').tooltip(); 
-							});
-						</script>
-					</td>								
-					<td>{{judgeAct.requirementsMatrixData.rowRequirement.name}}</td>
-					<td style="width: 170px;">
-						<div align="center">
-							<div style="display: inline-block; margin-left: 2px; margin-right: 2px;" ng-repeat="requirementsChoice in requirementsChoices" align="center">
-								<div align="center">
-									<label>{{requirementsChoice.label}}</label>
-								</div>
-					            <div align="center">
-									<input data-placement="bottom" data-toggle="tooltip" title="{{requirementsChoice.description}}" type="radio" ng-click="setVote(requirementsChoice.value, judgeAct.judgeActId)" ng-value="{{requirementsChoice.value}}" name="{{judgeAct.judgeActId}}">
-								</div>
-								<script>
-									$(document).ready(function(){
-									    $('[data-toggle="tooltip"]').tooltip(); 
-									});
-								</script>
-							</div>
-						</div>
-					</td>
-					<td>{{judgeAct.requirementsMatrixData.columnRequirement.name}}</td>
-					<td>
-						<div align="center">
-							<a href="#/game-requirements/judge_act?judgeActId={{judgeAct.judgeActId}}" class="btn btn-lg btn-success" role="button">Decide</a>
-						</div>
-					</td>
-					<td>
-						<div align="center">
-							<button  type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#{{judgeAct.judgeActId}}">
-							  Info
-							</button>
-						</div>								
-					</td>				
-				</tr>
-			</tbody>
-			
-			<tfoot>
-				<tr>
-					<td colspan="6">
-						<div class="paging_simple_numbers" align="center">
-							<ul class="pagination">
-								<li class="paginate_button previous" ng-class="{disabled: pagination.open.currentPage == 0}"><a href
-									ng-click="prevPage(pagination.open)">Prev</a></li>
-				
-								<li class="paginate_button" ng-repeat="n in range(pagination.open)" ng-class="{active: n == (pagination.open.currentPage + 1)}" ng-click="setPage(pagination.open)">
-									<a href ng-bind="n">1</a>
-								</li>
-				
-								<li class="paginate_button next" ng-class="{disabled: (pagination.open.currentPage) == pagination.open.totalPages - 1}">
-									<a href ng-click="nextPage(pagination.open)">Next</a>
-								</li>
-							</ul>
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-		</table>	
+   	<div style="float: left; width: 50%;">	
+		<h3>Filter by criteria: </h3>
+		<select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
+			<option value="{{undefined}}"></option>
+			<option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
+		</select>
+   	 </div>
+   
+	<div style="float: right; width: 50%;">
+		<h3>Filter by process name: </h3>
+		<select class="form-control" name="selectGame" id="selectGame" ng-model="selectedGame" ng-change="changeGame()">
+			<option value="{{undefined}}"></option>
+			<option ng-repeat="game in games" value="{{game.gameId}}">{{game.title}}</option>
+		</select>
 	</div>
-	<div class="row">
-    	<h1>Finished actions</h1>		
-		<table class="table table-striped table-condensed table-hover">
-			<thead>
-				<tr>
-					<th class="name">Comparison Criteria&nbsp;</th>
-					<th class="name">First Requirement&nbsp;</th>
-					<th class="name">Second Requirement&nbsp;</th>
-				</tr>
-			</thead>
+	<div style="clear: both;"></div>
 	
-			<tbody>
-				<tr	ng-repeat="judgeAct in closed_acts | limitTo:5:pagination.closed.currentPage*pagination.closed.itemsPerPage">
-					<td>{{judgeAct.requirementsMatrixData.criteria.name}}</td>								
-					<td>{{judgeAct.requirementsMatrixData.rowRequirement.name}}</td>
-					<td>{{judgeAct.requirementsMatrixData.columnRequirement.name}}</td>
-				</tr>
-			</tbody>		
-		</table>
-		
-		<tfoot>
-			<tr>
-				<td colspan="3">
-					<div class="paging_simple_numbers" align="center">
-						<ul class="pagination">
-							<li class="paginate_button previous" ng-class="{disabled: pagination.closed.currentPage == 0}">
-							<a href	ng-click="prevPage(pagination.closed)">Prev</a></li>
-	
-							<li class="paginate_button" ng-repeat="n in range(pagination.closed)" ng-class="{active: n == (pagination.closed.currentPage + 1)}" ng-click="setPage(pagination.closed)">
-								<a href ng-bind="n">1</a>
-							</li>
-	
-							<li class="paginate_button next" ng-class="{disabled: (pagination.closed.currentPage) == pagination.closed.totalPages - 1}">
-								<a href ng-click="nextPage(pagination.closed)">Next</a>
-							</li>
-						</ul>
-					</div>
-				</td>
-			</tr>
-		</tfoot>
-			
-	</div>
-	
-	
-	<!-- START Modal -->
-	<div ng-repeat="judgeAct in open_acts" class="modal fade" id="{{judgeAct.judgeActId}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="myModalLabel">Info about the negotiator action</h4>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="col-md-12">
-								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
-								<b>First requirement:</b> {{judgeAct.requirementsMatrixData.rowRequirement.name}}
-							</div>
-							<div class="col-md-12">
-								<b>Description:</b> {{judgeAct.requirementsMatrixData.rowRequirement.description}}
-							</div>
-						</div>	
-					</div>
-					<br>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="col-md-12">
-								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
-								<b>Second requirement:</b> {{judgeAct.requirementsMatrixData.columnRequirement.name}}
-							</div>
-							<div class="col-md-12">
-								<b>Description:</b> {{judgeAct.requirementsMatrixData.columnRequirement.description}}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
+	<div id='jqxTabs';">
+		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
+			<li>Available actions</li>
+			<li>Finished actions</li>
+		</ul>
+		<div>
+			<jqx-grid id="openGrid" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
+		</div>
+		<div>
+			<jqx-grid id="closedGrid" jqx-create="createWidgetClosed" jqx-settings="closedSettings"></jqx-grid>
 		</div>
 	</div>
-	<!-- END Modal -->
+	
 </div>  
