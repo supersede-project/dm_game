@@ -4,7 +4,7 @@
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-     http://www.apache.org/licenses/LICENSE-2.0
+	 http://www.apache.org/licenses/LICENSE-2.0
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +15,8 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('player_moves', function($scope, $http, $location, $interval,  $rootScope) {
-    
-	$scope.Math = window.Math;
+	
+	$scope.Math = Math;
 	
 	$scope.selectedGame = $location.search()['gameId'];
 	
@@ -25,212 +25,174 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	$scope.open_moves = [];
 	$scope.closed_moves = [];
 
-	$scope.pagination = { 'open' : {}, 'closed' : {}};
-	$scope.pagination.open.totalPages = 1;
-	$scope.pagination.open.length = 0;
-    $scope.pagination.open.itemsPerPage = 5;
-    $scope.pagination.open.currentPage = 0;
-
-	$scope.pagination.closed.totalPages = 1;
-	$scope.pagination.closed.length = 0;
-    $scope.pagination.closed.itemsPerPage = 5;
-    $scope.pagination.closed.currentPage = 0;
-    
-    $scope.selectedCriteria = undefined;
-    $scope.criterias = [];
-    
-    //$scope.selectedGame = undefined;
-    $scope.games = [];
-    
-    reset = function(){
-    	$scope.open_moves.length = 0;
-		$scope.closed_moves.length = 0;
-    	
-    	$scope.pagination.open.totalPages = 1;
-    	$scope.pagination.open.length = 0;
-        $scope.pagination.open.itemsPerPage = 5;
-        $scope.pagination.open.currentPage = 0;
-
-    	$scope.pagination.closed.totalPages = 1;
-    	$scope.pagination.closed.length = 0;
-        $scope.pagination.closed.itemsPerPage = 5;
-        $scope.pagination.closed.currentPage = 0;
-    }
-    
-    criteriasContains = function(criteria)
-    {
-    	for(var i = 0; i < $scope.criterias.length; i++)
-    	{
-    		if($scope.criterias[i].criteriaId == criteria.criteriaId)
-    		{
-    			return true;
-    		}
-    	}
-    	
-    	return false;
-    }
-    
-    gamesContains = function(game)
-    {
-    	for(var i = 0; i < $scope.games.length; i++)
-    	{
-    		if($scope.games[i].gameId == game.gameId)
-    		{
-    			return true;
-    		}
-    	}
-    	
-    	return false;
-    }
-    
-    getActions = function() {
-    	$http.get('game-requirements/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }})
-    	.success(function(data) {
-    		reset();
-    		
-    		for(var i = 0; i < data.length; i++)
-    		{
-    			if(data[i].played)
-    			{
-    				$scope.closed_moves.push(data[i]);
-    			}
-    			else
-    			{
-    				$scope.open_moves.push(data[i]);
-    			}
-    		}
-    		
-    		$scope.pagination.open.length = $scope.open_moves.length;
-    		$scope.pagination.open.totalPages = Math.max(1, Math.ceil($scope.pagination.open.length / $scope.pagination.open.itemsPerPage));
-    		
-    		$scope.pagination.closed.length = $scope.closed_moves.length;
-    		$scope.pagination.closed.totalPages = Math.max(1, Math.ceil($scope.pagination.closed.length / $scope.pagination.closed.itemsPerPage));
-    	
-    		if(!$scope.selectedCriteria)
-    		{
-    			$scope.criterias.length = 0;
-    			for(var i = 0; i < data.length; i++)
-        		{
-    				if(!criteriasContains(data[i].requirementsMatrixData.criteria))
-    				{
-    					$scope.criterias.push(data[i].requirementsMatrixData.criteria);
-    				}
-        		}
-    		}
-    		
-    		if(!$scope.selectedGame)
-    		{
-    			$scope.games.length = 0;
-    			for(var i = 0; i < data.length; i++)
-        		{
-    				if(!gamesContains(data[i].requirementsMatrixData.game))
-    				{
-    					$scope.games.push(data[i].requirementsMatrixData.game);
-    				}
-        		}
-    		}
-    	});
-    };
+	$scope.selectedCriteria = undefined;
+	$scope.criterias = [];
 	
-    getActions();
-    
-    $scope.range = function (oc) {
-        var ret = [];
-        var showPages = Math.min(5, oc.totalPages);
-        
-        var start = Math.max(1, oc.currentPage - Math.floor(showPages / 2));
-        var end = Math.min(oc.totalPages, oc.currentPage + Math.ceil(showPages / 2))
-        
-        if(start == 1)
-        {
-        	end = start + showPages - 1;
-        }
-        if(end == oc.totalPages)
-        {
-        	start = end - showPages + 1;
-        }
-        
-        for (var i = start; i < start + showPages; i++) {
-            ret.push(i);
-        }
-        
-        return ret;
-    };
-    
-    $scope.prevPage = function (oc) {
-        if (oc.currentPage > 0) {
-        	oc.currentPage--;
-        }
-    };
-    
-    $scope.nextPage = function (oc) {
-        if (oc.currentPage < oc.totalPages - 1) {
-        	oc.currentPage++;
-        }
-    };
-    
-    $scope.setPage = function (oc) {
-    	oc.currentPage = this.n -1;
-    };
-    
-	$http.get('game-requirements/requirementchoice')
-		.success(function(data) {
-			$scope.requirementsChoices.length = 0;
+	criteriasContains = function(criteria)
+	{
+		for(var i = 0; i < $scope.criterias.length; i++)
+		{
+			if($scope.criterias[i].criteriaId == criteria.criteriaId)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	getActions = function() {
+		$http.get('game-requirements/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }}).success(function(data) {
+
+			$scope.open_moves.length = 0;
+			$scope.closed_moves.length = 0;
+			
 			for(var i = 0; i < data.length; i++)
 			{
-				$scope.requirementsChoices.push(data[i]);
-			}
-		});
-	 
-	$scope.setVote = function(playerVote, playerMoveId){
-		$http.put('game-requirements/playermove/' + playerMoveId + '/vote/' + playerVote)
-			.success(function(data) {
-				for(var i = 0; i < $scope.open_moves.length; i++)
+				if(data[i].played)
 				{
-					if($scope.open_moves[i].playerMoveId == playerMoveId)
+					$scope.closed_moves.push(data[i]);
+				}
+				else
+				{
+					$scope.open_moves.push(data[i]);
+				}
+			}
+			
+			if(!$scope.selectedCriteria)
+			{
+				$scope.criterias.length = 0;
+				for(var i = 0; i < data.length; i++)
+				{
+					if(!criteriasContains(data[i].requirementsMatrixData.criteria))
 					{
-						$scope.open_moves[i].played = true;
-						$scope.open_moves[i].value = playerVote;
-						
-						$scope.closed_moves.push($scope.open_moves[i]);
-						$scope.open_moves.splice(i, 1);
-						
-						$scope.pagination.open.length = $scope.open_moves.length;
-						$scope.pagination.open.totalPages = Math.max(1, Math.ceil($scope.pagination.open.length / $scope.pagination.open.itemsPerPage));
-						
-						if($scope.pagination.open.currentPage >= $scope.pagination.open.totalPages)
-						{
-							$scope.pagination.open.currentPage = Math.max(1, $scope.pagination.open.totalPages -1);
-						}
-						
-						$scope.pagination.closed.length = $scope.closed_moves.length;
-						$scope.pagination.closed.totalPages = Math.max(1, Math.ceil($scope.pagination.closed.length / $scope.pagination.closed.itemsPerPage));	
-					
-						break;
+						$scope.criterias.push(data[i].requirementsMatrixData.criteria);
 					}
 				}
-    	});
-	 };
+			}
+			
+			// prepare the open data
+			var sourceOpen =
+			{
+				datatype: "json",
+				datafields: [
+					{ name: 'criteriaName', map: 'requirementsMatrixData>criteria>name'},
+					{ name: 'firstRequirementName', map: 'requirementsMatrixData>rowRequirement>name'},
+					{ name: 'playerMoveId'},
+					{ name: 'secondRequirementName', map: 'requirementsMatrixData>columnRequirement>name'},
+					{ name: 'playerMoveId2', map: 'playerMoveId'},
+					{ name: 'playerMoveId3', map: 'playerMoveId'}
+				],
+				id: 'playerMoveId',
+				localdata: $scope.open_moves
+			};
+			var dataAdapterOpen = new $.jqx.dataAdapter(sourceOpen);
+			$scope.openSettings =
+			{
+				width: '100%',
+				height: 500,
+				pageable: true,
+				autorowheight: true,
+				source: dataAdapterOpen,
+				columns: [
+					{ text: 'Comparison Criteria', width: '30%', datafield: 'criteriaName' },
+					{ text: 'First Requirement', width: '16%', datafield: 'firstRequirementName' },
+					{ text: 'Select your vote', width: '24%', datafield: 'playerMoveId', cellsRenderer: function (row, columnDataField, value) {
+						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+						r = r + "<div align='center'>" +
+								"<div style='display: inline-block; margin-left: 2px; margin-right: 2px;' ng-repeat='requirementsChoice in requirementsChoices' align='center'>" + 
+								"<div align='center'>" +
+								"<label>{{requirementsChoice.label}}</label>" + 
+								"</div>" +
+								"<div align=center>" +
+								"<input title='{{requirementsChoice.description}}' type='radio' ng-click='setVote(requirementsChoice.value, " + value + ")' ng-value='{{requirementsChoice.value}}' name='" + value +"'>" + 
+								"</div>" + 
+								"</div>" + 
+								"</div>";
+						return r.concat("</div>");
+						}
+				    },
+					{ text: 'Second Requirement', width: '16%', datafield: 'secondRequirementName' },
+					{ text: '', width: '7%', datafield: 'playerMoveId2', cellsRenderer: function (row, columnDataField, value) {
+						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/game-requirements/vote_view?playerMoveId=" + value + "'>Vote</a></jqx-link-button>");
+						return r.concat("</div>");
+						}
+				    },
+				    { text: '', width: '7%', datafield: 'playerMoveId3', cellsRenderer: function (row, columnDataField, value) {
+						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/game-requirements/todo'>Info</a></jqx-link-button>");
+						return r.concat("</div>");
+						}
+				    }
+				]
+			};
+			$scope.createWidgetOpen = true;
+			
+			// prepare the closed data
+			var sourceClosed =
+			{
+				datatype: "json",
+				datafields: [
+					{ name: 'criteriaName', map: 'requirementsMatrixData>criteria>name'},
+					{ name: 'firstRequirementName', map: 'requirementsMatrixData>rowRequirement>name'},
+					{ name: 'value'},
+					{ name: 'secondRequirementName', map: 'requirementsMatrixData>columnRequirement>name'}
+				],
+				id: 'playerMoveId',
+				localdata: $scope.closed_moves
+			};
+			var dataAdapterClosed = new $.jqx.dataAdapter(sourceClosed);
+			$scope.closedSettings =
+			{
+				width: '100%',
+				height: 500,
+				pageable: true,
+				autorowheight: true,
+				source: dataAdapterClosed,
+				columns: [
+					{ text: 'Comparison Criteria', width: '40%', datafield: 'criteriaName' },
+					{ text: 'First Requirement', width: '25%', datafield: 'firstRequirementName' },
+					{ text: 'Your vote', width: '10%', datafield: 'value' },
+					{ text: 'Second Requirement', width: '25%', datafield: 'secondRequirementName' }
+				]
+			};
+			$scope.createWidgetClosed = true;
+			
+			$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
+			$('#unorderedList').css('visibility', 'visible');
+		});
+	};
+	
+	getActions();
+	
+	$http.get('game-requirements/requirementchoice').success(function(data) {
+		$scope.requirementsChoices.length = 0;
+		for(var i = 0; i < data.length; i++)
+		{
+			$scope.requirementsChoices.push(data[i]);
+		}
+	});
+	
+	$scope.setVote = function(playerVote, playerMoveId){
+		$http.put('game-requirements/playermove/' + playerMoveId + '/vote/' + playerVote).success(function(data) {
+			getActions();
+		});
+	};
 	 
-	 $scope.changeCriteria = function() {
-		 getActions();
-	 }
-    
-	 $scope.changeGame = function() {
-		 getActions();
-	 }
+	$scope.changeCriteria = function() {
+		getActions();
+	}
 	 
 	$scope.openMove = function(playerMoveId){
-		$http.put('game-requirements/playermove/open/' + playerMoveId)
-			.success(function(data) {
-				getActions();
+		$http.put('game-requirements/playermove/open/' + playerMoveId).success(function(data) {
+			getActions();
 		});
 	};
 	
 	// ##################################################################################
 	// polling methods (every second)
 	
-	$scope.loggedUser = $rootScope.user;
 	$scope.user = undefined;
 	
 	$scope.game = undefined;
@@ -248,9 +210,9 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 		
 	var update;
 	
-	update = $interval(function() {
-		$http.get('game-requirements/game/' + $scope.selectedGame)
-		.success(function(data) {
+	getGameData = function()
+	{
+		$http.get('game-requirements/game/' + $scope.selectedGame).success(function(data) {
 			$scope.game = data;	
 			
 			if(data.playerProgress < 100){
@@ -261,11 +223,11 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 				$scope.gameCompleted = true;
 			}
 			
-			$scope.gameProgressPoints = $scope.Math.floor((data.playerProgress / 10));	
+			$scope.gameProgressPoints = Math.floor((data.playerProgress / 10));	
 			$scope.movesPoints = data.movesDone;
 		});
 		
-		$http.get('game-requirements/user/' + $scope.loggedUser.userId)
+		$http.get('game-requirements/user/current')
 		.success(function(data) {
 			$scope.user = data;
 		});
@@ -284,49 +246,53 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 				$scope.positionInVotingPoints = 2;
 			}
 		});
-		
-		}, 1000);
+	}
+	getGameData();
+	
+	update = $interval(function() {
+		getGameData();
+		}, 5000);
 	
 	 // stops the interval
-    $scope.stop = function() {
-      $interval.cancel(update);
-    };
-    
-    // stops the interval when the scope is destroyed,
-    // this usually happens when a route is changed and 
-    // the ItemsController $scope gets destroyed. The
-    // destruction of the ItemsController scope does not
-    // guarantee the stopping of any intervals, you must
-    // be responsible of stopping it when the scope is
-    // is destroyed.
-    $scope.$on('$destroy', function() {
-      $scope.stop();
-    });
-    
-    // ##################################################################################
-    
-    $scope.hashCode = function(str) {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return hash;
-    };
-    
-    $scope.intToARGB = function(i) {
-        var hex = ((i>>24)&0xFF).toString(16) +
-                ((i>>16)&0xFF).toString(16) +
-                ((i>>8)&0xFF).toString(16) +
-                (i&0xFF).toString(16);
-        // Sometimes the string returned will be too short so we 
-        // add zeros to pad it out, which later get removed if
-        // the length is greater than six.
-        hex += '000000';
-        return hex.substring(0, 6);
-    };
-    
-    $scope.criteriaColor = function(data){
-    	return $scope.intToARGB($scope.hashCode(data));
-    };
+	$scope.stop = function() {
+	  $interval.cancel(update);
+	};
+	
+	// stops the interval when the scope is destroyed,
+	// this usually happens when a route is changed and 
+	// the ItemsController $scope gets destroyed. The
+	// destruction of the ItemsController scope does not
+	// guarantee the stopping of any intervals, you must
+	// be responsible of stopping it when the scope is
+	// is destroyed.
+	$scope.$on('$destroy', function() {
+	  $scope.stop();
+	});
+	
+	// ##################################################################################
+	
+	$scope.hashCode = function(str) {
+		var hash = 0;
+		for (var i = 0; i < str.length; i++) {
+			hash = str.charCodeAt(i) + ((hash << 5) - hash);
+		}
+		return hash;
+	};
+	
+	$scope.intToARGB = function(i) {
+		var hex = ((i>>24)&0xFF).toString(16) +
+				((i>>16)&0xFF).toString(16) +
+				((i>>8)&0xFF).toString(16) +
+				(i&0xFF).toString(16);
+		// Sometimes the string returned will be too short so we 
+		// add zeros to pad it out, which later get removed if
+		// the length is greater than six.
+		hex += '000000';
+		return hex.substring(0, 6);
+	};
+	
+	$scope.criteriaColor = function(data){
+		return $scope.intToARGB($scope.hashCode(data));
+	};
 	
 });

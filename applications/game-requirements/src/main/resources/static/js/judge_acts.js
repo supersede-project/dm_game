@@ -120,8 +120,8 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 				source: dataAdapterOpen,
 				columns: [
 					{ text: 'Comparison Criteria', width: '30%', datafield: 'criteriaName' },
-					{ text: 'First Requirement', width: '18%', datafield: 'firstRequirementName' },
-					{ text: 'Select your vote', width: '20%', datafield: 'judgeActId', cellsRenderer: function (row, columnDataField, value) {
+					{ text: 'First Requirement', width: '16%', datafield: 'firstRequirementName' },
+					{ text: 'Select your vote', width: '24%', datafield: 'judgeActId', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 						r = r + "<div align='center'>" +
 								"<div style='display: inline-block; margin-left: 2px; margin-right: 2px;' ng-repeat='requirementsChoice in requirementsChoices' align='center'>" + 
@@ -136,7 +136,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 						return r.concat("</div>");
 						}
 				    },
-					{ text: 'Second Requirement', width: '18%', datafield: 'secondRequirementName' },
+					{ text: 'Second Requirement', width: '16%', datafield: 'secondRequirementName' },
 					{ text: '', width: '7%', datafield: 'judgeActId2', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/game-requirements/judge_act?judgeActId=" + value + "'>Decide</a></jqx-link-button>");
@@ -160,7 +160,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 				datafields: [
 					{ name: 'criteriaName', map: 'requirementsMatrixData>criteria>name'},
 					{ name: 'firstRequirementName', map: 'requirementsMatrixData>rowRequirement>name'},
-					{ name: 'judgeActId'},
+					{ name: 'requirementVote', map: 'requirementsMatrixData>value'},
 					{ name: 'secondRequirementName', map: 'requirementsMatrixData>columnRequirement>name'}
 				],
 				id: 'judgeActId',
@@ -177,7 +177,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 				columns: [
 					{ text: 'Comparison Criteria', width: '40%', datafield: 'criteriaName' },
 					{ text: 'First Requirement', width: '25%', datafield: 'firstRequirementName' },
-					{ text: 'Your vote', width: '10%', datafield: 'judgeActId' },
+					{ text: 'Your vote', width: '10%', datafield: 'requirementVote' },
 					{ text: 'Second Requirement', width: '25%', datafield: 'secondRequirementName' }
 				]
 			};
