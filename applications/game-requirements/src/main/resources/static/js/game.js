@@ -33,7 +33,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 			for(var i in data)
 			{
 				
-				$scope.ahpResult.push({requirement: $scope.requirementName(i), value: (Math.round(data[i] * 1000) / 1000) * 100});
+				$scope.ahpResult.push({requirement: $scope.requirementName(i), value: (Math.round(data[i] * 1000) / 1000) });
 			}
 			
 			// prepare the open data
@@ -52,31 +52,40 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 			$scope.chartSettings = {
 				title: "",
 				description: "",
-				enableAnimations: true,
 				showLegend: true,
-				showBorderLine: true,
-				legendLayout: { left: 500, top: 160, width: 50, height: 100, flow: 'vertical' },
-				padding: { left: 5, top: 5, right: 5, bottom: 5 },
-				titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+				enableAnimations: true,
+				padding: { left: 20, top: 5, right: 20, bottom: 5 },
+				titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
 				source: dataAdapterChart,
-				colorScheme: 'scheme01',
-				seriesGroups: [{
-					type: 'pie',
-					showLabels: true,
-					series:	[{ 
-						dataField: 'value',
-						displayText: 'requirement',
-						labelRadius: 170,
-						initialAngle: 15,
-						radius: 145,
-						centerOffset: 0,
+				xAxis:
+				{
+					dataField: 'requirement',
+					gridLines: { visible: true },
+					flip: false
+				},
+				valueAxis:
+				{
+					flip: true,
+					labels: {
+						visible: true,
 						formatFunction: function (value) {
-							if (isNaN(value))
-								return value;
-							return parseFloat(value) + '%';
-						},
-					}]
-				}]
+							return value;
+						}
+					}
+				},
+				colorScheme: 'scheme01',
+				seriesGroups:
+				[
+					{
+						type: 'column',
+						orientation: 'horizontal',
+						columnsGapPercent: 50,
+						toolTipFormatSettings: { thousandsSeparator: ',' },
+						series: [
+							{ dataField: 'value', displayText: 'Value' , showLabels: true}
+						]
+					}
+				]
 			};
 			
 			$scope.createChart = true;
