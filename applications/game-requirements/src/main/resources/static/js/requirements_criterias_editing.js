@@ -71,11 +71,11 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 			editmode: 'selectedrow',
 			source: dataAdapterCriteria,
 			columns: [
-				{ text: 'Name', width: '25%', datafield: 'name' },
+				{ text: 'Name', width: '24%', datafield: 'name' },
 				{ text: 'Description', width: '65%', datafield: 'description' },
-				{ text: '', width: '10%', editable: false, datafield: 'criteriaId', cellsRenderer: function (row, columnDataField, value) {
+				{ text: '', width: '11%', height: '31px',editable: false, datafield: 'criteriaId', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-						r = r.concat("<jqx-button onclick='editCriteria(" + row + ");'>Edit</jqx-button> ");
+						r = r.concat("<jqx-button onclick='editCriteria(" + row + ");'>Save</jqx-button> ");
 						r = r.concat("<jqx-button onclick='deleteCriteria(" + row + ");'>Delete</jqx-button>");
 						return r.concat("</div>");
 					}
@@ -174,11 +174,11 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 			editmode: 'selectedrow',
 			source: dataAdapterRequirement,
 			columns: [
-			    { text: 'Name', width: '25%', datafield: 'name' },
+			    { text: 'Name', width: '24%', datafield: 'name' },
 			    { text: 'Description', width: '65%', datafield: 'description' },
-			    { text: '', width: '10%', editable: false, datafield: 'requirementId', cellsRenderer: function (row, columnDataField, value) {
+			    { text: '', width: '11%', editable: false, datafield: 'requirementId', cellsRenderer: function (row, columnDataField, value) {
 			    	var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-button onclick='editRequirement(" + row + ");'>Edit</jqx-button> ");
+					r = r.concat("<jqx-button onclick='editRequirement(" + row + ");'>Save</jqx-button> ");
 					r = r.concat("<jqx-button onclick='deleteRequirement(" + row + ");'>Delete</jqx-button>");
 					return r.concat("</div>");
 					}
