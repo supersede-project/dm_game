@@ -104,8 +104,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 					{ name: 'firstRequirementName', map: 'requirementsMatrixData>rowRequirement>name'},
 					{ name: 'judgeActId'},
 					{ name: 'secondRequirementName', map: 'requirementsMatrixData>columnRequirement>name'},
-					{ name: 'judgeActId2', map: 'judgeActId'},
-					{ name: 'judgeActId3', map: 'judgeActId'}
+					{ name: 'judgeActId2', map: 'judgeActId'}
 				],
 				id: 'judgeActId',
 				localdata: $scope.open_acts
@@ -114,14 +113,14 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 			$scope.openSettings =
 			{
 				width: '100%',
-				height: 500,
+				autoheight: true,
 				pageable: true,
-				autorowheight: true,
 				source: dataAdapterOpen,
+				rowsheight: 39,
 				columns: [
 					{ text: 'Comparison Criteria', width: '30%', datafield: 'criteriaName' },
 					{ text: 'First Requirement', width: '16%', datafield: 'firstRequirementName' },
-					{ text: 'Select your vote', width: '24%', datafield: 'judgeActId', cellsRenderer: function (row, columnDataField, value) {
+					{ text: 'Select your vote', width: '31%', datafield: 'judgeActId', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 						r = r + "<div align='center'>" +
 								"<div style='display: inline-block; margin-left: 2px; margin-right: 2px;' ng-repeat='requirementsChoice in requirementsChoices' align='center'>" + 
@@ -140,12 +139,6 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 					{ text: '', width: '7%', datafield: 'judgeActId2', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
 						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/game-requirements/judge_act?judgeActId=" + value + "'>Decide</a></jqx-link-button>");
-						return r.concat("</div>");
-						}
-				    },
-				    { text: '', width: '7%', datafield: 'judgeActId3', cellsRenderer: function (row, columnDataField, value) {
-						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/game-requirements/todo'>Info</a></jqx-link-button>");
 						return r.concat("</div>");
 						}
 				    }
@@ -170,10 +163,10 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 			$scope.closedSettings =
 			{
 				width: '100%',
-				height: 500,
+				autoheight: true,
 				pageable: true,
-				autorowheight: true,
 				source: dataAdapterClosed,
+				rowsheight: 31,
 				columns: [
 					{ text: 'Comparison Criteria', width: '40%', datafield: 'criteriaName' },
 					{ text: 'First Requirement', width: '25%', datafield: 'firstRequirementName' },
@@ -183,7 +176,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 			};
 			$scope.createWidgetClosed = true;
 			
-			$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
+			$('#jqxTabs').jqxTabs({ width: '100%' });
 			$('#unorderedList').css('visibility', 'visible');
 		});
 	};

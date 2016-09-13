@@ -52,10 +52,10 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		$scope.openSettings =
 		{
 			width: '100%',
-			height: 500,
+			autoheight: true,
 			pageable: true,
-			autorowheight: true,
 			source: dataAdapterOpen,
+			rowsheight: 31,
 			columns: [
 			    { text: 'Title', width: '40%', datafield: 'title' },
 			    { text: 'Created By', width: '25%', datafield: 'creator' },
@@ -94,10 +94,10 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		$scope.closedSettings =
 		{
 			width: '100%',
-			height: 500,
+			autoheight: true,
 			pageable: true,
-			autorowheight: true,
 			source: dataAdapterClosed,
+			rowsheight: 31,
 			columns: [
 			    { text: 'Title', width: '40%', datafield: 'title' },
 			    { text: 'Created By', width: '25%', datafield: 'creator' },
@@ -118,7 +118,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 		};
 		$scope.createWidgetClosed = true;
 		
-		$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
+		$('#jqxTabs').jqxTabs({  width: '100%' });
 	    $('#jqxTabs').on('tabclick', function (event) {
 	        if (event.args.item == $('#unorderedList').find('li').length - 1) {
 	            //go to create game page

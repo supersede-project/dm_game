@@ -35,8 +35,8 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
             }
         });
      
-     $scope.insertPlayerVote = function(playerVote){
-         $http.put('game-requirements/playermove/' + $scope.playerMoveId + '/vote/' + playerVote)
+     $scope.insertPlayerVote = function(){
+         $http.put('game-requirements/playermove/' + $scope.playerMoveId + '/vote/' + $scope.selectedRequirementsChoice.selected)
             .success(function(data) {
                 $location.url('/game-requirements/player_moves?gameId=' + data);
         });

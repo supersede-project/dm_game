@@ -41,11 +41,10 @@ app.controllerProvider.register('player_games', function($scope, $http, $locatio
 		$scope.gridSettings =
 		{
 			width: '100%',
-			height: 500,
+			autoheight: true,
 			pageable: true,
-			autorowheight: true,
 			source: dataAdapter,
-			columnsresize: true,
+			rowsheight: 31,
 			columns: [
 			    { text: 'Title', width: '83%', datafield: 'title' },
 			    { text: 'Progress', width: '7%', datafield: 'progress', cellsRenderer: function (row, columnDataField, value) {
