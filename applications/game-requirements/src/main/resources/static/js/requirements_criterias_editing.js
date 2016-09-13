@@ -20,17 +20,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	
 	drawTabs = function() {
 		console.log("Drawing");
-		$('#jqxTabs').jqxTabs({ height: 555, width: '100%' });
-		$('#jqxTabs').on('tabclick', function (event) {
-	        if (event.args.item == $('#unorderedList').find('li').length - 2) {
-	            //create criteria
-	        	createCriteria();
-	        }
-	        else if (event.args.item == $('#unorderedList').find('li').length - 1) {
-	            //create requirement
-	        	createRequirement();
-	        } 
-	    });
+		$('#jqxTabs').jqxTabs({ width: '100%' });
 	    $('#unorderedList').css('visibility', 'visible');
 	}
 	
@@ -46,6 +36,32 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 				setupCriterias();
 		 	});
 	};
+	
+	criteriaToolbar = function (toolbar) {
+        var me = this;
+        var container = $("<div style='margin: 5px;'></div>");
+        toolbar.append(container);
+        container.append('<input id="addrowbutton" type="button" value="Add New Criteria" />');
+        container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="Delete Selected Criteria" />');
+        container.append('<input style="margin-left: 5px;" id="updaterowbutton" type="button" value="Update Selected Criteria" />');
+        $("#addrowbutton").jqxButton();
+        $("#deleterowbutton").jqxButton();
+        $("#updaterowbutton").jqxButton();
+        // update row.
+        $("#updaterowbutton").on('click', function () {
+            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
+            editCriteria(selectedrowindex);
+        });
+        // create new row.
+        $("#addrowbutton").on('click', function () {
+        	createCriteria();
+        });
+        // delete row.
+        $("#deleterowbutton").on('click', function () {
+            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
+            deleteCriteria(selectedrowindex);
+        });
+    };
 	
 	setupCriterias = function() {
 		//prepare criteria data
@@ -64,23 +80,18 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$scope.criteriaSettings =
 		{
 			width: '100%',
-			height: 500,
+			autoheight: true,
 			pageable: true,
 			editable: true,
 			autorowheight: true,
 			editmode: 'selectedrow',
 			source: dataAdapterCriteria,
 			columns: [
-				{ text: 'Name', width: '24%', datafield: 'name' },
-				{ text: 'Description', width: '65%', datafield: 'description' },
-				{ text: '', width: '11%', height: '31px',editable: false, datafield: 'criteriaId', cellsRenderer: function (row, columnDataField, value) {
-						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-						r = r.concat("<jqx-button onclick='editCriteria(" + row + ");'>Save</jqx-button> ");
-						r = r.concat("<jqx-button onclick='deleteCriteria(" + row + ");'>Delete</jqx-button>");
-						return r.concat("</div>");
-					}
-				}
-			]
+				{ text: 'Name', width: '30%', datafield: 'name' },
+				{ text: 'Description', width: '70%', datafield: 'description' }
+			],
+			showtoolbar: true,
+			rendertoolbar: criteriaToolbar
 		};
 		$scope.createWidgetCriteria = true;
 		console.log("criteria");
@@ -149,7 +160,33 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 			setupRequirements();
 		});	
 	};
-	 
+	
+	requirementToolbar = function (toolbar) {
+        var me = this;
+        var container = $("<div style='margin: 5px;'></div>");
+        toolbar.append(container);
+        container.append('<input id="addrowbuttonrequirement" type="button" value="Add New Requirement" />');
+        container.append('<input style="margin-left: 5px;" id="deleterowbuttonrequirement" type="button" value="Delete Selected Requirement" />');
+        container.append('<input style="margin-left: 5px;" id="updaterowbuttonrequirement" type="button" value="Update Selected Requirement" />');
+        $("#addrowbuttonrequirement").jqxButton();
+        $("#deleterowbuttonrequirement").jqxButton();
+        $("#updaterowbuttonrequirement").jqxButton();
+        // update row.
+        $("#updaterowbuttonrequirement").on('click', function () {
+            var selectedrowindex = $("#requirementGrid").jqxGrid('getselectedrowindex');
+            editRequirement(selectedrowindex);
+        });
+        // create new row.
+        $("#addrowbuttonrequirement").on('click', function () {
+        	createRequirement();
+        });
+        // delete row.
+        $("#deleterowbuttonrequirement").on('click', function () {
+            var selectedrowindex = $("#requirementGrid").jqxGrid('getselectedrowindex');
+            deleteRequirement(selectedrowindex);
+        });
+    };
+	
 	setupRequirements = function() {
 		//prepare requirement data
 		var sourceRequirement =
@@ -167,23 +204,18 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$scope.requirementSettings =
 		{
 			width: '100%',
-			height: 500,
+			autoheight: true,
 			pageable: true,
 			editable: true,
 			autorowheight: true,
 			editmode: 'selectedrow',
 			source: dataAdapterRequirement,
 			columns: [
-			    { text: 'Name', width: '24%', datafield: 'name' },
-			    { text: 'Description', width: '65%', datafield: 'description' },
-			    { text: '', width: '11%', editable: false, datafield: 'requirementId', cellsRenderer: function (row, columnDataField, value) {
-			    	var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-button onclick='editRequirement(" + row + ");'>Save</jqx-button> ");
-					r = r.concat("<jqx-button onclick='deleteRequirement(" + row + ");'>Delete</jqx-button>");
-					return r.concat("</div>");
-					}
-			    }
-			]
+			    { text: 'Name', width: '30%', datafield: 'name' },
+			    { text: 'Description', width: '70%', datafield: 'description' }
+			],
+			showtoolbar: true,
+			rendertoolbar: requirementToolbar
 		};
 		$scope.createWidgetRequirement = true;
 		console.log("requirement");
