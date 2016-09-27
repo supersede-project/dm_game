@@ -18,6 +18,7 @@
 
 package eu.supersede.gr.rest;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.security.DatabaseUser;
@@ -90,7 +92,13 @@ public class UserRest {
 			@RequestParam(required = false) String profile) 
 	{
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-		List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
+		List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = null;
+		
+		try {
+			proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
+		} catch (URISyntaxException e) {
+			throw new InternalServerErrorException(e.getMessage());
+		}
 		
 		List<User> us = new ArrayList<>();
 		if(profile != null)
