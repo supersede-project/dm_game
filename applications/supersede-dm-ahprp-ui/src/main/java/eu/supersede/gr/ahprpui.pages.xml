@@ -1,0 +1,6 @@
+<pages>
+	<page name="gameSetup.html" activity="gameSetup"/>
+	<page name="vote.html" activity="vote" role="Opinion Provider"/>
+	<page name="negotiate.html" activity="negotiate" role="Negotiator"/>
+	<page name="gameFinalization.html" activity="gameFinalization" />
+</pages>

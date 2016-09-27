@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
+  <process id="supersedeAHPDM" name="SUPERSEDE AHP DM" isExecutable="true">
+    <startEvent id="theStart" activiti:initiator="Supervisor"></startEvent>
+    <sequenceFlow id="flow1" sourceRef="theStart" targetRef="gameSetup"></sequenceFlow>
+    <userTask id="gameSetup" name="Game setup" activiti:candidateGroups="Supervisor">
+      <extensionElements>
+        <activiti:formProperty id="page-name" name="name" type="string" expression="Exp" variable="Var"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="vote" name="Voting" activiti:candidateGroups="Opinion Provider"></userTask>
+    <endEvent id="theEnd"></endEvent>
+    <sequenceFlow id="sid-4212AFCF-8AA9-4CEA-90BD-43F98D94FD82" sourceRef="gameSetup" targetRef="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF"></sequenceFlow>
+    <parallelGateway id="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF"></parallelGateway>
+    <sequenceFlow id="sid-96DDD8F1-AAE5-4973-B927-EE9607CF35DF" sourceRef="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF" targetRef="vote"></sequenceFlow>
+    <userTask id="negotiate" name="Negotiation" activiti:candidateGroups="Negotiator"></userTask>
+    <sequenceFlow id="sid-C3C470BA-63DA-4D91-A4BA-1F424DF23791" sourceRef="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF" targetRef="negotiate"></sequenceFlow>
+    <userTask id="gameFinalization" name="Game finalization" activiti:candidateGroups="Supervisor"></userTask>
+    <sequenceFlow id="sid-151F9D40-4FEB-4367-A20A-E31A1A7B5C05" sourceRef="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF" targetRef="gameFinalization"></sequenceFlow>
+    <sequenceFlow id="sid-7CA686F5-0B0E-430C-B65E-C89F4701183A" sourceRef="gameFinalization" targetRef="theEnd"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_supersedeAHPDM">
+    <bpmndi:BPMNPlane bpmnElement="supersedeAHPDM" id="BPMNPlane_supersedeAHPDM">
+      <bpmndi:BPMNShape bpmnElement="theStart" id="BPMNShape_theStart">
+        <omgdc:Bounds height="30.0" width="30.0" x="75.0" y="225.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="gameSetup" id="BPMNShape_gameSetup">
+        <omgdc:Bounds height="80.0" width="100.0" x="165.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="vote" id="BPMNShape_vote">
+        <omgdc:Bounds height="80.0" width="100.0" x="395.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="theEnd" id="BPMNShape_theEnd">
+        <omgdc:Bounds height="28.0" width="28.0" x="705.0" y="431.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-365558DB-B263-4068-9BB8-0BDF3325BDBF" id="BPMNShape_sid-365558DB-B263-4068-9BB8-0BDF3325BDBF">
+        <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="negotiate" id="BPMNShape_negotiate">
+        <omgdc:Bounds height="80.0" width="100.0" x="395.0" y="300.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="gameFinalization" id="BPMNShape_gameFinalization">
+        <omgdc:Bounds height="80.0" width="100.0" x="280.0" y="405.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-4212AFCF-8AA9-4CEA-90BD-43F98D94FD82" id="BPMNEdge_sid-4212AFCF-8AA9-4CEA-90BD-43F98D94FD82">
+        <omgdi:waypoint x="265.0" y="240.2164502164502"></omgdi:waypoint>
+        <omgdi:waypoint x="310.4130434782609" y="240.41304347826087"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="105.0" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="240.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-96DDD8F1-AAE5-4973-B927-EE9607CF35DF" id="BPMNEdge_sid-96DDD8F1-AAE5-4973-B927-EE9607CF35DF">
+        <omgdi:waypoint x="349.5" y="240.5"></omgdi:waypoint>
+        <omgdi:waypoint x="445.0" y="240.5"></omgdi:waypoint>
+        <omgdi:waypoint x="445.0" y="185.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C3C470BA-63DA-4D91-A4BA-1F424DF23791" id="BPMNEdge_sid-C3C470BA-63DA-4D91-A4BA-1F424DF23791">
+        <omgdi:waypoint x="349.5" y="240.5"></omgdi:waypoint>
+        <omgdi:waypoint x="445.0" y="240.5"></omgdi:waypoint>
+        <omgdi:waypoint x="445.0" y="300.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7CA686F5-0B0E-430C-B65E-C89F4701183A" id="BPMNEdge_sid-7CA686F5-0B0E-430C-B65E-C89F4701183A">
+        <omgdi:waypoint x="380.0" y="445.0"></omgdi:waypoint>
+        <omgdi:waypoint x="705.0" y="445.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-151F9D40-4FEB-4367-A20A-E31A1A7B5C05" id="BPMNEdge_sid-151F9D40-4FEB-4367-A20A-E31A1A7B5C05">
+        <omgdi:waypoint x="330.453431372549" y="259.546568627451"></omgdi:waypoint>
+        <omgdi:waypoint x="330.09779951100245" y="405.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

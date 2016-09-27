@@ -1,0 +1,295 @@
+<script src="game-requirements/js/player_moves.js"></script>
+<div class="container" ng-controller="player_moves">
+
+	<div class="row">
+    	<div class="col-md-12">	
+			<h3>Filter by criteria: </h3>
+			<select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
+				<option value="{{undefined}}"></option>
+				<option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
+		    </select>
+	   	 </div>
+    	<!--  
+	    <div class="col-md-6">
+		    <h3>Filter by process name: </h3>
+			<select class="form-control" name="selectGame" id="selectGame" ng-model="selectedGame" ng-change="changeGame()">
+				<option value="{{undefined}}"></option>
+				<option ng-repeat="game in games" value="{{game.gameId}}">{{game.title}}</option>
+		    </select>
+	    </div>
+	    -->
+    </div>
+    
+    <div class="row">  	
+    	<table class="table table-striped table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="name">Votes&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="Number of actions, for which you have expressed your vote. The more votes you express, the higher is your point score, e.g. if you expressed 3 votes you get 3 points."></span>
+					</th>							
+					<th class="name">Accomplishment Percentage&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="Percentage of expressed votes, independently from the actual number. when you expressed votes in all the available actions, you get +10 points."></span>
+					</th>
+					<th class="name">Position in voting&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="The participant, who at a certain time has expressed the highest number of votes, is in first position in voting, and get the higher amount of points. Then comes the second, third and so on."></span>
+					</th>	
+					<th class="name">Status&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="Gives extra bonus points when you finish all your actions. If you didn't even start voting, you loose points."></span>
+					</th>
+					<th class="name">Agreement Index&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="The more your votes are similar to those of the other participants, the higher is your agreement index. For example, you all the other participants say that requirement A is strongly preferred to B, and you think that B is strongly preferred to A, you get very low points."></span>
+					</th>		
+					<th class="name">Points&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="In the overall points you gained so far, including Votes points, Accomplishment Percentage points, Position in voting points, Status points and Agreement Index points."></span>
+					</th>
+					<th class="name">Position&nbsp;
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="Tells you what is your position with respect to the other participants. If you have more points than all the others, then you are in first place."></span>
+					</th>													
+				</tr>
+			</thead>
+	
+			<tbody>
+				<tr>
+					<td>
+						{{game.movesDone}}					
+					</td>													
+					<td>
+						{{ (Math.round(game.playerProgress * 1000) / 1000) }} %
+					</td>
+					<td>
+						{{gamePlayerPoints.positionInVoting}}
+					</td>	
+					<td>
+						<p ng-show="gameCompleted == true">Complete!</p>
+						<p ng-show="gameCompleted == false">Not complete!</p>	
+					</td>
+					<td>
+						{{agreementIndex}}
+						<!--  {{gamePlayerPoints.agreementIndex}} -->
+					</td>	
+					<td>
+						
+					</td>
+					<td rowspan="2">
+						<div align="center">
+							<img ng-show="gamePlayerPoints.virtualPosition == 1" src="/game-requirements/img/medal_gold.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 2" src="/game-requirements/img/medal_silver.png" height="100" width="100"> 
+							<img ng-show="gamePlayerPoints.virtualPosition == 3" src="/game-requirements/img/medal_bronze.png" height="100" width="100"> 
+							<!--  
+							<p ng-show="gamePlayerPoints.virtualPosition == 1">FIRST!</p>
+							<p ng-show="gamePlayerPoints.virtualPosition == 2">SECOND!</p>
+							<p ng-show="gamePlayerPoints.virtualPosition == 3">THIRD!</p>
+							-->
+							<p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP</p>
+						</div>
+					</td>		
+				</tr>
+				<tr>
+					<td>
+						<b>+{{movesPoints}}pt</b>
+					</td>													
+					<td>
+						<b>+{{gameProgressPoints}}pt</b>
+					</td>
+					<td>
+						<b>+{{positionInVotingPoints}}pt</b>
+					</td>	
+					<td>
+						<b ng-show="gameStatusPoints != 0">{{gameStatusPoints}}pt</b>
+						<b ng-show="gameStatusPoints == 0">Completed</b>
+					</td>
+					<td>
+						<b>+{{gamePlayerPoints.agreementIndex}}pt</b>
+					</td>
+					<td>
+						<div align="center">
+							<h2><b>{{gamePlayerPoints.points}}</b></h2>
+						</div>				
+					</td>			
+				</tr>
+			</tbody>
+		</table>
+    </div>
+    
+	<div class="row">
+	   	<h1>Available actions</h1>			
+		<table class="table table-striped table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="name" colspan="2">Criteria&nbsp;</th>							
+					<th class="name">First Requirement&nbsp;</th>
+					<th class="name">Select your vote&nbsp;</th>
+					<th class="name">Second Requirement&nbsp;</th>
+					<th class="name">Vote&nbsp;</th>
+					<th class="name">Info&nbsp;</th>														
+				</tr>
+			</thead>
+	
+			<tbody>
+				<tr	ng-repeat="playerMove in open_moves | limitTo:5:pagination.open.currentPage*pagination.open.itemsPerPage">
+					<td bgcolor="{{ criteriaColor(playerMove.requirementsMatrixData.criteria.name + playerMove.requirementsMatrixData.criteria.criteriaId) }}"></td>
+					<td>{{playerMove.requirementsMatrixData.criteria.name}}
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="{{playerMove.requirementsMatrixData.criteria.description}}"></span>
+						<script>
+							$(document).ready(function(){
+							    $('[data-toggle="tooltip"]').tooltip(); 
+							});
+						</script>
+					</td>													
+					<td>{{playerMove.requirementsMatrixData.rowRequirement.name}}</td>
+					<td style="width: 170px;">
+						<div align="center">
+							<div style="display: inline-block; margin-left: 2px; margin-right: 2px;" ng-repeat="requirementsChoice in requirementsChoices" align="center">
+								<div align="center">
+									<label>{{requirementsChoice.label}}</label>
+								</div>
+								<div align="center">
+									<input data-placement="bottom" data-toggle="tooltip" title="{{requirementsChoice.description}}" type="radio" ng-click="setVote(requirementsChoice.value, playerMove.playerMoveId)" ng-value="{{requirementsChoice.value}}" name="{{playerMove.playerMoveId}}">
+								</div>
+								<script>
+									$(document).ready(function(){
+									    $('[data-toggle="tooltip"]').tooltip(); 
+									});
+								</script>
+							</div>
+						</div>
+					</td>
+					<td>{{playerMove.requirementsMatrixData.columnRequirement.name}}</td>
+					<td>
+						<div align="center">
+							<a href="#/game-requirements/vote_view?playerMoveId={{playerMove.playerMoveId}}" class="btn btn-lg btn-success" role="button">Vote</a>
+						</div>
+					</td>
+					<td>
+						<div align="center">
+							<button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#{{playerMove.playerMoveId}}">
+							  Info
+							</button>
+						</div>								
+					</td>						
+				</tr>
+			</tbody>
+			
+			<tfoot>
+				<tr>
+					<td colspan="6">
+						<div class="paging_simple_numbers" align="center">
+							<ul class="pagination">
+								<li class="paginate_button previous" ng-class="{disabled: pagination.open.currentPage == 0}"><a href
+									ng-click="prevPage(pagination.open)">Prev</a></li>
+				
+								<li class="paginate_button" ng-repeat="n in range(pagination.open)" ng-class="{active: n == (pagination.open.currentPage + 1)}" ng-click="setPage(pagination.open)">
+									<a href ng-bind="n">1</a>
+								</li>
+				
+								<li class="paginate_button next" ng-class="{disabled: (pagination.open.currentPage) == pagination.open.totalPages - 1}">
+									<a href ng-click="nextPage(pagination.open)">Next</a>
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>	
+	</div>
+	<div class="row">
+	   	<h1>Finished actions</h1>			
+		<table class="table table-striped table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="name">Criteria&nbsp;</th>							
+					<th class="name">First Requirement&nbsp;</th>
+					<th class="name">Second Requirement&nbsp;</th>
+					<th class="name">Vote&nbsp;</th>												
+				</tr>
+			</thead>
+	
+			<tbody>
+				<tr	ng-repeat="playerMove in closed_moves | limitTo:5:pagination.closed.currentPage*pagination.closed.itemsPerPage | orderBy: '-playedTime'">
+					<td>{{playerMove.requirementsMatrixData.criteria.name}}</td>								
+					<td>{{playerMove.requirementsMatrixData.rowRequirement.name}}</td>
+					<td>{{playerMove.requirementsMatrixData.columnRequirement.name}}</td>
+					<td ng-if="playerMove.value != null">
+						<!-- {{playerMove.value}}-->
+						<p ng-show="playerMove.value == 0">9 for first</p>
+						<p ng-show="playerMove.value == 1">7 for first</p>
+						<p ng-show="playerMove.value == 2">5 for first</p>
+						<p ng-show="playerMove.value == 3">3 for first</p>
+						<p ng-show="playerMove.value == 4">1</p>
+						<p ng-show="playerMove.value == 5">3 for second</p>
+						<p ng-show="playerMove.value == 6">5 for second</p>
+						<p ng-show="playerMove.value == 7">7 for second</p>
+						<p ng-show="playerMove.value == 8">9 for second</p>
+					</td>
+					<td ng-if="playerMove.value == null">not voted</td>
+					<td>
+						<button ng-show="playerMove.requirementsMatrixData.game.finished != true && playerMove.requirementsMatrixData.value == -1" type="button" ng-click="openMove(playerMove.playerMoveId)" class="btn btn-lg btn-success">Re-Open</button>
+					</td>
+				</tr>
+			</tbody>
+			
+			<tfoot>
+				<tr>
+					<td colspan="4">
+						<div class="paging_simple_numbers" align="center">
+							<ul class="pagination">
+								<li class="paginate_button previous" ng-class="{disabled: pagination.closed.currentPage == 0}">
+								<a href	ng-click="prevPage(pagination.closed)">Prev</a></li>
+		
+								<li class="paginate_button" ng-repeat="n in range(pagination.closed)" ng-class="{active: n == (pagination.closed.currentPage + 1)}" ng-click="setPage(pagination.closed)">
+									<a href ng-bind="n">1</a>
+								</li>
+		
+								<li class="paginate_button next" ng-class="{disabled: (pagination.closed.currentPage) == pagination.closed.totalPages - 1}">
+									<a href ng-click="nextPage(pagination.closed)">Next</a>
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+			
+		</table>	
+	</div>
+			
+	<!-- START Modal -->
+	<div ng-repeat="playerMove in open_moves" class="modal fade" id="{{playerMove.playerMoveId}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+		    	<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Info about the opinion provider action</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-12">
+								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
+								<b>First requirement:</b> {{playerMove.requirementsMatrixData.rowRequirement.name}}
+							</div>
+							<div class="col-md-12">
+								<b>Description:</b> {{playerMove.requirementsMatrixData.rowRequirement.description}}
+							</div>
+						</div>	
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-12">
+								<img src="/game-requirements/img/placeholder.png" height="120" width="120" title="Earned with 1 vote.">
+								<b>Second requirement:</b> {{playerMove.requirementsMatrixData.columnRequirement.name}}
+							</div>
+							<div class="col-md-12">
+								<b>Description:</b> {{playerMove.requirementsMatrixData.columnRequirement.description}}
+							</div>
+						</div>
+					</div>		        
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- END Modal -->  				  	
+</div>  

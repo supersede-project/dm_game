@@ -9,3 +9,4 @@
 **/build/
 dist/
 **/gradle.properties
+**/*.class

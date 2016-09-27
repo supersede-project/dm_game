@@ -1,0 +1,192 @@
+    <script src="game-requirements/js/requirements_criterias_editing.js"></script>
+	<div class="container">
+		<div class="row" ng-controller="requirements_criterias_editing">
+			<div class="col-md-12">
+				<br>
+				<p>Here there are the lists of criterias and requirements. You can personalize and add new of these.</p>
+				
+				<div class="row">
+					<h1>Criterias</h1>
+					<div>
+						<button data-toggle="modal" data-target="#newCriteria">NEW</button>
+					</div>
+					<br>
+					<table class="table table-striped table-condensed table-hover">
+				
+						<thead>
+							<tr>
+								<th class="name">Name&nbsp;</th>
+								<th class="name">Description&nbsp;</th>
+								<th class="name">Edit&nbsp;</th>
+								<th class="name">Delete&nbsp;</th>								
+							</tr>
+						</thead>
+				
+						<tbody>
+							<tr	ng-repeat="valutationCriteria in valutationCriterias">
+								<td>{{valutationCriteria.name}}</td>
+								<td>{{valutationCriteria.description}}</td>
+								<td><button data-toggle="modal" data-target="#editCriteria" ng-click="getCriteria(valutationCriteria.criteriaId)">Edit</button></td>
+								<td><button ng-click="deleteCriteria(valutationCriteria.criteriaId)">Delete</button></td>
+							</tr>
+						</tbody>		
+					</table>
+				</div>
+				<div class="row">		
+					<h1>Requirements</h1>
+					<div>
+						<button data-toggle="modal" data-target="#newRequirement">New</button>
+					</div>
+					<br>			
+					<table class="table table-striped table-condensed table-hover">
+				
+						<thead>
+							<tr>
+								<th class="name">Name&nbsp;</th>
+								<th class="name">Description&nbsp;</th>
+								<th class="name">Edit&nbsp;</th>
+								<th class="name">Delete&nbsp;</th>
+							</tr>
+						</thead>
+				
+						<tbody>
+							<tr	ng-repeat="requirement in requirements">
+								<td>{{requirement.name}}</td>
+								<td>{{requirement.description}}</td>
+								<td><button data-toggle="modal" data-target="#editRequirement" ng-click="getRequirement(requirement.requirementId)">Edit</button></td>
+								<td><button ng-click="deleteRequirement(requirement.requirementId)">Delete</button></td>
+							</tr>
+						</tbody>		
+					</table>
+				</div>
+			</div>
+			
+			<!-- START Modal NEW CRITERIA -->
+			<div class="modal fade" id="newCriteria" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Create new criteria</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-12">
+										<b>Criteria Name:</b>
+										<input ng-model="criteria.name" type="text" placeholder="Name" style="width: 100%;"/>										
+									</div>
+									<div class="col-md-12">
+										<b>Criteria Description:</b>
+										<textarea rows="6" ng-model="criteria.description" placeholder="Description"
+										style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea> 
+									</div>
+								</div>	
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" ng-disabled="!criteria.name || !criteria.description" ng-click="createCriteria()" class="btn btn-primary" data-dismiss="modal">Create</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Modal -->
+			
+			<!-- START Modal NEW REQUIREMENT -->
+			<div class="modal fade" id="newRequirement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Create new requirement</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-12">
+										<b>Requirement Name:</b>
+										<input ng-model="requirement.name" type="text" placeholder="Name" style="width: 100%;"/>										
+									</div>
+									<div class="col-md-12">
+										<b>Requirement Description:</b>
+										<textarea rows="6" ng-model="requirement.description" placeholder="Description"
+										style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea> 
+									</div>
+								</div>	
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" ng-disabled="!requirement.name || !requirement.description" ng-click="createRequirement()" class="btn btn-primary" data-dismiss="modal">Create</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Modal -->
+			
+			<!-- START Modal EDIT CRITERIA -->
+			<div class="modal fade" id="editCriteria" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Edit criteria</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-12">
+										<b>Criteria Name:</b>
+										<input ng-model="criteria.name" type="text" placeholder="Name" style="width: 100%;"/>										
+									</div>
+									<div class="col-md-12">
+										<b>Criteria Description:</b>
+										<textarea rows="6" ng-model="criteria.description" placeholder="Description"
+										style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea> 
+									</div>
+								</div>	
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" ng-disabled="!criteria.name || !criteria.description" ng-click="editCriteria()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Modal -->
+			
+			<!-- START Modal EDIT REQUIREMENT -->
+			<div class="modal fade" id="editRequirement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Edit requirement</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-12">
+										<b>Requirement Name:</b>
+										<input ng-model="requirement.name" type="text" placeholder="Name" style="width: 100%;"/>										
+									</div>
+									<div class="col-md-12">
+										<b>Requirement Description:</b>
+										<textarea rows="6" ng-model="requirement.description" placeholder="Description"
+										style="width:100%; display:block; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"></textarea> 
+									</div>
+								</div>	
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" ng-disabled="!requirement.name || !requirement.description" ng-click="editRequirement()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Modal -->		
+		</div>
+	</div>
