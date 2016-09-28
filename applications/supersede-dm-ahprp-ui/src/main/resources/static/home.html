@@ -1,71 +1,29 @@
-    <script src="game-requirements/js/home.js"></script>
-	<div class="container">
-		<div class="row" ng-controller="home">
-			<div class="col-md-6">
-				<h1>Profile details</h1>
-				<p>Name: <b>{{user.name}}</b></p>
-				<p>Email: <b>{{user.email}}</b></p>
-				<!-- 
-				<p>Global points: <b ng-if="user.userGlobalPoints.userPoints != null">{{user.userGlobalPoints.userPoints}}</b>
-									<b ng-if="user.userGlobalPoints.userPoints == null">0</b></p>
-				<p>Total points: <b>{{user.points}}</b></p>
-				
-				 -->
+<script src="supersede-dm-ahprp-ui/js/home.js"></script>
+<div class="container">
 
-				<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
+	<div class="row" ng-controller="home">
+		<div class="col-md-6">
+			<h1>Profile details</h1>
+			<p>Name: <b>{{user.name}}</b></p>
+			<p>Email: <b>{{user.email}}</b></p>
 
-					<div class="col-md-6">
-						<p>Go to Decision making processes:</p>
-					</div>
-					<div class="col-md-6">
-						<a href="#/game-requirements/games" class="btn btn-lg btn-success">Decision making processes</a>
-					</div>
-				</div>
-				
-				<div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">
-					<div class="col-md-6">
-						<p>Go to Negotiator actions:</p>
-					</div>
-					<div class="col-md-6">
-						<a href="#/game-requirements/judge_acts" class="btn btn-lg btn-success">Negotiator actions</a>
-					</div>
-				</div>
-				
-				<div ng-show="hasRole('OPINION_PROVIDER')" class="row">
-					<div class="col-md-6">
-						<p>Go to Opinion provider actions:</p>
-					</div>
-					<div class="col-md-6">
-						<a href="#/game-requirements/player_games" class="btn btn-lg btn-success">Opinion provider actions</a>
-					</div>
-				</div>
+			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
+				<jqx-link-button jqx-width="200" jqx-height="30">
+					<a href="#/supersede-dm-ahprp-ui/games">Decision making processes</a>
+				</jqx-link-button>
 			</div>
-
-			<!--  
-			<div class="col-md-6">
-				<h1>Criterias points</h1>
-				<ul class="list-group" ng-show="user.userCriteriaPoints.length">
-				  <li class="list-group-item" ng-repeat="userCriteriaPoint in user.userCriteriaPoints | orderBy: '-points'">Points for {{userCriteriaPoint.valutationCriteria.name}}: <b>{{userCriteriaPoint.points}}</b></li>
-				</ul>
-				<p ng-show="!user.userCriteriaPoints.length">User doesn't have points per criterias.</p>
-			</div>	
-
-			-->
-		</div>
-		<!-- 
-		<div class="row">
-			<div class="col-md-12">
-				<h1>Personal collection</h1>
-				<img src="/game-requirements/img/1.png" height="120" width="120" title="Earned with 1 vote.">
-				<img src="/game-requirements/img/5.png" height="120" width="120" title="Earned with 5 votes.">
-				<img src="/game-requirements/img/50.png" height="120" width="120" title="Earned with 50 votes.">
-				<img src="/game-requirements/img/100.png" height="120" width="120" title="Earned with 100 votes.">
-				<img src="/game-requirements/img/200.png" height="120" width="120" title="Earned with 200 votes.">
-				<img src="/game-requirements/img/500.png" height="120" width="120" title="Earned with 500 votes.">
-				<img src="/game-requirements/img/first.png" height="120" width="120" title="Earned for voting for the first.">
-				<img src="/game-requirements/img/specialist.png" height="120" width="120" title="Earned for be a specialist in a criteria.">
+				
+			<div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">
+				<jqx-link-button jqx-width="200" jqx-height="30">
+					<a href="#/supersede-dm-ahprp-ui/judge_acts">Negotiator actions</a>
+				</jqx-link-button>
+			</div>
+				
+			<div ng-show="hasRole('OPINION_PROVIDER')" class="row">
+				<jqx-link-button jqx-width="200" jqx-height="30">
+					<a href="#/supersede-dm-ahprp-ui/player_games">Opinion provider actions</a>
+				</jqx-link-button>
 			</div>
 		</div>
-		
-		 -->
 	</div>
+</div>

@@ -15,129 +15,256 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('requirements_criterias_editing', function($scope, $http) {
-		
-	$scope.valutationCriterias = [];
-	$scope.criteria = {};
 	
-	getCriterias = function () {
-		 $http.get('game-requirements/criteria')
+	$scope.criterias = [];
+	
+	drawTabs = function() {
+		console.log("Drawing");
+		$('#jqxTabs').jqxTabs({ width: '100%' });
+	    $('#unorderedList').css('visibility', 'visible');
+	}
+	
+	getCriterias = function() {
+		 $http.get('supersede-dm-ahprp-ui/criteria')
 		 	.success(function(data) {
-				$scope.valutationCriterias.length = 0;
+				$scope.criterias.length = 0;
 				for(var i = 0; i < data.length; i++)
 				{
-					$scope.valutationCriterias.push(data[i]);
+					$scope.criterias.push(data[i]);
 				}
-			});
+				
+				setupCriterias();
+		 	});
 	};
+	
+	criteriaToolbar = function (toolbar) {
+        var me = this;
+        var container = $("<div style='margin: 5px;'></div>");
+        toolbar.append(container);
+        container.append('<input id="addrowbutton" type="button" value="Add New Criteria" />');
+        container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="Delete Selected Criteria" />');
+        container.append('<input style="margin-left: 5px;" id="updaterowbutton" type="button" value="Update Selected Criteria" />');
+        $("#addrowbutton").jqxButton();
+        $("#deleterowbutton").jqxButton();
+        $("#updaterowbutton").jqxButton();
+        // update row.
+        $("#updaterowbutton").on('click', function () {
+            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
+            editCriteria(selectedrowindex);
+        });
+        // create new row.
+        $("#addrowbutton").on('click', function () {
+        	createCriteria();
+        });
+        // delete row.
+        $("#deleterowbutton").on('click', function () {
+            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
+            deleteCriteria(selectedrowindex);
+        });
+    };
+	
+	setupCriterias = function() {
+		//prepare criteria data
+		var sourceCriteria =
+		{
+			datatype: "json",
+			datafields: [
+				{ name: 'name'},
+				{ name: 'description'},
+				{ name: 'criteriaId'}
+			],
+			id: 'criteriaId',
+			localdata: $scope.criterias
+		};
+		var dataAdapterCriteria = new $.jqx.dataAdapter(sourceCriteria);
+		$scope.criteriaSettings =
+		{
+			width: '100%',
+			autoheight: true,
+			pageable: true,
+			editable: true,
+			autorowheight: true,
+			editmode: 'selectedrow',
+			source: dataAdapterCriteria,
+			columns: [
+				{ text: 'Name', width: '30%', datafield: 'name' },
+				{ text: 'Description', width: '70%', datafield: 'description' }
+			],
+			showtoolbar: true,
+			rendertoolbar: criteriaToolbar
+		};
+		$scope.createWidgetCriteria = true;
+		console.log("criteria");
+		if($scope.createWidgetRequirement)
+		{
+			console.log("criteria drawing");
+			drawTabs();
+		}
+	};
+		
 	getCriterias();
 	
-	$scope.getCriteria = function (criteriaId) {
-		$http.get('game-requirements/criteria/' + criteriaId)
-		.success(function(data) {
-			$scope.criteria = data;
-		});	
-	};
-	
-	$scope.createCriteria = function () {
+	createCriteria = function() {
+		var criteria = {name: "", description: ""};
 		$http({
-			url: "game-requirements/criteria/",
-			data: $scope.criteria,
+			url: "supersede-dm-ahprp-ui/criteria/",
+			data: criteria,
 			method: 'POST'
-		}).success(function(data){
-			$scope.criteria = {};
-			getCriterias();
+		}).success(function(data, status, headers, config){
+			var l = headers('Location');
+			criteria.criteriaId = parseInt(l.substring(l.lastIndexOf("/") + 1));
+			$('#criteriaGrid').jqxGrid('addrow', criteria.criteriaId, criteria);
 		}).error(function(err){
 		});
     };
 	
-	$scope.editCriteria = function () {
+	editCriteria = function(row) {
+		$('#criteriaGrid').jqxGrid('endrowedit', row, false);
+		var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
 		$http({
-			url: "game-requirements/criteria/",
-			data: $scope.criteria,
+			url: "supersede-dm-ahprp-ui/criteria/",
+			data: rowData,
 			method: 'PUT'
 		}).success(function(data){
-			$scope.criteria = {};
-			getCriterias();
 		}).error(function(err){
 		});
 	};
 	
-	$scope.deleteCriteria = function (criteriaId) {
-		 $http.delete('game-requirements/criteria/' + criteriaId)
-			.success(function(data) {
-				if(data == true){
-					$scope.valutationCriterias = [];
-					getCriterias();
-				}
-				else
-				{
-					alert("Can not delete criteria");
-				}
-			});
+	deleteCriteria = function(row) {
+		var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
+		$http.delete('supersede-dm-ahprp-ui/criteria/' + rowData.criteriaId).success(function(data) {
+			if(data == true){
+				$('#criteriaGrid').jqxGrid('deleterow', $('#criteriaGrid').jqxGrid('getrowid', row));
+			}
+			else
+			{
+				alert("Can not delete criteria");
+			}
+		});
 	};
 	
 	
 	
 	
 	$scope.requirements = [];
-	$scope.requirement = {};
 	
 	getRequirements = function () {
-		$http.get('game-requirements/requirement')
+		$http.get('supersede-dm-ahprp-ui/requirement')
 		.success(function(data) {
 			$scope.requirements.length = 0;
 			for(var i = 0; i < data.length; i++)
 			{
 				$scope.requirements.push(data[i]);
 			}
+			
+			setupRequirements();
 		});	
 	};
-	 
+	
+	requirementToolbar = function (toolbar) {
+        var me = this;
+        var container = $("<div style='margin: 5px;'></div>");
+        toolbar.append(container);
+        container.append('<input id="addrowbuttonrequirement" type="button" value="Add New Requirement" />');
+        container.append('<input style="margin-left: 5px;" id="deleterowbuttonrequirement" type="button" value="Delete Selected Requirement" />');
+        container.append('<input style="margin-left: 5px;" id="updaterowbuttonrequirement" type="button" value="Update Selected Requirement" />');
+        $("#addrowbuttonrequirement").jqxButton();
+        $("#deleterowbuttonrequirement").jqxButton();
+        $("#updaterowbuttonrequirement").jqxButton();
+        // update row.
+        $("#updaterowbuttonrequirement").on('click', function () {
+            var selectedrowindex = $("#requirementGrid").jqxGrid('getselectedrowindex');
+            editRequirement(selectedrowindex);
+        });
+        // create new row.
+        $("#addrowbuttonrequirement").on('click', function () {
+        	createRequirement();
+        });
+        // delete row.
+        $("#deleterowbuttonrequirement").on('click', function () {
+            var selectedrowindex = $("#requirementGrid").jqxGrid('getselectedrowindex');
+            deleteRequirement(selectedrowindex);
+        });
+    };
+	
+	setupRequirements = function() {
+		//prepare requirement data
+		var sourceRequirement =
+		{
+			datatype: "json",
+			datafields: [
+				{ name: 'name'},
+				{ name: 'description'},
+				{ name: 'requirementId'}
+			],
+			id: 'requirementId',
+			localdata: $scope.requirements
+		};
+		var dataAdapterRequirement = new $.jqx.dataAdapter(sourceRequirement);
+		$scope.requirementSettings =
+		{
+			width: '100%',
+			autoheight: true,
+			pageable: true,
+			editable: true,
+			autorowheight: true,
+			editmode: 'selectedrow',
+			source: dataAdapterRequirement,
+			columns: [
+			    { text: 'Name', width: '30%', datafield: 'name' },
+			    { text: 'Description', width: '70%', datafield: 'description' }
+			],
+			showtoolbar: true,
+			rendertoolbar: requirementToolbar
+		};
+		$scope.createWidgetRequirement = true;
+		console.log("requirement");
+		if($scope.createWidgetCriteria)
+		{
+			console.log("requirement drawing");
+			drawTabs();
+		}
+	};
+	
 	getRequirements();
 	
-	$scope.getRequirement = function (requirementId) {
-		$http.get('game-requirements/requirement/' + requirementId)
-		.success(function(data) {
-			$scope.requirement = data;
-		});	
-	};
-	
-	$scope.createRequirement = function () {
+	createRequirement = function() {
+		var requirement = {name: "", description: ""};
 		$http({
-			url: "game-requirements/requirement/",
-			data: $scope.requirement,
+			url: "supersede-dm-ahprp-ui/requirement/",
+			data: requirement,
 			method: 'POST'
-		}).success(function(data){
-			$scope.requirement = {};
-			getRequirements();
+		}).success(function(data, status, headers, config){
+			var l = headers('Location');
+			requirement.requirementId = parseInt(l.substring(l.lastIndexOf("/") + 1));
+			$('#requirementGrid').jqxGrid('addrow', requirement.requirementId, requirement);
 		}).error(function(err){
 		});
 	};
 	
-	$scope.editRequirement = function () {
+	editRequirement = function(row) {
+		$('#requirementGrid').jqxGrid('endrowedit', row, false);
+		var rowData = $('#requirementGrid').jqxGrid('getrowdata', row);
 		$http({
-			url: "game-requirements/requirement/",
-			data: $scope.requirement,
+			url: "supersede-dm-ahprp-ui/requirement/",
+			data: rowData,
 			method: 'PUT'
 		}).success(function(data){
-			$scope.requirement = {};
-			getRequirements();
 		}).error(function(err){
 		});
 	};
 	
-	$scope.deleteRequirement = function (requirementId) {
-		 $http.delete('game-requirements/requirement/' + requirementId)
-			.success(function(data) {
-				if(data == true){
-					$scope.requirements = [];
-					getRequirements();
-				}
-				else
-				{
-					alert("Can not delete requirement");
-				}
-			});
+	deleteRequirement = function(row) {
+		var rowData = $('#requirementGrid').jqxGrid('getrowdata', row);
+		$http.delete('supersede-dm-ahprp-ui/requirement/' + rowData.requirementId).success(function(data) {
+			if(data == true){
+				$('#requirementGrid').jqxGrid('deleterow', $('#requirementGrid').jqxGrid('getrowid', row));
+			}
+			else
+			{
+				alert("Can not delete requirement");
+			}
+		});
 	};
   
 });

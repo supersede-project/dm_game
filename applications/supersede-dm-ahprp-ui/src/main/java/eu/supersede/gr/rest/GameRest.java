@@ -402,7 +402,7 @@ public class GameRest {
 			supersedeMailSender.sendEmail("New Decision Making Process", 
 							"Hi " + proxyUser.getFirst_name() + " " + proxyUser.getLast_name() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", proxyUser.getEmail());
 			
-			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "game-requirements/player_games");
+			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "supersede-dm-ahprp-ui/player_games");
 			
 			// ######################################################
 			// create a GamePlayerPoint for this game and for all the players in the game
@@ -414,7 +414,7 @@ public class GameRest {
 			
 			// ######################################################
 		}
-		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "game-requirements/judge_acts");
+		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "supersede-dm-ahprp-ui/judge_acts");
 		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setLocation(ServletUriComponentsBuilder

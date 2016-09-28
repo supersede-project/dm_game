@@ -1,127 +1,21 @@
-<script src="game-requirements/js/games.js"></script>
-<link href="game-requirements/css/games.css" rel="stylesheet">
+<script src="supersede-dm-ahprp-ui/js/games.js"></script>
 
-<div ng-controller="games">
-	<div class="well">
+<div ng-controller="games" style="height: 500px;">
 	
-		<div style="float: left;">
-			<h1>Open Decision Making Process</h1>
+	<div id='jqxTabs'>
+		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
+			<li>Open</li>
+			<li>Closed</li>
+			<li canselect='false'>Create new</li>
+		</ul>
+		<div>
+			<jqx-grid id="openGrid" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
 		</div>
-		<div style="float: right";>
-			<button type="button" class="btn btn-success btn-lg" ng-click="goCreateGame()">
-				Create Decision Making Process
-			</button>
+		<div>
+			<jqx-grid id="closedGrid" jqx-create="createWidgetClosed" jqx-settings="closedSettings"></jqx-grid>
 		</div>
-		<table class="table table-striped table-condensed table-hover">
-	
-			<thead>
-				<tr>
-					<!--  
-					<th class="id">Id&nbsp;</th>
-					-->
-					<th class="title">Title&nbsp;</th>
-					<th class="creator">Created by&nbsp;</th>
-					<th class="date">Creation Date&nbsp;</th>
-					<th class="progr">Progress&nbsp;</th>
-					<th class="details"></th>
-				</tr>
-			</thead>
-	
-			<tbody>
-				<tr	ng-repeat="game in open_games | limitTo:5:pagination.open.currentPage*pagination.open.itemsPerPage">
-					<!-- 
-					<td class="id">{{game.gameId}}</td>
-					-->
-					<td class="title">{{game.title}}</td>
-					<td class="creator">{{game.creator.name}}</td>
-					<td class="date">{{game.startTime}}</td>
-					<td class="progr">{{(Math.round(game.progress * 100) / 100)}}%</td>
-					<td class="details">
-						<button type="button" class="btn btn-warning btn-lg" ng-click="goGame(game.gameId)">
-							Details
-						</button>
-					</td>
-				</tr>
-			</tbody>
-	
-			<tfoot>
-				<tr>
-					<td colspan="6">
-						<div class="paging_simple_numbers" align="center">
-							<ul class="pagination">
-								<li class="paginate_button previous" ng-class="{disabled: pagination.open.currentPage == 0}"><a href
-									ng-click="prevPage(pagination.open)">Prev</a></li>
-		
-								<li class="paginate_button" ng-repeat="n in range(pagination.open)" ng-class="{active: n == (pagination.open.currentPage + 1)}" ng-click="setPage(pagination.open)">
-									<a href ng-bind="n">1</a>
-								</li>
-		
-								<li class="paginate_button next" ng-class="{disabled: (pagination.open.currentPage) == pagination.open.totalPages - 1}">
-									<a href ng-click="nextPage(pagination.open)">Next</a>
-								</li>
-							</ul>
-						</div>
-					</td>
-				<tr>
-			</tfoot>
-	
-		</table>
+		<div>
+		</div>
 	</div>
 	
-	<div class="well">
-		<h1>Closed Decision Making Process</h1>
-		<table class="table table-striped table-condensed table-hover">
-	
-			<thead>
-				<tr>
-					<!--  
-					<th class="id">Id&nbsp;</th>
-					-->
-					<th class="title">Title&nbsp;</th>
-					<th class="creator">Created by&nbsp;</th>
-					<th class="date">Creation Date&nbsp;</th>
-					<th class="progr">Progress&nbsp;</th>
-					<th class="details"></th>
-				</tr>
-			</thead>
-	
-			<tbody>
-				<tr	ng-repeat="game in closed_games | limitTo:5:pagination.closed.currentPage*pagination.closed.itemsPerPage">
-					<!--  
-					<td class="id">{{game.gameId}}</td>
-					-->
-					<td class="title">{{game.title}}</td>
-					<td class="creator">{{game.creator.name}}</td>
-					<td class="date">{{game.startTime}}</td>
-					<td class="progr">{{(Math.round(game.progress * 100) / 100)}}%</td>
-					<td class="details">
-						<button type="button" class="btn btn-warning btn-lg" ng-click="goGame(game.gameId)">
-							Details
-						</button>
-					</td>
-				</tr>
-			</tbody>
-	
-			<tfoot>
-				<tr>
-					<td colspan="6">
-						<div class="paging_simple_numbers" align="center">
-							<ul class="pagination">
-								<li class="paginate_button previous" ng-class="{disabled: pagination.closed.currentPage == 0}"><a href
-									ng-click="prevPage(pagination.closed)">Prev</a></li>
-		
-								<li class="paginate_button" ng-repeat="n in range(pagination.closed)" ng-class="{active: n == (pagination.closed.currentPage + 1)}" ng-click="setPage(pagination.closed)">
-									<a href ng-bind="n">1</a>
-								</li>
-		
-								<li class="paginate_button next" ng-class="{disabled: (pagination.closed.currentPage) == pagination.closed.totalPages - 1}">
-									<a href ng-click="nextPage(pagination.closed)">Next</a>
-								</li>
-							</ul>
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
 </div>

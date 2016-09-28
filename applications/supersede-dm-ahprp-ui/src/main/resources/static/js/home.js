@@ -16,24 +16,22 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $rootScope) {
 	
-	$scope.loggedUser = $rootScope.user;
-	
-	$http.get('game-requirements/user/current')
+	$http.get('supersede-dm-ahprp-ui/user/current')
 	.success(function(data) {
 		$scope.user = data;
 	});
-	
+		
 	$scope.hasRole = function(role){
-		if($scope.loggedUser)
+		if($rootScope.user && $rootScope.user.authorities)
 		{
-			for(var i = 0; i < $scope.loggedUser.authorities.length; i++)
+			for(var i = 0; i < $rootScope.user.authorities.length; i++)
 			{
-				if($scope.loggedUser.authorities[i].authority == "ROLE_" + role)
+				if($rootScope.user.authorities[i].authority == "ROLE_" + role)
 				{
 					return true;
 				}
 			}
-		}		
+		}
 		return false;
 	}
 

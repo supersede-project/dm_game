@@ -31,7 +31,9 @@ public class DMLibrary {
 					DMMethod method = (DMMethod)cls.newInstance();
 					methods.put( method.getName(), method );
 				}
-				catch( Exception ex ) {}
+				catch( Exception ex ) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		

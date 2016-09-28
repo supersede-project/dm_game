@@ -22,11 +22,11 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 	$scope.selectedRequirementsChoice = {selected:4};
 	$scope.playerMoves = [];
 	
-	$http.get('game-requirements/judgeact/' + $scope.judgeActId)
+	$http.get('supersede-dm-ahprp-ui/judgeact/' + $scope.judgeActId)
 	.success(function(data) {
 		$scope.judgeAct = data;
 		
-		 $http.get('game-requirements/playermove/requirementsmatrixdata/' + $scope.judgeAct.requirementsMatrixData.requirementsMatrixDataId)
+		 $http.get('supersede-dm-ahprp-ui/playermove/requirementsmatrixdata/' + $scope.judgeAct.requirementsMatrixData.requirementsMatrixDataId)
 			.success(function(data) {
 				for(var i = 0; i < data.length; i++)
 				{
@@ -35,7 +35,7 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 			});
 	});
     
-	 $http.get('game-requirements/requirementchoice')
+	 $http.get('supersede-dm-ahprp-ui/requirementchoice')
 		.success(function(data) {
 			$scope.requirementsChoices.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -44,10 +44,10 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 			}
 		});
 	 
-	 $scope.insertJudgeVote = function(judgeVote){
-		 $http.put('game-requirements/judgeact/' + $scope.judgeActId + '/vote/' + judgeVote)
+	 $scope.insertJudgeVote = function(){
+		 $http.put('supersede-dm-ahprp-ui/judgeact/' + $scope.judgeActId + '/vote/' + $scope.selectedRequirementsChoice.selected)
 	    	.success(function(data) {
-	    		$location.url('/game-requirements/judge_acts');
+	    		$location.url('/supersede-dm-ahprp-ui/judge_acts');
     	});
 	 };	
 });
