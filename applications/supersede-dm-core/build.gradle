@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.3.3.RELEASE'
+        springBootVersion = '1.3.5.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -21,16 +21,10 @@ group = 'eu.supersede'
 
 jar {
     baseName = 'supersede-dm-core'
-    
-    from {
-          configurations.runtime.filter( { (it.name == "supersede-dm-core-0.0.1-SNAPSHOT.jar" )}).collect {
-             it.isDirectory() ? it : zipTree(it)
-         }
-     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -54,7 +48,7 @@ dependencies {
 eclipse {
     classpath {
          containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
 }
 
