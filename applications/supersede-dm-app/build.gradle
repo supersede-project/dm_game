@@ -96,6 +96,9 @@ dependencies {
     compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
+    
+    compile files("../supersede-dm-interfaces/build/libs/supersede-dm-interfaces-0.0.1-SNAPSHOT.jar")
+    compile files("../supersede-dm-app-2/build/libs/supersede-dm-app-0.0.1-SNAPSHOT.war")
 }
 
 
