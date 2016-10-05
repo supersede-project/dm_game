@@ -1,0 +1,21 @@
+<script src="supersede-dm-assetmgr/js/games.js"></script>
+
+<div ng-controller="alerts" style="height: 500px;">
+	
+	<div id='jqxTabs'>
+		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
+			<li>Open</li>
+			<li>Closed</li>
+<!-- 			<li canselect='false'>Create new</li> -->
+		</ul>
+		<div>
+			<jqx-grid id="openGrid" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
+		</div>
+<!-- 		<div> -->
+<!-- 			<jqx-grid id="closedGrid" jqx-create="createWidgetClosed" jqx-settings="closedSettings"></jqx-grid> -->
+<!-- 		</div> -->
+		<div>
+		</div>
+	</div>
+	
+</div>

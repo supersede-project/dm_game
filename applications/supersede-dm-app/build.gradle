@@ -67,9 +67,9 @@ dependencies {
     compile('commons-collections:commons-collections:3.2.1')
     compile('org.apache.velocity:velocity:1.6.2')    
     
-    //compile("org.springframework.boot:spring-boot-starter-jdbc")
-	//compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    //compile("org.postgresql:postgresql:9.4.1208.jre7")
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+	compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.postgresql:postgresql:9.4.1208.jre7")
     
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     
@@ -98,7 +98,8 @@ dependencies {
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
     
     compile files("../supersede-dm-interfaces/build/libs/supersede-dm-interfaces-0.0.1-SNAPSHOT.jar")
-    compile files("../supersede-dm-app-2/build/libs/supersede-dm-app-0.0.1-SNAPSHOT.war")
+    compile files("../supersede-dm-ahprp-ui-2/build/libs/supersede-dm-ahprp-ui-0.0.1-SNAPSHOT.jar")
+    compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.1-SNAPSHOT.jar")
 }
 
 

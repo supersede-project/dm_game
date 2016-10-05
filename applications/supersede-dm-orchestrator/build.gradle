@@ -43,7 +43,7 @@ dependencies {
 	compile("org.reflections:reflections:0.9.9-RC1")
 	
 	compile files('../supersede-dm-core/build/libs/supersede-dm-core-0.0.1-SNAPSHOT.jar')
-	compile files('../supersede-dm-ahprp/build/libs/ahp-requirements-prioritization-0.0.1-SNAPSHOT.jar')
+	//compile files('../supersede-dm-ahprp/build/libs/ahp-requirements-prioritization-0.0.1-SNAPSHOT.jar')
 	compile files('../supersede-dm-planning-jmetal/build/libs/supersede-dm-planning-jmetal-0.0.1-SNAPSHOT.jar')
 	compile files('../supersede-dm-executor/build/libs/supersede-dm-executor-0.0.1-SNAPSHOT.jar')
 	

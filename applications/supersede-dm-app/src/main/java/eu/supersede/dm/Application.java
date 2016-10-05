@@ -30,7 +30,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@ComponentScan(basePackages = {"eu.supersede.dm", "eu.supersede.fe"})
+@ComponentScan(basePackages = {"eu.supersede.dm", "eu.supersede.gr", "eu.supersede.fe"})
 @EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
 @EnableJpaRepositories(basePackages={"eu.supersede.dm.jpa", "eu.supersede.fe.notification.jpa"})
 @EnableScheduling
