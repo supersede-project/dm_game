@@ -16,7 +16,7 @@ version = '0.0.1-SNAPSHOT'
 group = 'eu.supersede'
 
 jar {
-    baseName = 'supersede-dm-interfaces'
+    baseName = 'supersede-dm-integration'
 }
 
 sourceCompatibility = 1.8
@@ -33,7 +33,12 @@ configurations {
 }
 
 dependencies {
-
+	
+	compile("com.google.code.gson:gson:2.3.1");
+	compile("commons-io:commons-io:2.1")
+	compile("org.apache.httpcomponents:httpclient:4.3.6")
+	compile("org.apache.commons:commons-csv:1.0")
+	
 }
 
 

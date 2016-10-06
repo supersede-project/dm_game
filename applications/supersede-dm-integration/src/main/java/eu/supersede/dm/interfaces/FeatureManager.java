@@ -14,10 +14,8 @@
 
 package eu.supersede.dm.interfaces;
 
-import eu.supersede.dm.datamodel.PotentialRequirementList;
-
 public interface FeatureManager {
 	
-	public PotentialRequirementList getPotentialRequirements();
+	public void scheduleRequirement();
 	
 }

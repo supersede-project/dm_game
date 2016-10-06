@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.datamodel.Alert;
 import eu.supersede.dm.datamodel.Condition;
 import eu.supersede.dm.datamodel.Feature;
+import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.fe.notification.NotificationUtil;
 
 @RestController
@@ -64,9 +65,11 @@ public class IntegrationRest {
 	}
 	
 	@RequestMapping(value = "/schedule", method = RequestMethod.POST)
-	public void notifyFeatureScheduled( Feature feature ) {
+	public void notifyFeatureScheduled( FeatureList features ) {
 		
-		System.out.println( "Received: " + feature );
+		for( Feature feature : features.list() ) {
+			System.out.println( "Received: " + feature );
+		}
 		
 	}
 	
