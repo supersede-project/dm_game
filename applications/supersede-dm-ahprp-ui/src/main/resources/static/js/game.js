@@ -98,6 +98,12 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 		});
 	};
 	 
+	$scope.gameEnd = function(gameId){
+		$http.put('supersede-dm-ahprp-ui/game/enact/' + gameId).success(function(data) {
+//			$scope.game.finished = true;
+		});
+	};
+	 
 	$scope.requirementName = function(id)
 	{
 		for(var i = 0; i < $scope.game.requirements.length; i++)

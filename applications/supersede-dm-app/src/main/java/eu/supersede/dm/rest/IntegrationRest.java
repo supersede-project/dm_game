@@ -18,6 +18,9 @@
 
 package eu.supersede.dm.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +34,12 @@ import eu.supersede.dm.datamodel.Condition;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.fe.notification.NotificationUtil;
+import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.logics.Datastore;
+import eu.supersede.gr.model.Requirement;
 
 @RestController
-@RequestMapping("/api/public")
+@RequestMapping("/api/monitoring/alert")
 public class IntegrationRest {
 	
 	@Autowired
@@ -61,10 +67,25 @@ public class IntegrationRest {
 		
 		notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
 		
+		List<Requirement> requirements = getRequirements( alert );
+		
+		for( Requirement r : requirements ) {
+			
+			Datastore.get().store( r );
+			
+		}
+		
 		return;
 	}
 	
-	@RequestMapping(value = "/schedule", method = RequestMethod.POST)
+	private List<Requirement> getRequirements(Alert alert) {
+		
+		// Either extract from the alert, or make a backward request to WP2
+		
+		return new ArrayList<>();
+	}
+
+	@RequestMapping(value = "/api/enacting/schedule", method = RequestMethod.POST)
 	public void notifyFeatureScheduled( FeatureList features ) {
 		
 		for( Feature feature : features.list() ) {

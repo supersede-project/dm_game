@@ -8,19 +8,19 @@ public class Alert {
 	String				applicationID;
 	long				timestamp;
 	String				tenant;
-	String				resourceID;
 	List<Condition>		conditions;
+	List<UserRequest>	requests;
 	
 	
 	public Alert(	String iD, String applicationID, long timestamp, 
-					String tenant, String resourceID, List<Condition> conditions ) {
+					String tenant, String resourceID, List<Condition> conditions, List<UserRequest>	requests ) {
 		super();
 		ID = iD;
 		this.applicationID = applicationID;
 		this.timestamp = timestamp;
 		this.tenant = tenant;
-		this.resourceID = resourceID;
 		this.conditions = conditions;
+		this.requests = requests;
 	}
 
 
@@ -44,11 +44,6 @@ public class Alert {
 
 	public String getTenant() {
 		return tenant;
-	}
-
-
-	public String getResourceID() {
-		return resourceID;
 	}
 
 
