@@ -1,7 +1,7 @@
 package eu.supersede.dm.datamodel;
 
-public enum DependencyType {
+public enum DependencyReason {
 	
-	Value, Cost, Risk;
+	Function, Value, Cost, Risk;
 	
 }
