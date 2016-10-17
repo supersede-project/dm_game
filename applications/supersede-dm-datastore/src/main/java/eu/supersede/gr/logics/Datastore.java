@@ -16,7 +16,7 @@ public class Datastore {
 	@Autowired
     private RequirementsJpa requirementsTable;
 	
-	public void store( Requirement r ) {
+	public void storeAsNew( Requirement r ) {
 		
 		r.setRequirementId(null);
 		requirementsTable.save(r);

@@ -1,5 +1,5 @@
 <script src="supersede-dm-app/js/home.js"></script>
-<div class="container">
+<div class="container" ng-controller="home">
 
 	<div class="row" ng-controller="home">
 		<div class="col-md-6">
@@ -7,11 +7,11 @@
 			<p>Name: <b>{{user.name}}</b></p>
 			<p>Email: <b>{{user.email}}</b></p>
 
-			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
-				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-app/games">Decision making processes</a>
-				</jqx-link-button>
-			</div>
+<!-- 			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row"> -->
+<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
+<!-- 					<a href="#/supersede-dm-app/games">Decision making processes</a> -->
+<!-- 				</jqx-link-button> -->
+<!-- 			</div> -->
 				
 			<div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">
 				<jqx-link-button jqx-width="200" jqx-height="30">
@@ -19,11 +19,13 @@
 				</jqx-link-button>
 			</div>
 				
-			<div ng-show="hasRole('OPINION_PROVIDER')" class="row">
-				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-app/player_games">Opinion provider actions</a>
-				</jqx-link-button>
-			</div>
 		</div>
+		
+	<div id='jqxTabs'>
+		<div>
+			<jqx-grid id="requirementsList" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
+		</div>
+	</div>
+	
 	</div>
 </div>

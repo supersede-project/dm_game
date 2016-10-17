@@ -33,6 +33,8 @@ import eu.supersede.dm.datamodel.Alert;
 import eu.supersede.dm.datamodel.Condition;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.dm.interfaces.AlertManager;
+import eu.supersede.dm.interfaces.FeatureManager;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.logics.Datastore;
@@ -40,7 +42,7 @@ import eu.supersede.gr.model.Requirement;
 
 @RestController
 @RequestMapping("/api/monitoring/alert")
-public class IntegrationRest {
+public class IntegrationRest implements AlertManager, FeatureManager {
 	
 	@Autowired
 	private NotificationUtil notificationUtil;
@@ -56,7 +58,6 @@ public class IntegrationRest {
 		msg += "appID;" + alert.getApplicationID();
 		msg += "tenant;" + alert.getTenant();
 		msg += "timestamp;" + alert.getTimestamp();
-		msg += "resID;" + alert.getResourceID();
 		msg += "} = ";
 		
 		for( Condition c : alert.getConditions() ) {
@@ -71,7 +72,7 @@ public class IntegrationRest {
 		
 		for( Requirement r : requirements ) {
 			
-			Datastore.get().store( r );
+			Datastore.get().storeAsNew( r );
 			
 		}
 		
@@ -85,8 +86,9 @@ public class IntegrationRest {
 		return new ArrayList<>();
 	}
 
+	@Override
 	@RequestMapping(value = "/api/enacting/schedule", method = RequestMethod.POST)
-	public void notifyFeatureScheduled( FeatureList features ) {
+	public void scheduleRequirement( FeatureList features ) {
 		
 		for( Feature feature : features.list() ) {
 			System.out.println( "Received: " + feature );
