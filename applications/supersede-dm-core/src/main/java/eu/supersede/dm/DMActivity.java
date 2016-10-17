@@ -29,5 +29,9 @@ public class DMActivity {
 	public String toString() {
 		return methodName + " " + options;
 	}
+
+	public String getMethodName() {
+		return this.methodName;
+	}
 	
 }

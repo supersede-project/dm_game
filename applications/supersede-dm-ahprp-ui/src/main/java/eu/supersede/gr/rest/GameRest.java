@@ -298,6 +298,36 @@ public class GameRest {
 		}
 	}
 	
+	@RequestMapping(value = "/end/{gameId}", method = RequestMethod.PUT)
+	public void doEnactGame(@PathVariable Long gameId)
+	{
+		Game g = games.findOne(gameId);
+		
+		// set all judgeActs voted and playerMoves played
+		List<RequirementsMatrixData> rmdList =  g.getRequirementsMatrixData();
+		
+		// TODO: make a POST request to WP4
+		
+//		for(int i = 0; i < rmdList.size(); i++)
+//		{
+//			RequirementsMatrixData rmd = rmdList.get(i);
+//			List<JudgeAct> jaList = judgeActs.findByRequirementsMatrixData(rmd);
+//			List<PlayerMove> pmList = playerMoves.findByRequirementsMatrixData(rmd);
+//			
+//			for(int j = 0; j < jaList.size(); j++)
+//			{
+//				jaList.get(j).setVoted(true);
+//				judgeActs.save(jaList.get(j));
+//			}
+//			
+//			for(int k = 0; k < pmList.size(); k++)
+//			{
+//				pmList.get(k).setPlayed(true);
+//				playerMoves.save(pmList.get(k));
+//			}
+//		}
+	}
+	
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<?> createGame(Authentication auth, @RequestBody Game game,
 			@RequestParam(required = true) String criteriaValues) throws JsonParseException, JsonMappingException, IOException

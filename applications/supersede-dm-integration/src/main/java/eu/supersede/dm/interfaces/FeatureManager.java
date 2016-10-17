@@ -14,8 +14,10 @@
 
 package eu.supersede.dm.interfaces;
 
+import eu.supersede.dm.datamodel.FeatureList;
+
 public interface FeatureManager {
 	
-	public void scheduleRequirement();
+	public void scheduleRequirement( FeatureList features );
 	
 }

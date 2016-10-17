@@ -2,8 +2,8 @@ package eu.supersede.dm.datamodel;
 
 public class SoftDependency {
 	
-	String			ref_id;
-	DependencyType	type;
-	int				value;
+	String				ref_id;
+	DependencyReason	reason;
+	int					value;
 	
 }

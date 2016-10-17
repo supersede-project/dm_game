@@ -21,5 +21,9 @@ public class DMStep {
 		ret += "}";
 		return ret;
 	}
+
+	public List<DMActivity> getActivities() {
+		return this.activities;
+	}
 	
 }

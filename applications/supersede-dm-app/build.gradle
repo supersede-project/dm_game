@@ -99,9 +99,9 @@ dependencies {
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
     
-    compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.0.1-SNAPSHOT.jar")
-    compile files("../supersede-dm-ahprp-ui/build/libs/supersede-dm-ahprp-ui-0.0.1-SNAPSHOT.jar")
-    compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.1-SNAPSHOT.jar")
+    compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.0.2-SNAPSHOT.jar")
+    compile files("../supersede-dm-ahprp-ui/build/libs/supersede-dm-ahprp-ui-0.0.2-SNAPSHOT.jar")
+    compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.2-SNAPSHOT.jar")
 }
 
 

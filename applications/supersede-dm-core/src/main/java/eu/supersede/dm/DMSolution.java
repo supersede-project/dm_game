@@ -22,4 +22,8 @@ public class DMSolution {
 		return ret;
 	}
 	
+	public List<DMStep> getSteps() {
+		return this.steps;
+	}
+	
 }

@@ -18,6 +18,9 @@
 
 package eu.supersede.dm.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +33,16 @@ import eu.supersede.dm.datamodel.Alert;
 import eu.supersede.dm.datamodel.Condition;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.dm.interfaces.AlertManager;
+import eu.supersede.dm.interfaces.FeatureManager;
 import eu.supersede.fe.notification.NotificationUtil;
+import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.logics.Datastore;
+import eu.supersede.gr.model.Requirement;
 
 @RestController
-@RequestMapping("/api/public")
-public class IntegrationRest {
+@RequestMapping("/api/monitoring/alert")
+public class IntegrationRest implements AlertManager, FeatureManager {
 	
 	@Autowired
 	private NotificationUtil notificationUtil;
@@ -50,7 +58,6 @@ public class IntegrationRest {
 		msg += "appID;" + alert.getApplicationID();
 		msg += "tenant;" + alert.getTenant();
 		msg += "timestamp;" + alert.getTimestamp();
-		msg += "resID;" + alert.getResourceID();
 		msg += "} = ";
 		
 		for( Condition c : alert.getConditions() ) {
@@ -61,11 +68,27 @@ public class IntegrationRest {
 		
 		notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
 		
+		List<Requirement> requirements = getRequirements( alert );
+		
+		for( Requirement r : requirements ) {
+			
+			Datastore.get().storeAsNew( r );
+			
+		}
+		
 		return;
 	}
 	
-	@RequestMapping(value = "/schedule", method = RequestMethod.POST)
-	public void notifyFeatureScheduled( FeatureList features ) {
+	private List<Requirement> getRequirements(Alert alert) {
+		
+		// Either extract from the alert, or make a backward request to WP2
+		
+		return new ArrayList<>();
+	}
+
+	@Override
+	@RequestMapping(value = "/api/enacting/schedule", method = RequestMethod.POST)
+	public void scheduleRequirement( FeatureList features ) {
 		
 		for( Feature feature : features.list() ) {
 			System.out.println( "Received: " + feature );
