@@ -25,6 +25,23 @@ buildscript {
     repositories {
         mavenCentral()
 	maven {
+  //        url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
+            url 'http://62.14.219.13:10080/artifactory/libs-release'
+            name = 'maven-supersede-release'
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+	maven {
+            url 'http://62.14.219.13:10080/artifactory/libs-snapshot'
+            name = 'maven-supersede-snapshot'
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+/*	maven {
             url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
             name = 'maven-supersede-snapshot'
 	    credentials {
@@ -39,7 +56,7 @@ buildscript {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
 	    }
-        }
+        }*/
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 

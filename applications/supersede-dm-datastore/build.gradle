@@ -19,20 +19,21 @@ buildscript {
     repositories {
         mavenCentral()
 	maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
-            name = 'maven-supersede-snapshot'
-	    credentials {
+  //        url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
+            url 'http://62.14.219.13:10080/artifactory/libs-release'
+            name = 'maven-supersede-release'
+            credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
-	    }
+            }
         }
 	maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
-            name = 'maven-supersede-release'
-	    credentials {
+            url 'http://62.14.219.13:10080/artifactory/libs-snapshot'
+            name = 'maven-supersede-snapshot'
+            credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
-	    }
+            }
         }
     }
     dependencies {
@@ -59,7 +60,7 @@ dependencies {
 	
     compile("org.springframework.boot:spring-boot-starter-redis:1.3.5.RELEASE")
 
-	compile("eu.supersede:supersede-frontend-core:0.0.1-SNAPSHOT")
+	compile("eu.supersede:supersede-frontend-core:0.0.3-SNAPSHOT")
 }
 
 

@@ -45,7 +45,6 @@ dependencies {
 	compile('org.uma.jmetal:jmetal-core:5.0')
 	compile('org.uma.jmetal:jmetal-problem:5.0')
 	compile('org.uma.jmetal:jmetal-algorithm:5.0')
-	compile('org.uma.jmetal:jmetal:5.0')
 	
 }
 
