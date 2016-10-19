@@ -298,7 +298,7 @@ public class GameRest {
 		}
 	}
 	
-	@RequestMapping(value = "/end/{gameId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/enact/{gameId}", method = RequestMethod.PUT)
 	public void doEnactGame(@PathVariable Long gameId)
 	{
 		Game g = games.findOne(gameId);
