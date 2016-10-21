@@ -24,14 +24,20 @@ public class AHPUILoader {
 		System.out.println( "Registering AHP app" );
 		
 		Map<String, String> labels = new HashMap<>();
-//		labels.put( "", "AHP Gamified Decision Making Process" );
-//		au.addApplication( "supersede-dm-ahprp-ui", labels, "home" );
+		List<String> roles;
 		
 		labels = new HashMap<>();
+		roles = new ArrayList<>();
 		labels.put( "", "AHP Home" );
-		List<String> roles = new ArrayList<>();
 		roles.add( "DM_ADMIN" );
 		au.addApplicationPage( "supersede-dm-app", "supersede-dm-ahprp-ui/home", labels, roles );
+		
+		labels = new HashMap<>();
+		labels.put( "", "APP Home" );
+		roles = new ArrayList<>();
+		roles = new ArrayList<>();
+		roles.add( "DM_ADMIN" );
+		au.addApplicationPage( "supersede-dm-app", "supersede-dm-ahprp-ui/game", labels, roles );
 		
 	}
 	

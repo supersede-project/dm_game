@@ -16,7 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $rootScope) {
 	
-	$http.get('supersede-dm-ahprp-ui/user/current')
+	$http.get('/supersede-dm-app/user/current')
 	.success(function(data) {
 		$scope.user = data;
 	});
