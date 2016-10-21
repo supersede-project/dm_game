@@ -220,7 +220,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 			$scope.movesPoints = data.movesDone;
 		});
 		
-		$http.get('supersede-dm-ahprp-ui/user/current')
+		$http.get('supersede-dm-app/user/current')
 		.success(function(data) {
 			$scope.user = data;
 		});

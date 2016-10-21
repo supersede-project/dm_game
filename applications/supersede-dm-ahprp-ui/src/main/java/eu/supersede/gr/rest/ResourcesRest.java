@@ -10,13 +10,16 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 @RestController
 @RequestMapping("/supersede-dm-ahprp-ui")
 public class ResourcesRest {
 	
-	@Autowired
-    private ResourceLoader resourceLoader;
+//	@Autowired
+//    private ResourceLoader resourceLoader;
+
+    private ResourceLoader resourceLoader = new GenericWebApplicationContext();
 	
 	
 	@RequestMapping("/{page}.{ext}")
@@ -24,7 +27,15 @@ public class ResourcesRest {
 		
 		System.out.println( "Serving page " + name );
 		
+//		Resource resource = resourceLoader.getResource("classpath:static/" + name + "." + ext);
 		Resource resource = resourceLoader.getResource("classpath:static/" + name + "." + ext);
+		
+		try {
+			System.out.println( resource.getFile().getAbsolutePath() );
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+//		Resource resource = resourceLoader.getResource("classpath:static/game.html");
 		
 		try {
 			InputStream is = resource.getInputStream();
