@@ -18,15 +18,6 @@ war {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets {
-    main {
-        classesDir = file('web/WEB-INF/classes')
-        resources {
-            srcDirs = ['resources']   
-        }
-    }
-}
-
 buildscript {
 	ext {
         springBootVersion = '1.4.1.RELEASE'
