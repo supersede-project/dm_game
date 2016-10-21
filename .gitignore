@@ -3,9 +3,6 @@
 **/.project
 **/.settings/
 **/bin/
-**/gradlew
-**/gradlew.bat
-**/gradle/wrapper/
 **/build/
 dist/
 **/gradle.properties
