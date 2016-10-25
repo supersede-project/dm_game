@@ -28,9 +28,9 @@ import eu.supersede.gr.jpa.RequirementsChoicesJpa;
 import eu.supersede.gr.model.RequirementChoice;
 
 @RestController
-@RequestMapping("/requirementchoice")
+@RequestMapping("/ahprp/requirementchoice")
 public class RequirementChoiceRest {
-
+	
 	@Autowired
     private RequirementsChoicesJpa requirementsChoices;
 	

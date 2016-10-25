@@ -36,7 +36,6 @@ import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.interfaces.AlertManager;
 import eu.supersede.dm.interfaces.FeatureManager;
 import eu.supersede.fe.notification.NotificationUtil;
-import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.logics.Datastore;
 import eu.supersede.gr.model.Requirement;
 

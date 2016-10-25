@@ -14,29 +14,18 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('criterias_leaderboard', function($scope, $http) {
+app.controllerProvider.register('leaderboard', function($scope, $http) {
 	
-	$scope.valutationCriterias = [];
-    $scope.criteriaUsers = []; 
-    $scope.selectedCriteria = undefined;
-    
-    $http.get('supersede-dm-ahprp-ui/criteria')
+    $scope.users = [];
+    $scope.usersCount = 0;
+       
+    $http.get('supersede-dm-app/ahprp/user')
 	.success(function(data) {
-		$scope.valutationCriterias.length = 0;
+		$scope.users.length = 0;
 		for(var i = 0; i < data.length; i++)
 		{
-			$scope.valutationCriterias.push(data[i]);
+			$scope.users.push(data[i]);
 		}
+		 $scope.usersCount = data.length;
 	});
-    	
-    $scope.selectedCriteriaChanged = function(){   	
-    	$http.get('supersede-dm-ahprp-ui/user/criteria/' + $scope.selectedCriteria.criteriaId)
-		.success(function(data) {
-			$scope.criteriaUsers.length = 0;
-			for(var i = 0; i < data.length; i++)
-			{
-				$scope.criteriaUsers.push(data[i]);
-			}
-		});
-    }
 });

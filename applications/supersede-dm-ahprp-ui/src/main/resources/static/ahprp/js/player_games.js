@@ -18,7 +18,7 @@ app.controllerProvider.register('player_games', function($scope, $http, $locatio
     
     $scope.playerGames = [];
        
-    $http.get('supersede-dm-ahprp-ui/game', {params:{byUser: true, finished:false}})
+    $http.get('supersede-dm-app/ahprp/game', {params:{byUser: true, finished:false}})
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -55,7 +55,7 @@ app.controllerProvider.register('player_games', function($scope, $http, $locatio
 			    },
 			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
 					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-ahprp-ui/player_moves?gameId=" + value + "'>Enter</a></jqx-link-button>");
+					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/player_moves?gameId=" + value + "'>Enter</a></jqx-link-button>");
 					return r.concat("</div>");
 					}
 			    }

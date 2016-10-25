@@ -46,7 +46,7 @@ import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
-@RequestMapping("/playermove")
+@RequestMapping("/ahprp/playermove")
 public class PlayerMoveRest {
 
 	@Autowired

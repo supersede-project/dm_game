@@ -18,7 +18,7 @@ import eu.supersede.gr.model.User;
 import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
-@RequestMapping("/gameplayerpoint")
+@RequestMapping("/ahprp/gameplayerpoint")
 public class GamePlayerPointRest {
 	
 	@Autowired

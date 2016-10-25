@@ -42,7 +42,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	}
 	
 	getActions = function() {
-		$http.get('supersede-dm-ahprp-ui/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }}).success(function(data) {
+		$http.get('supersede-dm-app/ahprp/playermove', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }}).success(function(data) {
 
 			$scope.open_moves.length = 0;
 			$scope.closed_moves.length = 0;
@@ -114,7 +114,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 					{ text: 'Second Requirement', width: '16%', datafield: 'secondRequirementName' },
 					{ text: '', width: '7%', datafield: 'playerMoveId2', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/supersede-dm-ahprp-ui/vote_view?playerMoveId=" + value + "'>Vote</a></jqx-link-button>");
+						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/supersede-dm-app/ahprp/vote_view?playerMoveId=" + value + "'>Vote</a></jqx-link-button>");
 						return r.concat("</div>");
 						}
 				    }
@@ -159,7 +159,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	
 	getActions();
 	
-	$http.get('supersede-dm-ahprp-ui/requirementchoice').success(function(data) {
+	$http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
 		{
@@ -168,7 +168,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	});
 	
 	$scope.setVote = function(playerVote, playerMoveId){
-		$http.put('supersede-dm-ahprp-ui/playermove/' + playerMoveId + '/vote/' + playerVote).success(function(data) {
+		$http.put('supersede-dm-app/ahprp/playermove/' + playerMoveId + '/vote/' + playerVote).success(function(data) {
 			getActions();
 		});
 	};
@@ -178,7 +178,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	}
 	 
 	$scope.openMove = function(playerMoveId){
-		$http.put('supersede-dm-ahprp-ui/playermove/open/' + playerMoveId).success(function(data) {
+		$http.put('supersede-dm-app/ahprp/playermove/open/' + playerMoveId).success(function(data) {
 			getActions();
 		});
 	};
@@ -205,7 +205,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	
 	getGameData = function()
 	{
-		$http.get('supersede-dm-ahprp-ui/game/' + $scope.selectedGame).success(function(data) {
+		$http.get('supersede-dm-app/ahprp/game/' + $scope.selectedGame).success(function(data) {
 			$scope.game = data;	
 			
 			if(data.playerProgress < 100){
@@ -225,7 +225,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 			$scope.user = data;
 		});
 		
-		$http.get('supersede-dm-ahprp-ui/gameplayerpoint/game/' + $scope.selectedGame)
+		$http.get('supersede-dm-app/ahprp/gameplayerpoint/game/' + $scope.selectedGame)
 		.success(function(data) {
 			$scope.gamePlayerPoints = data;
 			
