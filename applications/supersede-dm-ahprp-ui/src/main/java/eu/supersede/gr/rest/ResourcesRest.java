@@ -15,27 +15,13 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 @RestController
 @RequestMapping("/supersede-dm-ahprp-ui")
 public class ResourcesRest {
-	
-//	@Autowired
-//    private ResourceLoader resourceLoader;
 
     private ResourceLoader resourceLoader = new GenericWebApplicationContext();
 	
-	
 	@RequestMapping("/{page}.{ext}")
 	public byte[] getResource( @PathVariable("page") String name, @PathVariable("ext") String ext ) {
-		
-		System.out.println( "Serving page " + name );
-		
-//		Resource resource = resourceLoader.getResource("classpath:static/" + name + "." + ext);
 		Resource resource = resourceLoader.getResource("classpath:static/" + name + "." + ext);
-		
-		try {
-			System.out.println( resource.getFile().getAbsolutePath() );
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-//		Resource resource = resourceLoader.getResource("classpath:static/game.html");
+		System.out.print("Resource: " + resource.getDescription());
 		
 		try {
 			InputStream is = resource.getInputStream();
@@ -60,5 +46,4 @@ public class ResourcesRest {
 		// Something went wrong
 		return ("Failed to load resource '" + name + "." + ext + "'").getBytes();
 	}
-	
 }

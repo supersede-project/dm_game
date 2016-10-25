@@ -37,7 +37,7 @@ public class AHPUILoader {
 		roles = new ArrayList<>();
 		roles = new ArrayList<>();
 		roles.add( "DM_ADMIN" );
-		au.addApplicationPage( "supersede-dm-app", "supersede-dm-ahprp-ui/game", labels, roles );
+		au.addApplicationPage( "supersede-dm-app", "supersede-dm-ahprp-ui/game_page", labels, roles );
 		
 	}
 	
