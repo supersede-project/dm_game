@@ -38,7 +38,7 @@ import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.fe.exception.NotFoundException;
 
 @RestController
-@RequestMapping("/criteria")
+@RequestMapping("/ahprp/criteria")
 public class CriteriaRest {
 	
 	@Autowired

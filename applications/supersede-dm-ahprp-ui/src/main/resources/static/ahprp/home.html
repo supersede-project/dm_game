@@ -1,4 +1,4 @@
-<script src="supersede-dm-ahprp-ui/js/home.js"></script>
+<script src="supersede-dm-app/ahprp/js/home.js"></script>
 <div class="container">
 
 	<div class="row" ng-controller="home">
@@ -9,19 +9,19 @@
 
 			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
 				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-app/supersede-dm-ahprp-ui/games">Decision making processes</a>
+					<a href="#/supersede-dm-app/ahprp/games">Decision making processes</a>
 				</jqx-link-button>
 			</div>
 				
 			<div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">
 				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-app/supersede-dm-ahprp-ui/judge_acts">Negotiator actions</a>
+					<a href="#/supersede-dm-app/ahprp/judge_acts">Negotiator actions</a>
 				</jqx-link-button>
 			</div>
 				
 			<div ng-show="hasRole('OPINION_PROVIDER')" class="row">
 				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-app/supersede-dm-ahprp-ui/player_games">Opinion provider actions</a>
+					<a href="#/supersede-dm-app/ahprp/player_games">Opinion provider actions</a>
 				</jqx-link-button>
 			</div>
 		</div>

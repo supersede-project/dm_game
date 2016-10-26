@@ -22,12 +22,12 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	$scope.game = undefined;
 	$scope.ahpResult = [];
 	
-	$http.get('supersede-dm-ahprp-ui/game/' + $scope.gameId).success(function(data) {
+	$http.get('supersede-dm-app/ahprp/game/' + $scope.gameId).success(function(data) {
 		$scope.game = data;
 	});
 
 	$scope.computeAHP = function(gameId){
-		$http.get('supersede-dm-ahprp-ui/ahp/' + gameId).success(function(data) {
+		$http.get('supersede-dm-app/ahprp/ahp/' + gameId).success(function(data) {
 			$scope.ahpResult.length = 0;;
 			
 			for(var i in data)
@@ -93,13 +93,13 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	};
 	
 	$scope.gameEnd = function(gameId){
-		$http.put('supersede-dm-ahprp-ui/game/end/' + gameId).success(function(data) {
+		$http.put('supersede-dm-app/ahprp/game/end/' + gameId).success(function(data) {
 			$scope.game.finished = true;
 		});
 	};
 	 
 	$scope.gameEnd = function(gameId){
-		$http.put('supersede-dm-ahprp-ui/game/enact/' + gameId).success(function(data) {
+		$http.put('supersede-dm-app/ahprp/game/enact/' + gameId).success(function(data) {
 //			$scope.game.finished = true;
 		});
 	};
@@ -119,7 +119,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	
 	$scope.exportGameData = function(){
 		var a = document.createElement("a");
-		a.href = 'supersede-dm-ahprp-ui/game/' + $scope.gameId + '/exportGameData'; 
+		a.href = 'supersede-dm-app/ahprp/game/' + $scope.gameId + '/exportGameData'; 
 		a.target = '_blank';
 		
 		var clickEvent = new MouseEvent("click", {
@@ -133,7 +133,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	
 	$scope.exportGameResults = function(){
 		var a = document.createElement("a");
-		a.href = 'supersede-dm-ahprp-ui/game/' + $scope.gameId + '/exportGameResults'; 
+		a.href = 'supersede-dm-app/ahprp/game/' + $scope.gameId + '/exportGameResults'; 
 		a.target = '_blank';
 
 		var clickEvent = new MouseEvent("click", {
@@ -149,7 +149,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	 $scope.choices = {};
 	 $scope.requirementsChoices = [];
 
-	 $http.get('supersede-dm-ahprp-ui/requirementchoice').success(function(data) {
+	 $http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
 		{

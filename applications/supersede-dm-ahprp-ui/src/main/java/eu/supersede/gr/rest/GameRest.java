@@ -73,7 +73,7 @@ import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/ahprp/game")
 public class GameRest {
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
@@ -432,7 +432,7 @@ public class GameRest {
 			supersedeMailSender.sendEmail("New Decision Making Process", 
 							"Hi " + proxyUser.getFirst_name() + " " + proxyUser.getLast_name() + ", this is an automatically generated mail. You have just been invited to participate in a prioritization process. To access the propritization process, connect to the URL 213.21.147.91:8081 and log in with your userid and password. Then click on Decision Making Process; then on Opinion Provider Actions and finally click Enter on the displayed process.", proxyUser.getEmail());
 			
-			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "supersede-dm-ahprp-ui/player_games");
+			notificationUtil.createNotificationForUser(proxyUser.getEmail(), "A new decision making process has been created, are you ready to vote?", "supersede-dm-app/ahprp/player_games");
 			
 			// ######################################################
 			// create a GamePlayerPoint for this game and for all the players in the game
@@ -444,7 +444,7 @@ public class GameRest {
 			
 			// ######################################################
 		}
-		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "supersede-dm-ahprp-ui/judge_acts");
+		notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR", "A new decision making process has been created, you are in charge to take decisions", "supersede-dm-app/ahprp/judge_acts");
 		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setLocation(ServletUriComponentsBuilder

@@ -38,7 +38,7 @@ import eu.supersede.gr.model.RequirementsMatrixData;
 import eu.supersede.fe.exception.NotFoundException;
 
 @RestController
-@RequestMapping("/requirement")
+@RequestMapping("/ahprp/requirement")
 public class RequirementRest {
 	
 	@Autowired

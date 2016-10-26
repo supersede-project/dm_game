@@ -19,7 +19,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 	$scope.open_games = [];
 	$scope.closed_games = [];
 
-	$http.get('supersede-dm-ahprp-ui/game').
+	$http.get('supersede-dm-app/ahprp/game').
 	success(function(data) 
 	{
 		for(var i = 0; i < data.length; i++)
@@ -68,7 +68,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 			    },
 			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
 					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-ahprp-ui/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
+					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
 					return r.concat("</div>");
 					}
 			    }
@@ -110,7 +110,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 			    },
 			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
 					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-ahprp-ui/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
+					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/game_page?gameId=" + value + "'>Detail</a></jqx-link-button>");
 					return r.concat("</div>");
 					}
 			    }
@@ -122,7 +122,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 	    $('#jqxTabs').on('tabclick', function (event) {
 	        if (event.args.item == $('#unorderedList').find('li').length - 1) {
 	            //go to create game page
-	        	$location.path('/supersede-dm-ahprp-ui/create_game');
+	        	$location.path('/supersede-dm-app/ahprp/create_game');
 	        }
 	    });
 	    $('#unorderedList').css('visibility', 'visible');
@@ -131,7 +131,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
 	 });
 	
     $scope.goGame = function (gameId) {
-    	$location.path('/supersede-dm-ahprp-ui/game_page').search('gameId', gameId);
+    	$location.path('/supersede-dm-app/ahprp/game_page').search('gameId', gameId);
 	};
 	
 });

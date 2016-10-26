@@ -41,7 +41,7 @@ import eu.supersede.dm.algorithms.AHPStructure;
 import eu.supersede.fe.exception.NotFoundException;
 
 @RestController
-@RequestMapping("/ahp")
+@RequestMapping("/ahprp/ahp")
 public class AHPRest {
 
 	@Autowired

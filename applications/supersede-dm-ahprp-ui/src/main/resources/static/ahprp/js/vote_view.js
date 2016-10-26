@@ -21,12 +21,12 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
     $scope.requirementsChoices = [];
     $scope.selectedRequirementsChoice = {selected:4};
     
-    $http.get('supersede-dm-ahprp-ui/playermove/' + $scope.playerMoveId)
+    $http.get('supersede-dm-app/ahprp/playermove/' + $scope.playerMoveId)
     .success(function(data) {
         $scope.playerMove = data;
     });
     
-     $http.get('supersede-dm-ahprp-ui/requirementchoice')
+     $http.get('supersede-dm-app/ahprp/requirementchoice')
         .success(function(data) {
             $scope.requirementsChoices.length = 0;
             for(var i = 0; i < data.length; i++)
@@ -36,9 +36,9 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
         });
      
      $scope.insertPlayerVote = function(){
-         $http.put('supersede-dm-ahprp-ui/playermove/' + $scope.playerMoveId + '/vote/' + $scope.selectedRequirementsChoice.selected)
+         $http.put('supersede-dm-app/ahprp/playermove/' + $scope.playerMoveId + '/vote/' + $scope.selectedRequirementsChoice.selected)
             .success(function(data) {
-                $location.url('/supersede-dm-ahprp-ui/player_moves?gameId=' + data);
+                $location.url('/supersede-dm-app/ahprp/player_moves?gameId=' + data);
         });
      };
 });

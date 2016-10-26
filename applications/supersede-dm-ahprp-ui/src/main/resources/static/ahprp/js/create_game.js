@@ -37,7 +37,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     
     $scope.choices = {};
     
-    $http.get('supersede-dm-ahprp-ui/user?profile=OPINION_PROVIDER')
+    $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -45,7 +45,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-ahprp-ui/requirement')
+    $http.get('supersede-dm-app/ahprp/requirement')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -53,7 +53,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-ahprp-ui/criteria')
+    $http.get('supersede-dm-app/ahprp/criteria')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -61,7 +61,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
 
-    $http.get('supersede-dm-ahprp-ui/requirementchoice')
+    $http.get('supersede-dm-app/ahprp/requirementchoice')
 	.success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -101,7 +101,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	$scope.createGame = function()
 	{
 		$http({
-			url: "supersede-dm-ahprp-ui/game",
+			url: "supersede-dm-app/ahprp/game",
 	        data: $scope.game,
 	        method: 'POST',
 	        params: {criteriaValues : $scope.choices}
@@ -109,7 +109,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
 	    	$scope.choices = {};
 	    	$scope.currentPage = 'page1';
-	    	$location.url('supersede-dm-ahprp-ui/game_page').search('gameId', data);
+	    	$location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
 	    }).error(function(err){
 	    	console.log(err);
 	    });

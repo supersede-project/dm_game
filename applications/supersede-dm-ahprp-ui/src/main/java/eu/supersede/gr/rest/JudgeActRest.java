@@ -47,7 +47,7 @@ import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
-@RequestMapping("/judgeact")
+@RequestMapping("/ahprp/judgeact")
 public class JudgeActRest {
 
 	@Autowired

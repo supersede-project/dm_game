@@ -54,7 +54,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 	}
 	
 	getActs = function() {
-		$http.get('supersede-dm-ahprp-ui/judgeact', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }}).success(function(data)
+		$http.get('supersede-dm-app/ahprp/judgeact', {params: { criteriaId: $scope.selectedCriteria, gameId: $scope.selectedGame, gameNotFinished: true }}).success(function(data)
 		{
 			$scope.closed_acts.length = 0;
 			$scope.open_acts.length = 0;
@@ -138,7 +138,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 					{ text: 'Second Requirement', width: '16%', datafield: 'secondRequirementName' },
 					{ text: '', width: '7%', datafield: 'judgeActId2', cellsRenderer: function (row, columnDataField, value) {
 						var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/supersede-dm-ahprp-ui/judge_act?judgeActId=" + value + "'>Decide</a></jqx-link-button>");
+						r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/supersede-dm-app/ahprp/judge_act?judgeActId=" + value + "'>Decide</a></jqx-link-button>");
 						return r.concat("</div>");
 						}
 				    }
@@ -183,7 +183,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 	
 	getActs();
 		
-	$http.get('supersede-dm-ahprp-ui/requirementchoice').success(function(data)
+	$http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data)
 	{
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -193,7 +193,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 	});
 	
 	$scope.setVote = function(judgeVote, judgeActId){
-		$http.put('supersede-dm-ahprp-ui/judgeact/' + judgeActId + '/vote/' + judgeVote).success(function(data)
+		$http.put('supersede-dm-app/ahprp/judgeact/' + judgeActId + '/vote/' + judgeVote).success(function(data)
 		{
 			getActs();
 		});
