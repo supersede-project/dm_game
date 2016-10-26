@@ -12,13 +12,13 @@ import eu.supersede.dm.jmetal.DMJMetalSingleMethodPlanner;
 import eu.supersede.dm.methods.AHPRequirementsPrioritizationMethod;
 import eu.supersede.dm.methods.DMLibrary;
 
-public class TestDMCollection {
+public class OrchestratorDemo {
 	
 	public static void main( String[] args ) {
-		new TestDMCollection().run();
+		new OrchestratorDemo().run();
 	}
 	
-	public TestDMCollection() {
+	public OrchestratorDemo() {
 		clients.put( AHPRequirementsPrioritizationMethod.NAME, new AHPRPProcessClient() );
 	}
 	
