@@ -1,1 +1,0 @@
-include 'supersede-dm-core', 'supersede-dm-datastore', 'supersede-dm-executor', 'supersede-dm-integration', 'supersede-dm-ahprp', 'supersede-dm-ahprp-ui', 'supersede-dm-app', 'supersede-dm-planning-jmetal', 'supersede-dm-orchestrator'
