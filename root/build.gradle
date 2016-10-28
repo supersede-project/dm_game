@@ -12,19 +12,7 @@ version = '0.0.2-SNAPSHOT'
 group = 'eu.supersede'
 
 war {
-    baseName = 'dm-app'
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources' 
-        }
-    }
-
+    baseName = 'dm-application'
 }
 
 buildscript {
@@ -129,14 +117,16 @@ dependencies {
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
     
-    compile project(":supersede-dm-core")
-    compile project(":supersede-dm-datastore")
     compile project(":supersede-dm-integration")
-    compile project(":supersede-dm-executor")
-    compile project(":supersede-dm-ahprp")
-    compile project(":supersede-dm-ahprp-ui")
-    compile project(":supersede-dm-planning-jmetal")
-    compile project(":supersede-dm-orchestrator")
+    compile project("supersede-dm-core")
+    compile project("supersede-dm-datastore")
+    compile project("supersede-dm-executor")
+    compile project("supersede-dm-integration")
+    compile project("supersede-dm-ahprp")
+    compile project("supersede-dm-ahprp-ui")
+    compile project("supersede-dm-app")
+    compile project("supersede-dm-planning-jmetal")
+    compile project("supersede-dm-orchestrator")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
@@ -157,8 +147,8 @@ allprojects {
 }
 
 subprojects {
-    group = 'eu.supersede'
-    version = '0.0.2-SNAPSHOT'
+    group = 'se.radley'
+    version = '1.0.0'
 }
 
 /*
