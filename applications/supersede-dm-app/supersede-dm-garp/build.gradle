@@ -50,7 +50,7 @@ dependencies {
 	compile('org.uma.jmetal:jmetal-algorithm:5.0')
 	compile('org.uma.jmetal:jmetal:5.0')
 	compile('com.opencsv:opencsv:3.8')
-	compile('org.junit:junit:4.12')
+	compile('junit:junit:4.12')
 	
 	compile files('../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar')
 	compile files('../supersede-dm-executor/build/libs/supersede-dm-executor-0.0.2-SNAPSHOT.jar')
