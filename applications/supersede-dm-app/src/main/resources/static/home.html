@@ -1,13 +1,13 @@
 <script src="supersede-dm-app/js/home.js"></script>
 <div class="container" ng-controller="home">
 
-I am supersede-dm-app
+Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
 
 	<div class="row" ng-controller="home">
 		<div class="col-md-6">
-			<h1>Profile details</h1>
-			<p>Name: <b>{{user.name}}</b></p>
-			<p>Email: <b>{{user.email}}</b></p>
+<!-- 			<h1>Profile details</h1> -->
+<!-- 			<p>Name: <b>{{user.name}}</b></p> -->
+<!-- 			<p>Email: <b>{{user.email}}</b></p> -->
 
 <!-- 			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row"> -->
 <!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
@@ -15,9 +15,28 @@ I am supersede-dm-app
 <!-- 				</jqx-link-button> -->
 <!-- 			</div> -->
 				
-				<jqx-link-button jqx-width="200" jqx-height="30">
-					<a href="#/supersede-dm-ahprp-ui/games">Processes</a>
-				</jqx-link-button>
+<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
+<!-- 					<a href="#/supersede-dm-ahprp-ui/games">Processes</a> -->
+<!-- 				</jqx-link-button> -->
+	
+	<h2>List of unscheduled requirements</h2>
+	
+		<div class="row">
+			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" 
+				ng-mouseenter="$parent.currentRequirement = requirement"
+				ng-mouseleave="$parent.currentRequirement = undefined">
+				<input
+				    type="checkbox"
+				    name="selectedRequirements"
+				    value="{{requirement}}"
+				    ng-checked="game.requirements.indexOf(requirement) > -1"
+				    ng-click="toggleSelection(game.requirements, requirement)"
+			  	/> {{requirement.name}}
+			</label>
+		</div>
+		<div ng-show="currentRequirement" class="selection-summary">
+			<div class="summary-row">{{currentRequirement.description}}</div>
+		</div>
 				
 		</div>
 		
