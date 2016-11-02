@@ -13,7 +13,7 @@ public class Alert {
 	
 	
 	public Alert(	String iD, String applicationID, long timestamp, 
-					String tenant, String resourceID, List<Condition> conditions, List<UserRequest>	requests ) {
+					String tenant, List<Condition> conditions, List<UserRequest>	requests ) {
 		super();
 		ID = iD;
 		this.applicationID = applicationID;

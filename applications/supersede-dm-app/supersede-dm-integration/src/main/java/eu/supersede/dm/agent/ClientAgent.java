@@ -13,7 +13,7 @@ public class ClientAgent {
 	
 	public void run( String base_addr ) {
 		
-		Alert alert = new Alert( "id1", "app1", System.currentTimeMillis(), "atos", "res1", new ArrayList<>(), new ArrayList<>() );
+		Alert alert = new Alert( "id1", "app1", System.currentTimeMillis(), "atos", new ArrayList<>(), new ArrayList<>() );
 		
 		RESTClient client = new RESTClient( base_addr );
 		
