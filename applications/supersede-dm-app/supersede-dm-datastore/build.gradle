@@ -60,7 +60,7 @@ dependencies {
 	
     compile("org.springframework.boot:spring-boot-starter-redis:1.4.1.RELEASE")
 
-	compile("eu.supersede:supersede-frontend-core:0.0.3-SNAPSHOT")
+	compile("eu.supersede:supersede-frontend-core:0.2-SNAPSHOT")
 }
 
 
