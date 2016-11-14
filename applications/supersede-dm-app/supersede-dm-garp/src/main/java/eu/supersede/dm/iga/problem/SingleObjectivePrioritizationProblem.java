@@ -17,6 +17,7 @@ import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 
 /**
@@ -30,6 +31,12 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	 */
 	private static final long serialVersionUID = -6009605359050279552L;
 
+	public SingleObjectivePrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant){
+		super(ahpVotesFile, dependenciesFile, of, gaVariant);
+		problemName = "SingleObjectivePrioritizationProblem";
+	}
+	
+	
 	/**
 	 * 
 	 */

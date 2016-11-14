@@ -310,6 +310,7 @@ public class Utils {
 		for (T v : array){
 			System.out.print(v + ", ");
 		}
+		System.out.println();
 	}
 
 	public static void printArray(int[] array){

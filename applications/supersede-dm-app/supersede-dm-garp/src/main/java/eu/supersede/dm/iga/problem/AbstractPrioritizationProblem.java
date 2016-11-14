@@ -3,19 +3,27 @@
  */
 package eu.supersede.dm.iga.problem;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
 
+import eu.supersede.dm.algorithms.AHPStructure;
+import eu.supersede.dm.algorithms.Ahp;
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.utils.MapUtil;
 import eu.supersede.dm.iga.utils.StatisticsUtils;
 import eu.supersede.dm.iga.utils.Utils;
 
@@ -92,25 +100,26 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		// TODO Auto-generated constructor stub
 	}
 	
+
 	/**
-	 * 
+	 * Read the prioritization problem from AHP vote files 
 	 */
-//	public AbstractPrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant) {
-//		readProblemFromAHP(ahpVotesFile, dependenciesFile);
-//		numberOfVariables = numberOfRequirements;
-//		OBJECTIVE_FUNCTION = of;
-//		if (gaVariant == GAVariant.MO){
-//			if (OBJECTIVE_FUNCTION == ObjectiveFunction.CRITERIA){
-//				numberOfObjectives = criteria.size();
-//			}else if (OBJECTIVE_FUNCTION == ObjectiveFunction.PLAYERS){
-//				numberOfObjectives = numberOfPlayers;
-//			}
-//		}else{
-//			numberOfObjectives = 1;
-//		}
-//		numberOfConstraints = 0;
-//
-//	}
+	public AbstractPrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant) {
+		readProblemFromAHP(ahpVotesFile, dependenciesFile);
+		numberOfVariables = numberOfRequirements;
+		OBJECTIVE_FUNCTION = of;
+		if (gaVariant == GAVariant.MO){
+			if (OBJECTIVE_FUNCTION == ObjectiveFunction.CRITERIA){
+				numberOfObjectives = criteria.size();
+			}else if (OBJECTIVE_FUNCTION == ObjectiveFunction.PLAYERS){
+				numberOfObjectives = numberOfPlayers;
+			}
+		}else{
+			numberOfObjectives = 1;
+		}
+		numberOfConstraints = 0;
+
+	}
 
 	
 	public AbstractPrioritizationProblem(int numPlayers, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile, ObjectiveFunction of, GAVariant gaVariant) {
@@ -162,163 +171,161 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		Collections.sort(REQUIREMENT_IDS);
 	}
 
-//	private void readProblemFromAHP (String ahpVotesFile, String dependenciesFile){
-//		criteria = new HashMap<String, String[]>();
-//		criteriaWeights = new HashMap<String, Double>();
-//		playerWeights = new HashMap<String, double[]>();
-//		playerRankings = new ArrayList<Map<String, List<String>>> ();
-//		
-//		
-//		
-////		Map<String, Map<String, int[]>> ahpRanks = Utils.readAHPRanks(ahpVotesFile, criteria, criteriaWeights, playerWeights);
-//		Map<String, Map<String, int[]>> playerRanks = new HashMap<String, Map<String, int[]>>();
-//
-//		Set<String> requirementSet = new HashSet<String>();
-//		Set<String> criteriaValues = new HashSet<String>();
-//
-//		List<String[]> matrix = new ArrayList<String[]>();
-//		Map<String, List<String[]>> playerVotes = new HashMap<String, List<String[]>>();
-//
-//		try {
-//			BufferedReader reader = new BufferedReader(new FileReader(new File(
-//					ahpVotesFile)));
-//			while (reader.ready()) {
-//				String line = reader.readLine();
-//				if (line.isEmpty()
-//						|| line.startsWith("REQUIREMENT1;REQUIREMENT2;CRITERIA;USER;VOTE;VOTE_TIME")) {
-//					continue;
-//				} else {
-//					// each line has following format
-//					// REQUIREMENT1;REQUIREMENT2;CRITERIA;USER;VOTE;VOTE_TIME
-//
-//					String[] values = line.split(";");
-//					String req1 = values[0];
-//					String req2 = values[1];
-//					String criterion = values[2];
-//					String player = values[3];
-//					String vote = values[4];
-//					String time = values[5];
-//
-//					requirementSet.add(req1);
-//					requirementSet.add(req2);
-//					criteriaValues.add(criterion);
-//
-//					String[] row = new String[4];
-//					row[0] = req1;
-//					row[1] = req2;
-//					row[2] = criterion;
-//					row[3] = vote;
-//
-//					matrix.add(row);
-//					
-//					if (playerVotes.containsKey(player)){
-//						playerVotes.get(player).add(row);
-//					}else{
-//						List<String[]> m = new ArrayList<String[]>();
-//						m.add(row);
-//						playerVotes.put(player, m);
-//					}
-//				}
-//			}
-//			reader.close();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		// put the requirements from set to list
+	private void readProblemFromAHP (String ahpVotesFile, String dependenciesFile){
+		criteria = new HashMap<String, String[]>();
+		criteriaWeights = new HashMap<String, Double>();
+		playerWeights = new HashMap<String, double[]>();
+		playerRankings = new ArrayList<Map<String, List<String>>> ();
+		requirements = new HashMap<String, String>();
+		
+		
+//		Map<String, Map<String, int[]>> ahpRanks = Utils.readAHPRanks(ahpVotesFile, criteria, criteriaWeights, playerWeights);
+		Map<String, Map<String, String[]>> playerRanks = new HashMap<String, Map<String, String[]>>();
+
+		Set<String> requirementSet = new HashSet<String>();
+		Set<String> criteriaValues = new HashSet<String>();
+
+		List<String[]> matrix = new ArrayList<String[]>();
+		Map<String, List<String[]>> playerVotes = new HashMap<String, List<String[]>>();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(ahpVotesFile)));
+			while (reader.ready()) {
+				String line = reader.readLine();
+				if (line.isEmpty()
+						|| line.startsWith("REQUIREMENT1;REQUIREMENT2;CRITERIA;USER;VOTE;VOTE_TIME")) {
+					continue;
+				} else {
+					// each line has following format
+					// REQUIREMENT1;REQUIREMENT2;CRITERIA;USER;VOTE;VOTE_TIME
+
+					String[] values = line.split(";");
+					String req1 = values[0];
+					String req2 = values[1];
+					String criterion = values[2];
+					String player = values[3];
+					String vote = values[4];
+					String time = values[5];
+
+					requirementSet.add(req1);
+					requirementSet.add(req2);
+					criteriaValues.add(criterion);
+
+					String[] row = new String[4];
+					row[0] = req1;
+					row[1] = req2;
+					row[2] = criterion;
+					row[3] = vote;
+
+					matrix.add(row);
+					
+					if (playerVotes.containsKey(player)){
+						playerVotes.get(player).add(row);
+					}else{
+						List<String[]> m = new ArrayList<String[]>();
+						m.add(row);
+						playerVotes.put(player, m);
+					}
+				}
+			}
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// put the requirements from set to list
+		List<String> requirementList = new ArrayList<String>();
 //		String[] arr = new String[requirementSet.size()];
-//		requirementSet.toArray(arr);
-//		Arrays.sort(arr);
-//		
-//		for (String req : arr){
-//			requirements.put(req, req);
-//		}
-//		
-//		List<String> requirementList = Arrays.asList(arr);
-////		for (String r : opts){
-////			System.out.println(r);
-////		}
-//		
-//		
-//		// all players have equal weights for all criteria
-//		double[] defaultWeights = new double[playerVotes.keySet().size()];
-//		for (int i = 0; i < defaultWeights.length; i++){
-//			defaultWeights[i] = 10;
-//		}
-//
-//		int ci = 1;
-//		for (String c : criteriaValues){
-//			String criterionId = "C" + ci ++;
-//			String[] criterionDetail = {c, "min"};
-//			criteria.put(criterionId, criterionDetail);
-//
-//			playerWeights.put(criterionId, defaultWeights);
-//			
-//			criteriaWeights.put(criterionId, new Double(10)); // criteria have equal weight in this case
-//		}
-//		
-//		// for each player, and for each criterion, compute the ranks
-//		for (Entry<String, List<String[]>> entry : playerVotes.entrySet()){
-//			
-//			
-//			Map<String, int[]> rankCriterion = new HashMap<String, int[]>();
-//			int j = 1;
-//			String criterionId;
-//			for (String criterion : criteriaValues){
-//				
+		requirementList.addAll(requirementSet);
+		Collections.sort(requirementList);
+		
+		// all players have equal weights for all criteria
+		double[] defaultWeights = new double[playerVotes.keySet().size()];
+		for (int i = 0; i < defaultWeights.length; i++){
+			defaultWeights[i] = 10;
+		}
+
+		int ci = 1;
+		for (String c : criteriaValues){
+			String criterionId = "C" + ci ++;
+			String[] criterionDetail = {c, "min"};
+			criteria.put(criterionId, criterionDetail);
+
+			playerWeights.put(criterionId, defaultWeights);
+			
+			criteriaWeights.put(criterionId, new Double(10)); // criteria have equal weight in this case
+		}
+		
+		// for each player, and for each criterion, compute the ranks
+		for (Entry<String, List<String[]>> entry : playerVotes.entrySet()){
+			System.out.println(entry.getKey());
+			
+			Map<String, String[]> rankCriterion = new HashMap<String, String[]>();
+			int j = 1;
+			String criterionId;
+			for (String criterion : criteriaValues){
+				System.out.println(criterion);
 //				criterionId = "C" + (j++);
-//				
-//				AHPStructure objAHP = new AHPStructure();
-//				
-//				// set the criteria
-//				objAHP.setCriteria(criterion);
-//				
-//				// set the alternatives (requirements)
-//				objAHP.setOptions(requirementList);
-//				
-//				// populate the vote matrix
-//				for (String[] row : entry.getValue()) {
-//					if (row[2].equalsIgnoreCase(criterion)){
-//						objAHP.setOptionPreference(row[0], row[1], row[2], Integer.parseInt(row[3]));
-//					}
-//				}
-//
-//				Ahp objCalculateRank = new Ahp(objAHP);
-//
-//				Map<String, Double> result = objCalculateRank.execute();
-//
-//				LinkedHashMap<String, Double> sortedRanks = (LinkedHashMap<String, Double>) MapUtil.sortByValue(result);
-//				
-//				Map<String, Integer> rankings = MapUtil.ahpRanksToRanking(result);
-//				
-//				int[] ranks = new int[sortedRanks.size()];
-//				int i = 0;
+				
+				AHPStructure objAHP = new AHPStructure();
+				
+				// set the criteria
+				objAHP.setCriteria(criterion);
+				
+				// set the alternatives (requirements)
+				objAHP.setOptions(requirementList);
+				
+				// populate the vote matrix
+				for (String[] row : entry.getValue()) {
+					if (row[2].equalsIgnoreCase(criterion)){
+						objAHP.setOptionPreference(row[0], row[1], row[2], Integer.parseInt(row[3]));
+					}
+				}
+
+				Ahp objCalculateRank = new Ahp(objAHP);
+
+				Map<String, Double> result = objCalculateRank.execute();
+
+				LinkedHashMap<String, Double> sortedRanks = (LinkedHashMap<String, Double>) MapUtil.sortByValue(result);
+				
+				Map<String, Integer> rankings = MapUtil.ahpRanksToRanking(result);
+				
+				String[] ranks = new String[sortedRanks.size()];
+				int i = 0;
 //				for (String req : requirementList){
-//					ranks[i++] = rankings.get(req);
+////					ranks[i++] = rankings.get(req);
+//					ranks[i++] = req;
 //				}
-//				
-//				rankCriterion.put(criterionId, ranks);
-//				Utils.printArray(ranks);
-//				
-//				
-//				
-////				for (Entry<String, Double> e : sortedRanks.entrySet())
-////					System.out.println(e.getKey() + ";" + e.getValue());
-//			}
-//			playerRanks.put(entry.getKey(), rankCriterion);
-//
-//		}
-//		
-//		
-//		
-//		numberOfPlayers = playerRanks.keySet().size();
-//		numberOfRequirements = requirements.size();
-//		REQUIREMENT_IDS.addAll(requirements.keySet());
-//		playerRankings.addAll(playerRanks.values());
-//		
+				
+				for (Entry<String, Double> ranking : sortedRanks.entrySet()){
+					ranks[i++] = ranking.getKey();
+				}
+				
+				rankCriterion.put(criterion, ranks);
+				Utils.printArray(ranks);
+				
+				
+				
+//				for (Entry<String, Double> e : sortedRanks.entrySet())
+//					System.out.println(e.getKey() + ";" + e.getValue());
+			}
+			playerRanks.put(entry.getKey(), rankCriterion);
+
+		}
+		
+		
+		for (String req : requirementList){
+			requirements.put(req, req);
+		}
+		
+		numberOfPlayers = playerRanks.keySet().size();
+		numberOfRequirements = requirements.size();
+		REQUIREMENT_IDS.addAll(requirements.keySet());
+//		playerRankings.addAll(playerRanks.values()); //TODO uncomment after debug!! change ranking from int[] to String[]
+		
 //		dependencies = new HashMap<String, Set<String>> ();
-////		dependencies = Utils.readDependencies(dependenciesFile);
-//	}
+		dependencies = Utils.readDependencies(dependenciesFile);
+	}
 	
 
 	/*
