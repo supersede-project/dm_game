@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -58,7 +60,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	// weights of the criteria
 	protected Map<String, Double> criteriaWeights;
 	
-	protected Map<String, String[]> criteria;
+	protected SortedMap<String, String[]> criteria;
 	
 	protected Map<String, String> requirements;
 	
@@ -80,7 +82,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	
 	public static ObjectiveFunction OBJECTIVE_FUNCTION = ObjectiveFunction.PLAYERS;
 	
-	public static DistanceType DISTANCE_TYPE = DistanceType.KENDALL;
+	public static DistanceType DISTANCE_TYPE = DistanceType.SPEARMAN; // .DELTA; // .KENDALL;
 	
 	
 	/**
@@ -104,8 +106,9 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	/**
 	 * Read the prioritization problem from AHP vote files 
 	 */
-	public AbstractPrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant) {
+	public AbstractPrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
 		readProblemFromAHP(ahpVotesFile, dependenciesFile);
+		DISTANCE_TYPE = distanceType;
 		numberOfVariables = numberOfRequirements;
 		OBJECTIVE_FUNCTION = of;
 		if (gaVariant == GAVariant.MO){
@@ -122,7 +125,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	}
 
 	
-	public AbstractPrioritizationProblem(int numPlayers, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile, ObjectiveFunction of, GAVariant gaVariant) {
+	public AbstractPrioritizationProblem(int numPlayers, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
+		DISTANCE_TYPE = distanceType;
 		OBJECTIVE_FUNCTION = of;
 		GA_VARIANT = gaVariant;
 		numberOfPlayers = numPlayers;
@@ -172,15 +176,15 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	}
 
 	private void readProblemFromAHP (String ahpVotesFile, String dependenciesFile){
-		criteria = new HashMap<String, String[]>();
+		criteria = new TreeMap<String, String[]>();
 		criteriaWeights = new HashMap<String, Double>();
 		playerWeights = new HashMap<String, double[]>();
 		playerRankings = new ArrayList<Map<String, List<String>>> ();
 		requirements = new HashMap<String, String>();
 		
 		
-//		Map<String, Map<String, int[]>> ahpRanks = Utils.readAHPRanks(ahpVotesFile, criteria, criteriaWeights, playerWeights);
-		Map<String, Map<String, String[]>> playerRanks = new HashMap<String, Map<String, String[]>>();
+//		Map<String, Map<String, String[]>> playerRanks = new HashMap<String, Map<String, String[]>>();
+		Map<String, Map<String, List<String>>> playerRanks = new HashMap<String, Map<String, List<String>>>();
 
 		Set<String> requirementSet = new HashSet<String>();
 		Set<String> criteriaValues = new HashSet<String>();
@@ -247,22 +251,22 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 
 		int ci = 1;
 		for (String c : criteriaValues){
-			String criterionId = "C" + ci ++;
+//			String criterionId = "C" + ci ++;
 			String[] criterionDetail = {c, "min"};
-			criteria.put(criterionId, criterionDetail);
+			criteria.put(c, criterionDetail);
 
-			playerWeights.put(criterionId, defaultWeights);
+			playerWeights.put(c, defaultWeights);
 			
-			criteriaWeights.put(criterionId, new Double(10)); // criteria have equal weight in this case
+			criteriaWeights.put(c, new Double(10)); // criteria have equal weight in this case
 		}
 		
 		// for each player, and for each criterion, compute the ranks
 		for (Entry<String, List<String[]>> entry : playerVotes.entrySet()){
 			System.out.println(entry.getKey());
 			
-			Map<String, String[]> rankCriterion = new HashMap<String, String[]>();
+			Map<String, List<String>> rankCriterion = new HashMap<String, List<String>>();
 			int j = 1;
-			String criterionId;
+//			String criterionId;
 			for (String criterion : criteriaValues){
 				System.out.println(criterion);
 //				criterionId = "C" + (j++);
@@ -290,7 +294,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 				
 				Map<String, Integer> rankings = MapUtil.ahpRanksToRanking(result);
 				
-				String[] ranks = new String[sortedRanks.size()];
+				List<String> ranks = new ArrayList<String>();
 				int i = 0;
 //				for (String req : requirementList){
 ////					ranks[i++] = rankings.get(req);
@@ -298,7 +302,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 //				}
 				
 				for (Entry<String, Double> ranking : sortedRanks.entrySet()){
-					ranks[i++] = ranking.getKey();
+					ranks.add(ranking.getKey());
 				}
 				
 				rankCriterion.put(criterion, ranks);
@@ -320,11 +324,11 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		
 		numberOfPlayers = playerRanks.keySet().size();
 		numberOfRequirements = requirements.size();
-		REQUIREMENT_IDS.addAll(requirements.keySet());
-//		playerRankings.addAll(playerRanks.values()); //TODO uncomment after debug!! change ranking from int[] to String[]
+		REQUIREMENT_IDS.addAll(requirementList);
+		playerRankings.addAll(playerRanks.values()); //TODO uncomment after debug!! change ranking from int[] to String[]
 		
-//		dependencies = new HashMap<String, Set<String>> ();
-		dependencies = Utils.readDependencies(dependenciesFile);
+		dependencies = new HashMap<String, Set<String>> ();
+//		dependencies = Utils.readDependencies(dependenciesFile);
 	}
 	
 
@@ -361,7 +365,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	 * @param solution
 	 * @return
 	 */
-	private int[] requirementsListToRanking(List<String> solution) {
+	public static int[] requirementsListToRanking(List<String> solution) {
 		int[] ranking = new int[solution.size()];
 		int i = 0;
 		for (String reqId : solution){

@@ -31,13 +31,13 @@
 			<artifactId>jmetal-algorithm</artifactId>
 			<version>5.0</version>
 		</dependency>
-		<!-- dependency>
+		<dependency>
 			<groupId>eu.supersede.dm</groupId>
 			<artifactId>ahp</artifactId>
 			<version>0.1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/ahp.jar</systemPath>
-		</dependency -->
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>

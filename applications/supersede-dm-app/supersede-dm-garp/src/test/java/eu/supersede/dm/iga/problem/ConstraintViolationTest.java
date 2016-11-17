@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.PermutationSolution;
 
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 
@@ -44,8 +45,9 @@ public class ConstraintViolationTest {
 		
 		ObjectiveFunction of = ObjectiveFunction.CRITERIA;
 		GAVariant gaVariant = GAVariant.SO;
+		DistanceType distanceType = DistanceType.KENDALL;
 		
-		problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant);
+		problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
 	}
 
 	@Test

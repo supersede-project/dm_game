@@ -17,6 +17,7 @@ import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 
@@ -31,8 +32,8 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	 */
 	private static final long serialVersionUID = -6009605359050279552L;
 
-	public SingleObjectivePrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant){
-		super(ahpVotesFile, dependenciesFile, of, gaVariant);
+	public SingleObjectivePrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType){
+		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType);
 		problemName = "SingleObjectivePrioritizationProblem";
 	}
 	
@@ -43,8 +44,8 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	public SingleObjectivePrioritizationProblem(int numPlayers,
 			String criteriaFile, String dependenciesFile,
 			String criteriaWeightFile, String playerWeightFile,
-			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant) {
-		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant);
+			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
+		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
 		problemName = "SingleObjectivePrioritizationProblem";
 		
 

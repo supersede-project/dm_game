@@ -20,8 +20,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.uma.jmetal.problem.PermutationProblem;
+import org.uma.jmetal.solution.PermutationSolution;
 
 import com.opencsv.CSVReader;
+
+import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem;
 
 //import eu.supersede.dm.algorithms.AHPStructure;
 //import eu.supersede.dm.algorithms.Ahp;
@@ -125,8 +133,8 @@ public class Utils {
 		return criteria;
 	}
 
-	public static Map<String, String[]> readCriteria(String criteriaFile){
-		Map<String, String[]> criteria = new HashMap<String, String[]>();
+	public static SortedMap<String, String[]> readCriteria(String criteriaFile){
+		SortedMap<String, String[]> criteria = new TreeMap<String, String[]>();
 		Reader reader;
 		try {
 			reader = new FileReader(criteriaFile);
@@ -306,6 +314,13 @@ public class Utils {
 		return l;
 	}
 
+	public static <T> void printArray(List<T> array) {
+		for (T v : array){
+			System.out.print(v + ", ");
+		}
+		System.out.println();
+	}
+	
 	public static <T> void printArray(T[] array) {
 		for (T v : array){
 			System.out.print(v + ", ");
@@ -362,5 +377,13 @@ public class Utils {
 			throw new RuntimeException("Unexpected problem while reading requirements file: " + requirementsFile);
 		}
 		return requirements;
+	}
+	
+	public static void readFinalAhpRanking(String ahpRankingFile, PrioritizationSolution solution){
+		List<String> ahpRanking = readRequirementsSimple(ahpRankingFile);
+		int[] ranking = AbstractPrioritizationProblem.requirementsListToRanking(ahpRanking);
+		for (int i = 0; i < ranking.length; i++){
+			solution.setVariableValue(i, ranking[i]);
+		}
 	}
 }
