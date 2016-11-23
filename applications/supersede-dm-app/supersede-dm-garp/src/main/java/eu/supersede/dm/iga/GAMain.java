@@ -25,6 +25,7 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.WeightType;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
@@ -66,6 +67,7 @@ public class GAMain {
 		
 		ObjectiveFunction of = ObjectiveFunction.CRITERIA;
 		DistanceType distanceType = DistanceType.KENDALL;
+		WeightType weightType = WeightType.EQUAL;
 				
 	    double crossoverProbability = 0.9 ;
 	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
@@ -82,7 +84,7 @@ public class GAMain {
 	    
 		// if single-objective
 		if (gaVariant == GAVariant.SO){
-			problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
+			problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 			
 			double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 		    mutation = new PermutationSwapMutation (mutationProbability) ;
@@ -95,7 +97,7 @@ public class GAMain {
 			System.out.println(solution.toNamedStringWithObjectives());
 			GAUtils.printSolutionWithLabels(solution,"solution.csv");
 		}else if (gaVariant == GAVariant.MO){
-			problem = new MultiObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
+			problem = new MultiObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 			
 			double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 		    mutation = new PermutationSwapMutation (mutationProbability) ;

@@ -40,8 +40,8 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	public MultiObjectivePrioritizationProblem(int numPlayers,
 			String criteriaFile, String dependenciesFile,
 			String criteriaWeightFile, String playerWeightFile,
-			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
-		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
+			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
+		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 		problemName = "MultiObjectivePrioritizationProblem";
 	}
 
@@ -53,8 +53,8 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	 * @param gaVariant
 	 */
 	public MultiObjectivePrioritizationProblem(String ahpVotesFile,
-			String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
-		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType);
+			String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType, String playerWeightsFile, String criteriaWeightsFile) {
+		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
 		problemName = "MultiObjectivePrioritizationProblem";
 	}
 
@@ -70,16 +70,16 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 
 		double d = 0.0;
 		int idx = 0;
-		for (String key : criteria.keySet()){
-			double cw = 1d / criteriaWeights.get(key);
-			for (int p = 0; p < numberOfPlayers; p++){
-				double pw = 1d / playerWeights.get(key)[p];
-				List<String> pr = playerRankings.get(p).get(key);
+		for (String criterion : getCriteria().keySet()){
+			double cw = getCriteriaWeights().get(criterion);
+			for (String player : getPlayerRankings().keySet()){
+				double pw = getPlayerWeights().get(criterion).get(player);
+				List<String> pr = getPlayerRankings().get(player).get(criterion);
 				double dist = computeDistance(solution, pr);
 				d += pw * dist;
 			}
 			d *= cw;
-			d /= numberOfRequirements;
+			d /= numberOfPlayers; // numberOfRequirements; // TODO WHY was this numberOfRequirements ?!
 			solution.setObjective(idx++, d);
 		}
 
@@ -96,17 +96,18 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 
 		double d = 0.0;
 		
-		for (int p = 0; p < numberOfPlayers; p++){
-			for (String key : criteria.keySet()){
-				double pw = 1d / playerWeights.get(key)[p];
-				double cw = 1d / criteriaWeights.get(key);
-				List<String> pr = playerRankings.get(p).get(key);
+		int idx = 0;
+		for (String player : getPlayerRankings().keySet()){
+			for (String criterion : getCriteria().keySet()){
+				double pw = getPlayerWeights().get(criterion).get(player);
+				double cw = getCriteriaWeights().get(criterion);
+				List<String> pr = getPlayerRankings().get(player).get(criterion);
 				double dist = computeDistance(solution, pr);
 				d += (cw * pw * dist);
 			}
-			d /= numberOfRequirements;
-			d /= criteria.keySet().size();
-			solution.setObjective(p, d);
+//			d /= numberOfRequirements; // TODO WHY was this added??
+			d /= getCriteria().keySet().size();
+			solution.setObjective(idx++, d);
 		}
 
 	}
@@ -121,7 +122,7 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	 */
 	public void evaluate(PermutationSolution<?> solution) {
 		if (violatesDependencyConstraints(solution)){
-			for (int i = 0; i < criteria.keySet().size(); i++){
+			for (int i = 0; i < getCriteria().keySet().size(); i++){
 				solution.setObjective(i, Double.MAX_VALUE);
 			}
 		}else{

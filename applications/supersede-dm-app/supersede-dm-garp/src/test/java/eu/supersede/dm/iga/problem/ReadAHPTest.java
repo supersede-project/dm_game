@@ -33,6 +33,7 @@ import eu.supersede.dm.iga.encoding.PrioritizationSolution;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.WeightType;
 import eu.supersede.dm.iga.utils.GAUtils;
 import eu.supersede.dm.iga.utils.Utils;
 
@@ -46,10 +47,12 @@ public class ReadAHPTest {
 	public void testSO() {
 		String ahpVotesFile = "resources/input/VOTES/System.csv";
 		String dependenciesFile = "resources/input/dependencies";
+		String playerWeightsFile = "resources/input/weights_player_presto.csv"; 
+		String criteriaWeightsFile = "resources/input/weights_criteria_presto.csv";
 		ObjectiveFunction of = ObjectiveFunction.PLAYERS;
 		GAVariant gaVariant = GAVariant.SO;
 		DistanceType distanceType = DistanceType.KENDALL;
-		
+		WeightType weightType = WeightType.EQUAL;
 		
 	    double crossoverProbability = 0.9 ;
 	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
@@ -63,7 +66,7 @@ public class ReadAHPTest {
 	    
 	    AbstractGeneticAlgorithm<PermutationSolution<?>, ?> algorithm;
 	    MutationOperator<PermutationSolution<?>> mutation;
-	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType);
+	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
 		
 		double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 	    mutation = new PermutationSwapMutation (mutationProbability) ;
@@ -82,7 +85,8 @@ public class ReadAHPTest {
 		AhpExperimentMain experiment = new AhpExperimentMain();
 		String subSystem = "Timeline";
 		DistanceType distanceType = DistanceType.KENDALL;
-		experiment.runMOGA(subSystem, distanceType);
+		WeightType weightType = WeightType.EQUAL;
+		experiment.runMOGA(subSystem, distanceType, weightType);
 	    
 	}
 	

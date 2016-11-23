@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -108,31 +109,6 @@ public class Utils {
 		return dependencies;
 	}
 
-	public static Map<String, String[]> readCriteria1(String criteriaFile) {
-		Map<String, String[]> criteria = new HashMap<String, String[]>();
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File(
-					criteriaFile)));
-			while (reader.ready()) {
-				String line = reader.readLine();
-				if (line.isEmpty() || line.startsWith("#")) {
-					continue;
-				} else {
-					// criteria, desc, min/max
-					String[] values = line.split(",");
-					String[] vals = new String[2];
-					vals[0] = values[1];
-					vals[1] = values[2];
-					criteria.put(values[0], vals);
-				}
-			}
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return criteria;
-	}
-
 	public static SortedMap<String, String[]> readCriteria(String criteriaFile){
 		SortedMap<String, String[]> criteria = new TreeMap<String, String[]>();
 		Reader reader;
@@ -185,7 +161,55 @@ public class Utils {
 		return criteriaWeights;
 	}
 
-	public static Map<String, double[]> readPlayerWeights(String weightsFile) {
+	/*
+	 * converts criteria weights to probabilities: pi = wi/sum(wi)
+	 */
+	public static Map<String, Double> criteriaWeightsToProbabilities (Map<String, Double> weights){
+		Map<String, Double> probabilities = new HashMap<String, Double>();
+		double total = 0;
+		for (Entry<String, Double> entry : weights.entrySet()){
+			total += entry.getValue();
+		}
+		for (Entry<String, Double> entry : weights.entrySet()){
+			probabilities.put(entry.getKey(), entry.getValue()/total);
+		}
+		return probabilities;
+	}
+
+	public static Map<String, Map<String, Double>> readPlayerWeights(String weightsFile) {
+		Map<String, Map<String, Double>> playerWeights = new HashMap<String, Map<String, Double>>();
+
+		Reader reader;
+		try {
+			reader = new FileReader(weightsFile);
+			CSVReader csvReader = new CSVReader(reader);
+			List<String[]> allContent = csvReader.readAll();
+			csvReader.close();
+			
+			// extract player names from the header
+			String[] header = allContent.get(0);
+			List<String> players = Arrays.asList(header);
+			
+			for (int i = 1; i < allContent.size(); i++){
+				String[] line = allContent.get(i); // first line skipped (i starts from 1) b/c it's header
+				Map<String, Double> weights = new HashMap<String, Double>();
+				for (int j = 1; j < line.length; j++){
+					weights.put(players.get(j), Double.parseDouble(line[j]));
+				}
+				playerWeights.put(line[0], weights);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Unable to read file: " + weightsFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Unexpected problem while reading file: " + weightsFile);
+		}
+
+		return playerWeights;
+	}
+	
+	public static Map<String, double[]> _readPlayerWeights(String weightsFile) {
 		Map<String, double[]> playerWeights = new HashMap<String, double[]>();
 
 		try {
@@ -215,6 +239,34 @@ public class Utils {
 		}
 
 		return playerWeights;
+	}
+	
+	public static Map<String, Map<String, Double>> playerWeightsToProbabilities (Map<String, Map<String, Double>> playerWeights){
+		Map<String, Map<String, Double>> probabilities = new HashMap<String, Map<String, Double>>();
+//		int numCriteria = playerWeights.get(0).length;
+		
+		// first, sum all the weights per criterion
+//		double[] total = new double[numCriteria];
+		Map<String, Double> total = new HashMap<String, Double>(); 
+		for (String criterion : playerWeights.keySet()){
+			double tot = 0;
+			for (double weight : playerWeights.get(criterion).values()){
+				tot += weight; 
+			}
+			total.put(criterion, tot);
+		}
+		
+		// divide weights by the total, for each criterion
+		int c = 0;
+		for (String criterion : playerWeights.keySet()){
+			Map<String, Double> probs = new HashMap<String, Double>();
+			for (Entry<String, Double> entry : playerWeights.get(criterion).entrySet()){
+				probs.put(entry.getKey(), entry.getValue()/total.get(criterion));
+			}
+			probabilities.put(criterion, probs);
+		}
+		
+		return probabilities;
 	}
 
 	public static <T> Map<T, List<T>> readPlayerRankings(String rankingsFile) {
@@ -386,4 +438,5 @@ public class Utils {
 			solution.setVariableValue(i, ranking[i]);
 		}
 	}
+
 }

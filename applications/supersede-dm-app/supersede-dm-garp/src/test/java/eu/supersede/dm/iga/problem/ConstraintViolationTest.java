@@ -14,6 +14,7 @@ import org.uma.jmetal.solution.PermutationSolution;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.WeightType;
 
 /**
  * @author fitsum
@@ -46,8 +47,9 @@ public class ConstraintViolationTest {
 		ObjectiveFunction of = ObjectiveFunction.CRITERIA;
 		GAVariant gaVariant = GAVariant.SO;
 		DistanceType distanceType = DistanceType.KENDALL;
+		WeightType weightType = WeightType.EQUAL;
 		
-		problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
+		problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 	}
 
 	@Test

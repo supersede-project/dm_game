@@ -36,11 +36,11 @@ public class UtilTest {
 	
 	@Test
 	public void testReadPlayerWeights(){
-		String weights = "resources/input/weights_player.csv";
+		String weights = "resources/input/weights_player_presto.csv";
 		int numPlayers = 6;
-		Map<String, double[]> playerWeights = Utils.readPlayerWeights(weights);
+		Map<String, Map<String, Double>> playerWeights = Utils.readPlayerWeights(weights);
 		assertTrue(playerWeights.size() == 2);
-		assertTrue(playerWeights.get("c1").length == numPlayers);
+		assertTrue(playerWeights.get("c1").get("p1") == null);
 	}
 	
 	
@@ -48,9 +48,9 @@ public class UtilTest {
 	public void testReadCriteriaWeights(){
 		String weights = "resources/input/weights_criteria.csv";
 		int numCriteria = 2;
-		Map<String, double[]> criteriaWeights = Utils.readPlayerWeights(weights);
+		Map<String, Double> criteriaWeights = Utils.readCriteriaWeights(weights);
 		assertTrue(criteriaWeights.size() == numCriteria);
-		assertTrue(criteriaWeights.get("c1").length == 1);
+		assertTrue(criteriaWeights.get("c1") == 10);
 	}
 	
 	@Test

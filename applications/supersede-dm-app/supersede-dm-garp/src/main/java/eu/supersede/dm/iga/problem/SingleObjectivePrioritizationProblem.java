@@ -32,8 +32,8 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	 */
 	private static final long serialVersionUID = -6009605359050279552L;
 
-	public SingleObjectivePrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType){
-		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType);
+	public SingleObjectivePrioritizationProblem(String ahpVotesFile, String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType, String playerWeightsFile, String criteriaWeightsFile){
+		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
 		problemName = "SingleObjectivePrioritizationProblem";
 	}
 	
@@ -44,8 +44,8 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	public SingleObjectivePrioritizationProblem(int numPlayers,
 			String criteriaFile, String dependenciesFile,
 			String criteriaWeightFile, String playerWeightFile,
-			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType) {
-		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType);
+			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
+		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 		problemName = "SingleObjectivePrioritizationProblem";
 		
 
@@ -85,16 +85,16 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 
 		double d = 0.0;
 		int idx = 0;
-		for (String key : criteria.keySet()){
-			double cw = 1d / criteriaWeights.get(key);
-			for (int p = 0; p < numberOfPlayers; p++){
-				double pw = 1d / playerWeights.get(key)[p];
-				List<String> pr = playerRankings.get(p).get(key);
+		for (String criterion : getCriteria().keySet()){
+			double cw = getCriteriaWeights().get(criterion);
+			for (String player : getPlayerRankings().keySet()){
+				double pw = getPlayerWeights().get(criterion).get(player);
+				List<String> pr = getPlayerRankings().get(player).get(criterion);
 				double dist = computeDistance(solution, pr);
 				d += cw * pw * dist;
 			}
 		}
-		d /= numberOfPlayers * criteria.size();
+		d /= numberOfPlayers * getCriteria().size();
 		solution.setObjective(idx, d);
 
 	}
