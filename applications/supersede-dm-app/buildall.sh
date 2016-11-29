@@ -26,5 +26,5 @@ cd ..
 cd supersede-dm-orchestrator
 gradle build
 cd ..
-gradle build
+gradle build --refresh-dependencies
 cd ..
