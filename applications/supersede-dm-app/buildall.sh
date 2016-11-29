@@ -1,3 +1,4 @@
+gradle clean
 cd supersede-dm-core
 gradle build
 cd ..
