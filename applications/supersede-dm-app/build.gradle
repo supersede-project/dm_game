@@ -34,8 +34,7 @@ buildscript {
     repositories {
         mavenCentral()
 	maven {
-  //        url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
-            url 'http://62.14.219.13:10080/artifactory/libs-release'
+            url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
             name = 'maven-supersede-release'
             credentials {
                 username = "${artifactory_user}"
@@ -43,7 +42,7 @@ buildscript {
             }
         }
 	maven {
-            url 'http://62.14.219.13:10080/artifactory/libs-snapshot'
+            url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
             name = 'maven-supersede-snapshot'
             credentials {
                 username = "${artifactory_user}"
