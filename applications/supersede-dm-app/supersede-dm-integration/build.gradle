@@ -24,8 +24,8 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-	maven {url 'http://repo.spring.io/milestone' }
-	maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
+    maven {url 'http://repo.spring.io/milestone' }
+    maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
 }
 
 configurations {
@@ -33,12 +33,12 @@ configurations {
 }
 
 dependencies {
-	
-	compile("com.google.code.gson:gson:2.3.1");
-	compile("commons-io:commons-io:2.1")
-	compile("org.apache.httpcomponents:httpclient:4.3.6")
-	compile("org.apache.commons:commons-csv:1.0")
-	
+
+    compile("com.google.code.gson:gson:2.3.1");
+    compile("commons-io:commons-io:2.1")
+    compile("org.apache.httpcomponents:httpclient:4.3.6")
+    compile("org.apache.commons:commons-csv:1.0")
+
 }
 
 

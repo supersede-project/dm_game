@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
     }
 }
@@ -21,7 +21,7 @@ group = 'eu.supersede'
 
 jar {
     baseName = 'supersede-dm-garp'
-    
+
     from {
           configurations.runtime.filter( { (it.name == "supersede-dm-garp-0.0.2-SNAPSHOT.jar" )}).collect {
              it.isDirectory() ? it : zipTree(it)
@@ -34,8 +34,8 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-	maven {url 'http://repo.spring.io/milestone' }
-	maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
+    maven {url 'http://repo.spring.io/milestone' }
+    maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
 }
 
 configurations {
@@ -44,19 +44,19 @@ configurations {
 
 dependencies {
 
-	compile('org.apache.commons:commons-math3:3.6.1')
-	compile('org.uma.jmetal:jmetal-core:5.0')
-	compile('org.uma.jmetal:jmetal-problem:5.0')
-	compile('org.uma.jmetal:jmetal-algorithm:5.0')
-	compile('org.uma.jmetal:jmetal:5.0')
-	compile('com.opencsv:opencsv:3.8')
-	compile('junit:junit:4.12')
-	
-	compile files('../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar')
-	compile files('../supersede-dm-executor/build/libs/supersede-dm-executor-0.0.2-SNAPSHOT.jar')
-	
-	compile('com.h2database:h2:1.4.190')
-	compile('org.activiti:activiti-engine:5.21.0')
+    compile('org.apache.commons:commons-math3:3.6.1')
+    compile('org.uma.jmetal:jmetal-core:5.0')
+    compile('org.uma.jmetal:jmetal-problem:5.0')
+    compile('org.uma.jmetal:jmetal-algorithm:5.0')
+    compile('org.uma.jmetal:jmetal:5.0')
+    compile('com.opencsv:opencsv:3.8')
+    compile('junit:junit:4.12')
+
+    compile files('../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar')
+    compile files('../supersede-dm-executor/build/libs/supersede-dm-executor-0.0.2-SNAPSHOT.jar')
+
+    compile('com.h2database:h2:1.4.190')
+    compile('org.activiti:activiti-engine:5.21.0')
 }
 
 
