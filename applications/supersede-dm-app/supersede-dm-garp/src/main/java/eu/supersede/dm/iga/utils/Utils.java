@@ -415,7 +415,7 @@ public class Utils {
 			CSVReader csvReader = new CSVReader(reader);
 			List<String[]> allContent = csvReader.readAll();
 			csvReader.close();
-			for (int i = 1; i < allContent.size(); i++){
+			for (int i = 0; i < allContent.size(); i++){
 				String[] line = allContent.get(i); // first line skipped (i starts from 1) b/c it's header
 				if (line.length == 2){
 					requirements.put(line[0], line[1]); // id,description
@@ -437,6 +437,34 @@ public class Utils {
 		for (int i = 0; i < ranking.length; i++){
 			solution.setVariableValue(i, ranking[i]);
 		}
+	}
+
+	/**
+	 * @param playerRankings
+	 */
+	public static void exportAnonymizedPlayerRankings(Map<String, Map<String, List<String>>> playerRankings, String system) {
+		String outputBase = "resources/input/PRESTO/anonymized/" + system + "/";
+		(new File(outputBase)).mkdirs();
+		// for every player, export rankings per criterion
+		int i = 1;
+		StringBuffer playerMap = new StringBuffer();
+		for (Entry<String, Map<String,List<String>>> players : playerRankings.entrySet()){
+			String player = players.getKey();
+			String playerId = "p" + i++;
+			playerMap.append(playerId + "," + player + "\n");
+			StringBuffer playerRanking = new StringBuffer();
+			for (Entry<String, List<String>> criteria : players.getValue().entrySet()){
+				playerRanking.append(criteria.getKey());
+				for (String requirement : criteria.getValue()){
+					playerRanking.append("," + requirement );
+				}
+				playerRanking.append("\n");
+			}
+//			writeStringToFile(playerRanking.toString(), outputBase + player.replaceAll(" ", "_") + "_ranking_" + system + ".csv");
+			writeStringToFile(playerRanking.toString(), outputBase + "ranking_" + playerId + ".csv");
+		}
+		writeStringToFile(playerMap.toString(), outputBase + "playerMapping.csv");
+		
 	}
 
 }

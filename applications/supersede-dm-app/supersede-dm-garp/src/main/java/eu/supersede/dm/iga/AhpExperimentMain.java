@@ -50,22 +50,25 @@ public class AhpExperimentMain {
 	
 	static Map<String, double[]> playerWeights;
 	
+	public static String SUBSYSTEM = "";
+	
 	public static void main(String[] args) {
 		if (args.length == 0){
 			System.err.println("Please enter the subsystem name (Timeline, System, or SceneSelection), distance type (kendall, spearman, delta), and weight type (RANDOM, EQUAL, INPUT, defaults to EQUAL).");
 			System.exit(0);
 		}
-		String subSystem = args[0];
+//		String subSystem = args[0];
+		SUBSYSTEM = args[0];
 		DistanceType distanceType = DistanceType.valueOf(args[1].toUpperCase());;
 		WeightType weightType = WeightType.EQUAL;
 		if (args.length == 3){
 			weightType = WeightType.valueOf(args[2].toUpperCase());
 		}
 		AhpExperimentMain experiment = new AhpExperimentMain();
-		experiment.runMOGA(subSystem, distanceType, weightType);
+		experiment.runMOGA(distanceType, weightType);
 	}
 	
-	public PrioritizationSolution runSOGA(String subSystem, DistanceType distanceType, WeightType weightType, AbstractPrioritizationProblem moProblem){
+	public PrioritizationSolution runSOGA(DistanceType distanceType, WeightType weightType, AbstractPrioritizationProblem moProblem){
 		GAVariant gaVariant = GAVariant.SO;
 		double crossoverProbability = 0.7 ;
 	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
@@ -75,7 +78,7 @@ public class AhpExperimentMain {
 		
 		SolutionListEvaluator<PermutationSolution<?>> evaluator = new SequentialSolutionListEvaluator<PermutationSolution<?>>();
 	    
-	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFileBase + subSystem + ".csv", dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
+	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFileBase + SUBSYSTEM + ".csv", dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
 		
 	    // take weights from the multi-objective problem
 	    if (moProblem != null){
@@ -96,7 +99,7 @@ public class AhpExperimentMain {
 	/**
 	 * 
 	 */
-	public void runMOGA(String subSystem, DistanceType distanceType, WeightType weightType) {
+	public void runMOGA(DistanceType distanceType, WeightType weightType) {
 		
 		GAVariant gaVariant = GAVariant.MO;
 
@@ -108,7 +111,7 @@ public class AhpExperimentMain {
 		
 		SolutionListEvaluator<PermutationSolution<?>> evaluator = new SequentialSolutionListEvaluator<PermutationSolution<?>>();
 	    
-	    Problem<PermutationSolution<?>> problem = new MultiObjectivePrioritizationProblem(ahpVotesFileBase + subSystem + ".csv", dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
+	    Problem<PermutationSolution<?>> problem = new MultiObjectivePrioritizationProblem(ahpVotesFileBase + SUBSYSTEM + ".csv", dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
 		
 	    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 	    MutationOperator<PermutationSolution<?>> mutation = new PermutationSwapMutation (mutationProbability);
@@ -117,27 +120,27 @@ public class AhpExperimentMain {
 	    AbstractGeneticAlgorithm<PermutationSolution<?>, ?> algorithm = new NSGAII<PermutationSolution<?>>(problem, searchBudget, populationSize, crossover, mutation, selection, evaluator);
 	    algorithm.run();
 	    List<PermutationSolution<?>> pareto = (List<PermutationSolution<?>>) algorithm.getResult();
-	    GAUtils.printParetoFrontWithLabels(pareto, outputBase + subSystem + "_" + distanceType.toString() + "_" + weightType.toString() + "_pareto.csv");
+	    GAUtils.printParetoFrontWithLabels(pareto, outputBase + SUBSYSTEM + "_" + distanceType.toString() + "_" + weightType.toString() + "_pareto.csv");
 	    
 	    List<PermutationSolution<?>> ahpPareto = new ArrayList<PermutationSolution<?>>();
-	    String ahpRankingFileAverage = ahpVotesFileBase + subSystem + "_ahp_average.csv";
+	    String ahpRankingFileAverage = ahpVotesFileBase + SUBSYSTEM + "_ahp_average.csv";
 	    PrioritizationSolution ahpSolutionAverage = (PrioritizationSolution) problem.createSolution();
 	    Utils.readFinalAhpRanking(ahpRankingFileAverage, ahpSolutionAverage);
 	    problem.evaluate(ahpSolutionAverage);
 	    ahpPareto.add(ahpSolutionAverage);
-	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + subSystem + "_" + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_average.csv");
+	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + SUBSYSTEM + "_" + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_average.csv");
 	    
-	    String ahpRankingFileNegotiator = ahpVotesFileBase + subSystem + "_ahp_negotiator.csv";
+	    String ahpRankingFileNegotiator = ahpVotesFileBase + SUBSYSTEM + "_ahp_negotiator.csv";
 	    PrioritizationSolution ahpSolutionNegotiator = (PrioritizationSolution) problem.createSolution();
 	    Utils.readFinalAhpRanking(ahpRankingFileNegotiator, ahpSolutionNegotiator);
 	    problem.evaluate(ahpSolutionNegotiator);
 	    ahpPareto.clear();
 	    ahpPareto.add(ahpSolutionNegotiator);
-	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + subSystem + "_" + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_negotiator.csv");
+	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + SUBSYSTEM + "_" + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_negotiator.csv");
 	    
 	    // Get a solution using the single-objective ga
 	    AhpExperimentMain ahpExp = new AhpExperimentMain();
-	    PrioritizationSolution sogaSolution = ahpExp.runSOGA(subSystem, distanceType, weightType, (AbstractPrioritizationProblem)problem);
+	    PrioritizationSolution sogaSolution = ahpExp.runSOGA(distanceType, weightType, (AbstractPrioritizationProblem)problem);
 	    PrioritizationSolution mogaSolution = (PrioritizationSolution) problem.createSolution();
 	    for (int i = 0; i < sogaSolution.getNumberOfVariables(); i++){
 	    	mogaSolution.setVariableValue(i, sogaSolution.getVariableValue(i));
@@ -145,7 +148,7 @@ public class AhpExperimentMain {
 	    problem.evaluate(mogaSolution);
 	    ahpPareto.clear();
 	    ahpPareto.add(mogaSolution);
-	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + subSystem + "_" + distanceType.toString() + "_" + weightType.toString() + "_soga_pareto.csv");
+	    GAUtils.printParetoFrontWithLabels(ahpPareto, outputBase + SUBSYSTEM + "_" + distanceType.toString() + "_" + weightType.toString() + "_soga_pareto.csv");
 	}
 
 }

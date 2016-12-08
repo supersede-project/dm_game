@@ -86,7 +86,7 @@ public class ReadAHPTest {
 		String subSystem = "Timeline";
 		DistanceType distanceType = DistanceType.KENDALL;
 		WeightType weightType = WeightType.EQUAL;
-		experiment.runMOGA(subSystem, distanceType, weightType);
+		experiment.runMOGA(distanceType, weightType);
 	    
 	}
 	

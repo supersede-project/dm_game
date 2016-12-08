@@ -37,11 +37,10 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	 * @param requirementsFile
 	 * @param of
 	 */
-	public MultiObjectivePrioritizationProblem(int numPlayers,
-			String criteriaFile, String dependenciesFile,
+	public MultiObjectivePrioritizationProblem(String inputDir, String criteriaFile, String dependenciesFile,
 			String criteriaWeightFile, String playerWeightFile,
 			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
-		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
+		super(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 		problemName = "MultiObjectivePrioritizationProblem";
 	}
 

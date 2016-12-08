@@ -25,6 +25,7 @@ import org.uma.jmetal.solution.PermutationSolution;
 
 import eu.supersede.dm.algorithms.AHPStructure;
 import eu.supersede.dm.algorithms.Ahp;
+import eu.supersede.dm.iga.AhpExperimentMain;
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
 import eu.supersede.dm.iga.utils.MapUtil;
 import eu.supersede.dm.iga.utils.StatisticsUtils;
@@ -138,13 +139,13 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	}
 
 	
-	public AbstractPrioritizationProblem(int numPlayers, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
+	public AbstractPrioritizationProblem(String inputDir, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
 		WEIGHT_TYPE = weightType;
 		DISTANCE_TYPE = distanceType;
 		OBJECTIVE_FUNCTION = of;
 		GA_VARIANT = gaVariant;
-		numberOfPlayers = numPlayers;
-		readProblem(criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile);
+//		numberOfPlayers = numPlayers;
+		readProblem(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile);
 		numberOfRequirements = requirements.size();
 		numberOfVariables = numberOfRequirements;
 		if (GA_VARIANT == GAVariant.MO){
@@ -173,17 +174,18 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	 * @param dependenciesFile 
 	 */
 	
-	private void readProblem (String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile){
+	private void readProblem (String inputDir, String criteriaFile, String dependenciesFile, String criteriaWeightFile, String playerWeightFile, String requirementsFile){
 		criteria = Utils.readCriteria(criteriaFile);
 		criteriaWeights = Utils.readCriteriaWeights(criteriaWeightFile);
-		String rankingsFile = "resources/input/rankings_p__NUM__.csv";
+		playerWeights = Utils.playerWeightsToProbabilities(Utils.readPlayerWeights(playerWeightFile));
+		numberOfPlayers = playerWeights.get("c1").keySet().size();
+		String rankingsFile = inputDir + "/ranking_p__NUM__.csv";
 		playerRankings = new HashMap<String, Map<String, List<String>>> ();
 		for (int i = 0; i < numberOfPlayers; i++){
 			Map<String, List<String>> rankings = Utils.readPlayerRankings(rankingsFile.replace("__NUM__", ""+(i+1)));
-			playerRankings.put("P"+(i+1), rankings);
+			playerRankings.put("p"+(i+1), rankings);
 		}
 		dependencies = Utils.readDependencies(dependenciesFile);
-		playerWeights = Utils.playerWeightsToProbabilities(Utils.readPlayerWeights(playerWeightFile));
 		requirements = Utils.readRequirements(requirementsFile);
 		REQUIREMENT_IDS.addAll(requirements.keySet());
 		Collections.sort(REQUIREMENT_IDS);
@@ -359,6 +361,10 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		
 		dependencies = new HashMap<String, Set<String>> ();
 //		dependencies = Utils.readDependencies(dependenciesFile);
+		
+		// export player rankings to file
+		//Utils.exportAnonymizedPlayerRankings(playerRankings, AhpExperimentMain.SUBSYSTEM);
+		//System.exit(0);
 	}
 	
 
@@ -378,7 +384,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 				valid = false;
 			}
 		}while (!valid && trials <= 10);
-		System.err.println(trials + " trails, " + valid);
+//		System.err.println(trials + " trails, " + valid);
 		registerSeenPermutation(solution);
 		return solution;
 	}

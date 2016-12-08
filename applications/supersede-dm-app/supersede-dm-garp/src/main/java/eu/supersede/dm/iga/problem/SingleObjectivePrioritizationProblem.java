@@ -41,11 +41,10 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 	/**
 	 * 
 	 */
-	public SingleObjectivePrioritizationProblem(int numPlayers,
-			String criteriaFile, String dependenciesFile,
+	public SingleObjectivePrioritizationProblem(String inputDir, String criteriaFile, String dependenciesFile,
 			String criteriaWeightFile, String playerWeightFile,
 			String requirementsFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType) {
-		super(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
+		super(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 		problemName = "SingleObjectivePrioritizationProblem";
 		
 

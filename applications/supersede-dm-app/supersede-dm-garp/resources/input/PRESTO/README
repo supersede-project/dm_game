@@ -1,0 +1,12 @@
+This folder contains the requirements prioritization dataset from the PRESTO project. More information about the project could be found in the following publication:
+M. Robol and P. Busetta. Applying bdi to serious games: The presto experience.
+Technical report, Universita di Trento, 2016.
+
+The dataset contains three subsystems: SceneSelection, System, and Timeline; each in a separate folder. Each folder contains:
+- list of requirements for that subsystem (requirements.csv)
+- list of criteria for prioritization (criteria.csv)
+- weights of the criteria (weights_criteria.csv)
+- weights of the decision makers involved in the prioritization process (weights_players.csv)
+- prioritizations of the requirements by each decision maker and for each criterion (ranking_pN.csv, where N=1, 2, 3, ... is the number of decision makers)
+- the result of prioritization of the requirements by the team using two methods based on AHP (Prioritization_ahp_negotiator.csv, Prioritization_ahp_average.csv)
+
