@@ -1,6 +1,6 @@
 {
   "name": "Decision Making Game",
   "tagline": "",
-  "body": "The DMGame software tool consists of:\r\n• a set of decision making algorithms;\r\n• a general process management component, called the orchestrator;\r\n• a set of decision making methods, integrated in the orchestrator;\r\n• a set of user interfaces, which rely on the functional and technical specifications of WP5 Front End;\r\n• a set of software interfaces, in the form of REST methods, which allow the communication with the WP5 Integration Framework.\r\n",
+  "body": "The DMGame software tool consists of:\r\n\r\n• a set of decision making algorithms;\r\n\r\n• a general process management component, called the orchestrator;\r\n\r\n• a set of decision making methods, integrated in the orchestrator;\r\n\r\n• a set of user interfaces, which rely on the functional and technical specifications of WP5 Front End;\r\n\r\n• a set of software interfaces, in the form of REST methods, which allow the communication with the WP5 Integration Framework.\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
