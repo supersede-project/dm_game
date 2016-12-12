@@ -28,7 +28,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 	String name;
 	
 	
-	BPMNExecutor executor = new BPMNExecutor();
+//	BPMNExecutor executor = new BPMNExecutor();
 	
 	
 	List<DMRoleSpec> list = new ArrayList<>();
@@ -47,7 +47,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 		options.add( new DMOption( "gamification", new String[] { "on", "off" } ) );
 		options.add( new DMOption( "negotiator", new String[] { "active", "not active" } ) );
 
-		executor.loadBPMN( "supersedeAHPDM.bpmn20.xml" );
+//		executor.loadBPMN( "supersedeAHPDM.bpmn20.xml" );
 	}
 	
 	public String getName() {
@@ -88,8 +88,8 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 	//	}
 
 	public void init( DMStatus status ) {
-		String pid = executor.startBPMN( "supersedeAHPDM" );
-		status.setProperty( "pid", pid );
+//		String pid = executor.startBPMN( "supersedeAHPDM" );
+//		status.setProperty( "pid", pid );
 	}
 
 	public void callAHP() {
@@ -116,7 +116,8 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 	}
 
 	public List<DMTask> getActiveTasks( DMStatus status ) {
-		return executor.getActiveTasks( status.getProperty( "pid", "" ) );
+		return new ArrayList<>();
+//		return executor.getActiveTasks( status.getProperty( "pid", "" ) );
 	}
 
 	public void createGame( DMStatus status ) {
@@ -125,7 +126,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 	}
 
 	public void completeTask(DMStatus status, DMTask task) {
-		executor.completeTask( status.getProperty( "pid", "" ), task );
+//		executor.completeTask( status.getProperty( "pid", "" ), task );
 	}
 
 	public void callAHP( DMStatus status ) {

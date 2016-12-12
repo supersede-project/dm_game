@@ -14,4 +14,14 @@ public class DMUser {
 		return this.name;
 	}
 	
+	public String toString() {
+		String string = name;
+		string += " [";
+		for( DMSkill skill : skills ) {
+			string += skill + ";";
+		}
+		string += "]";
+		return string;
+	}
+	
 }

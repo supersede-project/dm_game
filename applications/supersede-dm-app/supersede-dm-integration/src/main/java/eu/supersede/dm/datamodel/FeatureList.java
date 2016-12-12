@@ -13,4 +13,8 @@ public class FeatureList {
 		return this.features;
 	}
 	
+	public int getProjectNum() {
+		return 0;
+	}
+	
 }

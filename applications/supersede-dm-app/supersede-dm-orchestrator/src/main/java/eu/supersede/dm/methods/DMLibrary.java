@@ -23,7 +23,7 @@ public class DMLibrary {
 
 		{
 			Reflections reflections = new Reflections( DMLibrary.class.getPackage().getName() );
-
+			
 			Set<Class<? extends DMMethod>> subTypes = reflections.getSubTypesOf( DMMethod.class );
 
 			for( Class<? extends DMMethod> cls : subTypes ) {
@@ -31,7 +31,9 @@ public class DMLibrary {
 					DMMethod method = (DMMethod)cls.newInstance();
 					methods.put( method.getName(), method );
 				}
-				catch( Exception ex ) {}
+				catch( Exception ex ) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		
@@ -61,6 +63,10 @@ public class DMLibrary {
 
 	public DMMethod getMethod( String methodName ) {
 		return methods.get( methodName );
+	}
+	
+	public void addMethod( DMMethod method ) {
+		this.methods.put( method.getName(), method );
 	}
 
 }

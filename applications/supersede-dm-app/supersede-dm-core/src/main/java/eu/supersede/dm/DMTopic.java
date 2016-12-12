@@ -14,4 +14,8 @@ public class DMTopic {
 		return this.name;
 	}
 	
+	public String toString() {
+		return name;
+	}
+	
 }

@@ -38,4 +38,20 @@ public class DMRequirement extends DMItem implements Cloneable {
 		return r;
 	}
 	
+	public String toString() {
+		String string = "";
+		string += getId();
+		string += ": " + getText();
+		if( topic != null ) {
+			string += " [" + topic.getName() + "]";
+		}
+		if( dependencies.size()> 0 ) {
+			string += " deps:";
+			for( String dep : dependencies ) {
+				string += dep + ";";
+			}
+		}
+		return string;
+	}
+	
 }

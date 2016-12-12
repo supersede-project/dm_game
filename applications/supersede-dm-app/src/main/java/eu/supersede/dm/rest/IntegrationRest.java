@@ -40,7 +40,7 @@ import eu.supersede.gr.logics.Datastore;
 import eu.supersede.gr.model.Requirement;
 
 @RestController
-@RequestMapping("/api/monitoring/alert")
+@RequestMapping("/api")
 public class IntegrationRest implements AlertManager, FeatureManager {
 	
 	@Autowired
@@ -48,7 +48,7 @@ public class IntegrationRest implements AlertManager, FeatureManager {
 	
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	@RequestMapping(value = "/alert", method = RequestMethod.POST)
+	@RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
 	public void notifyAlert(@RequestBody Alert alert) {
 		log.debug("Alert received: " + alert);
 		
@@ -86,12 +86,19 @@ public class IntegrationRest implements AlertManager, FeatureManager {
 	}
 
 	@Override
-	@RequestMapping(value = "/api/enacting/schedule", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
 	public void scheduleRequirement( FeatureList features ) {
 		
 		for( Feature feature : features.list() ) {
 			System.out.println( "Received: " + feature );
 		}
+		
+	}
+	
+	@RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
+	public void scheduleFeature( Feature feature ) {
+		
+		System.out.println( "Received: " + feature );
 		
 	}
 	

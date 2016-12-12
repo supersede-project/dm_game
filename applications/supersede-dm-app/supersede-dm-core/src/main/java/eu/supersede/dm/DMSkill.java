@@ -11,4 +11,10 @@ public class DMSkill {
 		this.level = level;
 	}
 	
+	public String toString() {
+		String string = topic.toString();
+		string += ":" + level;
+		return string;
+	}
+	
 }
