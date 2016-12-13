@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
 	maven {url 'http://repo.spring.io/milestone' }
 	maven {url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot-local/'}
+	maven {url 'http://supersede.es.atos.net:10080/artifactory/ext-release-local/'}
 }
 
 configurations {
