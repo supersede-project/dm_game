@@ -1,0 +1,18 @@
+<script src="supersede-dm-app/ahprp/js/requirements_criterias_editing.js"></script>
+
+<div ng-controller="requirements_criterias_editing" style="height: 500px;">
+	
+	<div id='jqxTabs'>
+		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
+			<li>Criterias</li>
+			<li>Requirements</li>
+		</ul>
+		<div>
+			<jqx-grid id="criteriaGrid" jqx-create="createWidgetCriteria" jqx-settings="criteriaSettings"></jqx-grid>
+		</div>
+		<div>
+			<jqx-grid id="requirementGrid" jqx-create="createWidgetRequirement" jqx-settings="requirementSettings"></jqx-grid>
+		</div>
+	</div>
+	
+</div>

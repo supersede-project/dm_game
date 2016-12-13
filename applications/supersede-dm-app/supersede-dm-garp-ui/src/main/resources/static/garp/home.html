@@ -1,0 +1,40 @@
+<script src="supersede-dm-app/garp/js/home.js"></script>
+
+<div ng-controller="display_games">
+	
+		<p>
+			<a ng-click="createNew()">
+				<img src="supersede-dm-app/garp/img/create-new.png" title="Create New" height="104" width="301">
+			</a>
+		</p>
+		
+	<h1>Ongoing Games</h1>
+	
+	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
+        <div id="jqxgrid"></div>
+    </div>
+    
+</div>
+
+<!-- script src="supersede-dm-app/garp/js/home.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+    $http.get('supersede-dm-app/garp/ownedgames').success(function(data) {} );
+        	$("#jqxgrid").jqxGrid(
+                    {
+                        width: 670,
+                        columns: [
+                          { text: 'Name', datafield: 'firstname', width: 100 },
+                          { text: 'Date', datafield: 'lastname', width: 100 },
+                          { text: 'Status', datafield: 'productname', width: 180 },
+                        ]
+                    });
+        });
+     </script> 
+<div class="container" ng-controller="home">
+
+	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
+        <div id="jqxgrid"></div>
+    </div>
+    
+</div-->

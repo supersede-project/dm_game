@@ -13,8 +13,6 @@ public class ModuleLoader {
 	
 	public ModuleLoader() {
 		
-		System.out.println( ">>> ModuleLoader initialized " + au );
-		
 	}
 	
 }
