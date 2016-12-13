@@ -25,8 +25,10 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.WeightType;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 import eu.supersede.dm.iga.utils.GAUtils;
@@ -51,19 +53,28 @@ public class GAMain {
 	
 	public static void main(String[] args) {
 		GAVariant gaVariant = GAVariant.MO; // multi-objective
-		if (args != null && args.length == 1){
-			gaVariant = GAVariant.valueOf(args[0]);
+		if (args.length < 2){
+			System.err.println("Please provide the path to input directory, output directory, and an optional parameter to indicate type of algorithm: SO or MO, defaults to MO");
+			System.exit(0);
+		}
+		
+		String inputDirectory = args[0];
+		String outputDirectory = args[1];
+		if (args.length == 3){
+			gaVariant = GAVariant.valueOf(args[2]);
 		}
 		
 		// set common parameters for the algorithms
-		int numPlayers = 6; // Integer.parseInt(args[1]);
-		String criteriaFile = "resources/input/criteria.csv"; // args[2];
-		String dependenciesFile = "resources/input/dependencies"; // args[3];
-		String criteriaWeightFile = "resources/input/weights_criteria.csv"; // args[4];
-		String playerWeightFile = "resources/input/weights_player.csv"; // args[5];
-		String requirementsFile = "resources/input/requirements.csv"; // args[6];
+//		int numPlayers = 6; // Integer.parseInt(args[1]);
+		String criteriaFile = inputDirectory + "/criteria.csv"; // args[2];
+		String dependenciesFile = inputDirectory + "/dependencies"; // args[3];
+		String criteriaWeightFile = inputDirectory + "/weights_criteria.csv"; // args[4];
+		String playerWeightFile = inputDirectory + "/weights_player.csv"; // args[5];
+		String requirementsFile = inputDirectory + "/requirements.csv"; // args[6];
 		
 		ObjectiveFunction of = ObjectiveFunction.CRITERIA;
+		DistanceType distanceType = DistanceType.KENDALL;
+		WeightType weightType = WeightType.INPUT;
 				
 	    double crossoverProbability = 0.9 ;
 	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
@@ -80,7 +91,7 @@ public class GAMain {
 	    
 		// if single-objective
 		if (gaVariant == GAVariant.SO){
-			problem = new SingleObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant);
+			problem = new SingleObjectivePrioritizationProblem(inputDirectory, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 			
 			double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 		    mutation = new PermutationSwapMutation (mutationProbability) ;
@@ -91,9 +102,9 @@ public class GAMain {
 			algorithm.run();
 			PrioritizationSolution solution = (PrioritizationSolution)algorithm.getResult();
 			System.out.println(solution.toNamedStringWithObjectives());
-			GAUtils.printSolutionWithLabels(solution,"solution.csv");
+			GAUtils.printSolutionWithLabels(solution,outputDirectory + "/solution.csv");
 		}else if (gaVariant == GAVariant.MO){
-			problem = new MultiObjectivePrioritizationProblem(numPlayers, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant);
+			problem = new MultiObjectivePrioritizationProblem(inputDirectory, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 			
 			double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
 		    mutation = new PermutationSwapMutation (mutationProbability) ;
@@ -106,7 +117,7 @@ public class GAMain {
 		    
 //		    GAUtils.printNamedSolutions(pareto, "pareto_solutions.csv");
 //			GAUtils.printFinalSolutionSet(pareto, "pareto");
-			GAUtils.printParetoFrontWithLabels(pareto,"pareto.csv");
+			GAUtils.printParetoFrontWithLabels(pareto, outputDirectory + "/pareto.csv");
 		}else{
 			throw new RuntimeException("Unrecognized algorithm mariant: " + gaVariant + ". Only SO or MO allowed.");
 		}
