@@ -142,6 +142,15 @@ public class PrioritizationSolution extends
 		return toNamedString().hashCode();
 	}
 	
+	public Map<String, Double> toRanks (){
+		Map<String, Double> ranks = new HashMap<String, Double> ();
+		int numVars = getNumberOfVariables();
+		for (int i = 0; i < numVars; i++){
+			ranks.put(getVariableValueString(i), new Double(numVars - i)); //numVars - i ==> weight/score of the requirement: i.e., the higher the value the higher the rank
+		}
+		return ranks;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.uma.jmetal.solution.impl.AbstractGenericSolution#equals(java.lang.Object)
 	 */

@@ -133,6 +133,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		GA_VARIANT = gaVariant;
 //		numberOfPlayers = numPlayers;
 		readProblem(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile);
+		REQUIREMENT_IDS.addAll(requirements.keySet());
+		Collections.sort(REQUIREMENT_IDS);
 		numberOfRequirements = requirements.size();
 		numberOfVariables = numberOfRequirements;
 		if (GA_VARIANT == GAVariant.MO){
@@ -149,6 +151,42 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 
 		System.out.println(numberOfRequirements);
 	}
+
+	public AbstractPrioritizationProblem(SortedMap<String, String[]> criteria2, Map<String, Double> criteriaWeights2,
+			Map<String, Map<String, Double>> playerWeights2, Map<String, String> requirements2, Map<String, Set<String>> dependencies2,
+			Map<String, Map<String, List<String>>> rankings, ObjectiveFunction of, GAVariant gaVariant) {
+		
+		OBJECTIVE_FUNCTION = of;
+		GA_VARIANT = gaVariant;
+		
+		this.criteria = criteria2;
+		this.criteriaWeights = criteriaWeights2;
+		this.playerWeights = playerWeights2;
+		this.requirements = requirements2;
+		this.dependencies = dependencies2;
+		this.playerRankings = rankings;
+		
+		numberOfPlayers = playerWeights.get("c1").keySet().size();
+		
+		REQUIREMENT_IDS.addAll(requirements.keySet());
+		Collections.sort(REQUIREMENT_IDS);
+		numberOfRequirements = requirements.size();
+		numberOfVariables = numberOfRequirements;
+		if (GA_VARIANT == GAVariant.MO){
+			if (OBJECTIVE_FUNCTION == ObjectiveFunction.CRITERIA){
+				numberOfObjectives = criteria.size();
+			}else if (OBJECTIVE_FUNCTION == ObjectiveFunction.PLAYERS){
+				numberOfObjectives = numberOfPlayers;
+			}
+		}else{
+			numberOfObjectives = 1;
+		}
+		numberOfConstraints = 0;
+
+
+		System.out.println(numberOfRequirements);
+	}
+
 
 	/** read the instance of the problem. In particular, read the following aspects of the problem instance:
 	 * Player rankings per each criteria
@@ -174,8 +212,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		}
 		dependencies = Utils.readDependencies(dependenciesFile);
 		requirements = Utils.readRequirements(requirementsFile);
-		REQUIREMENT_IDS.addAll(requirements.keySet());
-		Collections.sort(REQUIREMENT_IDS);
+//		REQUIREMENT_IDS.addAll(requirements.keySet());
+//		Collections.sort(REQUIREMENT_IDS);
 	}
 
 //	private void readProblemFromAHP (String ahpVotesFile, String dependenciesFile, String playerWeightsFile, String criteriaWeightsFile){

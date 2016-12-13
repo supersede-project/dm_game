@@ -5,6 +5,9 @@ package eu.supersede.dm.iga.problem;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.management.JMException;
 
@@ -54,6 +57,19 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	public MultiObjectivePrioritizationProblem(String ahpVotesFile,
 			String dependenciesFile, ObjectiveFunction of, GAVariant gaVariant, DistanceType distanceType, WeightType weightType, String playerWeightsFile, String criteriaWeightsFile) {
 		super(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
+		problemName = "MultiObjectivePrioritizationProblem";
+	}
+
+
+	public MultiObjectivePrioritizationProblem() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public MultiObjectivePrioritizationProblem(SortedMap<String, String[]> criteria,
+			Map<String, Double> criteriaWeights, Map<String, Map<String, Double>> playerWeights, Map<String, String> requirements,
+			Map<String, Set<String>> dependencies, Map<String, Map<String, List<String>>> rankings, ObjectiveFunction of, GAVariant gaVariant) {
+		super(criteria, criteriaWeights, playerWeights, requirements, dependencies, rankings, of, gaVariant);
 		problemName = "MultiObjectivePrioritizationProblem";
 	}
 

@@ -10,6 +10,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.management.JMException;
 
@@ -49,6 +52,19 @@ public class SingleObjectivePrioritizationProblem extends AbstractPrioritization
 		
 
 	}
+
+	public SingleObjectivePrioritizationProblem() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public SingleObjectivePrioritizationProblem(SortedMap<String, String[]> criteria,
+			Map<String, Double> criteriaWeights, Map<String, Map<String, Double>> playerWeights, Map<String, String> requirements,
+			Map<String, Set<String>> dependencies, Map<String, Map<String, List<String>>> rankings, ObjectiveFunction of, GAVariant gaVariant) {
+		super(criteria, criteriaWeights, playerWeights, requirements, dependencies, rankings, of, gaVariant);
+		problemName = "SingleObjectivePrioritizationProblem";
+	}
+
 
 	/*
 	 * (non-Javadoc)
