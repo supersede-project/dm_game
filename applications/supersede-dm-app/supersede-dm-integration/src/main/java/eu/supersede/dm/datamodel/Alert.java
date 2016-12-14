@@ -4,6 +4,41 @@ import java.util.List;
 
 public class Alert {
 	
+	public List<UserRequest> getRequests() {
+		return requests;
+	}
+
+
+	public void setRequests(List<UserRequest> requests) {
+		this.requests = requests;
+	}
+
+
+	public void setID(String iD) {
+		ID = iD;
+	}
+
+
+	public void setApplicationID(String applicationID) {
+		this.applicationID = applicationID;
+	}
+
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
+	}
+
+
+	public void setConditions(List<Condition> conditions) {
+		this.conditions = conditions;
+	}
+
+
 	String				ID;
 	String				applicationID;
 	long				timestamp;
