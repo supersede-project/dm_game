@@ -18,14 +18,15 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
 	
     $http.get('supersede-dm-app/garp/game/ownedgames')
 	.success(function(data) {
-		var data = [{ "empName": "test", "age": "67", "department": { "id": "1234", "name": "Sales" }, "author": "ravi"}];
+		//var data = [{ "empName": "test", "age": "67", "department": { "id": "1234", "name": "Sales" }, "author": "ravi"}];
 		// prepare the data
+		console.log(data);
 		var source =
 		{
 		    datatype: "json",
 		    datafields: [
-		        { name: 'empName' },
-		        { name: 'age' },
+		        { name: 'id' },
+		        { name: 'owner' },
 		        { name: 'id', map: 'department&gt;id' },
 		        { name: 'name', map: 'department&gt;name' },
 		        { name: 'author' }
@@ -38,9 +39,9 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                     width: 670,
                     source: dataAdapter,
                     columns: [
-                      { text: 'Name', datafield: 'firstname', width: 100 },
-                      { text: 'Date', datafield: 'lastname', width: 100 },
-                      { text: 'Status', datafield: 'productname', width: 180 },
+                      { text: 'Name', datafield: 'name', width: 100 },
+                      { text: 'Date', datafield: 'data', width: 100 },
+                      { text: 'Status', datafield: 'status', width: 180 },
                     ]
                 });
 	});
@@ -61,4 +62,23 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
 	    	console.log(err);
 	    });
 	};
+	
+	$scope.createNew = function()
+	{
+		$http({
+			url: "supersede-dm-app/garp/game/newrandom",
+//	        data: $scope.game,
+	        method: 'GET',
+	        params: {criteriaValues : $scope.choices}
+	    }).success(function(data){
+	    	console.log(data);
+//	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
+//	    	$scope.choices = {};
+//	    	$scope.currentPage = 'page1';
+	    	$location.url('supersede-dm-app/garp/home').search('gameId', data);
+	    }).error(function(err){
+	    	console.log(err);
+	    });
+	}
+	
 });

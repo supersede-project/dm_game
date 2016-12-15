@@ -22,12 +22,22 @@ public class GAGameRest {
 	
 	@RequestMapping(value="/ownedgames", method = RequestMethod.GET)
 	public List<GAGame> getOwnedGames() {
-		return GAVirtualDB.get().getOwnedGames( 1L );
+		List<GAGame> list = new ArrayList<>();
+		list.add( new GAGame() );
+		return list;
+//		return GAVirtualDB.get().getOwnedGames( 1L );
 	}
 //	public List<GAGame> getOwnedGames( Authentication authentication ) {
 //		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 //		return GAVirtualDB.get().getOwnedGames( currentUser.getUserId() );
 //	}
+	
+	@RequestMapping(value="/newrandom",method=RequestMethod.GET)
+	public GAGame createNewRandomGame() {
+		GAGame game = new GAGame();
+		GAVirtualDB.get().create( game );
+		return game;
+	}
 	
 	@RequestMapping(value="/activegames", method = RequestMethod.GET)
 	public List<GAGame> getActiveGames() {
@@ -53,9 +63,9 @@ public class GAGameRest {
 		
 		IGAAlgorithm algo = new IGAAlgorithm();
 		
-		algo.setCriteria( game.getCriteria() );
+		algo.setCriteria( GAVirtualDB.get().getCriteria( game ) );
 		
-		for( String rid : game.getRequirements() ) {
+		for( String rid : GAVirtualDB.get().getRequirements( game ) ) {
 			algo.addRequirement( rid, new ArrayList<>() );
 		}
 		
