@@ -86,6 +86,17 @@ public class GAGameRest {
 		GAVirtualDB.get().setRanking( gameId, currentUser.getUserId(), reqs );
 	}
 	
+	@RequestMapping(value="/requirements",method=RequestMethod.POST)
+	public List<Requirement> getRequirements( Authentication authentication, Long gameId ) {
+		return availableRequirements.findAll();
+//		List<Requirement> gameReqs = new ArrayList<>();
+//		List<Requirement> reqs = availableRequirements.findAll();
+//		for( Long id : GAVirtualDB.get().getRequirements( gameId ) ) {
+//			
+//		}
+//		return gameReqs;
+	}
+	
 	@RequestMapping(value="/calc", method = RequestMethod.GET)
 	public List<Map<String,Double>> calcRanking( Authentication authentication, GAGame game ) {
 		
@@ -93,7 +104,7 @@ public class GAGameRest {
 		
 		algo.setCriteria( GAVirtualDB.get().getCriteria( game ) );
 		
-		for( Long rid : GAVirtualDB.get().getRequirements( game ) ) {
+		for( Long rid : GAVirtualDB.get().getRequirements( game.getId() ) ) {
 			algo.addRequirement( "" + rid, new ArrayList<>() );
 		}
 		

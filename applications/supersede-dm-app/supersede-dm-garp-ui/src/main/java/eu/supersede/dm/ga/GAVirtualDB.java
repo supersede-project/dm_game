@@ -88,8 +88,8 @@ public class GAVirtualDB {
 		return gi.criteria;
 	}
 	
-	public List<Long> getRequirements(GAGame game) {
-		GameInfo gi = getGameInfo( game.getId() );
+	public List<Long> getRequirements( Long gameId ) {
+		GameInfo gi = getGameInfo( gameId );
 		if( gi == null ) {
 			return new ArrayList<>();
 		}

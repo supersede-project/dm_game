@@ -18,7 +18,7 @@ cd supersede-dm-ahprp-ui
 gradle build --refresh-dependencies
 cd ..
 cd supersede-dm-garp
-gradle build --refresh-dependencies
+gradle build --refresh-dependencies -x test
 cd ..
 cd supersede-dm-planning-jmetal
 gradle build --refresh-dependencies
@@ -26,5 +26,5 @@ cd ..
 cd supersede-dm-orchestrator
 gradle build --refresh-dependencies
 cd ..
-gradle build --refresh-dependencies
+gradle build --refresh-dependencies -x test
 cd ..
