@@ -24,18 +24,23 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 datatype: "json",
                 datafields: [
                     { name: 'id' },
-                    { name: 'owner' }
+                    { name: 'owner' },
+                    { name : 'date' },
+                    { name : 'status' }
                 ],
                 localdata: data
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({
-                width: 300,
+                width: 500,
                 autoheight: true,
                 source: dataAdapter,
                 columns: [
-                  { text: 'Id', datafield: 'id', width: 100 },
-                  { text: 'Owner', datafield: 'owner', width: 100 }                    ]
+                  { text: 'Id', datafield: 'id', width: 200 },
+                  { text: 'Owner', datafield: 'owner', width: 100 },
+                  { text: 'Date', datafield: 'date', width: 100 },
+                  { text: 'Status', datafield: 'status', width: 100 }
+                ]
             });
         });
     };
@@ -48,18 +53,23 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 datatype: "json",
                 datafields: [
                     { name: 'id' },
-                    { name: 'owner' }
+                    { name: 'owner' },
+                    { name : 'date' },
+                    { name : 'status' }
                 ],
                 localdata: data
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#activeGames").jqxGrid( {
-                width: 300,
+                width: 500,
                 autoheight: true,
                 source: dataAdapter,
                 columns: [
-                  { text: 'Id', datafield: 'id', width: 100 },
-                  { text: 'Owner', datafield: 'owner', width: 100 }                    ]
+                  { text: 'Id', datafield: 'id', width: 200 },
+                  { text: 'Owner', datafield: 'owner', width: 100 },
+                  { text: 'Date', datafield: 'date', width: 100 },
+                  { text: 'Status', datafield: 'status', width: 100 }
+                ]
             });
         });
     };
