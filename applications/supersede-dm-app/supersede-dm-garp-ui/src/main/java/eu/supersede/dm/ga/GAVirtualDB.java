@@ -44,11 +44,12 @@ public class GAVirtualDB
         return gi;
     }
 
-    public void create(GAGame game, List<String> gameCriteria, List<Long> gameRequirements)
+    public void create(GAGame game, List<String> criteria, List<Long> requirements, List<Long> participants)
     {
         GameInfo gi = create(game);
-        gi.requirements = gameRequirements;
-        gi.criteria = gameCriteria;
+        gi.requirements = requirements;
+        gi.criteria = criteria;
+        gi.participants = participants;
     }
 
     public List<GAGame> getOwnedGames(Long owner)

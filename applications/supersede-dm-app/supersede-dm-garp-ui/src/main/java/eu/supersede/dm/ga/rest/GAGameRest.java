@@ -17,8 +17,10 @@ import eu.supersede.dm.ga.data.GAGame;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
@@ -30,6 +32,9 @@ public class GAGameRest
 
     @Autowired
     private RequirementsJpa availableRequirements;
+
+    @Autowired
+    private UsersJpa users;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
     public List<GAGame> getOwnedGames(Authentication authentication)
@@ -57,27 +62,35 @@ public class GAGameRest
         game.setStatus("open");
 
         List<String> gameCriteria = new ArrayList<>();
+        List<ValutationCriteria> criteria = valutationCriterias.findAll();
+        Collections.shuffle(criteria, new Random(System.nanoTime()));
+
+        for (int i = 0; ((i < 2) | i < criteria.size()); i++)
         {
-            List<ValutationCriteria> criteria = valutationCriterias.findAll();
-            Collections.shuffle(criteria, new Random(System.nanoTime()));
-            for (int i = 0; ((i < 2) | i < criteria.size()); i++)
-            {
-                gameCriteria.add(criteria.get(i).getName());
-            }
+            gameCriteria.add(criteria.get(i).getName());
         }
 
         List<Long> gameRequirements = new ArrayList<>();
+        List<Requirement> requirements = availableRequirements.findAll();
+        Collections.shuffle(requirements, new Random(System.nanoTime()));
+        int max = new Random(System.currentTimeMillis()).nextInt(requirements.size());
+
+        for (int i = 0; i < max; i++)
         {
-            List<Requirement> requirements = availableRequirements.findAll();
-            Collections.shuffle(requirements, new Random(System.nanoTime()));
-            int max = new Random(System.currentTimeMillis()).nextInt(requirements.size());
-            for (int i = 0; i < max; i++)
-            {
-                gameRequirements.add(requirements.get(i).getRequirementId());
-            }
+            gameRequirements.add(requirements.get(i).getRequirementId());
         }
 
-        GAVirtualDB.get().create(game, gameCriteria, gameRequirements);
+        List<Long> gameParticipants = new ArrayList<>();
+        List<User> participants = users.findAll();
+        Collections.shuffle(participants, new Random(System.nanoTime()));
+        max = new Random(System.currentTimeMillis()).nextInt(participants.size());
+
+        for (int i = 0; i < max; i++)
+        {
+            gameParticipants.add(participants.get(i).getUserId());
+        }
+
+        GAVirtualDB.get().create(game, gameCriteria, gameRequirements, gameParticipants);
         return game;
     }
 
