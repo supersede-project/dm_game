@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.supersede.dm.ga.data.GAGame;
 
 public class GAVirtualDB
 {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     static GAVirtualDB instance = new GAVirtualDB();
 
     public static GAVirtualDB get()
@@ -35,12 +40,6 @@ public class GAVirtualDB
         gi.game = game;
         games.put(game.getId(), gi);
         ownedGames.put(game.getOwner(), game);
-
-        for (Long provider : getParticipants(game))
-        {
-            activeGames.put(provider, game);
-        }
-
         return gi;
     }
 
@@ -50,6 +49,14 @@ public class GAVirtualDB
         gi.requirements = requirements;
         gi.criteria = criteria;
         gi.participants = participants;
+
+        for (Long provider : participants)
+        {
+            activeGames.put(provider, game);
+        }
+
+        log.info("Created game: " + game.getId() + ", requirements: " + gi.requirements.size() + ", criteria: "
+                + gi.criteria.size() + ", participants: " + gi.participants.size());
     }
 
     public List<GAGame> getOwnedGames(Long owner)

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,8 @@ import eu.supersede.gr.model.ValutationCriteria;
 @RequestMapping("/garp/game")
 public class GAGameRest
 {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private ValutationCriteriaJpa valutationCriterias;
 
@@ -88,6 +92,7 @@ public class GAGameRest
         for (int i = 0; i < max; i++)
         {
             gameParticipants.add(participants.get(i).getUserId());
+            log.info("Added user id " + participants.get(i).getUserId() + " to game id: " + game.getId());
         }
 
         GAVirtualDB.get().create(game, gameCriteria, gameRequirements, gameParticipants);
