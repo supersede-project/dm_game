@@ -1,54 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title id="Description">Mockup for Requirements Ordering</title>
-    <link rel="stylesheet" type="text/css" href="jqwidgets/styles/jqx.base.css" />
-    <link rel="stylesheet" type="text/css" href="jqwidgets/styles/jqx.summer.css" />
-    <script type="text/javascript" src="scripts/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqx-all.js"></script>
-    <style>
-        h1 {
-            text-align: center;
-        }
-        #sortable {
-            margin: 0 auto;
-            padding: 5px;
-            width: 520px;
-        }
-        #sortable > div {
-            border-radius: 5px;
-            margin: 5px;
-        }
-        #sortable div {
-            padding: 5px;
-        }
-        #sortable div:hover {
-            border: 1px solid #356AA0;
-        }
-    </style>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var requirements = ["First Requirement", "Second Requirement", "Third Requirement", "Fourth Requirement", "Fifth Requirement"];
-            var descriptions = ['<strong>Description</strong>: description of the first requirement.<br><strong>Characteristics</strong>: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><strong>Issue</strong>: <a href="http://mantis/R0" target="_blank">http://mantis/R0</a>',
-                            '<strong>Description</strong>: description of the second requirement.<br><strong>Characteristics</strong>: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><strong>Issue</strong>: <a href="http://mantis/R1" target="_blank">http://mantis/R1</a>',
-                            '<strong>Description</strong>: description of the third requirement.<br><strong>Characteristics</strong>: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><strong>Issue</strong>: <a href="http://mantis/R2" target="_blank">http://mantis/R2</a>',
-                            '<strong>Description</strong>: description of the fourth requirement.<br><strong>Characteristics</strong>: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><strong>Issue</strong>: <a href="http://mantis/R3" target="_blank">http://mantis/R3</a>',
-                            '<strong>Description</strong>: description of the fifth requirement.<br><strong>Characteristics</strong>: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<br><strong>Issue</strong>: <a href="http://mantis/R4" target="_blank">http://mantis/R4</a>',];
-            var sortableList = '';
-            for (var i = 0; i < requirements.length; i++) {
-                var element = '<div class="jqxexpander" style="min-width: 500px"><div><strong>R' + i + ': ' + requirements[i] +
-                                '</strong></div><div style="background-color: #ffd11a">' + descriptions[i] + '</div></div>';
-                sortableList = sortableList + element;
-            }
-            
-            $("#sortable").html(sortableList);
-            $("#sortable").jqxSortable();
-            $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200, showArrow: true});
-        });
-    </script>
-</head>
-<body>
-    <h1>Mockup for Requirements Ordering</h1>
-    <div id="sortable"></div>
-</body>
-</html>
+<script src="supersede-dm-app/garp/js/gameplay.js"></script>
+<link rel="stylesheet" type="text/css" href="supersede-dm-app/garp/jqwidgets/styles/jqx.summer.css" />
+<style>
+    h1 {
+        text-align: center;
+    }
+    #sortable {
+        margin: 0 auto;
+        padding: 5px;
+        width: 520px;
+    }
+    #sortable > div {
+        border-radius: 5px;
+        margin: 5px;
+    }
+    #sortable div {
+        padding: 5px;
+    }
+    #sortable div:hover {
+        border: 1px solid #356AA0;
+    }
+</style>
+<h1>Mockup for Requirements Ordering</h1>
+<div id="sortable" ng-controller="reqsCtrl">
+    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
+        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
+        <div style="background-color: #ffd11a">
+            <strong>Description</strong>: {{x.description}}<br>
+            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
+            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
+        </div>
+    </div>
+</div>
