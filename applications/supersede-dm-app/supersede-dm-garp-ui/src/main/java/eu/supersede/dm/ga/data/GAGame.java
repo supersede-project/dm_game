@@ -1,21 +1,26 @@
 package eu.supersede.dm.ga.data;
 
-public class GAGame {
-	
-	Long			id;
-	
-	Long			owner;
-	
-	String			date = "";
-	
-	String			status = "open";
-	
-	public Long getOwner() {
-		return this.owner;
-	}
+public class GAGame
+{
+    private static Long identifier = 0L;
 
-	public Long getId() {
-		return this.id;
-	}
-	
+    Long id;
+    Long owner = 1L;
+    String date = "";
+    String status = "open";
+
+    public GAGame()
+    {
+        id = identifier++;
+    }
+
+    public Long getOwner()
+    {
+        return this.owner;
+    }
+
+    public Long getId()
+    {
+        return this.id;
+    }
 }

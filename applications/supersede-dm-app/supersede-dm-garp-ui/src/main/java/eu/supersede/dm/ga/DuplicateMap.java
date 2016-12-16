@@ -7,174 +7,210 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+public class DuplicateMap<K, V> implements Iterable<V>
+{
+    private Map<K, List<V>> map = new HashMap<>();
+    private ArrayList<V> order = new ArrayList<>();
 
-public class DuplicateMap<K, V> implements Iterable<V> {
-	
-	private Map<K, List<V>>		map		= new HashMap<K, List<V>>();
+    public void add(K key, V value)
+    {
+        put(key, value);
+    }
 
-	private ArrayList<V>		order	= new ArrayList<V>();
+    public void clear()
+    {
+        this.map.clear();
+        this.order.clear();
+    }
 
-	public void add( K key, V value ) {
-		put( key, value );
-	}
+    public boolean containsKey(K key)
+    {
+        return this.map.containsKey(key);
+    }
 
-	public void clear() {
-		this.map.clear();
-		this.order.clear();
-	}
+    public boolean containsValue(V value)
+    {
+        return this.order.contains(value);
+    }
 
-	public boolean containsKey( K key ) {
-		return this.map.containsKey( key );
-	}
+    public int count(K key)
+    {
+        List<V> list = this.map.get(key);
 
-	public boolean containsValue( V value ) {
-		return this.order.contains( value );
-	}
+        if (list == null)
+        {
+            return 0;
+        }
 
-	public int count( K key ) {
-		List<V> list = this.map.get( key );
+        return list.size();
+    }
 
-		if( list == null ) {
-			return 0;
-		}
+    public V get(K key)
+    {
+        return get(key, 0);
+    }
 
-		return list.size();
-	}
+    public V get(K key, int index)
+    {
+        List<V> list = this.map.get(key);
 
-	public V get( K key ) {
-		return get( key, 0 );
-	}
+        if (list == null)
+        {
+            return null;
+        }
 
-	public V get( K key, int index ) {
-		List<V> list = this.map.get( key );
+        if (index > (list.size() - 1))
+        {
+            return null;
+        }
 
-		if( list == null ) {
-			return null;
-		}
+        return list.get(index);
+    }
 
-		if( index > (list.size() - 1) ) {
-			return null;
-		}
+    public int getKeyCount()
+    {
+        return this.map.size();
+    }
 
-		return list.get( index );
-	}
+    public java.util.List<V> getList(K key)
+    {
+        if (map.containsKey(key))
+        {
+            return this.map.get(key);
+        }
+        else
+        {
+            return new ArrayList<>();
+        }
+    }
 
-	public int getKeyCount() {
-		return this.map.size();
-	}
+    public boolean isEmpty()
+    {
+        return this.map.isEmpty();
+    }
 
-	public java.util.List<V> getList( K key ) {
-		return this.map.get( key );
-	}
+    public int keyCount()
+    {
+        return this.map.size();
+    }
 
-	public boolean isEmpty() {
-		return this.map.isEmpty();
-	}
+    public Set<K> keySet()
+    {
+        return this.map.keySet();
+    }
 
-	public int keyCount() {
-		return this.map.size();
-	}
+    public List<V> list(K key)
+    {
+        List<V> list = this.map.get(key);
 
-	public Set<K> keySet() {
-		return this.map.keySet();
-	}
+        if (list != null)
+        {
+            return list;
+        }
 
-	public List<V> list( K key ) {
-		List<V> list = this.map.get( key );
-		if( list != null ) {
-			return list;
-		}
-		return new ArrayList<V>();
-	}
+        return new ArrayList<>();
+    }
 
-	public void put( K key, V value ) {
-		List<V> existing = this.map.get( key );
-		if( existing == null ) {
-			List<V> list = new ArrayList<V>();
-			list.add( value );
-			this.map.put( key, list );
-		} else {
-			existing.add( value );
-		}
-		this.order.add( value );
-	}
+    public void put(K key, V value)
+    {
+        List<V> existing = this.map.get(key);
 
-	public void remove( K key ) {
-		for( V val : list( key ) ) {
-			order.remove( val );
-		}
-		
-		map.remove( key );
-	}
+        if (existing == null)
+        {
+            List<V> list = new ArrayList<>();
+            list.add(value);
+            this.map.put(key, list);
+        }
+        else
+        {
+            existing.add(value);
+        }
 
-	public void remove( K key, int n ) {
-		V o = get( key );
+        this.order.add(value);
+    }
 
-		List<V> list = this.map.get( key );
+    public void remove(K key)
+    {
+        for (V val : list(key))
+        {
+            order.remove(val);
+        }
 
-		if( list == null ) {
-			return;
-		}
+        map.remove(key);
+    }
 
-		list.remove( n );
+    public void remove(K key, int n)
+    {
+        V o = get(key);
 
-		this.order.remove( o );
-	}
+        List<V> list = this.map.get(key);
 
-	public int size() {
-		return this.order.size();
-	}
-	
-	public void putAll( DuplicateMap<K,V> newmap ) {
-		
-		for( K key : newmap.keySet() ) {
-			
-			for( int v = 0; v < newmap.count( key ); v++ ) {
-				
-				V value = newmap.get( key, v );
-				
-				this.put( key, value );
-			}
-		}
-	}
-	
-	class ValueIterator implements Iterator<V> {
-		
-		int x = 0, y = 0;
-		
-		@Override
-		public boolean hasNext() {
-			return x < order.size();
-		}
+        if (list == null)
+        {
+            return;
+        }
 
-		@Override
-		public V next() {
-			
-			List<V> list = map.get( order.get( x ) );
-			
-			V v = list.get( y );
-			
-			y++;
-			
-			if( y >= list.size() ) {
-				y = 0;
-				x++;
-			}
-			
-			return v;
-		}
+        list.remove(n);
+        this.order.remove(o);
+    }
 
-		@Override
-		public void remove() {}
-		
-	}
-	
-	@Override
-	public Iterator<V> iterator() {
-		return order.iterator();
-	}
+    public int size()
+    {
+        return this.order.size();
+    }
 
-	public V getValue( int i ) {
-		return order.get( i );
-	}
+    public void putAll(DuplicateMap<K, V> newmap)
+    {
+        for (K key : newmap.keySet())
+        {
+            for (int v = 0; v < newmap.count(key); v++)
+            {
+                V value = newmap.get(key, v);
+                this.put(key, value);
+            }
+        }
+    }
+
+    class ValueIterator implements Iterator<V>
+    {
+        int x = 0, y = 0;
+
+        @Override
+        public boolean hasNext()
+        {
+            return x < order.size();
+        }
+
+        @Override
+        public V next()
+        {
+            List<V> list = map.get(order.get(x));
+            V v = list.get(y);
+            y++;
+
+            if (y >= list.size())
+            {
+                y = 0;
+                x++;
+            }
+
+            return v;
+        }
+
+        @Override
+        public void remove()
+        {
+        }
+    }
+
+    @Override
+    public Iterator<V> iterator()
+    {
+        return order.iterator();
+    }
+
+    public V getValue(int i)
+    {
+        return order.get(i);
+    }
 }
