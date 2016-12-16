@@ -16,15 +16,11 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('display_games', function($scope, $http, $location) {
 
-    $scope.getOwnedGames = function()
-    {
+    $scope.getOwnedGames = function() {
         $http.get('supersede-dm-app/garp/game/ownedgames')
         .success(function(data) {
-            //var data = [{ "empName": "test", "age": "67", "department": { "id": "1234", "name": "Sales" }, "author": "ravi"}];
-            // prepare the data
             console.log(data);
-            var source =
-            {
+            var source = {
                 datatype: "json",
                 datafields: [
                     { name: 'id' },
@@ -33,20 +29,42 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 localdata: data
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#jqxgrid").jqxGrid(
-                    {
-                        //width: 670,
-                        autoheight: true,
-                        source: dataAdapter,
-                        columns: [
-                          { text: 'Id', datafield: 'id', width: 100 },
-                          { text: 'Owner', datafield: 'owner', width: 100 }                    ]
-                    });
+            $("#ownedGames").jqxGrid({
+                width: 300,
+                autoheight: true,
+                source: dataAdapter,
+                columns: [
+                  { text: 'Id', datafield: 'id', width: 100 },
+                  { text: 'Owner', datafield: 'owner', width: 100 }                    ]
+            });
         });
     };
 
-    $scope.createGame = function()
-    {
+    $scope.getActiveGames = function() {
+        $http.get('supersede-dm-app/garp/game/activegames')
+        .success(function(data) {
+            console.log(data);
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'owner' }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#activeGames").jqxGrid( {
+                width: 300,
+                autoheight: true,
+                source: dataAdapter,
+                columns: [
+                  { text: 'Id', datafield: 'id', width: 100 },
+                  { text: 'Owner', datafield: 'owner', width: 100 }                    ]
+            });
+        });
+    };
+
+    $scope.createGame = function() {
         $http({
             url: "supersede-dm-app/ahprp/game",
             data: $scope.game,
@@ -62,26 +80,19 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
         });
     };
 
-    $scope.createNew = function()
-    {
+    $scope.createNew = function() {
         $http({
             url: "supersede-dm-app/garp/game/newrandom",
-//            data: $scope.game,
             method: 'GET'
-//            params: {criteriaValues : $scope.choices}
         }).success(function(data, status){
             console.log(data);
-            console.log("Created new random game!");
-//            $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-//            $scope.choices = {};
-//            $scope.currentPage = 'page1';
-            //$location.url('supersede-dm-app/garp/game/ownedgames');//.search('gameId', data);
-            $scope.getOwnedGames()
+            $scope.getOwnedGames();
+            $scope.getActiveGames()
         }).error(function(err){
             alert(err.message);
         });
     };
 
-    $scope.getOwnedGames()
-
+    $scope.getOwnedGames();
+    $scope.getActiveGames()
 });

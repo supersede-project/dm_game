@@ -2,18 +2,24 @@
 
 <div ng-controller="display_games">
 	
-		<p>
-			<a ng-click="createNew()">
-				<img src="supersede-dm-app/garp/img/create-new.png" title="Create New" height="104" width="301">
-			</a>
-		</p>
-		
-	<h1>Ongoing Games</h1>
-	
-	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
-        <div id="jqxgrid"></div>
+    <p>
+        <a ng-click="createNew()">
+            <img src="supersede-dm-app/garp/img/create-new.png" title="Create New" height="104" width="301">
+        </a>
+    </p>
+
+    <h1>Ongoing Games</h1>
+
+    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
+        <div id="ownedGames"></div>
     </div>
-    
+
+    <h1>Active Games</h1>
+
+    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
+        <div id="activeGames"></div>
+    </div>
+
 </div>
 
 <!-- script src="supersede-dm-app/garp/js/home.js"></script>
