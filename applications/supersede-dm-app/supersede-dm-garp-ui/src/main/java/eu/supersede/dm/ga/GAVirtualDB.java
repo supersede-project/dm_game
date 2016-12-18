@@ -27,7 +27,7 @@ public class GAVirtualDB
         List<String> criteria = new ArrayList<>();
         List<Long> requirements = new ArrayList<>();
         List<Long> participants = new ArrayList<>();
-        Map<Long, List<String>> rankings = new HashMap<>();
+        Map<Long, Map<String,List<Long>>> rankings = new HashMap<>();
     }
 
     DuplicateMap<Long, GAGame> ownedGames = new DuplicateMap<>();
@@ -74,7 +74,19 @@ public class GAVirtualDB
         return activeGames.get(userId);
     }
 
-    public void setRanking(Long gameId, Long userId, List<String> reqs)
+//    public void setRanking(Long gameId, Long userId, List<Long> reqs)
+//    {
+//        GameInfo gi = getGameInfo(gameId);
+//
+//        if (gi == null)
+//        {
+//            return;
+//        }
+//
+//        gi.rankings.put(userId, reqs);
+//    }
+
+    public void setRanking(Long gameId, Long userId, Map<String,List<Long>> reqs)
     {
         GameInfo gi = getGameInfo(gameId);
 
@@ -82,7 +94,7 @@ public class GAVirtualDB
         {
             return;
         }
-
+        
         gi.rankings.put(userId, reqs);
     }
 
@@ -126,4 +138,16 @@ public class GAVirtualDB
 
         return gi.requirements;
     }
+
+	public Map<String,List<Long>> getRequirements( Long gameId, Long userId ) {
+		GameInfo gi = getGameInfo( gameId );
+		if( gi == null ) {
+			return new HashMap<>();
+		}
+		Map<String,List<Long>> map = new HashMap<>();
+		for( String c : gi.criteria ) {
+			map.put( c, gi.requirements );
+		}
+		return map;
+	}
 }
