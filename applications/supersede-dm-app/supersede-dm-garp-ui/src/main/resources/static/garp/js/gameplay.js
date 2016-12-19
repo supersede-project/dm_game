@@ -15,24 +15,46 @@
 var app = angular.module('w5app');
 app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     var gameId = $location.search().id;
+    var requirements = {};
+
     $scope.getGameRequirements = function() {
         $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
         .success(function(data) {
-            console.log(data);
+            getCriteriaRequirements(data);
         }).error(function(err){
             alert(err.message);
         });
     };
+
+    var getRequirement = function(gameRequirements, criterion, i) {
+        requirementId = gameRequirements[criterion][i];
+        $http.get('supersede-dm-app/garp/game/requirement?requirementId=' + requirementId)
+        .success(function(data) {
+            console.log("found requirement:");
+            console.log(data);
+            requirements[criterion].push(data);
+        }).error(function(err){
+            alert(err.message);
+        });
+    };
+
+    var getCriteriaRequirements = function(gameRequirements) {
+        for (var criterion in gameRequirements) {
+            requirements[criterion] = [];
+            for (var i = 0; i < gameRequirements[criterion].length; i++) {
+                getRequirement(gameRequirements, criterion, i);
+            }
+        }
+        console.log("current requirements:");
+        console.log(requirements);
+    };
+
     $scope.getGameRequirements();
-    $scope.requirements = [
-        {id:'R0', title:'First Requirement', description:'description of the first requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R0'},
-        {id:'R1', title:'Second Requirement', description:'description of the second requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R1'},
-        {id:'R2', title:'Third Requirement', description:'description of the third requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R2'},
-        {id:'R3', title:'Fourth Requirement', description:'description of the fourth requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R3'},
-        {id:'R4', title:'Fifth Requirement', description:'description of the fifth requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R4'}
-    ];
+    console.log("current requirements:");
+    console.log(requirements);
 });
 $(document).ready(function () {
-    $("#sortable").jqxSortable();
+    $('#jqxTabs').jqxTabs({ width: 700 });
+    $(".sortable").jqxSortable();
     $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
 });

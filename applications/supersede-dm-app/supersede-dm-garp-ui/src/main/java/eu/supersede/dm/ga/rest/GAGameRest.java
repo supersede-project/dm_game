@@ -112,6 +112,12 @@ public class GAGameRest
         return availableRequirements.findAll();
     }
 
+    @RequestMapping(value = "/requirement", method = RequestMethod.GET)
+    public Requirement getRequirement(Authentication authentication, Long requirementId)
+    {
+        return availableRequirements.findOne(requirementId);
+    }
+
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
     public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
