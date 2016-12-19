@@ -15,7 +15,7 @@
 var app = angular.module('w5app');
 app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     var gameId = $location.search().id;
-    var requirements = {};
+    $scope.requirements = [];
 
     $scope.getGameRequirements = function() {
         $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
@@ -26,32 +26,40 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
         });
     };
 
-    var getRequirement = function(gameRequirements, criterion, i) {
-        requirementId = gameRequirements[criterion][i];
+    var getRequirement = function(gameRequirements, criterionId, i) {
+        var requirementId = gameRequirements[criterionId][i];
         $http.get('supersede-dm-app/garp/game/requirement?requirementId=' + requirementId)
         .success(function(data) {
             console.log("found requirement:");
             console.log(data);
-            requirements[criterion].push(data);
+            for (var i = 0; i < $scope.requirements.length; i++) {
+                if ($scope.requirements[i].id == criterionId) {
+                    $scope.requirements[i].requirements.push(data);
+                }
+            }
         }).error(function(err){
             alert(err.message);
         });
     };
 
     var getCriteriaRequirements = function(gameRequirements) {
-        for (var criterion in gameRequirements) {
-            requirements[criterion] = [];
-            for (var i = 0; i < gameRequirements[criterion].length; i++) {
-                getRequirement(gameRequirements, criterion, i);
+        $scope.requirements = [];
+        for (var criterionId in gameRequirements) {
+            var criterion = {};
+            criterion.id = criterionId;
+            criterion.requirements = [];
+            $scope.requirements.push(criterion);
+            for (var i = 0; i < gameRequirements[criterionId].length; i++) {
+                getRequirement(gameRequirements, criterionId, i);
             }
         }
         console.log("current requirements:");
-        console.log(requirements);
+        console.log($scope.requirements);
     };
 
     $scope.getGameRequirements();
     console.log("current requirements:");
-    console.log(requirements);
+    console.log($scope.requirements);
 });
 $(document).ready(function () {
     $('#jqxTabs').jqxTabs({ width: 700 });
