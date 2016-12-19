@@ -123,7 +123,12 @@ public class GAVirtualDB
 
     public List<String> getCriteria(GAGame game)
     {
-        GameInfo gi = getGameInfo(game.getId());
+    	return getCriteria( game.getId() );
+    }
+
+    public List<String> getCriteria( long gameId )
+    {
+        GameInfo gi = getGameInfo( gameId );
 
         if (gi == null)
         {
