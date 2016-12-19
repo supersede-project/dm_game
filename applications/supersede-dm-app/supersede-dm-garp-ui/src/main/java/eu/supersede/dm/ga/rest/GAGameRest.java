@@ -2,8 +2,10 @@ package eu.supersede.dm.ga.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -136,7 +138,30 @@ public class GAGameRest
             algo.addRequirement("" + rid, new ArrayList<>());
         }
 
+        
+        // get all the players in this game
+        List<Long> participantIds = GAVirtualDB.get().getParticipants(game);
+        
+        // get the rankings of each player for each criterion
+        for (Long userId : participantIds){
+        	String player = users.getOne(userId).getName();
+        	Map<String, List<Long>> userRanking = GAVirtualDB.get().getRanking(game.getId(), userId);
+        	Map<String, List<String>> userRankingStr = new HashMap<String, List<String>>();
+        	for (Entry<String, List<Long>> entry : userRanking.entrySet()){
+        		userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+        	}
+        	algo.addRanking(player, userRankingStr);
+        }
+        
         List<Map<String, Double>> prioritization = algo.calc();
         return prioritization;
+    }
+    
+    private List<String> idToString (List<Long> ids){
+    	List<String> strings = new ArrayList<String>();
+    	for (Long id : ids){
+    		strings.add(availableRequirements.getOne(id).getName());
+    	}
+    	return strings;
     }
 }

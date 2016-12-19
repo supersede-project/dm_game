@@ -101,9 +101,15 @@ public class GAVirtualDB
             map.put( key,  reqs.get( key ) );
         }
         
-//        gi.rankings.put(userId, reqs);
+        gi.rankings.put(userId, map);
     }
 
+    public Map<String,List<Long>> getRanking (Long gameId, Long userId){
+    	GameInfo gi = getGameInfo(gameId);
+    	return gi.rankings.get(userId);
+    }
+
+    
     public GameInfo getGameInfo(Long gameId)
     {
         return games.get(gameId);
