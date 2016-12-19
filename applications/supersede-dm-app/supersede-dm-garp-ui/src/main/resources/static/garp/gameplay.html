@@ -21,13 +21,16 @@
     }
 </style>
 <h1>Mockup for Requirements Ordering</h1>
-<div id="sortable" ng-controller="reqsCtrl">
-    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-        <div style="background-color: #ffd11a">
-            <strong>Description</strong>: {{x.description}}<br>
-            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
+<div id='jqxTabs' ng-controller="reqsCtrl">
+    <ul style='margin-left: 20px;'>
+        <li ng-repeat="criterion in requirements">{{criterion.id}}</li>
+    </ul>
+    <div class="sortable" ng-controller="reqsCtrl" ng-repeat="criterion in requirements">
+        <div ng-repeat="requirement in criterion.requirements" class="jqxexpander" style="min-width: 500px">
+            <div><strong>{{requirement.requirementId + ': ' + requirement.name}}</strong></div>
+            <div style="background-color: #ffd11a">
+                <strong>Description</strong>: {{requirement.description}}<br>
+            </div>
         </div>
     </div>
 </div>

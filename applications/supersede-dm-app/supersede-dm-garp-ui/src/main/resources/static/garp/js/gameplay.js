@@ -13,16 +13,56 @@
 */
 
 var app = angular.module('w5app');
-app.controllerProvider.register('reqsCtrl', function($scope) {
-    $scope.requirements = [
-        {id:'R0', title:'First Requirement', description:'description of the first requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R0'},
-        {id:'R1', title:'Second Requirement', description:'description of the second requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R1'},
-        {id:'R2', title:'Third Requirement', description:'description of the third requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R2'},
-        {id:'R3', title:'Fourth Requirement', description:'description of the fourth requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R3'},
-        {id:'R4', title:'Fifth Requirement', description:'description of the fifth requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R4'}
-    ];
+app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
+    var gameId = $location.search().id;
+    $scope.requirements = [];
+
+    $scope.getGameRequirements = function() {
+        $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
+        .success(function(data) {
+            getCriteriaRequirements(data);
+        }).error(function(err){
+            alert(err.message);
+        });
+    };
+
+    var getRequirement = function(gameRequirements, criterionId, i) {
+        var requirementId = gameRequirements[criterionId][i];
+        $http.get('supersede-dm-app/garp/game/requirement?requirementId=' + requirementId)
+        .success(function(data) {
+            console.log("found requirement:");
+            console.log(data);
+            for (var i = 0; i < $scope.requirements.length; i++) {
+                if ($scope.requirements[i].id == criterionId) {
+                    $scope.requirements[i].requirements.push(data);
+                }
+            }
+        }).error(function(err){
+            alert(err.message);
+        });
+    };
+
+    var getCriteriaRequirements = function(gameRequirements) {
+        $scope.requirements = [];
+        for (var criterionId in gameRequirements) {
+            var criterion = {};
+            criterion.id = criterionId;
+            criterion.requirements = [];
+            $scope.requirements.push(criterion);
+            for (var i = 0; i < gameRequirements[criterionId].length; i++) {
+                getRequirement(gameRequirements, criterionId, i);
+            }
+        }
+        console.log("current requirements:");
+        console.log($scope.requirements);
+    };
+
+    $scope.getGameRequirements();
+    console.log("current requirements:");
+    console.log($scope.requirements);
 });
 $(document).ready(function () {
-    $("#sortable").jqxSortable();
+    $('#jqxTabs').jqxTabs({ width: 700 });
+    $(".sortable").jqxSortable();
     $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
 });
