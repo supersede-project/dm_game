@@ -6,6 +6,8 @@ public class Condition {
 	Operator	operator;
 	Double		value;
 	
+	public Condition() {}
+	
 	public Condition(DataID idMonitoredData, Operator operator, Double value) {
 		super();
 		this.idMonitoredData = idMonitoredData;
