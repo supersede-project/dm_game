@@ -98,27 +98,27 @@ public class GAGameRest
         GAVirtualDB.get().create(game, gameCriteria, gameRequirements, gameParticipants);
         return game;
     }
-    
+
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public void submitAllPriorities(Authentication authentication, Long gameId, Map<String,List<Long>> reqs )
+    public void submitAllPriorities(Authentication authentication, Long gameId, Map<String, List<Long>> reqs)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        GAVirtualDB.get().setRanking( gameId, currentUser.getUserId(), reqs );
+        GAVirtualDB.get().setRanking(gameId, currentUser.getUserId(), reqs);
     }
-    
+
     @RequestMapping(value = "/requirements", method = RequestMethod.POST)
     public List<Requirement> getRequirements(Authentication authentication, Long gameId)
     {
         return availableRequirements.findAll();
     }
-    
+
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
-    public Map<String,List<Long>> getGameRequirements(Authentication authentication, Long gameId)
+    public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-    	return GAVirtualDB.get().getRequirements( gameId, currentUser.getUserId() );
+        return GAVirtualDB.get().getRequirements(gameId, currentUser.getUserId());
     }
-    
+
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
     public List<Map<String, Double>> calcRanking(Authentication authentication, GAGame game)
     {

@@ -13,7 +13,17 @@
 */
 
 var app = angular.module('w5app');
-app.controllerProvider.register('reqsCtrl', function($scope) {
+app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
+    var gameId = $location.search().id;
+    $scope.getGameRequirements = function() {
+        $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
+        .success(function(data) {
+            console.log(data);
+        }).error(function(err){
+            alert(err.message);
+        });
+    };
+    $scope.getGameRequirements();
     $scope.requirements = [
         {id:'R0', title:'First Requirement', description:'description of the first requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R0'},
         {id:'R1', title:'Second Requirement', description:'description of the second requirement', characteristics:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', link:'http://mantis/R1'},
