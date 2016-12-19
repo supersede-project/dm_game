@@ -43,61 +43,61 @@ import eu.supersede.dm.iga.utils.Utils;
  */
 public class ReadAHPTest {
 
-	@Test
-	public void testSO() {
-		String ahpVotesFile = "resources/input/VOTES/System.csv";
-		String dependenciesFile = "resources/input/dependencies";
-		String playerWeightsFile = "resources/input/weights_player_presto.csv"; 
-		String criteriaWeightsFile = "resources/input/weights_criteria_presto.csv";
-		ObjectiveFunction of = ObjectiveFunction.PLAYERS;
-		GAVariant gaVariant = GAVariant.SO;
-		DistanceType distanceType = DistanceType.KENDALL;
-		WeightType weightType = WeightType.EQUAL;
-		
-	    double crossoverProbability = 0.9 ;
-	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
-
-	    int searchBudget = 10000;
-	    int populationSize = 50;
-		
-		
-		SolutionListEvaluator<PermutationSolution<?>> evaluator = new SequentialSolutionListEvaluator<PermutationSolution<?>>();
-	    SelectionOperator<List<PermutationSolution<?>>, PermutationSolution<?>> selection;
-	    
-	    AbstractGeneticAlgorithm<PermutationSolution<?>, ?> algorithm;
-	    MutationOperator<PermutationSolution<?>> mutation;
-	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
-		
-		double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-	    mutation = new PermutationSwapMutation (mutationProbability) ;
-		
-	    selection = new BinaryTournamentSelection<PermutationSolution<?>>(new ObjectiveComparator<PermutationSolution<?>>(0)) ;
-		
-	    algorithm = new GenerationalGeneticAlgorithm(problem, searchBudget, populationSize, crossover, mutation, selection, evaluator);
-		algorithm.run();
-		PrioritizationSolution solution = (PrioritizationSolution)algorithm.getResult();
-		System.out.println(solution.toNamedStringWithObjectives());
-		GAUtils.printSolutionWithLabels(solution,"solution.csv");
-	}
-
-	@Test
-	public void testMO() {
-		AhpExperimentMain experiment = new AhpExperimentMain();
-		String subSystem = "Timeline";
-		DistanceType distanceType = DistanceType.KENDALL;
-		WeightType weightType = WeightType.EQUAL;
-		experiment.runMOGA(distanceType, weightType);
-	    
-	}
-	
-	@Test
-	public void treeMapTest(){
-		SortedMap<String, String[]> criteria = new TreeMap<String, String[]>();
-		criteria.put("B", null);
-		criteria.put("C", null);
-		criteria.put("A", null);
-		for (String cr : criteria.keySet()){
-			System.out.println(cr);
-		}
-	}
+//	@Test
+//	public void testSO() {
+//		String ahpVotesFile = "resources/input/VOTES/System.csv";
+//		String dependenciesFile = "resources/input/dependencies";
+//		String playerWeightsFile = "resources/input/weights_player_presto.csv"; 
+//		String criteriaWeightsFile = "resources/input/weights_criteria_presto.csv";
+//		ObjectiveFunction of = ObjectiveFunction.PLAYERS;
+//		GAVariant gaVariant = GAVariant.SO;
+//		DistanceType distanceType = DistanceType.KENDALL;
+//		WeightType weightType = WeightType.EQUAL;
+//		
+//	    double crossoverProbability = 0.9 ;
+//	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
+//
+//	    int searchBudget = 10000;
+//	    int populationSize = 50;
+//		
+//		
+//		SolutionListEvaluator<PermutationSolution<?>> evaluator = new SequentialSolutionListEvaluator<PermutationSolution<?>>();
+//	    SelectionOperator<List<PermutationSolution<?>>, PermutationSolution<?>> selection;
+//	    
+//	    AbstractGeneticAlgorithm<PermutationSolution<?>, ?> algorithm;
+//	    MutationOperator<PermutationSolution<?>> mutation;
+//	    Problem<PermutationSolution<?>> problem = new SingleObjectivePrioritizationProblem(ahpVotesFile, dependenciesFile, of, gaVariant, distanceType, weightType, playerWeightsFile, criteriaWeightsFile);
+//		
+//		double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
+//	    mutation = new PermutationSwapMutation (mutationProbability) ;
+//		
+//	    selection = new BinaryTournamentSelection<PermutationSolution<?>>(new ObjectiveComparator<PermutationSolution<?>>(0)) ;
+//		
+//	    algorithm = new GenerationalGeneticAlgorithm(problem, searchBudget, populationSize, crossover, mutation, selection, evaluator);
+//		algorithm.run();
+//		PrioritizationSolution solution = (PrioritizationSolution)algorithm.getResult();
+//		System.out.println(solution.toNamedStringWithObjectives());
+//		GAUtils.printSolutionWithLabels(solution,"solution.csv");
+//	}
+//
+//	@Test
+//	public void testMO() {
+//		AhpExperimentMain experiment = new AhpExperimentMain();
+//		String subSystem = "Timeline";
+//		DistanceType distanceType = DistanceType.KENDALL;
+//		WeightType weightType = WeightType.EQUAL;
+//		experiment.runMOGA(distanceType, weightType);
+//	    
+//	}
+//	
+//	@Test
+//	public void treeMapTest(){
+//		SortedMap<String, String[]> criteria = new TreeMap<String, String[]>();
+//		criteria.put("B", null);
+//		criteria.put("C", null);
+//		criteria.put("A", null);
+//		for (String cr : criteria.keySet()){
+//			System.out.println(cr);
+//		}
+//	}
 }
