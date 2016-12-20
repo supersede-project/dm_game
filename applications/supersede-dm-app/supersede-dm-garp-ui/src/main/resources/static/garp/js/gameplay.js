@@ -14,55 +14,68 @@
 
 var app = angular.module('w5app');
 app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
+	 
     var gameId = $location.search().id;
+	var criterion = $location.search().idC;
+	
+ 	$scope.criterion = criterion;
     $scope.requirements = [];
+    /*$scope.requirements = [
+    	{id:"1", title:"R1", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"2", title:"R2", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"3", title:"R3", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"4", title:"R4", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"5", title:"R5", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"6", title:"R6", description:"description", characteristics: "characteristics", link: "link"},
+    	{id:"7", title:"R7", description:"description", characteristics: "characteristics", link: "link"},
+        
+    ];*/
 
-    $scope.getGameRequirements = function() {
-        $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
+    $scope.getRequirements = function() {
+        $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + criterion)
         .success(function(data) {
-            getCriteriaRequirements(data);
-        }).error(function(err){
-            alert(err.message);
-        });
-    };
-
-    var getRequirement = function(gameRequirements, criterionId, i) {
-        var requirementId = gameRequirements[criterionId][i];
-        $http.get('supersede-dm-app/garp/game/requirement?requirementId=' + requirementId)
-        .success(function(data) {
-            console.log("found requirement:");
-            console.log(data);
-            for (var i = 0; i < $scope.requirements.length; i++) {
-                if ($scope.requirements[i].id == criterionId) {
-                    $scope.requirements[i].requirements.push(data);
-                }
+        	//alert('Data' + data);
+        	for (var i = 0; i < data.length; i++) {
+        	    $scope.requirements.push(data[i]);
             }
         }).error(function(err){
             alert(err.message);
         });
     };
 
-    var getCriteriaRequirements = function(gameRequirements) {
-        $scope.requirements = [];
-        for (var criterionId in gameRequirements) {
-            var criterion = {};
-            criterion.id = criterionId;
-            criterion.requirements = [];
-            $scope.requirements.push(criterion);
-            for (var i = 0; i < gameRequirements[criterionId].length; i++) {
-                getRequirement(gameRequirements, criterionId, i);
-            }
-        }
-        console.log("current requirements:");
-        console.log($scope.requirements);
-    };
+    $scope.submitPrio = function() {
+    	var data = $("#sortable").jqxSortable("toArray");
+    	//alert('Criterion :' + criterion);
+    	//alert('Requirements :' + data);
 
-    $scope.getGameRequirements();
+    	var rankings = {};
+    	rankings[criterion] = data;
+    	
+    	//alert('rankings :' + rankings);
+    	
+    	$http({
+            url: "supersede-dm-app/garp/game/submit",
+            data: rankings,
+            method: 'POST',
+            params: {gameId : gameId}
+        }).success(function(){
+        	alert('Your prioritization was saved!');
+            $location.url('supersede-dm-app/garp/criteria?id=' + gameId);
+        }).error(function(err){
+            alert(err.message);
+        });
+    };	
+    
+    $scope.retour = function() {
+      $location.url('supersede-dm-app/garp/criteria?id=' + gameId);
+    };	
+
+    $scope.getRequirements();
     console.log("current requirements:");
     console.log($scope.requirements);
+    
 });
 $(document).ready(function () {
-    $('#jqxTabs').jqxTabs({ width: 700 });
-    $(".sortable").jqxSortable();
+    $("#sortable").jqxSortable();
     $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
 });

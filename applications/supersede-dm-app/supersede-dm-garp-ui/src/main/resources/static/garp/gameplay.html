@@ -1,5 +1,4 @@
 <script src="supersede-dm-app/garp/js/gameplay.js"></script>
-<link rel="stylesheet" type="text/css" href="supersede-dm-app/garp/jqwidgets/styles/jqx.summer.css" />
 <style>
     h1 {
         text-align: center;
@@ -16,21 +15,27 @@
     #sortable div {
         padding: 5px;
     }
-    #sortable div:hover {
+    #sortable > div:hover {
         border: 1px solid #356AA0;
     }
 </style>
-<h1>Mockup for Requirements Ordering</h1>
-<div id='jqxTabs' ng-controller="reqsCtrl">
-    <ul style='margin-left: 20px;'>
-        <li ng-repeat="criterion in requirements">{{criterion.id}}</li>
-    </ul>
-    <div class="sortable" ng-controller="reqsCtrl" ng-repeat="criterion in requirements">
-        <div ng-repeat="requirement in criterion.requirements" class="jqxexpander" style="min-width: 500px">
-            <div><strong>{{requirement.requirementId + ': ' + requirement.name}}</strong></div>
-            <div style="background-color: #ffd11a">
-                <strong>Description</strong>: {{requirement.description}}<br>
-            </div>
+<div ng-controller="reqsCtrl">
+<h1>Requirements Ordering for the criterion: {{criterion}}</h1>
+</div>
+
+<div id="sortable" ng-controller="reqsCtrl">
+    <div ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}" class="jqxexpander">
+        <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
+        <div style="background-color: #ffd11a">
+            <strong>Description</strong>: {{x.description}}<br>
         </div>
     </div>
 </div>
+
+<div ng-controller="reqsCtrl">
+	<jqx-button ng-click="submitPrio()">Submit prioritized requirements</jqx-button>
+</div> 
+<br/>
+<div ng-controller="reqsCtrl">
+	<jqx-button ng-click="retour()">Retour criteria</jqx-button>
+</div> 
