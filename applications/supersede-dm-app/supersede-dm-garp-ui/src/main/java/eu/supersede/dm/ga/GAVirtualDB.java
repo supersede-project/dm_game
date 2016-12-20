@@ -149,6 +149,18 @@ public class GAVirtualDB
         return gi.participants;
     }
 
+    public List<Long> getParticipants(Long gameId){
+    	GameInfo gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return gi.participants;
+
+    }
+    
     public List<String> getCriteria(GAGame game)
     {
     	return getCriteria( game.getId() );
