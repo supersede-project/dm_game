@@ -20,16 +20,6 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
 	
  	$scope.criterion = criterion;
     $scope.requirements = [];
-    /*$scope.requirements = [
-    	{id:"1", title:"R1", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"2", title:"R2", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"3", title:"R3", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"4", title:"R4", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"5", title:"R5", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"6", title:"R6", description:"description", characteristics: "characteristics", link: "link"},
-    	{id:"7", title:"R7", description:"description", characteristics: "characteristics", link: "link"},
-        
-    ];*/
 
     $scope.getRequirements = function() {
         $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + criterion)

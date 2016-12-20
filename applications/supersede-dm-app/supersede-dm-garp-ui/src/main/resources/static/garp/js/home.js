@@ -31,7 +31,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 localdata: data
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="http://localhost/#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
+                return '<a href="#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({

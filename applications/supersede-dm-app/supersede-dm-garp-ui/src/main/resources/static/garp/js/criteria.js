@@ -39,7 +39,7 @@ app.controllerProvider.register('display_criteria', function($scope, $http, $loc
                 localdata: data2
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="http://localhost/#/supersede-dm-app/garp/gameplay?id=' + gameId + '&idC=' + value + '">' + value + "</a>";
+                return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + '&idC=' + value + '">' + value + "</a>";
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#selectedCriteria").jqxGrid({
