@@ -18,90 +18,48 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 	
 	$scope.Math = window.Math;
 	
-	$scope.gameId = $location.search()['gameId'];
-	$scope.game = undefined;
-	$scope.ahpResult = [];
+	var gameId = $location.search().id;
+	$scope.gameId = gameId;
 	
-	$http.get('supersede-dm-app/ahprp/game/' + $scope.gameId).success(function(data) {
+	$scope.game = undefined;
+	$scope.solutions = [];
+	
+	$http.get('supersede-dm-app/garp/game/getGame?gameId=' + gameId)
+	 .success(function(data) {
 		$scope.game = data;
+		alert('Game data: ' + data);
 	});
 
-	$scope.computeAHP = function(gameId){
-		$http.get('supersede-dm-app/ahprp/ahp/' + gameId).success(function(data) {
-			$scope.ahpResult.length = 0;;
-			
+	$scope.computeRank = function(){
+		$http.get('supersede-dm-app/garp/game/calc?gameId=' + gameId)
+		 .success(function(data) {
+			 alert(data);
+			$scope.solutions.length = 0;
+			var count = 0;
 			for(var i in data)
 			{
-				
-				$scope.ahpResult.push({requirement: $scope.requirementName(i), value: (Math.round(data[i] * 1000) / 1000) });
+				alert(i);
+				count++;
+				var row = {};
+				row["requirementID"] = i[0];
+				row["requirementName"] = $scope.requirementName(i[0]);
+				row["value"] = i[1];
+				$scope.solutions["id"] = count;
+				$scope.solutions["id"].ranks.push(row);
+				//$scope.solutions.push({requirement: $scope.requirementName(i), value: (Math.round(data[i] * 1000) / 1000) });
 			}
 			
-			// prepare the open data
-			var sourceChart =
-			{
-				datatype: "json",
-				datafields: [
-					{ name: 'requirement'},
-					{ name: 'value'}
-				],
-				id: 'requirement',
-				localdata: $scope.ahpResult
-			};
-			var dataAdapterChart = new $.jqx.dataAdapter(sourceChart);
-			
-			$scope.chartSettings = {
-				title: "",
-				description: "",
-				showLegend: true,
-				enableAnimations: true,
-				padding: { left: 20, top: 5, right: 20, bottom: 5 },
-				titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
-				source: dataAdapterChart,
-				xAxis:
-				{
-					dataField: 'requirement',
-					gridLines: { visible: true },
-					flip: false
-				},
-				valueAxis:
-				{
-					flip: true,
-					labels: {
-						visible: true,
-						formatFunction: function (value) {
-							return value;
-						}
-					}
-				},
-				colorScheme: 'scheme01',
-				seriesGroups:
-				[
-					{
-						type: 'column',
-						orientation: 'horizontal',
-						columnsGapPercent: 50,
-						toolTipFormatSettings: { thousandsSeparator: ',' },
-						series: [
-							{ dataField: 'value', displayText: 'Value' , showLabels: true}
-						]
-					}
-				]
-			};
-			
-			$scope.createChart = true;
-		});
+		}).error(function(err){
+            alert(err.message);
+        });
 	};
 	
-	$scope.gameEnd = function(gameId){
-		$http.put('supersede-dm-app/ahprp/game/end/' + gameId).success(function(data) {
-			$scope.game.finished = true;
-		});
+	$scope.gameEnd = function(){
+		alert('Game was closed: ' + $scope.gameId);
 	};
 	 
-	$scope.gameEnd = function(gameId){
-		$http.put('supersede-dm-app/ahprp/game/enact/' + gameId).success(function(data) {
-//			$scope.game.finished = true;
-		});
+	$scope.enact = function(){
+		alert('Game was enacted: ' + $scope.gameId);
 	};
 	 
 	$scope.requirementName = function(id)
@@ -116,44 +74,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 		
 		return "";
 	}
-	
-	$scope.exportGameData = function(){
-		var a = document.createElement("a");
-		a.href = 'supersede-dm-app/ahprp/game/' + $scope.gameId + '/exportGameData'; 
-		a.target = '_blank';
-		
-		var clickEvent = new MouseEvent("click", {
-			"view": window,
-			"bubbles": true,
-			"cancelable": false
-		});
-		
-		a.dispatchEvent(clickEvent);
-	};
-	
-	$scope.exportGameResults = function(){
-		var a = document.createElement("a");
-		a.href = 'supersede-dm-app/ahprp/game/' + $scope.gameId + '/exportGameResults'; 
-		a.target = '_blank';
-
-		var clickEvent = new MouseEvent("click", {
-			"view": window,
-			"bubbles": true,
-			"cancelable": false
-		});
-		
-		a.dispatchEvent(clickEvent);
-	};
-	
-	// for the criterias test
-	 $scope.choices = {};
-	 $scope.requirementsChoices = [];
-
-	 $http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data) {
-		$scope.requirementsChoices.length = 0;
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirementsChoices.push(data[i]);
-		}
-	});
+});
+$(document).ready(function () {
+    $('#jqxTabs').jqxTabs({ width: 700 });
 });
