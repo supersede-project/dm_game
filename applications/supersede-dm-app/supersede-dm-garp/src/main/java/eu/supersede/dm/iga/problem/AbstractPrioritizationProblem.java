@@ -166,7 +166,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		this.dependencies = dependencies2;
 		this.playerRankings = rankings;
 		
-		numberOfPlayers = playerWeights.get("c1").keySet().size();
+		numberOfPlayers = playerRankings.keySet().size(); // playerWeights.get("c1").keySet().size();
 		
 		REQUIREMENT_IDS.addAll(requirements.keySet());
 		Collections.sort(REQUIREMENT_IDS);
