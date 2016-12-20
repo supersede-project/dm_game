@@ -1,5 +1,4 @@
 <script src="supersede-dm-app/garp/js/gameplayTest.js"></script>
-<link rel="stylesheet" type="text/css" href="supersede-dm-app/garp/jqwidgets/styles/jqx.summer.css" />
 <style>
     h1 {
         text-align: center;
@@ -8,7 +7,7 @@
         margin: 0 auto;
         padding: 5px;
         width: 520px;
-    }count
+    }
     #sortable > div {
         border-radius: 5px;
         margin: 5px;
@@ -16,7 +15,7 @@
     #sortable div {
         padding: 5px;
     }
-    #sortable div:hover {
+    #sortable > div:hover {
         border: 1px solid #356AA0;
     }
 </style>
@@ -24,10 +23,9 @@
 <h1>Requirements Ordering for the criterion: {{criterion}}</h1>
 </div>
 
-
 <div id="sortable" ng-controller="reqsCtrl">
     <div ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}" class="jqxexpander">
-        <div ><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
+        <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
         <div style="background-color: #ffd11a">
             <strong>Description</strong>: {{x.description}}<br>
         </div>

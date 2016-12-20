@@ -47,7 +47,7 @@ app.controllerProvider.register('display_criteria', function($scope, $http, $loc
                 autoheight: true,
                 source: dataAdapter,
                 columns: [
-                  { text: 'Name Criterion', datafield: 'id', width: 400, cellsrenderer: cellsrenderer }
+                  { text: 'Criterion Name', datafield: 'id', width: 500, cellsrenderer: cellsrenderer }
                 ]
             });
         });
