@@ -73,6 +73,8 @@ public class GARPResourcesRest
                 b.append("</style>\n");
 
                 IGAAlgorithm algo = new IGAAlgorithm();
+
+                System.out.println("Criteria: " + GAVirtualDB.get().getCriteria(gameId).size());
                 algo.setCriteria(GAVirtualDB.get().getCriteria(gameId));
 
                 for (Long rid : GAVirtualDB.get().getRequirements(gameId))
@@ -88,6 +90,8 @@ public class GARPResourcesRest
                 }
                 catch (Exception ex)
                 {
+                    System.err.println("Unable to compute prioritizations");
+                    ex.printStackTrace();
                     prioritizations = new ArrayList<>();
                     Map<String, Double> m = new HashMap<>();
                     m.put("1", 0.2);
@@ -127,8 +131,6 @@ public class GARPResourcesRest
                     b.append("</div>\n");
                 }
                 b.append("</div>\n");
-
-                System.out.println(b.toString());
 
                 return b.toString().getBytes();
             }
