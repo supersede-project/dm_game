@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ga.GAVirtualDB;
@@ -102,16 +104,35 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public void submitAllPriorities(Authentication authentication, Long gameId, Map<String, List<Long>> reqs)
+    public void submitAllPriorities(Authentication authentication, @RequestParam Long gameId, @RequestBody Map<String, List<Long>> reqs)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        for( String key : reqs.keySet() ) {
+        	log.info("Sending priorities: game " + gameId + " user " + currentUser.getUserId() + " criterion " + key + " reqs " + reqs.get( key ));
+        }
         GAVirtualDB.get().setRanking(gameId, currentUser.getUserId(), reqs);
     }
 
-    @RequestMapping(value = "/requirements", method = RequestMethod.POST)
-    public List<Requirement> getRequirements(Authentication authentication, Long gameId)
+    @RequestMapping(value = "/requirements", method = RequestMethod.GET)
+    public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
     {
-        return availableRequirements.findAll();
+    	DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+    	List<Long> reqs = GAVirtualDB.get().getRankingsCriterion(gameId, currentUser.getUserId(), criterion);
+    	if(reqs == null){
+            return availableRequirements.findAll();    		
+    	}
+    	List<Requirement> requirements = new ArrayList<>();
+    	for(Long requirementId: reqs){
+    		requirements.add(availableRequirements.findOne(requirementId));
+    	}
+    	return requirements;
+    }
+
+    @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
+    public List<String> getGameCriteria(Authentication authentication, Long gameId)
+    {
+        //DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        return GAVirtualDB.get().getCriteria(gameId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)

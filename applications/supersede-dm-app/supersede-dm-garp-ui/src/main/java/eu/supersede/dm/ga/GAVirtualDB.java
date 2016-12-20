@@ -97,13 +97,35 @@ public class GAVirtualDB
         
         Map<String,List<Long>> map = gi.rankings.get( userId );
         
+        if (map == null)
+        {
+        	map = new HashMap<>();
+        	gi.rankings.put(userId, map);
+        }
+        
         for( String key : reqs.keySet() ) {
             map.put( key,  reqs.get( key ) );
         }
         
-        gi.rankings.put(userId, map);
+//        gi.rankings.put(userId, reqs);
     }
 
+    public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
+    {
+        GameInfo gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return null;
+        }
+        Map<String, List<Long>> map = gi.rankings.get(userId);
+        if ( map == null){
+        	return null;
+        }
+
+        return map.get(criterion);
+    }
+    
     public Map<String,List<Long>> getRanking (Long gameId, Long userId){
     	GameInfo gi = getGameInfo(gameId);
     	return gi.rankings.get(userId);
