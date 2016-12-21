@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -74,7 +76,9 @@ public class GARPResourcesRest
 
                 IGAAlgorithm algo = new IGAAlgorithm();
 
-                System.out.println("Criteria: " + GAVirtualDB.get().getCriteria(gameId).size());
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                
+                log.info("Criteria: " + GAVirtualDB.get().getCriteria(gameId).size());
                 algo.setCriteria(GAVirtualDB.get().getCriteria(gameId));
 
                 for (Long rid : GAVirtualDB.get().getRequirements(gameId))
@@ -87,6 +91,7 @@ public class GARPResourcesRest
                 try
                 {
                     prioritizations = algo.calc();
+                    log.info("Calc running! Game:" + gameId);
                 }
                 catch (Exception ex)
                 {
