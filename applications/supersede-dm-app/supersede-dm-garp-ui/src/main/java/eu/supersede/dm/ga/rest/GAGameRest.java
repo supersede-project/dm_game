@@ -73,7 +73,7 @@ public class GAGameRest
         List<ValutationCriteria> criteria = valutationCriterias.findAll();
         Collections.shuffle(criteria, new Random(System.nanoTime()));
 
-        for (int i = 0; ((i < 2) | i < criteria.size()); i++)
+        for (int i = 0; i < Math.min(2, criteria.size()); i++)
         {
             gameCriteria.add(criteria.get(i).getName());
         }

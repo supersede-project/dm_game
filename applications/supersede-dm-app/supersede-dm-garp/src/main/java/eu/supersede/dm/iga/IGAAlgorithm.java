@@ -28,6 +28,7 @@ import eu.supersede.dm.iga.encoding.PrioritizationSolution;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
+import eu.supersede.dm.iga.utils.MapUtil;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
 
@@ -99,7 +100,7 @@ public class IGAAlgorithm {
 		    algorithm.run();
 		    List<PermutationSolution<?>> pareto = (List<PermutationSolution<?>>) algorithm.getResult();
 		    for (PermutationSolution<?> s : pareto){
-		    	finalRanking.add(((PrioritizationSolution)s).toRanks());
+		    	finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution)s).toRanks()));
 		    }
 		}else{
 			selection = new BinaryTournamentSelection<PermutationSolution<?>>(new ObjectiveComparator<PermutationSolution<?>>(0)) ;
@@ -107,7 +108,7 @@ public class IGAAlgorithm {
 			algorithm.run();
 			PrioritizationSolution solution = (PrioritizationSolution)algorithm.getResult();
 			System.out.println(solution.toNamedStringWithObjectives());
-			finalRanking.add(solution.toRanks());
+			finalRanking.add(MapUtil.sortByValue(solution.toRanks()));
 		}
 		
 		return finalRanking;
@@ -131,4 +132,13 @@ public class IGAAlgorithm {
 		playerWeights.put(criterion, weights);
 	}
 	
+	public void addDefaultPlayerWeights (List<String> criteria, List<String> players){
+		for (String criterion : criteria){
+			Map<String, Double> weights = new HashMap<String, Double>();
+			for (String player : players){
+				weights.put(player, 1d);
+			}
+			addPlayerRanking(criterion, weights);
+		}
+	}
 }

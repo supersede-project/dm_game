@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import eu.supersede.dm.ga.GAVirtualDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
+import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.model.Requirement;
 
 /*
  * If static resources do not need to be secured, this method is not necessary.
@@ -47,6 +50,11 @@ import eu.supersede.dm.iga.IGAAlgorithm;
 public class GARPResourcesRest
 {
 
+	@Autowired
+	private RequirementsJpa availableRequirements;
+
+	private static Map<Long, String> requirements = new HashMap<Long, String>();
+	
     interface ResourceProvider
     {
         public byte[] getResource(final HttpServletRequest request, String id);
@@ -83,15 +91,33 @@ public class GARPResourcesRest
 
                 for (Long rid : GAVirtualDB.get().getRequirements(gameId))
                 {
-                    algo.addRequirement("" + rid, new ArrayList<>());
+                    algo.addRequirement(requirements.get(rid), new ArrayList<>());
                 }
 
+             // get all the players in this game
+                List<Long> participantIds = GAVirtualDB.get().getParticipants(gameId);
+                
+                // get the rankings of each player for each criterion
+                List<String> players = new ArrayList<String>();
+                for (Long userId : participantIds){
+                	String player = "P" + userId; //users.getOne(userId).getName();
+                	players.add(player);
+                	Map<String, List<Long>> userRanking = GAVirtualDB.get().getRanking(gameId, userId);
+                	if (userRanking != null){
+	                	Map<String, List<String>> userRankingStr = new HashMap<String, List<String>>();
+	                	for (Entry<String, List<Long>> entry : userRanking.entrySet()){
+	                		userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+	                	}
+	                	algo.addRanking(player, userRankingStr);
+                	}
+                }
+                algo.addDefaultPlayerWeights(GAVirtualDB.get().getCriteria(gameId), players);
+                
                 List<Map<String, Double>> prioritizations = null;
 
                 try
                 {
-                    prioritizations = algo.calc();
-                    log.info("Calc running! Game:" + gameId);
+                    prioritizations = algo.calc().subList(0, 3);
                 }
                 catch (Exception ex)
                 {
@@ -129,7 +155,7 @@ public class GARPResourcesRest
                     for (String c : map.keySet())
                     {
                         b.append("<tr>\n");
-                        b.append("<td>Req. '" + c + "'</td><td>" + map.get(c) + "</td>");
+                        b.append("<td>'" + c + "'</td><td>" + map.get(c) + "</td>");
                         b.append("</tr>\n");
                     }
                     b.append("</table>\n");
@@ -142,6 +168,14 @@ public class GARPResourcesRest
         });
     }
 
+    private static List<String> idToString (List<Long> ids){
+    	List<String> strings = new ArrayList<String>();
+    	for (Long id : ids){
+    		strings.add(requirements.get(id));
+    	}
+    	return strings;
+    }
+    
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -166,6 +200,10 @@ public class GARPResourcesRest
 
         ResourceProvider rp = providers.get(finalPath);
 
+        // FIXME A temporary workaround to load requirement names from database (instead of displaying requirement IDs to the user, which is not meaningful)
+        for (Requirement req : availableRequirements.findAll()){
+        	requirements.put(req.getRequirementId(), req.getName());
+        }
         if (rp != null)
         {
             System.out.println("Serving page by provider: " + finalPath);
