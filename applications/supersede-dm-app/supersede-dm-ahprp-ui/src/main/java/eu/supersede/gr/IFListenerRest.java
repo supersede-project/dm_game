@@ -43,7 +43,7 @@ public class IFListenerRest {
 		
 		log.debug("Alert received: " + alert);
 		
-		notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", alert.getMessage(), "");
+		//notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", alert.getMessage(), "");
 		
 		return;
 	}

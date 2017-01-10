@@ -27,7 +27,7 @@ app.controllerProvider.register('display_criteria', function($scope, $http, $loc
             var data2 = {};
             for (var m = 0; m < data.length; m++) {
                 var row = {};
-                row["id"] = data[m];
+                row.id = data[m];
                 data2[m] = row;
             }
             
@@ -54,7 +54,7 @@ app.controllerProvider.register('display_criteria', function($scope, $http, $loc
     };
     
     $scope.finish = function() {
-        $location.url('supersede-dm-app/garp/home');
+        $location.url('supersede-dm-app/garp/results' + gameId);
       };
 
     $scope.getSelectedCriteria();

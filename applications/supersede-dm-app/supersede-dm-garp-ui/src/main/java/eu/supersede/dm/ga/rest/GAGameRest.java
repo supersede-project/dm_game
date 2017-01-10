@@ -73,7 +73,7 @@ public class GAGameRest
         List<ValutationCriteria> criteria = valutationCriterias.findAll();
         Collections.shuffle(criteria, new Random(System.nanoTime()));
 
-        for (int i = 0; ((i < 2) | i < criteria.size()); i++)
+        for (int i = 0; i < Math.min(2, criteria.size()); i++)
         {
             gameCriteria.add(criteria.get(i).getName());
         }
@@ -118,12 +118,19 @@ public class GAGameRest
     {
     	DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
     	List<Long> reqs = GAVirtualDB.get().getRankingsCriterion(gameId, currentUser.getUserId(), criterion);
-    	if(reqs == null){
-            return availableRequirements.findAll();    		
-    	}
     	List<Requirement> requirements = new ArrayList<>();
-    	for(Long requirementId: reqs){
-    		requirements.add(availableRequirements.findOne(requirementId));
+    	
+    	if(reqs != null){
+    		for(Long requirementId: reqs){
+        		requirements.add(availableRequirements.findOne(requirementId));
+        	}
+    	}
+    	else{
+        	//return availableRequirements.findAll();
+    		List<Long> tmp = GAVirtualDB.get().getRequirements(gameId);
+    		for(Long requirementId: tmp){
+        		requirements.add(availableRequirements.findOne(requirementId));
+        	}
     	}
     	return requirements;
     }

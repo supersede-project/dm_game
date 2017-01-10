@@ -28,6 +28,8 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
         	for (var i = 0; i < data.length; i++) {
         	    $scope.requirements.push(data[i]);
             }
+            $("#sortable").jqxSortable();
+            $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
         }).error(function(err){
             alert(err.message);
         });
@@ -63,9 +65,4 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     $scope.getRequirements();
     console.log("current requirements:");
     console.log($scope.requirements);
-    
-});
-$(document).ready(function () {
-    $("#sortable").jqxSortable();
-    $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
 });
