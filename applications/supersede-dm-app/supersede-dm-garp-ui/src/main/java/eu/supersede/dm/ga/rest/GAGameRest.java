@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ga.GAVirtualDB;
-import eu.supersede.dm.ga.data.GAGame;
+import eu.supersede.dm.ga.data.GAGameSummary;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsJpa;
@@ -45,25 +45,25 @@ public class GAGameRest
     private UsersJpa users;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
-    public List<GAGame> getOwnedGames(Authentication authentication)
+    public List<GAGameSummary> getOwnedGames(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         return GAVirtualDB.get().getOwnedGames(currentUser.getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
-    public List<GAGame> getActiveGames(Authentication authentication)
+    public List<GAGameSummary> getActiveGames(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         return GAVirtualDB.get().getActiveGames(currentUser.getUserId());
     }
 
     @RequestMapping(value = "/newrandom", method = RequestMethod.GET)
-    public GAGame createNewRandomGame(Authentication authentication)
+    public GAGameSummary createNewRandomGame(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         Long userId = currentUser.getUserId();
-        GAGame game = new GAGame();
+        GAGameSummary game = new GAGameSummary();
         game.setId(System.currentTimeMillis());
         game.setOwner(userId);
         game.setDate("12/12/2016");
@@ -149,7 +149,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGame game)
+    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
         algo.setCriteria(GAVirtualDB.get().getCriteria(game));

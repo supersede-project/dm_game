@@ -29,10 +29,27 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@ComponentScan(basePackages = {"eu.supersede.dm", "eu.supersede.gr", "eu.supersede.gr.jpa", "eu.supersede.gr.model", "eu.supersede.fe"})
-@EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
-@EnableJpaRepositories(basePackages={"eu.supersede.dm.jpa", "eu.supersede.fe.notification.jpa", "eu.supersede.gr.jpa"})
+@SpringBootApplication(
+		exclude = DataSourceAutoConfiguration.class)
+@ComponentScan(basePackages = {
+		"eu.supersede.dm", 
+		"eu.supersede.gr", 
+		"eu.supersede.gr.jpa", 
+		"eu.supersede.gr.model", 
+		"eu.supersede.fe",
+		"eu.supersede.dm.ga",
+		"eu.supersede.dm.ga.db",
+		"eu.supersede.dm.ga.jpa"
+		})
+@EnableGlobalMethodSecurity( 
+		securedEnabled = true, prePostEnabled = true )
+@EnableJpaRepositories(basePackages={
+		"eu.supersede.dm.jpa", 
+		"eu.supersede.fe.notification.jpa", 
+		"eu.supersede.gr.jpa",
+		"eu.supersede.dm.ga.db",
+		"eu.supersede.dm.ga.jpa"
+		})
 @EnableScheduling
 @EnableRedisHttpSession
 public class Application extends SpringBootServletInitializer {
