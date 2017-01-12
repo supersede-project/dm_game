@@ -1,7 +1,7 @@
-package eu.supersede.dm.ga.jpa;
+package eu.supersede.gr.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.supersede.dm.ga.db.HAttribute;
+import eu.supersede.gr.model.HAttribute;
 
 public interface AttributesJpa extends JpaRepository<HAttribute, Long> {}

@@ -1,4 +1,4 @@
-package eu.supersede.dm.ga.data;
+package eu.supersede.gr.data;
 
 public enum GARole {
 	

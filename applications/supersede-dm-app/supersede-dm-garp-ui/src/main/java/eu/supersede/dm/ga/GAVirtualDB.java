@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.supersede.dm.ga.data.GAGameDetails;
-import eu.supersede.dm.ga.data.GAGameSummary;
-import eu.supersede.dm.ga.db.HAttribute;
-import eu.supersede.dm.ga.db.HEntity;
-import eu.supersede.dm.ga.db.HGAGameSummary;
-import eu.supersede.dm.ga.jpa.AttributesJpa;
-import eu.supersede.dm.ga.jpa.EntitiesJpa;
-import eu.supersede.dm.ga.jpa.GAGameSummaryJpa;
+import eu.supersede.gr.data.GAGameDetails;
+import eu.supersede.gr.data.GAGameSummary;
+import eu.supersede.gr.jpa.AttributesJpa;
+import eu.supersede.gr.jpa.EntitiesJpa;
+import eu.supersede.gr.jpa.GAGameSummaryJpa;
+import eu.supersede.gr.model.HAttribute;
+import eu.supersede.gr.model.HEntity;
+import eu.supersede.gr.model.HGAGameSummary;
 
 @Component
 public class GAVirtualDB implements IGADataview

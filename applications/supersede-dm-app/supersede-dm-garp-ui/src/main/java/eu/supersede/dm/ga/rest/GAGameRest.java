@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ga.GAVirtualDB;
-import eu.supersede.dm.ga.data.GAGameSummary;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;

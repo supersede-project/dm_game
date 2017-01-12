@@ -3,8 +3,8 @@ package eu.supersede.dm.ga;
 import java.util.List;
 import java.util.Map;
 
-import eu.supersede.dm.ga.data.GAGameSummary;
-import eu.supersede.dm.ga.data.GAGameDetails;
+import eu.supersede.gr.data.GAGameDetails;
+import eu.supersede.gr.data.GAGameSummary;
 
 public interface IGADataview {
 

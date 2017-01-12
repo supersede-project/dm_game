@@ -1,4 +1,4 @@
-package eu.supersede.dm.ga.db;
+package eu.supersede.gr.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

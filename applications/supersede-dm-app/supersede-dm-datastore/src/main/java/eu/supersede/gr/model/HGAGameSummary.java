@@ -1,4 +1,4 @@
-package eu.supersede.dm.ga.db;
+package eu.supersede.gr.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,41 +9,43 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import eu.supersede.dm.ga.data.GAGameSummary;
+import eu.supersede.gr.data.GAGameSummary;
 
 @Entity
-@Table(name="ga_games")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "ga_games")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class HGAGameSummary
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-	
-	@Column(name="owner")
-    private Long		owner;
-	
-	@Column(name="date")
-    private String		date	= "";
-//    @Column(columnDefinition= "TIMESTAMP WITH TIME ZONE")
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date startTime;
-	
-	@Column(name="status")
-    private String		status	= "open";
-	
-	public HGAGameSummary() {
-		
-	}
-	
-	public HGAGameSummary(GAGameSummary game) {
-		this.id		= game.getId();
-		this.owner	= game.getOwner();
-		this.date	= game.getDate();
-		this.status	= game.getStatus();
-	}
 
-	public Long getId()
+    @Column(name = "owner")
+    private Long owner;
+
+    @Column(name = "date")
+    private String date = "";
+    // @Column(columnDefinition= "TIMESTAMP WITH TIME ZONE")
+    // @Temporal(TemporalType.TIMESTAMP)
+    // private Date startTime;
+
+    @Column(name = "status")
+    private String status = "open";
+
+    public HGAGameSummary()
+    {
+
+    }
+
+    public HGAGameSummary(GAGameSummary game)
+    {
+        this.id = game.getId();
+        this.owner = game.getOwner();
+        this.date = game.getDate();
+        this.status = game.getStatus();
+    }
+
+    public Long getId()
     {
         return this.id;
     }

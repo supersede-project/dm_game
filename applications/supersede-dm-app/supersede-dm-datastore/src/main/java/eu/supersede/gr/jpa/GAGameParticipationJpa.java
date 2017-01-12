@@ -1,3 +1,4 @@
+package eu.supersede.gr.jpa;
 //package eu.supersede.dm.ga.jpa;
 //
 //import java.util.List;
