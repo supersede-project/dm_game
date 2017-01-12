@@ -1,9 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-//apply plugin: 'war'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
@@ -20,32 +19,35 @@ targetCompatibility = 1.8
 
 buildscript {
     ext {
-        springBootVersion = '1.4.1.RELEASE'
+        springBootVersion = '1.4.3.RELEASE'
     }
     repositories {
         mavenCentral()
-    maven {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
             url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
             name = 'maven-supersede-snapshot'
-        credentials {
+            credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
+            }
         }
-        }
-    maven {
+        maven {
             url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
             name = 'maven-supersede-release'
-        credentials {
+            credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
-        }
+            }
         }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
-    //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
     }
 }
 
@@ -86,9 +88,7 @@ dependencies {
 
     compile files("../supersede-dm-ahprp/build/libs/supersede-dm-ahprp-0.0.2-SNAPSHOT.jar")
     compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.0.2-SNAPSHOT.jar")
-
     compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.2-SNAPSHOT.jar")
-    //runtime("supersede-dm-datastore:0.0.1-SNAPSHOT")
 
     //required by integration
     compile ("org.apache.axis2:axis2:1.6.1")
@@ -104,16 +104,11 @@ dependencies {
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
 }
 
-
 eclipse {
     classpath {
          containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
          containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
 }
 
 bootRepackage.enabled = false
