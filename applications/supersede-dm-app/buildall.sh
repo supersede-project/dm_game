@@ -1,30 +1,42 @@
+echo -e "\nCleaning supersede-dm-app...\n"
 gradle clean
+
 cd supersede-dm-core
+echo -e "\nBuilding supersede-dm-core...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-datastore
+
+cd ../supersede-dm-datastore
+echo -e "\nBuilding supersede-dm-datastore...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-integration
+
+cd ../supersede-dm-integration
+echo -e "\nBuilding supersede-dm-integration...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-executor
+
+cd ../supersede-dm-executor
+echo -e "\nBuilding supersede-dm-executor...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-ahprp
+
+cd ../supersede-dm-ahprp
+echo -e "\nBuilding supersede-dm-ahprp...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-ahprp-ui
+
+cd ../supersede-dm-ahprp-ui
+echo -e "\nBuilding supersede-dm-ahprp-ui...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-garp
+
+cd ../supersede-dm-garp
+echo -e "\nBuilding supersede-dm-garp...\n"
 gradle build --refresh-dependencies -x test
-cd ..
-cd supersede-dm-planning-jmetal
+
+cd ../supersede-dm-planning-jmetal
+echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 gradle build --refresh-dependencies
-cd ..
-cd supersede-dm-orchestrator
+
+cd ../supersede-dm-orchestrator
+echo -e "\nBuilding supersede-dm-orchestrator...\n"
 gradle build --refresh-dependencies
-cd ..
+
+cd ../
+echo -e "\nBuilding supersede-dm-app...\n"
 gradle build --refresh-dependencies -x test
-cd ..
