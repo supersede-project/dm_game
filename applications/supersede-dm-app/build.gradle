@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 apply plugin: 'maven'
@@ -25,13 +25,15 @@ sourceSets {
         }
     }
 }
-
 buildscript {
     ext {
-        springBootVersion = '1.4.1.RELEASE'
+        springBootVersion = '1.4.3.RELEASE'
     }
     repositories {
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         maven {
             url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
             name = 'maven-supersede-release'
@@ -53,7 +55,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
         //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
     }
 }
 
@@ -86,8 +88,8 @@ dependencies {
     compile('commons-collections:commons-collections:3.2.1')
     compile('org.apache.velocity:velocity:1.6.2')
 
-    compile("org.springframework.boot:spring-boot-starter-jdbc:1.4.1.RELEASE")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.4.1.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     compile("org.postgresql:postgresql:9.4.1208.jre7")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
@@ -150,11 +152,9 @@ subprojects {
     version = '0.0.2-SNAPSHOT'
 }
 
-/*
 eclipse {
     classpath {
          containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
          containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
 }
-*/

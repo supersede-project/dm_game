@@ -1,16 +1,3 @@
-buildscript {
-    ext {
-        springBootVersion = '1.4.1.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -26,10 +13,21 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+buildscript {
+    ext {
+        springBootVersion = '1.4.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
+    }
+}
+
 repositories {
     mavenCentral()
-    maven {url 'http://repo.spring.io/milestone' }
-    maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
 }
 
 configurations {
@@ -37,13 +35,11 @@ configurations {
 }
 
 dependencies {
-
     compile('org.apache.commons:commons-math3:3.6.1')
 
     compile("org.reflections:reflections:0.9.9-RC1")
 
     compile files('../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar')
-    //testCompile files('../supersede-dm-ahprp/build/libs/ahp-requirements-prioritization-0.0.1-SNAPSHOT.jar')
     compile files('../supersede-dm-planning-jmetal/build/libs/supersede-dm-planning-jmetal-0.0.2-SNAPSHOT.jar')
     compile files('../supersede-dm-executor/build/libs/supersede-dm-executor-0.0.2-SNAPSHOT.jar')
 
@@ -56,14 +52,9 @@ dependencies {
     compile('org.activiti:activiti-engine:5.21.0')
 }
 
-
 eclipse {
     classpath {
-         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
 }
