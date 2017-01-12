@@ -9,10 +9,8 @@
 //import java.util.Set;
 //
 //import eu.supersede.dm.jmetal.DMJMetalMultiMethodPlanner;
-//import eu.supersede.dm.jmetal.DMJMetalSingleMethodPlanner;
 //import eu.supersede.dm.methods.AHPRequirementsPrioritizationMethod;
 //import eu.supersede.dm.methods.DMLibrary;
-//import eu.supersede.dm.planners.DMRandomPlanner;
 //
 //public class OrchestratorDemo {
 //	
@@ -91,7 +89,7 @@
 //		// Some requirements with random topics
 //		{
 //			DMTopic[] topics = new DMTopic[] { userImpact, developmentEffort };
-//			for( int i = 0; i < 3; i++ ) {
+//			for( int i = 0; i < 15; i++ ) {
 //				c.add( new DMRequirement( "R" + i, "Requirement " + random.nextInt( 10000 ), topics[random.nextInt( 2 )] ) );
 //			}
 //		}

@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity
-@Table(name="ga_game_details")
+//@Entity
+//@Table(name="ga_game_details")
 public class GAGameDetails
 {
 	GAGameSummary	game;

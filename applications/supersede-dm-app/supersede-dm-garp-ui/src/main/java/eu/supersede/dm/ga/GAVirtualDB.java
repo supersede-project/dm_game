@@ -1,5 +1,6 @@
 package eu.supersede.dm.ga;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +13,8 @@ import org.springframework.stereotype.Component;
 
 import eu.supersede.dm.ga.data.GAGameDetails;
 import eu.supersede.dm.ga.data.GAGameSummary;
-import eu.supersede.dm.ga.db.HAttribute;
 import eu.supersede.dm.ga.db.HEntity;
 import eu.supersede.dm.ga.db.HGAGameSummary;
-import eu.supersede.dm.ga.jpa.AttributesJpa;
 import eu.supersede.dm.ga.jpa.EntitiesJpa;
 import eu.supersede.dm.ga.jpa.GAGameSummaryJpa;
 
@@ -35,7 +34,7 @@ public class GAVirtualDB implements IGADataview
     DuplicateMap<Long, GAGameSummary> activeGames = new DuplicateMap<>();
     Map<Long, GAGameDetails> games = new HashMap<>();
     
-//    @Autowired private EntitiesJpa				entities;
+    @Autowired private EntitiesJpa				entities;
 //    
 //    @Autowired private AttributesJpa			attributes;
     
@@ -92,6 +91,54 @@ public class GAVirtualDB implements IGADataview
 //        attributes.save( attr );
 //	}
 	
+	private void setAttr( Long entityId, String name, String value ) {
+//		HAttribute attr = new HAttribute();
+//		attr.setEntityId( entityId );
+//		attr.setName( name );
+//		attr.setValue( value );
+//		attributes.save( attr );
+	}
+	
+	private Long store( Object o ) {
+		HEntity entity = new HEntity();
+		entities.save( entity );
+		storeAttributes( entity.getId(), o );
+		return entity.getId();
+	}
+	
+    private void storeAttributes( Long id, Object o ) {
+    	
+    	Field[] fields = o.getClass().getFields();
+    	
+    	for( Field field : fields ) {
+    		
+			try {
+				
+				if( field.isSynthetic() ) {
+					
+				}
+				else if( field.getType().isArray() ) {
+				
+				}
+				else {
+					
+				}
+					
+				Object value = field.get( o );
+				
+				if( value == null  ) {
+					value = "";
+				}
+				setAttr( id, field.getName(), value.toString() );
+				
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+    		
+    	}
+    	
+    }
+    
     /* (non-Javadoc)
 	 * @see eu.supersede.dm.ga.IGADataview#create(eu.supersede.dm.ga.data.GAGame, java.util.List, java.util.List, java.util.List)
 	 */

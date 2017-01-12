@@ -30,15 +30,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.gr.jpa.UserCriteriaPointsJpa;
-import eu.supersede.gr.jpa.UsersJpa;
-import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.User;
-import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.UserCriteriaPointsJpa;
+import eu.supersede.gr.jpa.UsersJpa;
+import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.logics.Datastore;
+import eu.supersede.gr.model.User;
+import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
@@ -153,4 +154,5 @@ public class UserRest {
 		List<User> userList = userCriteriaPoints.findUsersByValutationCriteria(v);		
 		return userList;
 	}
+	
 }
