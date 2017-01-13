@@ -21,9 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -34,6 +38,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import eu.supersede.dm.ga.GAVirtualDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
+import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.model.Requirement;
 
 /*
  * If static resources do not need to be secured, this method is not necessary.
@@ -42,283 +48,239 @@ import eu.supersede.dm.iga.IGAAlgorithm;
 
 @RestController
 @RequestMapping("/garp")
-public class GARPResourcesRest {
-	
-	interface ResourceProvider {
-		public byte[] getResource( final HttpServletRequest request );
-	}
-	
-	static Map<String,ResourceProvider> providers = new HashMap<>();
-	
-	static {
-		providers.put( "results.html", new ResourceProvider() {
-			@Override
-			public byte[] getResource(HttpServletRequest request) {
-				
-				long gameId = 1482177818095L;
-				
-				StringBuilder b = new StringBuilder();
-				
-				b.append( "<script src=\"supersede-dm-app/garp/js/gameplay.js\"></script>" );
-				b.append( "<link rel=\"stylesheet\" type=\"text/css\" href=\"supersede-dm-app/garp/jqwidgets/styles/jqx.summer.css\" />" );
-				b.append( "<style>" );
-				b.append( "h1 { text-align: center; }\n" );
-				b.append( "#sortable { margin: 0 auto; padding: 5px; width: 520px; }\n" );
-				b.append( "#sortable > div { border-radius: 5px; margin: 5px; }\n" );
-				b.append( "#sortable div { padding: 5px; }\n" );
-				b.append( "#sortable div:hover { border: 1px solid #356AA0; }\n" );
-				b.append( "</style>\n" );
-				
-				{
-//					IGAAlgorithm algo = new IGAAlgorithm();
-//					algo.setCriteria(GAVirtualDB.get().getCriteria(gameId));
-//					
-//					for (Long rid : GAVirtualDB.get().getRequirements( gameId ))
-//					{
-//						algo.addRequirement("" + rid, new ArrayList<>());
-//						b.append("Req: " + rid + "\n");
-//					}
-					List<Map<String, Double>> prioritizations = null;
-					
-					IGAAlgorithm igaAlgorithm = new IGAAlgorithm();
-					
-					// set criteria
-					List<String> criteria = new ArrayList<String>();
-					String c1 = "c1";
-					String c2 = "c2";
-					criteria.add(c1);
-					criteria.add(c2);
-					igaAlgorithm.setCriteria(criteria);
-					
-					// set criteria weight
-					igaAlgorithm.setCriteriaWeight(c1, 1.0);
-					igaAlgorithm.setCriteriaWeight(c2, 1.0);
-					
-					// set requirements
-					String r1 = "R1";
-					List<String> r1Deps = new ArrayList<String>();
-					
-					String r2 = "R2";
-					String r3 = "R3";
-					
-					List<String> r2Deps = new ArrayList<String>();
-					r2Deps.add(r1);
-					List<String> r3Deps = new ArrayList<String>();
-					r3Deps.add(r1);
-					igaAlgorithm.addRequirement(r1, r1Deps);
-					igaAlgorithm.addRequirement(r2, r2Deps);
-					igaAlgorithm.addRequirement(r3, r3Deps);
-				
-					// set player rankings
-					String p1 = "P1";
-					Map<String, List<String>> rankP1 = new HashMap<String, List<String>>();
-					List<String> ranksc1 = new ArrayList<String>();
-					ranksc1.add(r1); ranksc1.add(r2); ranksc1.add(r3);
-					List<String> ranksc2 = new ArrayList<String>();
-					ranksc2.add(r1); ranksc2.add(r2); ranksc2.add(r3);
-					rankP1.put(c1, ranksc1); rankP1.put(c2, ranksc2);
-					igaAlgorithm.addRanking(p1, rankP1);
-					
-					String p2 = "P2";
-					Map<String, List<String>> rankP2 = new HashMap<String, List<String>>();
-					List<String> ranksp2c1 = new ArrayList<String>();
-					ranksp2c1.add(r1); ranksp2c1.add(r2); ranksp2c1.add(r3);
-					List<String> ranksp2c2 = new ArrayList<String>();
-					ranksp2c2.add(r1); ranksp2c2.add(r2); ranksp2c2.add(r3);
-					rankP2.put(c1, ranksp2c1); rankP2.put(c2, ranksp2c2);
-					igaAlgorithm.addRanking(p2, rankP2);
-					
-					// set player weights
-					Map<String, Double> weightsC1 = new HashMap<String, Double>();
-					weightsC1.put(p1, 1.0);
-					weightsC1.put(p2, 1.0);
-					igaAlgorithm.addPlayerRanking(c1, weightsC1);
-					
-					Map<String, Double> weightsC2 = new HashMap<String, Double>();
-					weightsC2.put(p1, 1.0);
-					weightsC2.put(p2, 1.0);
-					igaAlgorithm.addPlayerRanking(c2, weightsC2);
-					
-					
-					try {
-						prioritizations = igaAlgorithm.calc().subList(0, 3); // take only the first 3 results
-//						prioritizations = algo.calc();
-					}
-					catch( Exception ex ) {
-						prioritizations = new ArrayList<>();
-						Map<String, Double> m = new HashMap<>();
-						m.put( "1", 0.2 );
-						m.put( "2", 0.21 );
-						m.put( "3", 0.15 );
-						m.put( "4", 0.01 );
-						prioritizations.add( m );
-						m = new HashMap<>();
-						m.put( "1", 0.21 );
-						m.put( "2", 0.2 );
-						m.put( "3", 0.15 );
-						m.put( "4", 0.19 );
-						prioritizations.add( m );
-					}
-					
-					b.append( "<h2>Found: " + prioritizations.size() + " optimal solutions</h2>" );
-					
-					b.append( "<div id='jqxTabs'>\n" );
-					b.append( "<ul style='margin-left: 20px;'>\n" );
-					for( int i = 0; i < prioritizations.size(); i++ ) {
-						b.append( "<li>Solution " + i + "</li>\n" );
-					}
-					b.append( "</ul>\n" );
-					for( int i = 0; i < prioritizations.size(); i++ ) {
-						b.append( "<div>\n" );
-						b.append( "<table width=0'100%'>\n" );
-						Map<String,Double> map = prioritizations.get( i );
-						for( String c : map.keySet() ) {
-							b.append( "<tr>\n" );
-							b.append( "<td>Req. '" + c + "'</td><td>" + map.get( c ) + "</td>" );
-							b.append( "</tr>\n" );
-						}
-						b.append( "</table>\n" );
-						b.append( "</div>\n" );
-					}
-					b.append( "</div>\n" );
-				}
-				
-//				<h1>Mockup for Requirements Ordering</h1>
-//				<div id='jqxTabs'>
-//				    <ul style='margin-left: 20px;'>
-//				        <li>Tab 1</li>
-//				        <li>Tab 2</li>
-//				        <li>Tab 3</li>
-//				        <li>Tab 4</li>
-//				        <li>Tab 5</li>
-//				    </ul>
-//				    <div>
-//				<div id="sortable" ng-controller="reqsCtrl">
-//				    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-//				        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-//				        <div style="background-color: #ffd11a">
-//				            <strong>Description</strong>: {{x.description}}<br>
-//				            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-//				            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
-//				        </div>
-//				    </div>
-//				</div>
-//				    </div>
-//				    <div>
-//				<div id="sortable" ng-controller="reqsCtrl">
-//				    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-//				        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-//				        <div style="background-color: #ffd11a">
-//				            <strong>Description</strong>: {{x.description}}<br>
-//				            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-//				            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
-//				        </div>
-//				    </div>
-//				</div>
-//				    </div>
-//				    <div>
-//				<div id="sortable" ng-controller="reqsCtrl">
-//				    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-//				        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-//				        <div style="background-color: #ffd11a">
-//				            <strong>Description</strong>: {{x.description}}<br>
-//				            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-//				            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
-//				        </div>
-//				    </div>
-//				</div>
-//				    </div>
-//				    <div>
-//				<div id="sortable" ng-controller="reqsCtrl">
-//				    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-//				        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-//				        <div style="background-color: #ffd11a">
-//				            <strong>Description</strong>: {{x.description}}<br>
-//				            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-//				            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
-//				        </div>
-//				    </div>
-//				</div>
-//				    </div>
-//				    <div>
-//				<div id="sortable" ng-controller="reqsCtrl">
-//				    <div ng-repeat="x in requirements" class="jqxexpander" style="min-width: 500px">
-//				        <div><strong>{{x.id + ': ' + x.title}}</strong></div>
-//				        <div style="background-color: #ffd11a">
-//				            <strong>Description</strong>: {{x.description}}<br>
-//				            <strong>Characteristics:</strong>: {{x.characteristics}}<br>
-//				            <strong>Issue</strong>: <a href={{x.link}} target="_blank">{{x.link}}</a>
-//				        </div>
-//				    </div>
-//				</div>
-//				    </div>
-//				</div>
-//
-//				<jqx-button ng-click="submit(gameId)">Submit prioritized requirements</jqx-button>
-								
-				System.out.println( b.toString() );
-				
-				return b.toString().getBytes();
-			}} );
-	}
-	
-	@Autowired
-	private ResourceLoader resourceLoader;
+public class GARPResourcesRest
+{
+    @Autowired
+    private RequirementsJpa availableRequirements;
 
-	@RequestMapping("/**")
-	public byte[] getResource( final HttpServletRequest request ) {
+    @Autowired
+    private GAVirtualDB virtualDb;
 
+    private static Map<Long, String> requirements = new HashMap<>();
 
-		String path = (String) request.getAttribute(
-				HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+    interface ResourceProvider
+    {
+        public byte[] getResource(final HttpServletRequest request, String id);
+    }
 
-		AntPathMatcher apm = new AntPathMatcher();
-		String finalPath = apm.extractPathWithinPattern(bestMatchPattern, path);
-		
-		ResourceProvider rp = providers.get( finalPath );
-		
-		if( rp != null ) {
-			
-			return rp.getResource( request );
-			
-		}
-		else {
-			
-			System.out.println( "Serving page " + finalPath );
+    static Map<String, ResourceProvider> providers = new HashMap<>();
 
-			Resource resource = resourceLoader.getResource("classpath:static/garp/" + finalPath );
+    @PostConstruct
+    private void load()
+    {
+        providers.put("results.html", new ResourceProvider()
+        {
+            @Override
+            public byte[] getResource(HttpServletRequest request, String id)
+            {
+                long gameId = new Long(id);
 
-			try {
-				System.out.println( resource.getFile().getAbsolutePath() );
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			//		Resource resource = resourceLoader.getResource("classpath:static/game.html");
+                StringBuilder b = new StringBuilder();
 
-			try {
-				InputStream is = resource.getInputStream();
+                b.append("<script src=\"supersede-dm-app/garp/js/results.js\"></script>");
+                b.append("<style>");
+                b.append("h1 { text-align: center; }\n");
+                b.append("#sortable { margin: 0 auto; padding: 5px; width: 520px; }\n");
+                b.append("#sortable > div { border-radius: 5px; margin: 5px; }\n");
+                b.append("#sortable div { padding: 5px; }\n");
+                b.append("#sortable div:hover { border: 1px solid #356AA0; }\n");
+                b.append("</style>\n");
 
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				try {
-					int read = is.read();
-					while (read != -1) {
-						byteArrayOutputStream.write(read);
-						read = is.read();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				byte[] bytes = byteArrayOutputStream.toByteArray();
-				return bytes;
+                IGAAlgorithm algo = new IGAAlgorithm();
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+                Logger log = LoggerFactory.getLogger(this.getClass());
 
-			// Something went wrong
-			return ("Failed to load resource '" + finalPath).getBytes();
-			
-		}
-	}
+                log.info("Criteria: " + virtualDb.getCriteria(gameId).size());
+                algo.setCriteria(virtualDb.getCriteria(gameId));
+
+                for (Long rid : virtualDb.getRequirements(gameId))
+                {
+                    algo.addRequirement(requirements.get(rid), new ArrayList<>());
+                }
+
+                // get all the players in this game
+                List<Long> participantIds = virtualDb.getParticipants(gameId);
+
+                // get the rankings of each player for each criterion
+                List<String> players = new ArrayList<>();
+
+                for (Long userId : participantIds)
+                {
+                    String player = "P" + userId; // users.getOne(userId).getName();
+                    players.add(player);
+                    Map<String, List<Long>> userRanking = virtualDb.getRanking(gameId, userId);
+
+                    if (userRanking != null)
+                    {
+                        Map<String, List<String>> userRankingStr = new HashMap<>();
+
+                        for (Entry<String, List<Long>> entry : userRanking.entrySet())
+                        {
+                            userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+                        }
+
+                        algo.addRanking(player, userRankingStr);
+                    }
+                }
+
+                algo.addDefaultPlayerWeights(virtualDb.getCriteria(gameId), players);
+
+                List<Map<String, Double>> prioritizations = null;
+
+                try
+                {
+                    prioritizations = algo.calc().subList(0, 3);
+                }
+                catch (Exception ex)
+                {
+                    System.err.println("Unable to compute prioritizations");
+                    ex.printStackTrace();
+                    prioritizations = new ArrayList<>();
+                    Map<String, Double> m = new HashMap<>();
+                    m.put("1", 0.2);
+                    m.put("2", 0.21);
+                    m.put("3", 0.15);
+                    m.put("4", 0.01);
+                    prioritizations.add(m);
+                    m = new HashMap<>();
+                    m.put("1", 0.21);
+                    m.put("2", 0.2);
+                    m.put("3", 0.15);
+                    m.put("4", 0.19);
+                    prioritizations.add(m);
+                }
+
+                b.append("<h2>Found: " + prioritizations.size() + " optimal solutions</h2>");
+
+                b.append("<div id='jqxTabs'>\n");
+                b.append("<ul style='margin-left: 20px;'>\n");
+
+                for (int i = 0; i < prioritizations.size(); i++)
+                {
+                    b.append("<li>Solution " + i + "</li>\n");
+                }
+
+                b.append("</ul>\n");
+
+                for (int i = 0; i < prioritizations.size(); i++)
+                {
+                    b.append("<div>\n");
+                    b.append("<table width=0'100%'>\n");
+                    Map<String, Double> map = prioritizations.get(i);
+
+                    for (String c : map.keySet())
+                    {
+                        b.append("<tr>\n");
+                        b.append("<td>'" + c + "'</td><td>" + map.get(c) + "</td>");
+                        b.append("</tr>\n");
+                    }
+
+                    b.append("</table>\n");
+                    b.append("</div>\n");
+                }
+
+                b.append("</div>\n");
+
+                return b.toString().getBytes();
+            }
+        });
+    }
+
+    private static List<String> idToString(List<Long> ids)
+    {
+        List<String> strings = new ArrayList<>();
+
+        for (Long id : ids)
+        {
+            strings.add(requirements.get(id));
+        }
+
+        return strings;
+    }
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @RequestMapping("/**")
+    public byte[] getResource(final HttpServletRequest request)
+    {
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+
+        AntPathMatcher apm = new AntPathMatcher();
+        String finalPath = apm.extractPathWithinPattern(bestMatchPattern, path);
+
+        String URI = request.getRequestURI();
+        String[] tokens = URI.split("/");
+        String pageName = tokens[tokens.length - 1];
+
+        if (pageName.startsWith("results") && pageName.endsWith("html"))
+        {
+            finalPath = finalPath.replaceAll(pageName, "results") + ".html";
+        }
+
+        ResourceProvider rp = providers.get(finalPath);
+
+        // FIXME A temporary workaround to load requirement names from database (instead of displaying requirement IDs
+        // to the user, which is not meaningful)
+        for (Requirement req : availableRequirements.findAll())
+        {
+            requirements.put(req.getRequirementId(), req.getName());
+        }
+
+        if (rp != null)
+        {
+            System.out.println("Serving page by provider: " + finalPath);
+            String id = pageName.replaceAll("results", "").replaceAll(".html", "");
+            return rp.getResource(request, id);
+        }
+        else
+        {
+            System.out.println("Serving page " + finalPath);
+
+            Resource resource = resourceLoader.getResource("classpath:static/garp/" + finalPath);
+
+            try
+            {
+                System.out.println(resource.getFile().getAbsolutePath());
+            }
+            catch (IOException e1)
+            {
+                e1.printStackTrace();
+            }
+            // Resource resource = resourceLoader.getResource("classpath:static/game.html");
+
+            try
+            {
+                InputStream is = resource.getInputStream();
+
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                try
+                {
+                    int read = is.read();
+
+                    while (read != -1)
+                    {
+                        byteArrayOutputStream.write(read);
+                        read = is.read();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                byte[] bytes = byteArrayOutputStream.toByteArray();
+                return bytes;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            // Something went wrong
+            return ("Failed to load resource '" + finalPath).getBytes();
+        }
+    }
 }

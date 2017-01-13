@@ -31,7 +31,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 localdata: data
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
+                return '<a href="#/supersede-dm-app/garp/results' + value + '">' + value + "</a>";
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({
@@ -62,13 +62,16 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 ],
                 localdata: data
             };
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                return '<a href="#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
+            };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#activeGames").jqxGrid( {
                 width: 500,
                 autoheight: true,
                 source: dataAdapter,
                 columns: [
-                  { text: 'Id', datafield: 'id', width: 200 },
+                  { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
                   { text: 'Owner', datafield: 'owner', width: 100 },
                   { text: 'Date', datafield: 'date', width: 100 },
                   { text: 'Status', datafield: 'status', width: 100 }

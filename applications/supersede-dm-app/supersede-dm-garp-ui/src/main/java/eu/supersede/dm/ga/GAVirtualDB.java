@@ -12,11 +12,7 @@ import org.springframework.stereotype.Component;
 
 import eu.supersede.gr.data.GAGameDetails;
 import eu.supersede.gr.data.GAGameSummary;
-import eu.supersede.gr.jpa.AttributesJpa;
-import eu.supersede.gr.jpa.EntitiesJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
-import eu.supersede.gr.model.HAttribute;
-import eu.supersede.gr.model.HEntity;
 import eu.supersede.gr.model.HGAGameSummary;
 
 @Component
@@ -24,141 +20,138 @@ public class GAVirtualDB implements IGADataview
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    static IGADataview instance = new GAVirtualDB();
-
-    public static IGADataview get()
-    {
-        return instance;
-    }
-
     DuplicateMap<Long, GAGameSummary> ownedGames = new DuplicateMap<>();
     DuplicateMap<Long, GAGameSummary> activeGames = new DuplicateMap<>();
     Map<Long, GAGameDetails> games = new HashMap<>();
-    
-//    @Autowired private EntitiesJpa				entities;
-//    
-//    @Autowired private AttributesJpa			attributes;
-    
-    @Autowired private GAGameSummaryJpa			gameSummaries;
-    
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#create(eu.supersede.dm.ga.data.GAGame)
-	 */
+
+    // @Autowired private EntitiesJpa entities;
+    //
+    // @Autowired private AttributesJpa attributes;
+
+    @Autowired
+    private GAGameSummaryJpa gameSummaries;
+
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#create(eu.supersede.dm.ga.data.GAGame)
+     */
     @Override
-	public GAGameDetails create(GAGameSummary game)
+    public GAGameDetails create(GAGameSummary game)
     {
         GAGameDetails gi = new GAGameDetails();
-        gi.setGame( game );
+        gi.setGame(game);
         games.put(game.getId(), gi);
         ownedGames.put(game.getOwner(), game);
-        
-        HGAGameSummary gs = new HGAGameSummary( game );
-        gameSummaries.save( gs );
-        
-//        {
-//            HEntity entity = null;
-//            
-//            
-//            
-//            entity = new HEntity();
-//            entity.setClsName( "GameSummary" );
-//            entities.save( entity );
-//            
-//            setAttr( entity, "status", game.getStatus() );
-//            setAttr( entity, "date", game.getDate() );
-//            setAttr( entity, "orwner", "" + game.getOwner() );
-//            
-//            
-//            
-//            entity = new HEntity();
-//            entity.setClsName( "GameDetail");
-//            entities.save( entity );
-//            
-//            
-//            
-//            
-//            
-//            
-//        }
-        
+
+        HGAGameSummary gs = new HGAGameSummary(game);
+        gameSummaries.save(gs);
+
+        // {
+        // HEntity entity = null;
+        //
+        //
+        //
+        // entity = new HEntity();
+        // entity.setClsName( "GameSummary" );
+        // entities.save( entity );
+        //
+        // setAttr( entity, "status", game.getStatus() );
+        // setAttr( entity, "date", game.getDate() );
+        // setAttr( entity, "orwner", "" + game.getOwner() );
+        //
+        //
+        //
+        // entity = new HEntity();
+        // entity.setClsName( "GameDetail");
+        // entities.save( entity );
+        //
+        //
+        //
+        //
+        //
+        //
+        // }
+
         return gi;
     }
-    
-//	private void setAttr( HEntity entity, String name, String value ) {
-//        HAttribute attr = new HAttribute();
-//        attr.setEntityId( entity.getId() );
-//        attr.setName( name );
-//        attr.setValue( value );
-//        attributes.save( attr );
-//	}
-	
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#create(eu.supersede.dm.ga.data.GAGame, java.util.List, java.util.List, java.util.List)
-	 */
+
+    // private void setAttr( HEntity entity, String name, String value ) {
+    // HAttribute attr = new HAttribute();
+    // attr.setEntityId( entity.getId() );
+    // attr.setName( name );
+    // attr.setValue( value );
+    // attributes.save( attr );
+    // }
+
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#create(eu.supersede.dm.ga.data.GAGame, java.util.List, java.util.List,
+     * java.util.List)
+     */
     @Override
-	public void create(GAGameSummary game, List<String> criteria, List<Long> requirements, List<Long> participants)
+    public void create(GAGameSummary game, List<String> criteria, List<Long> requirements, List<Long> participants)
     {
         GAGameDetails gi = create(game);
-        gi.setRequirements( requirements );
-        gi.setCriteria( criteria );
-        gi.setParticipants( participants );
+        gi.setRequirements(requirements);
+        gi.setCriteria(criteria);
+        gi.setParticipants(participants);
 
         for (Long provider : participants)
         {
             activeGames.put(provider, game);
         }
 
-        log.info(
-        		"Created game: " + game.getId() + 
-        		", requirements: " + gi.getRequirements().size() + 
-        		", criteria: " + gi.getCriteria().size() + 
-        		", participants: " + gi.getParticipants().size());
+        log.info("Created game: " + game.getId() + ", requirements: " + gi.getRequirements().size() + ", criteria: "
+                + gi.getCriteria().size() + ", participants: " + gi.getParticipants().size());
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getOwnedGames(java.lang.Long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getOwnedGames(java.lang.Long)
+     */
     @Override
-	public List<GAGameSummary> getOwnedGames(Long owner)
+    public List<GAGameSummary> getOwnedGames(Long owner)
     {
         return ownedGames.getList(owner);
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getActiveGames(java.lang.Long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getActiveGames(java.lang.Long)
+     */
     @Override
-	public List<GAGameSummary> getActiveGames(Long userId)
+    public List<GAGameSummary> getActiveGames(Long userId)
     {
         return activeGames.getList(userId);
     }
 
-//    /* (non-Javadoc)
-//	 * @see eu.supersede.dm.ga.IGADataview#getActiveGame(java.lang.Long)
-//	 */
-//    @Override
-//	public GAGameSummary getActiveGame(Long userId)
-//    {
-//        return activeGames.get(userId);
-//    }
+    // /* (non-Javadoc)
+    // * @see eu.supersede.dm.ga.IGADataview#getActiveGame(java.lang.Long)
+    // */
+    // @Override
+    // public GAGameSummary getActiveGame(Long userId)
+    // {
+    // return activeGames.get(userId);
+    // }
 
-//    public void setRanking(Long gameId, Long userId, List<Long> reqs)
-//    {
-//        GameInfo gi = getGameInfo(gameId);
-//
-//        if (gi == null)
-//        {
-//            return;
-//        }
-//
-//        gi.rankings.put(userId, reqs);
-//    }
+    // public void setRanking(Long gameId, Long userId, List<Long> reqs)
+    // {
+    // GameInfo gi = getGameInfo(gameId);
+    //
+    // if (gi == null)
+    // {
+    // return;
+    // }
+    //
+    // gi.rankings.put(userId, reqs);
+    // }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#setRanking(java.lang.Long, java.lang.Long, java.util.Map)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#setRanking(java.lang.Long, java.lang.Long, java.util.Map)
+     */
     @Override
-	public void setRanking(Long gameId, Long userId, Map<String,List<Long>> reqs)
+    public void setRanking(Long gameId, Long userId, Map<String, List<Long>> reqs)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -166,27 +159,29 @@ public class GAVirtualDB implements IGADataview
         {
             return;
         }
-        
-        Map<String,List<Long>> map = gi.getRankings().get( userId );
-        
+
+        Map<String, List<Long>> map = gi.getRankings().get(userId);
+
         if (map == null)
         {
-        	map = new HashMap<>();
-        	gi.getRankings().put(userId, map);
+            map = new HashMap<>();
+            gi.getRankings().put(userId, map);
         }
-        
-        for( String key : reqs.keySet() ) {
-            map.put( key,  reqs.get( key ) );
+
+        for (String key : reqs.keySet())
+        {
+            map.put(key, reqs.get(key));
         }
-        
-//        gi.rankings.put(userId, reqs);
+
+        // gi.rankings.put(userId, reqs);
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getRankingsCriterion(java.lang.Long, java.lang.Long, java.lang.String)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getRankingsCriterion(java.lang.Long, java.lang.Long, java.lang.String)
+     */
     @Override
-	public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
+    public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -195,37 +190,41 @@ public class GAVirtualDB implements IGADataview
             return null;
         }
         Map<String, List<Long>> map = gi.getRankings().get(userId);
-        if ( map == null){
-        	return null;
+        if (map == null)
+        {
+            return null;
         }
 
         return map.get(criterion);
     }
-    
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getRanking(java.lang.Long, java.lang.Long)
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getRanking(java.lang.Long, java.lang.Long)
+     */
     @Override
-	public Map<String,List<Long>> getRanking (Long gameId, Long userId){
-    	GAGameDetails gi = getGameInfo(gameId);
-    	return gi.getRankings().get(userId);
+    public Map<String, List<Long>> getRanking(Long gameId, Long userId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+        return gi.getRankings().get(userId);
     }
 
-    
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getGameInfo(java.lang.Long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getGameInfo(java.lang.Long)
+     */
     @Override
-	public GAGameDetails getGameInfo(Long gameId)
+    public GAGameDetails getGameInfo(Long gameId)
     {
         return games.get(gameId);
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getParticipants(eu.supersede.dm.ga.data.GAGame)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getParticipants(eu.supersede.dm.ga.data.GAGame)
+     */
     @Override
-	public List<Long> getParticipants(GAGameSummary game)
+    public List<Long> getParticipants(GAGameSummary game)
     {
         GAGameDetails gi = getGameInfo(game.getId());
 
@@ -237,12 +236,14 @@ public class GAVirtualDB implements IGADataview
         return gi.getParticipants();
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getParticipants(java.lang.Long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getParticipants(java.lang.Long)
+     */
     @Override
-	public List<Long> getParticipants(Long gameId){
-    	GAGameDetails gi = getGameInfo(gameId);
+    public List<Long> getParticipants(Long gameId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -252,23 +253,25 @@ public class GAVirtualDB implements IGADataview
         return gi.getParticipants();
 
     }
-    
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getCriteria(eu.supersede.dm.ga.data.GAGame)
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getCriteria(eu.supersede.dm.ga.data.GAGame)
+     */
     @Override
-	public List<String> getCriteria(GAGameSummary game)
+    public List<String> getCriteria(GAGameSummary game)
     {
-    	return getCriteria( game.getId() );
+        return getCriteria(game.getId());
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getCriteria(long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getCriteria(long)
+     */
     @Override
-	public List<String> getCriteria( long gameId )
+    public List<String> getCriteria(long gameId)
     {
-        GAGameDetails gi = getGameInfo( gameId );
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -278,11 +281,12 @@ public class GAVirtualDB implements IGADataview
         return gi.getCriteria();
     }
 
-    /* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getRequirements(java.lang.Long)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getRequirements(java.lang.Long)
+     */
     @Override
-	public List<Long> getRequirements(Long gameId)
+    public List<Long> getRequirements(Long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -294,19 +298,23 @@ public class GAVirtualDB implements IGADataview
         return gi.getRequirements();
     }
 
-	/* (non-Javadoc)
-	 * @see eu.supersede.dm.ga.IGADataview#getRequirements(java.lang.Long, java.lang.Long)
-	 */
-	@Override
-	public Map<String,List<Long>> getRequirements( Long gameId, Long userId ) {
-		GAGameDetails gi = getGameInfo( gameId );
-		if( gi == null ) {
-			return new HashMap<>();
-		}
-		Map<String,List<Long>> map = new HashMap<>();
-		for( String c : gi.getCriteria() ) {
-			map.put( c, gi.getRequirements() );
-		}
-		return map;
-	}
+    /*
+     * (non-Javadoc)
+     * @see eu.supersede.dm.ga.IGADataview#getRequirements(java.lang.Long, java.lang.Long)
+     */
+    @Override
+    public Map<String, List<Long>> getRequirements(Long gameId, Long userId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+        if (gi == null)
+        {
+            return new HashMap<>();
+        }
+        Map<String, List<Long>> map = new HashMap<>();
+        for (String c : gi.getCriteria())
+        {
+            map.put(c, gi.getRequirements());
+        }
+        return map;
+    }
 }
