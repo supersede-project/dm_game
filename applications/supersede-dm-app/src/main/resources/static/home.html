@@ -1,47 +1,58 @@
 <script src="supersede-dm-app/js/home.js"></script>
 <div class="container" ng-controller="home">
 
-Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
+	Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
 
 	<div class="row" ng-controller="home">
 		<div class="col-md-6">
-<!-- 			<h1>Profile details</h1> -->
-<!-- 			<p>Name: <b>{{user.name}}</b></p> -->
-<!-- 			<p>Email: <b>{{user.email}}</b></p> -->
 
-<!-- 			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row"> -->
-<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
-<!-- 					<a href="#/supersede-dm-app/games">Decision making processes</a> -->
-<!-- 				</jqx-link-button> -->
-<!-- 			</div> -->
-				
-<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
-<!-- 					<a href="#/supersede-dm-ahprp-ui/games">Processes</a> -->
-<!-- 				</jqx-link-button> -->
-	
-	<h2>List of unscheduled requirements</h2>
-	
-		<div class="row">
-			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" 
-				ng-mouseenter="$parent.currentRequirement = requirement"
-				ng-mouseleave="$parent.currentRequirement = undefined">
-				<input
-				    type="checkbox"
-				    name="selectedRequirements"
-				    value="{{requirement}}"
-				    ng-checked="game.requirements.indexOf(requirement) > -1"
-				    ng-click="toggleSelection(game.requirements, requirement)"
-			  	/> {{requirement.name}}
-			</label>
+			<h2>List of unscheduled requirements</h2>
+
+			<div class="row">
+				<label ng-repeat="requirement in requirements | orderBy: 'name'"
+					class="selection-choice"
+					ng-mouseenter="$parent.currentRequirement = requirement"
+					ng-mouseleave="$parent.currentRequirement = undefined"> <input
+					type="checkbox" name="selectedRequirements" value="{{requirement}}"
+					ng-checked="game.requirements.indexOf(requirement) > -1"
+					ng-click="toggleSelection(game.requirements, requirement)" />
+					{{requirement.name}}
+				</label>
+			</div>
+			<div ng-show="currentRequirement" class="selection-summary">
+				<div class="summary-row">{{currentRequirement.description}}</div>
+			</div>
+
 		</div>
-		<div ng-show="currentRequirement" class="selection-summary">
-			<div class="summary-row">{{currentRequirement.description}}</div>
-		</div>
-				
-		</div>
-		
+
 	</div>
-	
-	
-	
+
+	<div align="center" style="margin-top: 32px">
+		<jqx-button ng-click="doPlan()">Plan Decision Making
+		Process</jqx-button>
+	</div>
+
+	<div id='jqxWidget'
+		style="width: 300px; height: 600px; font-size: 13px; font-family: Verdana;">
+		<div id='jqxDockPanel'>
+
+			<div id='first' dock='left' style='background: #eeeeee;'>Left
+				bar</div>
+
+			<div id='second' dock='bottom' style='height: 34px;'>Bottom</div>
+
+			<div id='third' dock='right'>
+				<div id='jqxWidget' style="float: right;">
+					<div id='jqxNavigationBar'>
+						<div>Results</div>
+						<div></div>
+					</div>
+				</div>
+			</div>
+			<div id='fourth'>
+				<div id='container' style="width: 350px; height: 500px" />
+			</div>
+		</div>
+	</div>
+
 </div>
