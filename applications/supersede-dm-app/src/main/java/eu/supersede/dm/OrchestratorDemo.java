@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import eu.supersede.dm.jmetal.DMJMetalMultiMethodPlanner;
 import eu.supersede.dm.methods.AHPRequirementsPrioritizationMethod;
 import eu.supersede.dm.methods.DMLibrary;
-import eu.supersede.gr.logics.Datastore;
+import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.jpa.UsersJpa;
+import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -22,23 +24,22 @@ import eu.supersede.gr.model.ValutationCriteria;
 @Service
 public class OrchestratorDemo
 {
+    @Autowired
+    private RequirementsJpa requirements;
 
     @Autowired
-    Datastore db;
+    private ValutationCriteriaJpa criteria;
+
+    @Autowired
+    private UsersJpa users;
 
     public OrchestratorDemo()
     {
         // clients.put( AHPRequirementsPrioritizationMethod.NAME, new AHPRPProcessClient() );
     }
 
-    Datastore getDB()
-    {
-        return Datastore.get();
-    }
-
     public DMRuleset createTestRuleset()
     {
-
         DMRuleset ruleset = new DMRuleset();
 
         ruleset.addRule(new IDMFitnessCalculator()
@@ -119,9 +120,7 @@ public class OrchestratorDemo
 
         DMProblem.Config cfg = new DMProblem.Config();
 
-        List<User> users = getDB().listUsers();
-
-        for (User user : users)
+        for (User user : users.findAll())
         {
             cfg.addUser(new DMUser(user.getName(), new DMSkill[] {}));
         }
@@ -129,16 +128,14 @@ public class OrchestratorDemo
         List<DMTopic> topics = new ArrayList<>();
 
         {
-            List<ValutationCriteria> criteria = getDB().listCriteria();
-
-            for (ValutationCriteria criterion : criteria)
+            for (ValutationCriteria criterion : criteria.findAll())
             {
                 topics.add(new DMTopic(criterion.getName()));
             }
         }
 
         {
-            for (Requirement r : getDB().listRequirements())
+            for (Requirement r : requirements.findAll())
             {
                 cfg.add(new DMRequirement("" + r.getRequirementId(), r.getName()));
             }
@@ -157,7 +154,6 @@ public class OrchestratorDemo
         cfg.setConstraint("requirements", "" + cfg.getRequirements().size());
 
         return planWithData(cfg, createTestRuleset(), DMObjective.PrioritizeRequirements);
-
     }
 
     public DMSolution planWithData(DMProblem.Config cfg, DMRuleset ruleset, DMObjective obj)
