@@ -80,22 +80,6 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
         });
     };
 
-    $scope.createGame = function() {
-        $http({
-            url: "supersede-dm-app/ahprp/game",
-            data: $scope.game,
-            method: 'POST',
-            params: {criteriaValues : $scope.choices}
-        }).success(function(data){
-            $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-            $scope.choices = {};
-            $scope.currentPage = 'page1';
-            $location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
-        }).error(function(err){
-            alert(err.message);
-        });
-    };
-
     $scope.createNew = function() {
         $http({
             url: "supersede-dm-app/garp/game/newrandom",
