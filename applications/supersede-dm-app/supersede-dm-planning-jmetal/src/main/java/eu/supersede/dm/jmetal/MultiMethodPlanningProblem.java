@@ -94,7 +94,11 @@ public class MultiMethodPlanningProblem extends AbstractIntegerProblem {
 			
 			if( c == null ) continue;
 			
-			fitness.add( c.evaluate( activity, problem ) );
+			DMFitness localFitness = c.evaluate( activity, problem );
+			
+			System.out.println( "fitness of " + activity.getMethodName() + " = " + localFitness );
+			
+			fitness.add( localFitness );
 			
 		}
 		

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,9 @@ public class OrchestrationRest
     private OrchestratorDemo orchestratorDemo;
 
     @RequestMapping(value = "/plan", method = RequestMethod.GET)
-    public String doPlan()
+    public String doPlan( @RequestParam(defaultValue = "2") Integer accuracy)
     {
-        DMSolution sol = orchestratorDemo.plan();
+        DMSolution sol = orchestratorDemo.plan( accuracy );
         Gson gson = new Gson();
         String ret = gson.toJson(sol);
         System.out.println(ret);

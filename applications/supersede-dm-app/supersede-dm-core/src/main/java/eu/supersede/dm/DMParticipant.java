@@ -9,4 +9,8 @@ public class DMParticipant {
 		return user.name;
 	}
 	
+	public String toString() {
+		return user + "(" + role + ")";
+	}
+	
 }

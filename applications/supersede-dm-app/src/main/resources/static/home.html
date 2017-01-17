@@ -8,26 +8,16 @@
 
 			<h2>List of unscheduled requirements</h2>
 
-			<div class="row">
-				<label ng-repeat="requirement in requirements | orderBy: 'name'"
-					class="selection-choice"
-					ng-mouseenter="$parent.currentRequirement = requirement"
-					ng-mouseleave="$parent.currentRequirement = undefined"> <input
-					type="checkbox" name="selectedRequirements" value="{{requirement}}"
-					ng-checked="game.requirements.indexOf(requirement) > -1"
-					ng-click="toggleSelection(game.requirements, requirement)" />
-					{{requirement.name}}
-				</label>
-			</div>
-			<div ng-show="currentRequirement" class="selection-summary">
-				<div class="summary-row">{{currentRequirement.description}}</div>
+			<div id='jqxGridWidget'
+				style="font-size: 13px; font-family: Verdana; float: left;">
+				<div id="jqxgrid"></div>
 			</div>
 
 		</div>
 
 	</div>
 
-	<div align="center" style="margin-top: 32px">
+	<div align="center" style="padding-top: 100px; margin-bottom:24px">
 		<jqx-button ng-click="doPlan()">Plan Decision Making
 		Process</jqx-button>
 	</div>
@@ -36,10 +26,21 @@
 		style="width: 300px; height: 600px; font-size: 13px; font-family: Verdana;">
 		<div id='jqxDockPanel'>
 
-			<div id='first' dock='left' style='background: #eeeeee;'>Left
-				bar</div>
+			<!-- 			<div id='first' dock='left' style='background: #eeeeee;'>Left -->
+			<!-- 				bar</div> -->
 
-			<div id='second' dock='bottom' style='height: 34px;'>Bottom</div>
+			<div id='first' dock='top'>
+				<div id="navBar1">
+					<ul>
+						<li><div id="jqxDateTimeSelector" style="width: '300px'"></div></li>
+						<li><div id="accuracyLevel"></div></li>
+					</ul>
+				</div>
+			</div>
+
+			<div align="center" id='second' dock='bottom' style='height: 34px;'>
+				<jqx-button>Execute plan</jqx-button>
+			</div>
 
 			<div id='third' dock='right'>
 				<div id='jqxWidget' style="float: right;">
