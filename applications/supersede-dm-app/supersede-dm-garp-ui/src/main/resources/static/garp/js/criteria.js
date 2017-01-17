@@ -12,50 +12,54 @@
    limitations under the License.
 */
 
-var app = angular.module('w5app');
+var app = angular.module("w5app");
 
-app.controllerProvider.register('display_criteria', function($scope, $http, $location) {
+app.controllerProvider.register("display_criteria", function($scope, $http, $location) {
 
-	var gameId = $location.search().id;
-	
-	$scope.gameId = gameId;
-    $scope.getSelectedCriteria = function() {
-        $http.get('supersede-dm-app/garp/game/gamecriteria?gameId=' + gameId)
-        .success(function(data) {
-            console.log(data);
-            //alert('Data:' + data);
-            var data2 = {};
-            for (var m = 0; m < data.length; m++) {
-                var row = {};
-                row.id = data[m];
-                data2[m] = row;
-            }
-            
-            var source = {
-                datatype: "array",
-                datafields: [
-                    { name: 'id' }
-                ],
-                localdata: data2
-            };
-            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + '&idC=' + value + '">' + value + "</a>";
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#selectedCriteria").jqxGrid({
-                width: 500,
-                autoheight: true,
-                source: dataAdapter,
-                columns: [
-                  { text: 'Criterion Name', datafield: 'id', width: 500, cellsrenderer: cellsrenderer }
-                ]
-            });
+    var gameId = $location.search().id;
+
+    $scope.gameId = gameId;
+
+    $http.get("supersede-dm-app/garp/game/game?gameId=" + gameId)
+    .success(function(data) {
+        console.log("Game:");
+        console.log(data);
+        $scope.game = data;
+    });
+
+    $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
+    .success(function(data) {
+        console.log(data);
+        //alert('Data:' + data);
+        var data2 = {};
+        for (var m = 0; m < data.length; m++) {
+            var row = {};
+            row.id = data[m];
+            data2[m] = row;
+        }
+
+        var source = {
+            datatype: "array",
+            datafields: [
+                { name: "id" }
+            ],
+            localdata: data2
+        };
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + "&idC=" + value + '">' + value + "</a>";
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#selectedCriteria").jqxGrid({
+            width: 500,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: "Criterion Name", datafield: "id", width: 500, cellsrenderer: cellsrenderer }
+            ]
         });
-    };
-    
-    $scope.finish = function() {
-        $location.url('supersede-dm-app/garp/results' + gameId);
-      };
+    });
 
-    $scope.getSelectedCriteria();
+    $scope.finish = function() {
+        $location.url("supersede-dm-app/garp/results" + gameId);
+    };
 });

@@ -2,7 +2,11 @@
 
 <div ng-controller="display_criteria">
 	
-    <h1>Criteria in the Game: {{gameId}}</h1>
+    <h1>Game Criteria</h1>
+    <p><strong>Id</strong>: {{game.id}}</p>
+    <p><strong>Owner</strong>: {{game.owner}}</p>
+    <p><strong>Creation Date</strong>: {{game.date}}</p>
+    <p><strong>Status</strong>: {{game.status}}</p>
 
     <div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
         <div id="selectedCriteria"></div>
