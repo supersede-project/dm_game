@@ -27,11 +27,11 @@ echo -e "\nBuilding supersede-dm-ahprp-ui...\n"
 
 cd ../supersede-dm-garp
 echo -e "\nBuilding supersede-dm-garp...\n"
-./gradlew build --refresh-dependencies -x test
+./gradlew build --refresh-dependencies test
 
 cd ../supersede-dm-garp-ui
 echo -e "\nBuilding supersede-dm-garp-ui...\n"
-./gradlew build --refresh-dependencies -x test
+./gradlew build --refresh-dependencies test
 
 cd ../supersede-dm-planning-jmetal
 echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
@@ -43,4 +43,4 @@ echo -e "\nBuilding supersede-dm-orchestrator...\n"
 
 cd ../
 echo -e "\nBuilding supersede-dm-app...\n"
-./gradlew build --refresh-dependencies -x test
+./gradlew build --refresh-dependencies test
