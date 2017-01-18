@@ -1,33 +1,37 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'war'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+apply plugin: "war"
+apply plugin: "maven"
+apply plugin: "maven-publish"
 apply plugin: "com.jfrog.artifactory"
 
-version = '0.0.2-M18'
-group = 'eu.supersede'
+version = "0.0.2-M18"
+group = "eu.supersede"
 
 war {
-    baseName = 'dm-app'
+    baseName = "dm-app"
 }
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 sourceSets {
     main {
         java {
-            srcDir 'src/main/java'
+            srcDir "src/main/java"
         }
         resources {
-            srcDir 'src/main/resources'
+            srcDir "src/main/resources"
         }
     }
 }
+
 buildscript {
     ext {
-        springBootVersion = '1.4.3.RELEASE'
+        springBootVersion = "1.4.3.RELEASE"
     }
     repositories {
         mavenCentral()
@@ -35,16 +39,16 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
         maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
-            name = 'maven-supersede-release'
+            url "http://supersede.es.atos.net:10080/artifactory/libs-release"
+            name = "maven-supersede-release"
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
             }
         }
         maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
-            name = 'maven-supersede-snapshot'
+            url "http://supersede.es.atos.net:10080/artifactory/libs-snapshot"
+            name = "maven-supersede-snapshot"
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
@@ -53,14 +57,11 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE")
         //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
     }
 }
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -76,31 +77,31 @@ configurations.all {
     //Avoids conflict: SL4J Multiple bindings were found on the class path
     exclude group: "org.slf4j", module: "slf4j-log4j12"
     // check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+    resolutionStrategy.cacheDynamicVersionsFor 0, "seconds"
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-security')
-    compile('org.springframework.boot:spring-boot-starter-web')
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    compile('commons-collections:commons-collections:3.2.1')
-    compile('org.apache.velocity:velocity:1.6.2')
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    compile("commons-collections:commons-collections:3.2.1")
+    compile("org.apache.velocity:velocity:1.6.2")
 
     compile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     compile("org.postgresql:postgresql:9.4.1208.jre7")
 
-    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
 
-    compile("org.springframework.boot:spring-boot-starter-mail")
+    compile("org.springframework.boot:spring-boot-starter-mail:${springBootVersion}")
 
     compile("org.springframework.session:spring-session:1.2.2.RELEASE")
-    compile("org.springframework.boot:spring-boot-starter-redis")
+    compile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
 
     compile("eu.supersede:AHP:0.0.1-SNAPSHOT")
-    compile('org.apache.commons:commons-math3:3.6.1')
+    compile("org.apache.commons:commons-math3:3.6.1")
 
     compile("eu.supersede:supersede-client:0.2.1-SNAPSHOT"){changing = true}
     compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
@@ -129,11 +130,11 @@ dependencies {
     compile project(":supersede-dm-planning-jmetal")
     compile project(":supersede-dm-orchestrator")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
 }
 
 allprojects {
-    apply plugin: 'java'
+    apply plugin: "java"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -148,13 +149,13 @@ allprojects {
 }
 
 subprojects {
-    group = 'eu.supersede'
-    version = '0.0.2-SNAPSHOT'
+    group = "eu.supersede"
+    version = "0.0.2-SNAPSHOT"
 }
 
 eclipse {
     classpath {
-         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+         containers.remove("org.eclipse.jdt.launching.JRE_CONTAINER")
+         containers "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"
     }
 }

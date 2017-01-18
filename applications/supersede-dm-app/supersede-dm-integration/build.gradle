@@ -1,13 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'maven'
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "maven"
 
-version = '0.0.2-SNAPSHOT'
-group = 'eu.supersede'
+version = "0.0.2-SNAPSHOT"
+group = "eu.supersede"
 
 jar {
-    baseName = 'supersede-dm-integration'
+    baseName = "supersede-dm-integration"
 }
 
 sourceCompatibility = 1.8
@@ -18,14 +18,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE')
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE")
     }
 }
 
 repositories {
     mavenCentral()
-    maven {url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot-local/'}
-    maven {url 'http://supersede.es.atos.net:10080/artifactory/ext-release-local/'}
+    maven {url "http://supersede.es.atos.net:10080/artifactory/libs-snapshot-local/"}
+    maven {url "http://supersede.es.atos.net:10080/artifactory/ext-release-local/"}
 }
 
 configurations {
@@ -43,8 +43,8 @@ dependencies {
 
 eclipse {
     classpath {
-        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+        containers.remove("org.eclipse.jdt.launching.JRE_CONTAINER")
+        containers "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"
     }
 }
 
