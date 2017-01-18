@@ -52,8 +52,9 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		    $("#jqxgrid").jqxGrid("addrow",null,
 		    		{ selected: "false",
 		    		 ReqID: data[i].requirementId,
-		    		 ReqName: data[i].name ,
-		    		 ReqDesc: data[i].description } );
+		    		 ReqName: data[i].name,
+		    		 ReqStatus: "Requirement" } );
+//		    		 ReqDesc: data[i].description } );
 		}
 	});
     
@@ -69,6 +70,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     {
     	var accuracy = $("#accuracyLevel").jqxSlider('value');
     	
+    	$('#jqxLoader').jqxLoader('open');
+    	
     	$http.get('supersede-dm-app/orchestration/plan?accuracy='+accuracy).success(
     			function(data) {
     				
@@ -76,7 +79,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     				$('#container').jqxDraw();
     				var renderer = $('#container').jqxDraw('getInstance');
     				
-    				
+    				renderer.clear();
     				
     				var top = 50;
     				var hgap = (dock.height - top) / (data.steps.length +3);
@@ -158,6 +161,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     	            
     	            renderer.refresh();
     	            
+    	            $('#jqxLoader').jqxLoader('close');
+    	            
 //    	            $('#jqxNavigationBar').jqxNavigationBar('update', '0', 'Requirements', '<ul><li>Requirement 1</li><li>Requirement 2</li></ul>');
     			}
     		);
@@ -233,7 +238,7 @@ $(document).ready(function () {
             { name: 'selected', type: 'bool' },
             { name: 'ReqID', type: 'string' },
             { name: 'ReqName', type: 'string' },
-            { name: 'ReqDesc', type: 'string' }
+            { name: 'ReqStatus', type: 'string' }
         ],
     };
     var dataAdapter = new $.jqx.dataAdapter(source, {
@@ -256,7 +261,8 @@ $(document).ready(function () {
                   { text: 'Select', columntype: 'checkbox', datafield: 'selected', width: 50 },
                   { text: 'ID', datafield: 'ReqID', width: 100 },
                   { text: 'Name', datafield: 'ReqName', width: 300 },
-                  { text: 'Description', datafield: 'ReqDesc', width: 300 }
+                  { text: 'Status', datafield: 'ReqStatus', width: 300 }
+//                  { text: 'Description', datafield: 'ReqDesc', width: 300 }
                 ]
             });
     
