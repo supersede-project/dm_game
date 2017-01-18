@@ -112,3 +112,7 @@ eclipse {
 }
 
 bootRepackage.enabled = false
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "3.3"
+}
