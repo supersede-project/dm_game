@@ -27,38 +27,37 @@ import org.springframework.stereotype.Component;
 import eu.supersede.fe.application.ApplicationUtil;
 
 @Component
-public class GAUILoader {
-	
-	@Autowired
-	private ApplicationUtil au;
-	
-	@PostConstruct
-	public void load() {
-		
-		System.out.println( "Registering GA app" );
-		
-		Map<String, String> labels = new HashMap<>();
-		List<String> roles;
-		
-		labels = new HashMap<>();
-		roles = new ArrayList<>();
-		labels.put( "", "GA Home" );
-		roles.add( "DM_ADMIN" );
-		roles.add( "OPINION_PROVIDER" );
-		roles.add( "DECISION_SCOPE_PROVIDER" );
-		roles.add( "OPINION_NEGOTIATOR" );
-		au.addApplicationPage( "supersede-dm-app", "garp/home", labels, roles );
-		
-//		labels = new HashMap<>();
-//		labels.put( "", "APP Home" );
-//		roles = new ArrayList<>();
-//		roles = new ArrayList<>();
-//		roles.add( "DM_ADMIN" );
-//		roles.add( "OPINION_PROVIDER" );
-//		roles.add( "DECISION_SCOPE_PROVIDER" );
-//		roles.add( "OPINION_NEGOTIATOR" );
-//		au.addApplicationPage( "supersede-dm-app", "garp/game_page", labels, roles );
-		
-	}
-	
+public class GAUILoader
+{
+    @Autowired
+    private ApplicationUtil au;
+
+    @PostConstruct
+    public void load()
+    {
+        System.out.println("Registering GA app");
+
+        Map<String, String> labels = new HashMap<>();
+        List<String> roles;
+
+        labels = new HashMap<>();
+        roles = new ArrayList<>();
+        labels.put("", "GA Home");
+        roles.add("DM_ADMIN");
+        roles.add("OPINION_PROVIDER");
+        roles.add("DECISION_SCOPE_PROVIDER");
+        roles.add("OPINION_NEGOTIATOR");
+        au.addApplicationPage("supersede-dm-app", "garp/home", labels, roles);
+
+        // labels = new HashMap<>();
+        // labels.put( "", "APP Home" );
+        // roles = new ArrayList<>();
+        // roles = new ArrayList<>();
+        // roles.add( "DM_ADMIN" );
+        // roles.add( "OPINION_PROVIDER" );
+        // roles.add( "DECISION_SCOPE_PROVIDER" );
+        // roles.add( "OPINION_NEGOTIATOR" );
+        // au.addApplicationPage( "supersede-dm-app", "garp/game_page", labels, roles );
+
+    }
 }

@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ga.GAVirtualDB;
-import eu.supersede.dm.ga.data.GAGame;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
@@ -44,26 +44,29 @@ public class GAGameRest
     @Autowired
     private UsersJpa users;
 
+    @Autowired
+    private GAVirtualDB virtualDb;
+
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
-    public List<GAGame> getOwnedGames(Authentication authentication)
+    public List<GAGameSummary> getOwnedGames(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return GAVirtualDB.get().getOwnedGames(currentUser.getUserId());
+        return virtualDb.getOwnedGames(currentUser.getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
-    public List<GAGame> getActiveGames(Authentication authentication)
+    public List<GAGameSummary> getActiveGames(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return GAVirtualDB.get().getActiveGames(currentUser.getUserId());
+        return virtualDb.getActiveGames(currentUser.getUserId());
     }
 
     @RequestMapping(value = "/newrandom", method = RequestMethod.GET)
-    public GAGame createNewRandomGame(Authentication authentication)
+    public GAGameSummary createNewRandomGame(Authentication authentication)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         Long userId = currentUser.getUserId();
-        GAGame game = new GAGame();
+        GAGameSummary game = new GAGameSummary();
         game.setId(System.currentTimeMillis());
         game.setOwner(userId);
         game.setDate("12/12/2016");
@@ -99,7 +102,7 @@ public class GAGameRest
             log.info("Added user id " + participants.get(i).getUserId() + " to game id: " + game.getId());
         }
 
-        GAVirtualDB.get().create(game, gameCriteria, gameRequirements, gameParticipants);
+        virtualDb.create(game, gameCriteria, gameRequirements, gameParticipants);
         return game;
     }
 
@@ -108,19 +111,21 @@ public class GAGameRest
             @RequestBody Map<String, List<Long>> reqs)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+
         for (String key : reqs.keySet())
         {
             log.info("Sending priorities: game " + gameId + " user " + currentUser.getUserId() + " criterion " + key
                     + " reqs " + reqs.get(key));
         }
-        GAVirtualDB.get().setRanking(gameId, currentUser.getUserId(), reqs);
+
+        virtualDb.setRanking(gameId, currentUser.getUserId(), reqs);
     }
 
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)
     public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        List<Long> reqs = GAVirtualDB.get().getRankingsCriterion(gameId, currentUser.getUserId(), criterion);
+        List<Long> reqs = virtualDb.getRankingsCriterion(gameId, currentUser.getUserId(), criterion);
         List<Requirement> requirements = new ArrayList<>();
 
         if (reqs != null)
@@ -132,27 +137,27 @@ public class GAGameRest
         }
         else
         {
-            // return availableRequirements.findAll();
-            List<Long> tmp = GAVirtualDB.get().getRequirements(gameId);
+            List<Long> tmp = virtualDb.getRequirements(gameId);
+
             for (Long requirementId : tmp)
             {
                 requirements.add(availableRequirements.findOne(requirementId));
             }
         }
+
         return requirements;
     }
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)
-    public GAGame getGame(Authentication authentication, Long gameId)
+    public GAGameSummary getGame(Authentication authentication, Long gameId)
     {
-        return GAVirtualDB.get().getGameInfo(gameId).getGame();
+        return virtualDb.getGameInfo(gameId).getGame();
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
     public List<String> getGameCriteria(Authentication authentication, Long gameId)
     {
-        // DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return GAVirtualDB.get().getCriteria(gameId);
+        return virtualDb.getCriteria(gameId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
@@ -165,47 +170,50 @@ public class GAGameRest
     public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return GAVirtualDB.get().getRequirements(gameId, currentUser.getUserId());
+        return virtualDb.getRequirements(gameId, currentUser.getUserId());
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGame game)
+    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        algo.setCriteria(GAVirtualDB.get().getCriteria(game));
+        algo.setCriteria(virtualDb.getCriteria(game));
 
-        for (Long rid : GAVirtualDB.get().getRequirements(game.getId()))
+        for (Long rid : virtualDb.getRequirements(game.getId()))
         {
             algo.addRequirement("" + rid, new ArrayList<>());
         }
 
         // get all the players in this game
-        List<Long> participantIds = GAVirtualDB.get().getParticipants(game);
+        List<Long> participantIds = virtualDb.getParticipants(game);
 
         // get the rankings of each player for each criterion
         for (Long userId : participantIds)
         {
             String player = users.getOne(userId).getName();
-            Map<String, List<Long>> userRanking = GAVirtualDB.get().getRanking(game.getId(), userId);
+            Map<String, List<Long>> userRanking = virtualDb.getRanking(game.getId(), userId);
             Map<String, List<String>> userRankingStr = new HashMap<>();
+
             for (Entry<String, List<Long>> entry : userRanking.entrySet())
             {
                 userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
             }
+
             algo.addRanking(player, userRankingStr);
         }
 
-        List<Map<String, Double>> prioritization = algo.calc();
-        return prioritization;
+        return algo.calc();
     }
 
     private List<String> idToString(List<Long> ids)
     {
         List<String> strings = new ArrayList<>();
+
         for (Long id : ids)
         {
             strings.add(availableRequirements.getOne(id).getName());
         }
+
         return strings;
     }
 }

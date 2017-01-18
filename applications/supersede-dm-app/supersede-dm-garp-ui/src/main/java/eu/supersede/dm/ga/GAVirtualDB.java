@@ -1,5 +1,6 @@
 package eu.supersede.dm.ga;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,37 +8,137 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import eu.supersede.dm.ga.data.GAGame;
-import eu.supersede.dm.ga.data.GameInfo;
+import eu.supersede.gr.data.GAGameDetails;
+import eu.supersede.gr.data.GAGameSummary;
+import eu.supersede.gr.jpa.EntitiesJpa;
+import eu.supersede.gr.jpa.GAGameSummaryJpa;
+import eu.supersede.gr.model.HEntity;
+import eu.supersede.gr.model.HGAGameSummary;
 
+@Component
 public class GAVirtualDB
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    static GAVirtualDB instance = new GAVirtualDB();
+    DuplicateMap<Long, GAGameSummary> ownedGames = new DuplicateMap<>();
+    DuplicateMap<Long, GAGameSummary> activeGames = new DuplicateMap<>();
+    Map<Long, GAGameDetails> games = new HashMap<>();
 
-    public static GAVirtualDB get()
+    @Autowired
+    private EntitiesJpa entities;
+    //
+    // @Autowired private AttributesJpa attributes;
+
+    @Autowired
+    private GAGameSummaryJpa gameSummaries;
+
+    public GAGameDetails create(GAGameSummary game)
     {
-        return instance;
-    }
-
-    DuplicateMap<Long, GAGame> ownedGames = new DuplicateMap<>();
-    DuplicateMap<Long, GAGame> activeGames = new DuplicateMap<>();
-    Map<Long, GameInfo> games = new HashMap<>();
-
-    public GameInfo create(GAGame game)
-    {
-        GameInfo gi = new GameInfo();
+        GAGameDetails gi = new GAGameDetails();
         gi.setGame(game);
         games.put(game.getId(), gi);
         ownedGames.put(game.getOwner(), game);
+
+        HGAGameSummary gs = new HGAGameSummary(game);
+        gameSummaries.save(gs);
+
+        // {
+        // HEntity entity = null;
+        //
+        //
+        //
+        // entity = new HEntity();
+        // entity.setClsName( "GameSummary" );
+        // entities.save( entity );
+        //
+        // setAttr( entity, "status", game.getStatus() );
+        // setAttr( entity, "date", game.getDate() );
+        // setAttr( entity, "orwner", "" + game.getOwner() );
+        //
+        //
+        //
+        // entity = new HEntity();
+        // entity.setClsName( "GameDetail");
+        // entities.save( entity );
+        //
+        //
+        //
+        //
+        //
+        //
+        // }
+
         return gi;
     }
 
-    public void create(GAGame game, List<String> criteria, List<Long> requirements, List<Long> participants)
+    // private void setAttr( HEntity entity, String name, String value ) {
+    // HAttribute attr = new HAttribute();
+    // attr.setEntityId( entity.getId() );
+    // attr.setName( name );
+    // attr.setValue( value );
+    // attributes.save( attr );
+    // }
+
+    private void setAttr(Long entityId, String name, String value)
     {
-        GameInfo gi = create(game);
+        // HAttribute attr = new HAttribute();
+        // attr.setEntityId( entityId );
+        // attr.setName( name );
+        // attr.setValue( value );
+        // attributes.save( attr );
+    }
+
+    private Long store(Object o)
+    {
+        HEntity entity = new HEntity();
+        entities.save(entity);
+        storeAttributes(entity.getId(), o);
+        return entity.getId();
+    }
+
+    private void storeAttributes(Long id, Object o)
+    {
+        Field[] fields = o.getClass().getFields();
+
+        for (Field field : fields)
+        {
+            try
+            {
+                if (field.isSynthetic())
+                {
+
+                }
+                else if (field.getType().isArray())
+                {
+
+                }
+                else
+                {
+
+                }
+
+                Object value = field.get(o);
+
+                if (value == null)
+                {
+                    value = "";
+                }
+                setAttr(id, field.getName(), value.toString());
+
+            }
+            catch (IllegalArgumentException | IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void create(GAGameSummary game, List<String> criteria, List<Long> requirements, List<Long> participants)
+    {
+        GAGameDetails gi = create(game);
         gi.setRequirements(requirements);
         gi.setCriteria(criteria);
         gi.setParticipants(participants);
@@ -51,36 +152,19 @@ public class GAVirtualDB
                 + gi.getCriteria().size() + ", participants: " + gi.getParticipants().size());
     }
 
-    public List<GAGame> getOwnedGames(Long owner)
+    public List<GAGameSummary> getOwnedGames(Long owner)
     {
         return ownedGames.getList(owner);
     }
 
-    public List<GAGame> getActiveGames(Long userId)
+    public List<GAGameSummary> getActiveGames(Long userId)
     {
         return activeGames.getList(userId);
     }
 
-    public GAGame getActiveGame(Long userId)
-    {
-        return activeGames.get(userId);
-    }
-
-    // public void setRanking(Long gameId, Long userId, List<Long> reqs)
-    // {
-    // GameInfo gi = getGameInfo(gameId);
-    //
-    // if (gi == null)
-    // {
-    // return;
-    // }
-    //
-    // gi.rankings.put(userId, reqs);
-    // }
-
     public void setRanking(Long gameId, Long userId, Map<String, List<Long>> reqs)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -105,13 +189,15 @@ public class GAVirtualDB
 
     public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
             return null;
         }
+
         Map<String, List<Long>> map = gi.getRankings().get(userId);
+
         if (map == null)
         {
             return null;
@@ -122,18 +208,18 @@ public class GAVirtualDB
 
     public Map<String, List<Long>> getRanking(Long gameId, Long userId)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
         return gi.getRankings().get(userId);
     }
 
-    public GameInfo getGameInfo(Long gameId)
+    public GAGameDetails getGameInfo(Long gameId)
     {
         return games.get(gameId);
     }
 
-    public List<Long> getParticipants(GAGame game)
+    public List<Long> getParticipants(GAGameSummary game)
     {
-        GameInfo gi = getGameInfo(game.getId());
+        GAGameDetails gi = getGameInfo(game.getId());
 
         if (gi == null)
         {
@@ -145,7 +231,7 @@ public class GAVirtualDB
 
     public List<Long> getParticipants(Long gameId)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -153,17 +239,16 @@ public class GAVirtualDB
         }
 
         return gi.getParticipants();
-
     }
 
-    public List<String> getCriteria(GAGame game)
+    public List<String> getCriteria(GAGameSummary game)
     {
         return getCriteria(game.getId());
     }
 
     public List<String> getCriteria(long gameId)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -175,7 +260,7 @@ public class GAVirtualDB
 
     public List<Long> getRequirements(Long gameId)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
@@ -187,16 +272,20 @@ public class GAVirtualDB
 
     public Map<String, List<Long>> getRequirements(Long gameId, Long userId)
     {
-        GameInfo gi = getGameInfo(gameId);
+        GAGameDetails gi = getGameInfo(gameId);
+
         if (gi == null)
         {
             return new HashMap<>();
         }
+
         Map<String, List<Long>> map = new HashMap<>();
+
         for (String c : gi.getCriteria())
         {
             map.put(c, gi.getRequirements());
         }
+
         return map;
     }
 }

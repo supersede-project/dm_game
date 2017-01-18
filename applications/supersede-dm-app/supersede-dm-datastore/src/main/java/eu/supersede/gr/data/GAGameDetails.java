@@ -1,27 +1,22 @@
-package eu.supersede.dm.ga.data;
+package eu.supersede.gr.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.supersede.gr.data.GAGameSummary;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-public class GameInfo
+@Entity
+@Table(name = "ga_game_details")
+public class GAGameDetails
 {
-    private GAGameSummary game;
-    private List<String> criteria;
-    private List<Long> requirements;
-    private List<Long> participants;
-    private Map<Long, Map<String, List<Long>>> rankings;
-
-    public GameInfo()
-    {
-        criteria = new ArrayList<>();
-        requirements = new ArrayList<>();
-        participants = new ArrayList<>();
-        rankings = new HashMap<>();
-    }
+    GAGameSummary game;
+    List<String> criteria = new ArrayList<>();
+    List<Long> requirements = new ArrayList<>();
+    List<Long> participants = new ArrayList<>();
+    Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
 
     public GAGameSummary getGame()
     {

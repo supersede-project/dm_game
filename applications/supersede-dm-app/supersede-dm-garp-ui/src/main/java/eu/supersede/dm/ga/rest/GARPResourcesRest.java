@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -49,12 +50,14 @@ import eu.supersede.gr.model.Requirement;
 @RequestMapping("/garp")
 public class GARPResourcesRest
 {
+    @Autowired
+    private RequirementsJpa availableRequirements;
 
-	@Autowired
-	private RequirementsJpa availableRequirements;
+    @Autowired
+    private GAVirtualDB virtualDb;
 
-	private static Map<Long, String> requirements = new HashMap<Long, String>();
-	
+    private static Map<Long, String> requirements = new HashMap<>();
+
     interface ResourceProvider
     {
         public byte[] getResource(final HttpServletRequest request, String id);
@@ -62,7 +65,8 @@ public class GARPResourcesRest
 
     static Map<String, ResourceProvider> providers = new HashMap<>();
 
-    static
+    @PostConstruct
+    private void load()
     {
         providers.put("results.html", new ResourceProvider()
         {
@@ -85,34 +89,42 @@ public class GARPResourcesRest
                 IGAAlgorithm algo = new IGAAlgorithm();
 
                 Logger log = LoggerFactory.getLogger(this.getClass());
-                
-                log.info("Criteria: " + GAVirtualDB.get().getCriteria(gameId).size());
-                algo.setCriteria(GAVirtualDB.get().getCriteria(gameId));
 
-                for (Long rid : GAVirtualDB.get().getRequirements(gameId))
+                log.info("Criteria: " + virtualDb.getCriteria(gameId).size());
+                algo.setCriteria(virtualDb.getCriteria(gameId));
+
+                for (Long rid : virtualDb.getRequirements(gameId))
                 {
                     algo.addRequirement(requirements.get(rid), new ArrayList<>());
                 }
 
-             // get all the players in this game
-                List<Long> participantIds = GAVirtualDB.get().getParticipants(gameId);
-                
+                // get all the players in this game
+                List<Long> participantIds = virtualDb.getParticipants(gameId);
+
                 // get the rankings of each player for each criterion
-                List<String> players = new ArrayList<String>();
-                for (Long userId : participantIds){
-                	String player = "P" + userId; //users.getOne(userId).getName();
-                	players.add(player);
-                	Map<String, List<Long>> userRanking = GAVirtualDB.get().getRanking(gameId, userId);
-                	if (userRanking != null){
-	                	Map<String, List<String>> userRankingStr = new HashMap<String, List<String>>();
-	                	for (Entry<String, List<Long>> entry : userRanking.entrySet()){
-	                		userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
-	                	}
-	                	algo.addRanking(player, userRankingStr);
-                	}
+                List<String> players = new ArrayList<>();
+
+                for (Long userId : participantIds)
+                {
+                    String player = "P" + userId; // users.getOne(userId).getName();
+                    players.add(player);
+                    Map<String, List<Long>> userRanking = virtualDb.getRanking(gameId, userId);
+
+                    if (userRanking != null)
+                    {
+                        Map<String, List<String>> userRankingStr = new HashMap<>();
+
+                        for (Entry<String, List<Long>> entry : userRanking.entrySet())
+                        {
+                            userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+                        }
+
+                        algo.addRanking(player, userRankingStr);
+                    }
                 }
-                algo.addDefaultPlayerWeights(GAVirtualDB.get().getCriteria(gameId), players);
-                
+
+                algo.addDefaultPlayerWeights(virtualDb.getCriteria(gameId), players);
+
                 List<Map<String, Double>> prioritizations = null;
 
                 try
@@ -142,25 +154,31 @@ public class GARPResourcesRest
 
                 b.append("<div id='jqxTabs'>\n");
                 b.append("<ul style='margin-left: 20px;'>\n");
+
                 for (int i = 0; i < prioritizations.size(); i++)
                 {
                     b.append("<li>Solution " + i + "</li>\n");
                 }
+
                 b.append("</ul>\n");
+
                 for (int i = 0; i < prioritizations.size(); i++)
                 {
                     b.append("<div>\n");
                     b.append("<table width=0'100%'>\n");
                     Map<String, Double> map = prioritizations.get(i);
+
                     for (String c : map.keySet())
                     {
                         b.append("<tr>\n");
                         b.append("<td>'" + c + "'</td><td>" + map.get(c) + "</td>");
                         b.append("</tr>\n");
                     }
+
                     b.append("</table>\n");
                     b.append("</div>\n");
                 }
+
                 b.append("</div>\n");
 
                 return b.toString().getBytes();
@@ -168,21 +186,24 @@ public class GARPResourcesRest
         });
     }
 
-    private static List<String> idToString (List<Long> ids){
-    	List<String> strings = new ArrayList<String>();
-    	for (Long id : ids){
-    		strings.add(requirements.get(id));
-    	}
-    	return strings;
+    private static List<String> idToString(List<Long> ids)
+    {
+        List<String> strings = new ArrayList<>();
+
+        for (Long id : ids)
+        {
+            strings.add(requirements.get(id));
+        }
+
+        return strings;
     }
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
 
     @RequestMapping("/**")
     public byte[] getResource(final HttpServletRequest request)
     {
-
         String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 
@@ -200,10 +221,13 @@ public class GARPResourcesRest
 
         ResourceProvider rp = providers.get(finalPath);
 
-        // FIXME A temporary workaround to load requirement names from database (instead of displaying requirement IDs to the user, which is not meaningful)
-        for (Requirement req : availableRequirements.findAll()){
-        	requirements.put(req.getRequirementId(), req.getName());
+        // FIXME A temporary workaround to load requirement names from database (instead of displaying requirement IDs
+        // to the user, which is not meaningful)
+        for (Requirement req : availableRequirements.findAll())
+        {
+            requirements.put(req.getRequirementId(), req.getName());
         }
+
         if (rp != null)
         {
             System.out.println("Serving page by provider: " + finalPath);
@@ -212,7 +236,6 @@ public class GARPResourcesRest
         }
         else
         {
-
             System.out.println("Serving page " + finalPath);
 
             Resource resource = resourceLoader.getResource("classpath:static/garp/" + finalPath);
@@ -232,9 +255,11 @@ public class GARPResourcesRest
                 InputStream is = resource.getInputStream();
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
                 try
                 {
                     int read = is.read();
+
                     while (read != -1)
                     {
                         byteArrayOutputStream.write(read);
@@ -245,9 +270,9 @@ public class GARPResourcesRest
                 {
                     e.printStackTrace();
                 }
+
                 byte[] bytes = byteArrayOutputStream.toByteArray();
                 return bytes;
-
             }
             catch (IOException e)
             {
@@ -256,7 +281,6 @@ public class GARPResourcesRest
 
             // Something went wrong
             return ("Failed to load resource '" + finalPath).getBytes();
-
         }
     }
 }
