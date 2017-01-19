@@ -17,49 +17,34 @@ var app = angular.module('w5app');
 app.controllerProvider.register('depcheck_editor', function($scope, $http, $location) {
 	
     $scope.getRequirements = function() {
-        $http.get('supersede-dm-app/depcheck/reqs/list')
+        $http.get('supersede-dm-app/ahprp/requirement')
         .success(function(data) {
-            console.log(data);
-            var source = {
-                datatype: "json",
-                datafields: [
-                    { name: 'id' },
-                    { name: 'owner' },
-                    { name : 'date' },
-                    { name : 'status' }
-                ],
-                localdata: data
-            };
-            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#activeGames").jqxGrid( {
-                width: 500,
-                autoheight: true,
-                source: dataAdapter,
-                columns: [
-                  { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
-                  { text: 'Owner', datafield: 'owner', width: 100 },
-                  { text: 'Date', datafield: 'date', width: 100 },
-                  { text: 'Status', datafield: 'status', width: 100 }
-                ]
-            });
-        });
-    };
-
-    $scope.createNew = function() {
-        $http({
-            url: "supersede-dm-app/depcheck/reqs/list",
-            method: 'GET'
-        }).success(function(data, status){
-            console.log(data);
-            $scope.getOwnedGames();
-            $scope.getActiveGames();
-        }).error(function(err){
-            alert(err.message);
+        	var source = [];
+        	for(var i = 0; i < data.length; i++) {
+        		source.push( { icon: "supersede-dm-app/depcheck/img/requirement-small.png", label: data[i].name, expanded: true } );
+        	}
+            $('#jqxTree').jqxTree({ source: source, width: '100%', height: '100%'});
+            $('#jqxTree').jqxTree('selectItem', null);
         });
     };
     
     $scope.getRequirements();
+});
+
+$(document).ready(function () {
+	$('#mainSplitter').jqxSplitter( {
+		width: 850, height: 600, panels: [{ size: 400, min: 100 }, {min: 200, size: 400}] });
+	$('#jqxExpander').jqxExpander({ showArrow: false, toggleMode: 'none', width: '300px', height: '400px'});
+	$("#jqxRightWidget").jqxPanel({ width: 300, height: 400});
+	$("#jqxradiobutton1").jqxRadioButton({ width: 220, height: 25 });
+    $("#jqxradiobutton2").jqxRadioButton({ width: 220, height: 25 });
+    // bind to change event.
+    $("#jqxradiobutton1").bind('change', function (event) {
+        var checked = event.args.checked;
+//        alert('jqxradiobutton1 checked: ' + checked);
+    });
+    $("#jqxradiobutton2").bind('change', function (event) {
+        var checked = event.args.checked;
+//        alert('jqxradiobutton2 checked: ' + checked);
+    });
 });
