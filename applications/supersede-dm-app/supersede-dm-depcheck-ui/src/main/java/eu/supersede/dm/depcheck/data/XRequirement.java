@@ -1,4 +1,4 @@
-package su.supersede.dm.depcheck.data;
+package eu.supersede.dm.depcheck.data;
 
 import java.util.ArrayList;
 import java.util.List;

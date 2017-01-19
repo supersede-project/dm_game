@@ -12,7 +12,7 @@
    limitations under the License.
 */
 
-package su.supersede.dm.depcheck;
+package eu.supersede.dm.depcheck;
 
 import java.util.ArrayList;
 import java.util.HashMap;

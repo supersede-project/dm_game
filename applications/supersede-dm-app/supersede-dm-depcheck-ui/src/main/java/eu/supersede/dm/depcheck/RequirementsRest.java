@@ -1,4 +1,4 @@
-package su.supersede.dm.depcheck;
+package eu.supersede.dm.depcheck;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-import su.supersede.dm.depcheck.data.XRequirement;
-import su.supersede.dm.depcheck.data.XTopic;
+import eu.supersede.dm.depcheck.data.XRequirement;
+import eu.supersede.dm.depcheck.data.XTopic;
 
 
 public class RequirementsRest {

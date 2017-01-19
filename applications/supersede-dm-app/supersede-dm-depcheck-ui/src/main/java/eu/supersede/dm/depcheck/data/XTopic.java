@@ -1,4 +1,4 @@
-package su.supersede.dm.depcheck.data;
+package eu.supersede.dm.depcheck.data;
 
 public class XTopic {
 	
