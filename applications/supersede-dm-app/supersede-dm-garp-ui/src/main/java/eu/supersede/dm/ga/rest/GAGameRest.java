@@ -1,12 +1,10 @@
 package eu.supersede.dm.ga.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +22,13 @@ import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
-import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.User;
-import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
 @RequestMapping("/garp/game")
 public class GAGameRest
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private ValutationCriteriaJpa valutationCriterias;
 
     @Autowired
     private RequirementsJpa availableRequirements;
@@ -50,82 +42,41 @@ public class GAGameRest
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
     public List<GAGameSummary> getOwnedGames(Authentication authentication)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return virtualDb.getOwnedGames(currentUser.getUserId());
+        return virtualDb.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
     public List<GAGameSummary> getActiveGames(Authentication authentication)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return virtualDb.getActiveGames(currentUser.getUserId());
+        return virtualDb.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/newrandom", method = RequestMethod.GET)
     public GAGameSummary createNewRandomGame(Authentication authentication)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        Long userId = currentUser.getUserId();
-        GAGameSummary game = new GAGameSummary();
-        game.setId(System.currentTimeMillis());
-        game.setOwner(userId);
-        game.setDate("12/12/2016");
-        game.setStatus("open");
-
-        List<String> gameCriteria = new ArrayList<>();
-        List<ValutationCriteria> criteria = valutationCriterias.findAll();
-        Collections.shuffle(criteria, new Random(System.nanoTime()));
-
-        for (int i = 0; i < Math.min(2, criteria.size()); i++)
-        {
-            gameCriteria.add(criteria.get(i).getName());
-        }
-
-        List<Long> gameRequirements = new ArrayList<>();
-        List<Requirement> requirements = availableRequirements.findAll();
-        Collections.shuffle(requirements, new Random(System.nanoTime()));
-        int max = new Random(System.currentTimeMillis()).nextInt(requirements.size());
-
-        for (int i = 0; i < max; i++)
-        {
-            gameRequirements.add(requirements.get(i).getRequirementId());
-        }
-
-        List<Long> gameParticipants = new ArrayList<>();
-        List<User> participants = users.findAll();
-        Collections.shuffle(participants, new Random(System.nanoTime()));
-        max = new Random(System.currentTimeMillis()).nextInt(participants.size());
-
-        for (int i = 0; i < max; i++)
-        {
-            gameParticipants.add(participants.get(i).getUserId());
-            log.info("Added user id " + participants.get(i).getUserId() + " to game id: " + game.getId());
-        }
-
-        virtualDb.create(game, gameCriteria, gameRequirements, gameParticipants);
-        return game;
+        return virtualDb.createRandomGame(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public void submitAllPriorities(Authentication authentication, @RequestParam Long gameId,
             @RequestBody Map<String, List<Long>> reqs)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
 
         for (String key : reqs.keySet())
         {
-            log.info("Sending priorities: game " + gameId + " user " + currentUser.getUserId() + " criterion " + key
-                    + " reqs " + reqs.get(key));
+            log.info("Sending priorities: game " + gameId + " user " + userId + " criterion " + key + " reqs "
+                    + reqs.get(key));
         }
 
-        virtualDb.setRanking(gameId, currentUser.getUserId(), reqs);
+        virtualDb.setRanking(gameId, userId, reqs);
     }
 
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)
     public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        List<Long> reqs = virtualDb.getRankingsCriterion(gameId, currentUser.getUserId(), criterion);
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+        List<Long> reqs = virtualDb.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
 
         if (reqs != null)
@@ -169,8 +120,7 @@ public class GAGameRest
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
     public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
-        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-        return virtualDb.getRequirements(gameId, currentUser.getUserId());
+        return virtualDb.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
