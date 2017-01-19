@@ -35,13 +35,13 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({
-                width: 500,
+                width: 600,
                 autoheight: true,
                 source: dataAdapter,
                 columns: [
                   { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
                   { text: 'Owner', datafield: 'owner', width: 100 },
-                  { text: 'Date', datafield: 'date', width: 100 },
+                  { text: 'Date', datafield: 'date', width: 200 },
                   { text: 'Status', datafield: 'status', width: 100 }
                 ]
             });
