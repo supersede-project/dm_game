@@ -58,6 +58,5 @@ public class GAUILoader
         // roles.add( "DECISION_SCOPE_PROVIDER" );
         // roles.add( "OPINION_NEGOTIATOR" );
         // au.addApplicationPage( "supersede-dm-app", "garp/game_page", labels, roles );
-
     }
 }

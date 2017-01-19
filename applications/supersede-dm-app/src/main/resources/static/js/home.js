@@ -15,7 +15,7 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $location) {
-	
+
 	$scope.now = function() {
 		return new Date().toJSON().slice(0,19).replace("T", " ");
 	}
@@ -45,8 +45,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	});
     
     $http.get('supersede-dm-app/ahprp/requirement').success(function(data) {
-    	console.log("callback");
-		for(var i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			$scope.requirements.push(data[i]);
 		    $("#jqxListBox").jqxListBox('addItem', 
 		    		{ label: data[i].name } );
@@ -57,10 +56,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		alert(page);
 		$scope.currentPage = page;
 	}
-	
 });
 
 $(document).ready(function () {
         $("#jqxListBox").jqxListBox({ width: 700 });
 });
-
