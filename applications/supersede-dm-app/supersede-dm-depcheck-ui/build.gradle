@@ -3,28 +3,20 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'war'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.artifactory"
 
-version = '0.0.2-M18'
+version = '0.0.2-SNAPSHOT'
 group = 'eu.supersede'
 
-war {
-    baseName = 'dm-app'
+jar {
+    baseName = 'supersede-dm-depcheck-ui'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources'
-        }
-    }
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 buildscript {
     ext {
         springBootVersion = '1.4.3.RELEASE'
@@ -35,16 +27,16 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
         maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
-            name = 'maven-supersede-release'
+            url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
+            name = 'maven-supersede-snapshot'
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
             }
         }
         maven {
-            url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
-            name = 'maven-supersede-snapshot'
+            url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
+            name = 'maven-supersede-release'
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
@@ -59,9 +51,6 @@ buildscript {
     }
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
     mavenCentral()
     add buildscript.repositories.getByName ("maven-supersede-snapshot")
@@ -72,14 +61,6 @@ configurations {
     providedRuntime
 }
 
-configurations.all {
-    //Avoids conflict: SL4J Multiple bindings were found on the class path
-    exclude group: "org.slf4j", module: "slf4j-log4j12"
-    // check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
-}
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
@@ -88,8 +69,8 @@ dependencies {
     compile('commons-collections:commons-collections:3.2.1')
     compile('org.apache.velocity:velocity:1.6.2')
 
-    compile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("org.postgresql:postgresql:9.4.1208.jre7")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
@@ -99,11 +80,14 @@ dependencies {
     compile("org.springframework.session:spring-session:1.2.2.RELEASE")
     compile("org.springframework.boot:spring-boot-starter-redis")
 
-    compile("eu.supersede:AHP:0.0.1-SNAPSHOT")
     compile('org.apache.commons:commons-math3:3.6.1')
 
     compile("eu.supersede:supersede-client:0.2.1-SNAPSHOT"){changing = true}
     compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
+
+    compile files("../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar")
+    compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.2-SNAPSHOT.jar")
+    compile files("../supersede-dm-depcheck/build/libs/supersede-dm-depcheck-0.0.2-SNAPSHOT.jar")
 
     //required by integration
     compile ("org.apache.axis2:axis2:1.6.1")
@@ -117,41 +101,9 @@ dependencies {
     compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
-
-    compile project(":supersede-dm-core")
-    compile project(":supersede-dm-datastore")
-    compile project(":supersede-dm-integration")
-    compile project(":supersede-dm-executor")
-    compile project(":supersede-dm-ahprp")
-    compile project(":supersede-dm-ahprp-ui")
-    compile project(":supersede-dm-garp")
-    compile project(":supersede-dm-garp-ui")
-    compile project(":supersede-dm-depcheck")
-    compile project(":supersede-dm-depcheck-ui")
-    compile project(":supersede-dm-planning-jmetal")
-    compile project(":supersede-dm-orchestrator")
-
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-}
-
-allprojects {
-    apply plugin: 'java'
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    repositories {
-        mavenCentral()
-    }
-
-    tasks.withType(JavaCompile) {
-        options.incremental = true
-    }
-}
-
-subprojects {
-    group = 'eu.supersede'
-    version = '0.0.2-SNAPSHOT'
+    
+    compile( "com.orientechnologies:orientdb-core:2.2.13" );
+    compile( "com.orientechnologies:orientdb-object:2.2.13" );
 }
 
 eclipse {
@@ -160,3 +112,5 @@ eclipse {
          containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
 }
+
+bootRepackage.enabled = false

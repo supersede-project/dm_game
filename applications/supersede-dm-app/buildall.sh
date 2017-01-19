@@ -29,6 +29,18 @@ cd ../supersede-dm-garp
 echo -e "\nBuilding supersede-dm-garp...\n"
 gradle build --refresh-dependencies -x test
 
+cd ../supersede-dm-garp-ui
+echo -e "\nBuilding supersede-dm-garp-ui...\n"
+gradle build --refresh-dependencies -x test
+
+cd ../supersede-dm-depcheck
+echo -e "\nBuilding supersede-dm-depcheck...\n"
+gradle build --refresh-dependencies -x test
+
+cd ../supersede-dm-depcheck-ui
+echo -e "\nBuilding supersede-dm-depcheck-ui...\n"
+gradle build --refresh-dependencies -x test
+
 cd ../supersede-dm-planning-jmetal
 echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 gradle build --refresh-dependencies
