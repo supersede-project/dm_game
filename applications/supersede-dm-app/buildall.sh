@@ -30,10 +30,6 @@ cd ../supersede-dm-garp-ui
 echo -e "\nBuilding supersede-dm-garp-ui...\n"
 ./gradlew build
 
-cd ../supersede-dm-garp-ui
-echo -e "\nBuilding supersede-dm-garp-ui...\n"
-gradle build
-
 cd ../supersede-dm-depcheck
 echo -e "\nBuilding supersede-dm-depcheck...\n"
 gradle build
