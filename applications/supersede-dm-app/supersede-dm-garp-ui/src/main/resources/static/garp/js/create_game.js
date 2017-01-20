@@ -16,70 +16,28 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 
-	$scope.now = function()
-	{
-		return new Date().toJSON().slice(0,19).replace("T", " ");
-	}
-	
-    $scope.players = [];
-    $scope.requirements = [];
-    $scope.criterias = [];
-    
-    $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-    
-    $scope.currentPage = 'page1';
-    
-    $scope.requirementsChoices = [];
-    
-    $scope.choices = {};
-    
-    $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.players.push(data[i]);
-		}
-	});
-    
     $http.get('supersede-dm-app/requirement')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirements.push(data[i]);
-		}
-	});
-    
-    $http.get('supersede-dm-app/criteria')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.criterias.push(data[i]);
-		}
-	});
-
-    $http.get('supersede-dm-app/requirementchoice')
-	.success(function(data) {
-		$scope.requirementsChoices.length = 0;
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirementsChoices.push(data[i]);
-		}
-	});
-	
-	$scope.createGame = function()
-	{
-		$http({
-			url: "supersede-dm-app/ahprp/game",
-	        data: $scope.game,
-	        method: 'POST',
-	        params: {criteriaValues : $scope.choices}
-	    }).success(function(data){
-	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-	    	$scope.choices = {};
-	    	$scope.currentPage = 'page1';
-	    	$location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
-	    }).error(function(err){
-	    	console.log(err);
-	    });
-	};
+    .success(function(data) {
+        console.log(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'requirementId' },
+                { name: 'name' },
+                { name : 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#requirements").jqxGrid({
+            width: 500,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: 'Id', datafield: 'requirementId', width: 100 },
+              { text: 'Name', datafield: 'owner', width: 100 },
+              { text: 'Description', datafield: 'date', width: 300 }
+            ]
+        });
+    });
 });
