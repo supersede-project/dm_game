@@ -45,7 +45,6 @@ import eu.supersede.gr.model.Requirement;
 public class IntegrationRest implements // AlertManager,
         FeatureManager
 {
-
     @Autowired
     private NotificationUtil notificationUtil;
 
@@ -60,12 +59,10 @@ public class IntegrationRest implements // AlertManager,
     @RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
     public void notifyPublicAlert(@RequestBody Alert alert)
     {
-
         List<Requirement> requirements = getRequirements(alert);
 
         for (Requirement r : requirements)
         {
-
             r.setRequirementId(null);
             requirementsTable.save(r);
 
@@ -76,7 +73,6 @@ public class IntegrationRest implements // AlertManager,
     @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
     public void notifyAlert(@RequestBody Alert alert)
     {
-
         System.out.println("Alert received: " + alert);
         log.debug("Alert received: " + alert);
 
@@ -108,7 +104,6 @@ public class IntegrationRest implements // AlertManager,
 
     private List<Requirement> getRequirements(Alert alert)
     {
-
         // Either extract from the alert, or make a backward request to WP2
 
         List<Requirement> reqs = new ArrayList<>();
@@ -125,20 +120,15 @@ public class IntegrationRest implements // AlertManager,
     @RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
     public void scheduleRequirement(FeatureList features)
     {
-
         for (Feature feature : features.list())
         {
             System.out.println("Received: " + feature);
         }
-
     }
 
     @RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
     public void scheduleFeature(Feature feature)
     {
-
         System.out.println("Received: " + feature);
-
     }
-
 }

@@ -44,7 +44,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		}
 	});
     
-    $http.get('supersede-dm-app/ahprp/requirement').success(function(data) {
+    $http.get('supersede-dm-app/requirement').success(function(data) {
 		for (var i = 0; i < data.length; i++) {
 			$scope.requirements.push(data[i]);
 		    $("#jqxListBox").jqxListBox('addItem', 

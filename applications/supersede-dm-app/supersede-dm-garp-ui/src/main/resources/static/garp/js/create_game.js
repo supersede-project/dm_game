@@ -24,10 +24,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     $scope.players = [];
     $scope.requirements = [];
     $scope.criterias = [];
-
-    $scope.currentPlayer = undefined;
-    $scope.currentRequirement= undefined;
-    $scope.currentCriteria = undefined;
     
     $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
     
@@ -45,7 +41,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-app/ahprp/requirement')
+    $http.get('supersede-dm-app/requirement')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -53,7 +49,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-app/ahprp/criteria')
+    $http.get('supersede-dm-app/criteria')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -61,7 +57,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
 
-    $http.get('supersede-dm-app/ahprp/requirementchoice')
+    $http.get('supersede-dm-app/requirementchoice')
 	.success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
@@ -69,34 +65,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 			$scope.requirementsChoices.push(data[i]);
 		}
 	});
-    
-    $scope.toggleSelection = function(array, item)
-	{
-	    var idx = array.indexOf(item);
-	    if (idx > -1) {
-	    	array.splice(idx, 1);
-	    }
-	    else {
-	    	array.push(item);
-	    }
-	};
-	
-	$scope.toPage = function(p)
-	{
-		if(p == 3)
-		{
-			if($scope.game.players.length > 0 &&
-					$scope.game.requirements.length > 1 &&
-					$scope.game.criterias.length > 1)
-			{
-				$scope.currentPage = 'page3';
-			}
-		}
-		else
-		{
-			$scope.currentPage = 'page' + p;
-		}
-	}
 	
 	$scope.createGame = function()
 	{

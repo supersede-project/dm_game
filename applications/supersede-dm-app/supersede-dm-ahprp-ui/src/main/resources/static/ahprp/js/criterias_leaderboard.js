@@ -20,7 +20,7 @@ app.controllerProvider.register('criterias_leaderboard', function($scope, $http)
     $scope.criteriaUsers = []; 
     $scope.selectedCriteria = undefined;
     
-    $http.get('supersede-dm-app/ahprp/criteria')
+    $http.get('supersede-dm-app/criteria')
 	.success(function(data) {
 		$scope.valutationCriterias.length = 0;
 		for(var i = 0; i < data.length; i++)

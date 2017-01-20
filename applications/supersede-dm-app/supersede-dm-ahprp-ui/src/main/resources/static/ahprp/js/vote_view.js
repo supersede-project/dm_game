@@ -26,7 +26,7 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
         $scope.playerMove = data;
     });
     
-     $http.get('supersede-dm-app/ahprp/requirementchoice')
+     $http.get('supersede-dm-app/requirementchoice')
         .success(function(data) {
             $scope.requirementsChoices.length = 0;
             for(var i = 0; i < data.length; i++)

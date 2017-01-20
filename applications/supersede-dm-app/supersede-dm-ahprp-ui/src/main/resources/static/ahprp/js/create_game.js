@@ -45,7 +45,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-app/ahprp/requirement')
+    $http.get('supersede-dm-app/requirement')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -53,7 +53,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
     
-    $http.get('supersede-dm-app/ahprp/criteria')
+    $http.get('supersede-dm-app/criteria')
 	.success(function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
@@ -61,7 +61,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 		}
 	});
 
-    $http.get('supersede-dm-app/ahprp/requirementchoice')
+    $http.get('supersede-dm-app/requirementchoice')
 	.success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)

@@ -159,7 +159,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
 	
 	getActions();
 	
-	$http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data) {
+	$http.get('supersede-dm-app/requirementchoice').success(function(data) {
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)
 		{

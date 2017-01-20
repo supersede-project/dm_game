@@ -25,7 +25,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	}
 	
 	getCriterias = function() {
-		 $http.get('supersede-dm-app/ahprp/criteria')
+		 $http.get('supersede-dm-app/criteria')
 		 	.success(function(data) {
 				$scope.criterias.length = 0;
 				for(var i = 0; i < data.length; i++)
@@ -107,7 +107,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	createCriteria = function() {
 		var criteria = {name: "", description: ""};
 		$http({
-			url: "supersede-dm-app/ahprp/criteria/",
+			url: "supersede-dm-app/criteria/",
 			data: criteria,
 			method: 'POST'
 		}).success(function(data, status, headers, config){
@@ -122,7 +122,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$('#criteriaGrid').jqxGrid('endrowedit', row, false);
 		var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
 		$http({
-			url: "supersede-dm-app/ahprp/criteria/",
+			url: "supersede-dm-app/criteria/",
 			data: rowData,
 			method: 'PUT'
 		}).success(function(data){
@@ -132,7 +132,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	
 	deleteCriteria = function(row) {
 		var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
-		$http.delete('supersede-dm-app/ahprp/criteria/' + rowData.criteriaId).success(function(data) {
+		$http.delete('supersede-dm-app/criteria/' + rowData.criteriaId).success(function(data) {
 			if(data == true){
 				$('#criteriaGrid').jqxGrid('deleterow', $('#criteriaGrid').jqxGrid('getrowid', row));
 			}
@@ -149,7 +149,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	$scope.requirements = [];
 	
 	getRequirements = function () {
-		$http.get('supersede-dm-app/ahprp/requirement')
+		$http.get('supersede-dm-app/requirement')
 		.success(function(data) {
 			$scope.requirements.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -231,7 +231,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	createRequirement = function() {
 		var requirement = {name: "", description: ""};
 		$http({
-			url: "supersede-dm-app/ahprp/requirement/",
+			url: "supersede-dm-app/requirement/",
 			data: requirement,
 			method: 'POST'
 		}).success(function(data, status, headers, config){
@@ -246,7 +246,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 		$('#requirementGrid').jqxGrid('endrowedit', row, false);
 		var rowData = $('#requirementGrid').jqxGrid('getrowdata', row);
 		$http({
-			url: "supersede-dm-app/ahprp/requirement/",
+			url: "supersede-dm-app/requirement/",
 			data: rowData,
 			method: 'PUT'
 		}).success(function(data){
@@ -256,7 +256,7 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
 	
 	deleteRequirement = function(row) {
 		var rowData = $('#requirementGrid').jqxGrid('getrowdata', row);
-		$http.delete('supersede-dm-app/ahprp/requirement/' + rowData.requirementId).success(function(data) {
+		$http.delete('supersede-dm-app/requirement/' + rowData.requirementId).success(function(data) {
 			if(data == true){
 				$('#requirementGrid').jqxGrid('deleterow', $('#requirementGrid').jqxGrid('getrowid', row));
 			}
