@@ -3,10 +3,32 @@ package eu.supersede.dm.depcheck.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.orientechnologies.orient.core.annotation.OAfterDeserialization;
 import com.orientechnologies.orient.core.annotation.OBeforeSerialization;
 
 public class XRequirement {
 	
+	public List<String> getDependencies() {
+		return dependencies;
+	}
+
+	public void setDependencies(List<String> dependencies) {
+		this.dependencies = dependencies;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public void setTopic(XTopic topic) {
+		this.topic = topic;
+	}
+
+
 	static long idcount;
 	
 	@OBeforeSerialization public void genId() {
@@ -15,12 +37,16 @@ public class XRequirement {
 		}
 	}
 	
+	@OAfterDeserialization public void deserialized() {
+		System.out.println( "Deserialized" );
+	}
+	
 	
 	String id;
 	
-	String text;
+	public String text;
 	
-	XTopic topic = XTopic.none;
+	XTopic topic;
 	
 	List<String> dependencies = new ArrayList<>();
 	
@@ -30,7 +56,7 @@ public class XRequirement {
 	}
 	
 	public XRequirement( String id, String text ) {
-		this( id, text, XTopic.none );
+		this( id, text, new XTopic( "<unspecified>" ) );
 	}
 	
 	public XRequirement( String id, String text, XTopic topic ) {

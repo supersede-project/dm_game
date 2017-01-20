@@ -2,8 +2,6 @@ package eu.supersede.dm.depcheck.data;
 
 public class XTopic {
 	
-	public static final XTopic none = new XTopic( "" );
-	
 	String name = "";
 	
 	public XTopic() {}
@@ -14,6 +12,10 @@ public class XTopic {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public void setName( String name ) {
+		this.name = name;
 	}
 	
 	public String toString() {

@@ -11,34 +11,48 @@ import eu.supersede.dm.depcheck.data.XTopic;
 
 
 public class RequirementsRest {
-	
+
 	public static void main( String[] args ) {
 		new RequirementsRest().getRequirementsTest();
 	}
-	
+
 	public void getRequirementsTest() {
-		
+
 		try( OObjectDatabaseTx db = new OObjectDatabaseTx( (ODatabaseDocumentTx)new ODatabaseDocumentTx ("memory:memdb").create() ) ) {
-			
+
 			db.getEntityManager().registerEntityClass(XRequirement.class);
 			db.getEntityManager().registerEntityClass(XTopic.class);
-			
-			XRequirement r = new XRequirement( "R1", "Requirement 1", new XTopic( "Topic" ) );
-			
-			r = db.save( r );
-			
-			List<XRequirement> result = db.query(
-					  new OSQLSynchQuery<XRequirement>("select * from " + XRequirement.class.getSimpleName() ) ); // where text = 'Requirement 1'"));
-			
-			for( XRequirement req : result ) {
-				System.out.println( req.getId() );
+
+			{
+				XTopic t = db.save( new XTopic( "Topic" ) );
+				XRequirement r = new XRequirement( "R1", "Requirement 1", t );
+
+				r = db.save( r );
 			}
-			
+
+			{
+				List<XRequirement> requirements = db.query(
+						new OSQLSynchQuery<XRequirement>("select * from " + XRequirement.class.getSimpleName() ) ); // where text = 'Requirement 1'"));
+
+				for( XRequirement r : requirements ) {
+					System.out.println( r.getId() + " - " + r.getTopic() );
+				}
+			}
+
+			{
+				List<XTopic> topics = db.query(
+						new OSQLSynchQuery<XRequirement>("select * from " + XTopic.class.getSimpleName() ) ); // where text = 'Requirement 1'"));
+
+				for( XTopic t : topics ) {
+					System.out.println( "Topic: " + t );
+				}
+			}
+
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

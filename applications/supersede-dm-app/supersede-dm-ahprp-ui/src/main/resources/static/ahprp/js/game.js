@@ -98,7 +98,8 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
 		});
 	};
 	 
-	$scope.gameEnd = function(gameId){
+	$scope.enact = function(gameId){
+		console.log('sono qui');
 		$http.put('supersede-dm-app/ahprp/game/enact/' + gameId).success(function(data) {
 //			$scope.game.finished = true;
 		});
