@@ -18,13 +18,9 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $http.get('supersede-dm-app/requirement')
     .success(function(data) {
-        for (var i = 0; i < data.length; i++) {
-            data[i].selected = false;
-        }
         var source = {
             datatype: "json",
             datafields: [
-                { name: 'selected' },
                 { name: 'requirementId' },
                 { name: 'name' },
                 { name : 'description' }
@@ -48,13 +44,9 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $http.get('supersede-dm-app/criteria')
     .success(function(data) {
-        for (var i = 0; i < data.length; i++) {
-            data[i].selected = false;
-        }
         var source = {
             datatype: "json",
             datafields: [
-                { name: 'selected' },
                 { name: 'criteriaId' },
                 { name: 'name' },
                 { name : 'description' }
@@ -78,13 +70,9 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
     .success(function(data) {
-        for (var i = 0; i < data.length; i++) {
-            data[i].selected = false;
-        }
         var source = {
             datatype: "json",
             datafields: [
-                { name: 'selected' },
                 { name: 'userId' },
                 { name: 'name' },
                 { name : 'email' }

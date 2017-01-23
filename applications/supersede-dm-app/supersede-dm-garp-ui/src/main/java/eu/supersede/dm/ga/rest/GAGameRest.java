@@ -24,7 +24,9 @@ import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
+import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
 @RequestMapping("/garp/game")
@@ -34,6 +36,9 @@ public class GAGameRest
 
     @Autowired
     private RequirementsJpa availableRequirements;
+
+    @Autowired
+    private ValutationCriteriaJpa availableCriteria;
 
     @Autowired
     private UsersJpa users;
@@ -139,9 +144,17 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
-    public List<Long> getGameCriteria(Authentication authentication, Long gameId)
+    public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {
-        return virtualDb.getCriteria(gameId);
+        List<ValutationCriteria> criteria = new ArrayList<>();
+        List<Long> criteriaIds = virtualDb.getCriteria(gameId);
+
+        for (Long criterionId : criteriaIds)
+        {
+            criteria.add(availableCriteria.findOne(criterionId));
+        }
+
+        return criteria;
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
