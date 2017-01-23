@@ -23,7 +23,7 @@
 	<div id="page2" ng-show="currentPage == 'page2'">
 		<p>Select the requirements to prioritize (at least two):</p>
 		<div class="selection">
-			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" 
+			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice"
 				ng-mouseenter="$parent.currentRequirement = requirement"
 				ng-mouseleave="$parent.currentRequirement = undefined">
 				<input
@@ -42,7 +42,7 @@
 		
 		<p>Select the criterias to prioritize (at least two):</p>
 		<div class="selection">
-			<label ng-repeat="criteria in criterias | orderBy: 'name'"  class="selection-choice" 
+			<label ng-repeat="criteria in criterias | orderBy: 'name'"  class="selection-choice"
 				ng-mouseenter="$parent.currentCriteria = criteria"
 				ng-mouseleave="$parent.currentCriteria = undefined">
 				<input
@@ -62,7 +62,7 @@
 		
 		<p>Select the players to prioritize (at least one):</p>
 		<div class="selection">
-			<label ng-repeat="player in players | orderBy: 'name'"  class="selection-choice" 
+			<label ng-repeat="player in players | orderBy: 'name'"  class="selection-choice"
 				ng-mouseenter="$parent.currentPlayer = player"
 				ng-mouseleave="$parent.currentPlayer = undefined">
 				<input

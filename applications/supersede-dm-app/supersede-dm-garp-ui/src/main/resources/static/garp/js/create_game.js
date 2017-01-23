@@ -30,13 +30,63 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#requirements").jqxGrid({
-            width: 500,
+            width: 700,
             autoheight: true,
             source: dataAdapter,
             columns: [
               { text: 'Id', datafield: 'requirementId', width: 100 },
-              { text: 'Name', datafield: 'owner', width: 100 },
-              { text: 'Description', datafield: 'date', width: 300 }
+              { text: 'Name', datafield: 'name', width: 300 },
+              { text: 'Description', datafield: 'description', width: 300 }
+            ]
+        });
+    });
+
+    $http.get('supersede-dm-app/criteria')
+    .success(function(data) {
+        console.log(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'criteriaId' },
+                { name: 'name' },
+                { name : 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#criteria").jqxGrid({
+            width: 700,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: 'Id', datafield: 'criteriaId', width: 100 },
+              { text: 'Name', datafield: 'name', width: 300 },
+              { text: 'Description', datafield: 'description', width: 300 }
+            ]
+        });
+    });
+
+    $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
+    .success(function(data) {
+        console.log(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'userId' },
+                { name: 'name' },
+                { name : 'email' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#players").jqxGrid({
+            width: 700,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: 'Id', datafield: 'userId', width: 100 },
+              { text: 'Name', datafield: 'name', width: 300 },
+              { text: 'Email', datafield: 'email', width: 300 }
             ]
         });
     });
