@@ -18,10 +18,13 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $http.get('supersede-dm-app/requirement')
     .success(function(data) {
-        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            data[i].selected = false;
+        }
         var source = {
             datatype: "json",
             datafields: [
+                { name: 'selected' },
                 { name: 'requirementId' },
                 { name: 'name' },
                 { name : 'description' }
@@ -30,23 +33,37 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#requirements").jqxGrid({
-            width: 700,
+            width: 750,
+            editable: true,
+            selectionmode: 'none',
             autoheight: true,
             source: dataAdapter,
             columns: [
-              { text: 'Id', datafield: 'requirementId', width: 100 },
-              { text: 'Name', datafield: 'name', width: 300 },
-              { text: 'Description', datafield: 'description', width: 300 }
+                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
+                { text: 'Id', editable: 'false', datafield: 'requirementId', width: 100 },
+                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
+                { text: 'Description', editable: 'false', datafield: 'description', width: 300 }
             ]
+        });
+        $("#requirements").bind('cellendedit', function (event) {
+            if (event.args.value) {
+                $("#requirements").jqxGrid('selectrow', event.args.rowindex);
+            }
+            else {
+                $("#requirements").jqxGrid('unselectrow', event.args.rowindex);
+            }
         });
     });
 
     $http.get('supersede-dm-app/criteria')
     .success(function(data) {
-        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            data[i].selected = false;
+        }
         var source = {
             datatype: "json",
             datafields: [
+                { name: 'selected' },
                 { name: 'criteriaId' },
                 { name: 'name' },
                 { name : 'description' }
@@ -55,23 +72,37 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#criteria").jqxGrid({
-            width: 700,
+            width: 750,
+            editable: true,
+            selectionmode: 'none',
             autoheight: true,
             source: dataAdapter,
             columns: [
-              { text: 'Id', datafield: 'criteriaId', width: 100 },
-              { text: 'Name', datafield: 'name', width: 300 },
-              { text: 'Description', datafield: 'description', width: 300 }
+                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
+                { text: 'Id', editable: 'false', datafield: 'criteriaId', width: 100 },
+                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
+                { text: 'Description', editable: 'false', datafield: 'description', width: 300 }
             ]
+        });
+        $("#criteria").bind('cellendedit', function (event) {
+            if (event.args.value) {
+                $("#criteria").jqxGrid('selectrow', event.args.rowindex);
+            }
+            else {
+                $("#criteria").jqxGrid('unselectrow', event.args.rowindex);
+            }
         });
     });
 
     $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
     .success(function(data) {
-        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            data[i].selected = false;
+        }
         var source = {
             datatype: "json",
             datafields: [
+                { name: 'selected' },
                 { name: 'userId' },
                 { name: 'name' },
                 { name : 'email' }
@@ -80,14 +111,29 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#players").jqxGrid({
-            width: 700,
+            width: 750,
+            editable: true,
+            selectionmode: 'none',
             autoheight: true,
             source: dataAdapter,
             columns: [
-              { text: 'Id', datafield: 'userId', width: 100 },
-              { text: 'Name', datafield: 'name', width: 300 },
-              { text: 'Email', datafield: 'email', width: 300 }
+                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
+                { text: 'Id', editable: 'false', datafield: 'userId', width: 100 },
+                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
+                { text: 'Email', editable: 'false', datafield: 'email', width: 300 }
             ]
         });
+        $("#players").bind('cellendedit', function (event) {
+            if (event.args.value) {
+                $("#players").jqxGrid('selectrow', event.args.rowindex);
+            }
+            else {
+                $("#players").jqxGrid('unselectrow', event.args.rowindex);
+            }
+        });
     });
+
+    $scope.create_game = function () {
+
+    };
 });
