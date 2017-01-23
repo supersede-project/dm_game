@@ -27,17 +27,25 @@ import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementsMatrixData;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface RequirementsMatricesDataJpa extends JpaRepository<RequirementsMatrixData, Long> {
+public interface RequirementsMatricesDataJpa extends JpaRepository<RequirementsMatrixData, Long>
+{
+    /**
+     * Get a List of RequirementsMatrixData from the ValutationCriteria
+     * @param criteria
+     */
+    List<RequirementsMatrixData> findByCriteria(ValutationCriteria criteria);
 
-	// Get a List of RequirementsMatrixData from the ValutationCriteria
-	List<RequirementsMatrixData> findByCriteria(ValutationCriteria criteria);
+    /**
+     * Get a List of RequirementsMatrixData from the RowRequirement
+     * @param requirement
+     */
+    List<RequirementsMatrixData> findByRowRequirement(Requirement requirement);
 
-	// Get a List of RequirementsMatrixData from the RowRequirement
-	List<RequirementsMatrixData> findByRowRequirement(Requirement requirement);
+    /**
+     * Get a List of RequirementsMatrixData from the ColumnRequirement
+     * @param requirement
+     */
+    List<RequirementsMatrixData> findByColumnRequirement(Requirement requirement);
 
-	// Get a List of RequirementsMatrixData from the ColumnRequirement
-	List<RequirementsMatrixData> findByColumnRequirement(Requirement requirement);
-
-	List<RequirementsMatrixData> findByGame(Game g);
-
+    List<RequirementsMatrixData> findByGame(Game g);
 }

@@ -35,90 +35,105 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 */
 
 @Entity
-@Table(name="users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User {
-	
-	@Id
+@Table(name = "users")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class User
+{
+    @Id
     private Long userId;
     private String name;
-	@Transient
+    @Transient
     private String email;
-    
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-	private List<UserCriteriaPoint> userCriteriaPoints;
-	
-	@OneToOne(mappedBy = "user", optional = true)
-	private UserPoint userGlobalPoints;
-	
-	public User()
-	{}
-	
-    public User(Long userId) {
-    	this.userId = userId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserCriteriaPoint> userCriteriaPoints;
+
+    @OneToOne(mappedBy = "user", optional = true)
+    private UserPoint userGlobalPoints;
+
+    public User()
+    {
     }
- 
-    public User(Long userId, String name, String email) {
-    	this(userId);
-        this.name = name;
-        this.email = email;
-    }
- 
-    public Long getUserId() {
-        return userId;
-    }
- 
-    public void setUserId(Long userId) {
+
+    public User(Long userId)
+    {
         this.userId = userId;
     }
- 
-    public String getName() {
-        return name;
-    }
- 
-    public void setName(String name) {
+
+    public User(Long userId, String name, String email)
+    {
+        this(userId);
         this.name = name;
-    }
- 
-    public String getEmail() {
-        return email;
-    }
- 
-    public void setEmail(String email) {
         this.email = email;
     }
-    
-    public Long getPoints() {
-    	long tmpPoints = 0;
-    	
-    	if(userCriteriaPoints != null)
-    	{
-	    	for(int i=0;i<userCriteriaPoints.size();i++){
-	    		tmpPoints += userCriteriaPoints.get(i).getPoints();
-	    	}
-    	}
-    	
-    	if(userGlobalPoints != null)
-    	{
-    		tmpPoints+= userGlobalPoints.getUserPoints();
-    	}
-    	return tmpPoints;
+
+    public Long getUserId()
+    {
+        return userId;
     }
-    
-    public List<UserCriteriaPoint> getUserCriteriaPoints(){
-    	return userCriteriaPoints;
+
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
     }
-    
-    public void setUserCriteriaPoints(List<UserCriteriaPoint> userCriteriaPoints){
-    	this.userCriteriaPoints = userCriteriaPoints;
-    } 
-    
-    public UserPoint getUserGlobalPoints(){
-    	return userGlobalPoints;
+
+    public String getName()
+    {
+        return name;
     }
-    
-    public void setUserGlobalPoints(UserPoint userGlobalPoints){
-    	this.userGlobalPoints = userGlobalPoints;
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
-    
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
+
+    public Long getPoints()
+    {
+        long tmpPoints = 0;
+
+        if (userCriteriaPoints != null)
+        {
+            for (int i = 0; i < userCriteriaPoints.size(); i++)
+            {
+                tmpPoints += userCriteriaPoints.get(i).getPoints();
+            }
+        }
+
+        if (userGlobalPoints != null)
+        {
+            tmpPoints += userGlobalPoints.getUserPoints();
+        }
+        return tmpPoints;
+    }
+
+    public List<UserCriteriaPoint> getUserCriteriaPoints()
+    {
+        return userCriteriaPoints;
+    }
+
+    public void setUserCriteriaPoints(List<UserCriteriaPoint> userCriteriaPoints)
+    {
+        this.userCriteriaPoints = userCriteriaPoints;
+    }
+
+    public UserPoint getUserGlobalPoints()
+    {
+        return userGlobalPoints;
+    }
+
+    public void setUserGlobalPoints(UserPoint userGlobalPoints)
+    {
+        this.userGlobalPoints = userGlobalPoints;
+    }
+
 }

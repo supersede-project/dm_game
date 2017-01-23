@@ -20,7 +20,6 @@ package eu.supersede.gr.jpa;
 
 import java.util.List;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,47 +30,84 @@ import eu.supersede.gr.model.RequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long> {
+public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
+{
+    /**
+     * Get a List of PlayerMove of a specific player
+     * @param player
+     */
+    List<PlayerMove> findByPlayer(User player);
 
-	// Get a List of PlayerMove of a specific player
-	List<PlayerMove> findByPlayer(User player);
-	
-	// Get a List of PlayerMove of a specific player, in a specific Game and on a particular ValutationCriteria
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3")
-	@Transactional
-	List<PlayerMove> findByPlayerAndGameAndCriteria(User player, Game game, ValutationCriteria criteria);
-	
-	// Get a List of PlayerMove of a specific player and in a specific Game 
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2")
-	@Transactional
-	List<PlayerMove> findByPlayerAndGame(User player, Game game);
-	
-	// Get a List of PlayerMove of a specific player and on a particular ValutationCriteria
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2")
-	@Transactional
-	List<PlayerMove> findByPlayerAndCriteria(User player, ValutationCriteria criteria);
+    /**
+     * Get a List of PlayerMove of a specific player, in a specific Game and on a particular ValutationCriteria
+     * @param player
+     * @param game
+     * @param criteria
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3")
+    @Transactional
+    List<PlayerMove> findByPlayerAndGameAndCriteria(User player, Game game, ValutationCriteria criteria);
 
-	// Get a List of PlayerMove of a specific player of the Games that are not finished
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game.finished = FALSE")
-	@Transactional
-	List<PlayerMove> findByPlayerAndGameNotFinished(User player);
-	
-	// Get a List of PlayerMove of a specific player, in a specific Game on a particular ValutationCriteria and the Games are not finished
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3 AND pm.requirementsMatrixData.game.finished = FALSE")
-	@Transactional
-	List<PlayerMove> findByPlayerAndGameAndCriteriaAndGameNotFinished(User player, Game game, ValutationCriteria criteria);
-	
-	// Get a List of PlayerMove of a specific player, in a specific Game and the Games are not finished
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
-	@Transactional
-	List<PlayerMove> findByPlayerAndGameAndGameNotFinished(User player, Game game);
-	
-	// Get a List of PlayerMove of a specific player on a particular ValutationCriteria and the Games are not finished
-	@Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
-	@Transactional
-	List<PlayerMove> findByPlayerAndCriteriaAndGameNotFinished(User player, ValutationCriteria criteria);
-	
-	// Get a List of PlayerMove of a specific RequirementsMatrixData
-	List<PlayerMove> findByRequirementsMatrixData(RequirementsMatrixData requirementMatrixData);
+    /**
+     * Get a List of PlayerMove of a specific player and in a specific Game
+     * @param player
+     * @param game
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2")
+    @Transactional
+    List<PlayerMove> findByPlayerAndGame(User player, Game game);
 
+    /**
+     * Get a List of PlayerMove of a specific player and on a particular ValutationCriteria
+     * @param player
+     * @param criteria
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2")
+    @Transactional
+    List<PlayerMove> findByPlayerAndCriteria(User player, ValutationCriteria criteria);
+
+    /**
+     * Get a List of PlayerMove of a specific player of the Games that are not finished
+     * @param player
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Transactional
+    List<PlayerMove> findByPlayerAndGameNotFinished(User player);
+
+    /**
+     * Get a List of PlayerMove of a specific player, in a specific Game on a particular ValutationCriteria and the
+     * games are not finished
+     * @param player
+     * @param game
+     * @param criteria
+     * @return
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Transactional
+    List<PlayerMove> findByPlayerAndGameAndCriteriaAndGameNotFinished(User player, Game game,
+            ValutationCriteria criteria);
+
+    /**
+     * Get a List of PlayerMove of a specific player, in a specific Game and the Games are not finished
+     * @param player
+     * @param game
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Transactional
+    List<PlayerMove> findByPlayerAndGameAndGameNotFinished(User player, Game game);
+
+    /**
+     * Get a List of PlayerMove of a specific player on a particular ValutationCriteria and the Games are not finished
+     * @param player
+     * @param criteria
+     */
+    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Transactional
+    List<PlayerMove> findByPlayerAndCriteriaAndGameNotFinished(User player, ValutationCriteria criteria);
+
+    /**
+     * Get a List of PlayerMove of a specific RequirementsMatrixData
+     * @param requirementMatrixData
+     */
+    List<PlayerMove> findByRequirementsMatrixData(RequirementsMatrixData requirementMatrixData);
 }

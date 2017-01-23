@@ -29,48 +29,57 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 */
 
 @Entity
-@Table(name="points")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Point {
+@Table(name = "points")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class Point
+{
+    @Id
+    private Long pointId;
+    private String description;
+    private Long globalPoints;
+    private Long criteriaPoints;
 
-	@Id
-    private Long pointId;	
-	private String description;
-	private Long globalPoints;
-	private Long criteriaPoints;
-	
-	public Point(){
-	}
-	
-	public Long getPointId() {
-		return pointId;
-	}
+    public Point()
+    {
+    }
 
-	public void setPointId(Long pointId) {
-		this.pointId = pointId;
-	}
+    public Long getPointId()
+    {
+        return pointId;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setPointId(Long pointId)
+    {
+        this.pointId = pointId;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	public Long getGlobalPoints() {
-		return globalPoints;
-	}
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
-	public void setGlobalPoints(Long globalPoints) {
-		this.globalPoints = globalPoints;
-	}
+    public Long getGlobalPoints()
+    {
+        return globalPoints;
+    }
 
-	public Long getCriteriaPoints() {
-		return criteriaPoints;
-	}
+    public void setGlobalPoints(Long globalPoints)
+    {
+        this.globalPoints = globalPoints;
+    }
 
-	public void setCriteriaPoints(Long criteriaPoints) {
-		this.criteriaPoints = criteriaPoints;
-	}	
+    public Long getCriteriaPoints()
+    {
+        return criteriaPoints;
+    }
+
+    public void setCriteriaPoints(Long criteriaPoints)
+    {
+        this.criteriaPoints = criteriaPoints;
+    }
 }

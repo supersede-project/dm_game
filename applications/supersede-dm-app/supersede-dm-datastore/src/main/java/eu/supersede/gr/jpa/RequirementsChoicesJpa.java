@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import eu.supersede.gr.model.RequirementChoice;
 
-public interface RequirementsChoicesJpa extends JpaRepository<RequirementChoice, Long> {
+public interface RequirementsChoicesJpa extends JpaRepository<RequirementChoice, Long>
+{
 
 }

@@ -27,12 +27,19 @@ import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.UserCriteriaPoint;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface UserCriteriaPointsJpa extends JpaRepository<UserCriteriaPoint, Long> {
+public interface UserCriteriaPointsJpa extends JpaRepository<UserCriteriaPoint, Long>
+{
+    /**
+     * Get a List of User from UserCriteriaPoint where the ValutationCriteria is specified
+     * @param valutationCriteria
+     */
+    @Query("SELECT DISTINCT user FROM UserCriteriaPoint ucp WHERE ucp.valutationCriteria = ?1")
+    List<User> findUsersByValutationCriteria(ValutationCriteria valutationCriteria);
 
-	// Get a List of User from UserCriteriaPoint where the ValutationCriteria is specified
-	@Query("SELECT DISTINCT user FROM UserCriteriaPoint ucp WHERE ucp.valutationCriteria = ?1")
-	List<User> findUsersByValutationCriteria(ValutationCriteria valutationCriteria);
-
-	//Get a UserCriteriaPoint from the ValutationCriteria and the User
-	UserCriteriaPoint findByValutationCriteriaAndUser(ValutationCriteria valutationCriteria, User user);
+    /**
+     * Get a UserCriteriaPoint from the ValutationCriteria and the User
+     * @param valutationCriteria
+     * @param user
+     */
+    UserCriteriaPoint findByValutationCriteriaAndUser(ValutationCriteria valutationCriteria, User user);
 }

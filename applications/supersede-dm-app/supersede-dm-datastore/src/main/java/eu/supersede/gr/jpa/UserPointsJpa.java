@@ -23,9 +23,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.UserPoint;
 
-public interface UserPointsJpa extends JpaRepository<UserPoint, Long>{
-
-	//Get a UserPoint of a specific User
-	UserPoint findByUser(User user);
-
+public interface UserPointsJpa extends JpaRepository<UserPoint, Long>
+{
+    /**
+     * Get a UserPoint of a specific User
+     * @param user
+     */
+    UserPoint findByUser(User user);
 }

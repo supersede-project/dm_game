@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface ValutationCriteriaJpa extends JpaRepository<ValutationCriteria, Long> {
+public interface ValutationCriteriaJpa extends JpaRepository<ValutationCriteria, Long>
+{
 
 }
