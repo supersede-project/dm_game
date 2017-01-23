@@ -18,8 +18,6 @@
 
 package eu.supersede.gr.rest;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
