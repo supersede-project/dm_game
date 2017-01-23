@@ -23,11 +23,9 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -330,28 +328,16 @@ public class GameRest
 				max = d;
 			}
 		}
-		
-		List<RequirementsMatrixData> rmdList = g.getRequirementsMatrixData();
 
 		FeatureList list = new FeatureList();
 
-		Set<String> set = new HashSet<>();
-		
-		for(int i = 0; i < rmdList.size(); i++)
-		{
-			RequirementsMatrixData rmd = rmdList.get(i);
-
+		for( Requirement r : g.getRequirements() ) {
 			Feature feature = new Feature();
-
-			if( !set.contains( rmd.getRowRequirement().getName() ) ) {
-				set.add( rmd.getRowRequirement().getName() );
-				feature.setName( rmd.getRowRequirement().getName() );
-				feature.setPriority( (int)(1 + ((rs.get( "" + rmd.getRowRequirement().getRequirementId() ) / max) * 5)) );
-				feature.setId( "" + rmd.getRowRequirement().getRequirementId() );
-			}
-			
+			feature.setName( r.getName() );
+			feature.setPriority( (int)(1 + ((rs.get( "" + r.getRequirementId() ) / max) * 5)) );
+			feature.setId( "" + r.getRequirementId() );
+			System.out.println( "Added feature with id: " + feature.getId() );
 			list.list().add( feature );
-
 		}
 
 		EnactmentService.get().send( list, "" );
