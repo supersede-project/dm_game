@@ -3,9 +3,9 @@ package eu.supersede.gr.data;
 public class GAGameSummary
 {
     private Long id;
-    private Long		owner;
-    private String		date	= "";
-    private String		status	= "open";
+    private Long owner;
+    private String date = "";
+    private String status = "open";
 
     public Long getId()
     {

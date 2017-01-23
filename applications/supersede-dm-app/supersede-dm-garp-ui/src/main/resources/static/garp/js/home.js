@@ -81,16 +81,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
     };
 
     $scope.createNew = function() {
-        $http({
-            url: "supersede-dm-app/garp/game/newrandom",
-            method: 'GET'
-        }).success(function(data, status){
-            console.log(data);
-            $scope.getOwnedGames();
-            $scope.getActiveGames();
-        }).error(function(err){
-            alert(err.message);
-        });
+        $location.url('supersede-dm-app/garp/create_game');
     };
 
     $scope.getOwnedGames();

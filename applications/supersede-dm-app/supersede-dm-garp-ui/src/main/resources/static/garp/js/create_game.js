@@ -134,6 +134,44 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     });
 
     $scope.create_game = function () {
+        var requirements = $("#requirements").jqxGrid("getrows");
+        var gameRequirements = [];
+        for (var i = 0; i < requirements.length; i++) {
+            if (requirements[i].selected === true) {
+                gameRequirements.push(requirements[i].requirementId);
+            }
+        }
+        console.log("Requirement ids:");
+        console.log(gameRequirements);
 
+        var criteria = $("#criteria").jqxGrid("getrows");
+        var gameCriteria = [];
+        for (var j = 0; j < criteria.length; j++) {
+            if (criteria[j].selected === true) {
+                gameCriteria.push(criteria[j].criteriaId);
+            }
+        }
+        console.log("Criteria ids:");
+        console.log(gameCriteria);
+
+        var players = $("#players").jqxGrid("getrows");
+        var gamePlayers = [];
+        for (var k = 0; k < players.length; k++) {
+            if (players[k].selected === true) {
+                gamePlayers.push(players[k].userId);
+            }
+        }
+        console.log("Players ids:");
+        console.log(gamePlayers);
+
+        $http.post('supersede-dm-app/garp/game/newgame', {},
+            {params: {gameRequirements: gameRequirements, gameCriteria: gameCriteria, gamePlayers: gamePlayers}})
+        .success(function(data) {
+            console.log("success");
+        }).error(function(err){
+            console.log(err);
+        });
+
+        $location.url('supersede-dm-app/garp/home');
     };
 });

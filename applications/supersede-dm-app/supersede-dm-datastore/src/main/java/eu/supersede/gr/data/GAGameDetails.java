@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class GAGameDetails
 {
     GAGameSummary game;
-    List<String> criteria = new ArrayList<>();
+    List<Long> criteria = new ArrayList<>();
     List<Long> requirements = new ArrayList<>();
     List<Long> participants = new ArrayList<>();
     Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
@@ -28,12 +28,12 @@ public class GAGameDetails
         this.game = game;
     }
 
-    public List<String> getCriteria()
+    public List<Long> getCriteria()
     {
         return criteria;
     }
 
-    public void setCriteria(List<String> criteria)
+    public void setCriteria(List<Long> criteria)
     {
         this.criteria = criteria;
     }

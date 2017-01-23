@@ -1,6 +1,8 @@
 package eu.supersede.dm.ga.rest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,46 @@ public class GAGameRest
         return virtualDb.createRandomGame(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
+    @RequestMapping(value = "/newgame", method = RequestMethod.POST)
+    public void createNewGame(Authentication authentication, String[] gameRequirements, String[] gameCriteria,
+            String[] gamePlayers)
+    {
+        List<Long> requirements = new ArrayList<>();
+        List<Long> criteria = new ArrayList<>();
+        List<Long> players = new ArrayList<>();
+
+        for (String id : gameRequirements)
+        {
+            log.info("Game Requirement: " + id);
+            requirements.add(new Long(id));
+        }
+
+        for (String id : gameCriteria)
+        {
+            log.info("Game Criterion: " + id);
+            criteria.add(new Long(id));
+        }
+
+        for (String id : gamePlayers)
+        {
+            log.info("Game Player: " + id);
+            players.add(new Long(id));
+        }
+
+        GAGameSummary game = new GAGameSummary();
+        long currentTime = System.currentTimeMillis();
+        game.setId(currentTime);
+        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+        game.setDate(sdfDate.format(now));
+
+        game.setStatus("open");
+
+        virtualDb.create(game, criteria, requirements, players);
+    }
+
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public void submitAllPriorities(Authentication authentication, @RequestParam Long gameId,
             @RequestBody Map<String, List<Long>> reqs)
@@ -106,7 +148,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
-    public List<String> getGameCriteria(Authentication authentication, Long gameId)
+    public List<Long> getGameCriteria(Authentication authentication, Long gameId)
     {
         return virtualDb.getCriteria(gameId);
     }
@@ -127,7 +169,15 @@ public class GAGameRest
     public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        algo.setCriteria(virtualDb.getCriteria(game));
+        List<Long> criteria = virtualDb.getCriteria(game);
+        List<String> gameCriteria = new ArrayList<>();
+
+        for (Long criterionId : criteria)
+        {
+            gameCriteria.add("" + criterionId);
+        }
+
+        algo.setCriteria(gameCriteria);
 
         for (Long rid : virtualDb.getRequirements(game.getId()))
         {

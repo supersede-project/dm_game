@@ -68,13 +68,13 @@ public class GAVirtualDB
 
         game.setStatus("open");
 
-        List<String> gameCriteria = new ArrayList<>();
+        List<Long> gameCriteria = new ArrayList<>();
         List<ValutationCriteria> criteria = valutationCriterias.findAll();
         Collections.shuffle(criteria, new Random(System.nanoTime()));
 
         for (int i = 0; i < Math.min(2, criteria.size()); i++)
         {
-            gameCriteria.add(criteria.get(i).getName());
+            gameCriteria.add(criteria.get(i).getCriteriaId());
         }
 
         List<Long> gameRequirements = new ArrayList<>();
@@ -100,45 +100,6 @@ public class GAVirtualDB
 
         create(game, gameCriteria, gameRequirements, gameParticipants);
         return game;
-    }
-
-    private GAGameDetails create(GAGameSummary game)
-    {
-        GAGameDetails gi = new GAGameDetails();
-        gi.setGame(game);
-        games.put(game.getId(), gi);
-        ownedGames.put(game.getOwner(), game);
-
-        HGAGameSummary gs = new HGAGameSummary(game);
-        gameSummaries.save(gs);
-
-        // {
-        // HEntity entity = null;
-        //
-        //
-        //
-        // entity = new HEntity();
-        // entity.setClsName( "GameSummary" );
-        // entities.save( entity );
-        //
-        // setAttr( entity, "status", game.getStatus() );
-        // setAttr( entity, "date", game.getDate() );
-        // setAttr( entity, "orwner", "" + game.getOwner() );
-        //
-        //
-        //
-        // entity = new HEntity();
-        // entity.setClsName( "GameDetail");
-        // entities.save( entity );
-        //
-        //
-        //
-        //
-        //
-        //
-        // }
-
-        return gi;
     }
 
     // private void setAttr( HEntity entity, String name, String value ) {
@@ -203,9 +164,16 @@ public class GAVirtualDB
         }
     }
 
-    public void create(GAGameSummary game, List<String> criteria, List<Long> requirements, List<Long> participants)
+    public void create(GAGameSummary game, List<Long> criteria, List<Long> requirements, List<Long> participants)
     {
-        GAGameDetails gi = create(game);
+        GAGameDetails gi = new GAGameDetails();
+        gi.setGame(game);
+        games.put(game.getId(), gi);
+        ownedGames.put(game.getOwner(), game);
+
+        HGAGameSummary gs = new HGAGameSummary(game);
+        gameSummaries.save(gs);
+
         gi.setRequirements(requirements);
         gi.setCriteria(criteria);
         gi.setParticipants(participants);
@@ -308,12 +276,12 @@ public class GAVirtualDB
         return gi.getParticipants();
     }
 
-    public List<String> getCriteria(GAGameSummary game)
+    public List<Long> getCriteria(GAGameSummary game)
     {
         return getCriteria(game.getId());
     }
 
-    public List<String> getCriteria(long gameId)
+    public List<Long> getCriteria(long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -348,9 +316,9 @@ public class GAVirtualDB
 
         Map<String, List<Long>> map = new HashMap<>();
 
-        for (String c : gi.getCriteria())
+        for (Long c : gi.getCriteria())
         {
-            map.put(c, gi.getRequirements());
+            map.put("" + c, gi.getRequirements());
         }
 
         return map;
