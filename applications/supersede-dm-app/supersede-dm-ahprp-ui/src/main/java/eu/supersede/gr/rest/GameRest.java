@@ -18,6 +18,8 @@
 
 package eu.supersede.gr.rest;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -330,28 +332,16 @@ public class GameRest
 				max = d;
 			}
 		}
-		
-		List<RequirementsMatrixData> rmdList = g.getRequirementsMatrixData();
 
 		FeatureList list = new FeatureList();
 
-		Set<String> set = new HashSet<>();
-		
-		for(int i = 0; i < rmdList.size(); i++)
-		{
-			RequirementsMatrixData rmd = rmdList.get(i);
-
+		for( Requirement r : g.getRequirements() ) {
 			Feature feature = new Feature();
-
-			if( !set.contains( rmd.getRowRequirement().getName() ) ) {
-				set.add( rmd.getRowRequirement().getName() );
-				feature.setName( rmd.getRowRequirement().getName() );
-				feature.setPriority( (int)(1 + ((rs.get( "" + rmd.getRowRequirement().getRequirementId() ) / max) * 5)) );
-				feature.setId( "" + rmd.getRowRequirement().getRequirementId() );
-			}
-			
+			feature.setName( r.getName() );
+			feature.setPriority( (int)(1 + ((rs.get( "" + r.getRequirementId() ) / max) * 5)) );
+			feature.setId( "" + r.getRequirementId() );
+			System.out.println( "Added feature with id: " + feature.getId() );
 			list.list().add( feature );
-
 		}
 
 		EnactmentService.get().send( list, "" );
