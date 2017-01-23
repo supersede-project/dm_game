@@ -34,24 +34,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#requirements").jqxGrid({
             width: 750,
-            editable: true,
-            selectionmode: 'none',
+            selectionmode: 'checkbox',
+            altrows: true,
             autoheight: true,
             source: dataAdapter,
             columns: [
-                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
-                { text: 'Id', editable: 'false', datafield: 'requirementId', width: 100 },
-                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
-                { text: 'Description', editable: 'false', datafield: 'description', width: 300 }
+                { text: 'Id', datafield: 'requirementId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
             ]
-        });
-        $("#requirements").bind('cellendedit', function (event) {
-            if (event.args.value) {
-                $("#requirements").jqxGrid('selectrow', event.args.rowindex);
-            }
-            else {
-                $("#requirements").jqxGrid('unselectrow', event.args.rowindex);
-            }
         });
     });
 
@@ -73,24 +64,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#criteria").jqxGrid({
             width: 750,
-            editable: true,
-            selectionmode: 'none',
+            selectionmode: 'checkbox',
+            altrows: true,
             autoheight: true,
             source: dataAdapter,
             columns: [
-                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
-                { text: 'Id', editable: 'false', datafield: 'criteriaId', width: 100 },
-                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
-                { text: 'Description', editable: 'false', datafield: 'description', width: 300 }
+                { text: 'Id', datafield: 'criteriaId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
             ]
-        });
-        $("#criteria").bind('cellendedit', function (event) {
-            if (event.args.value) {
-                $("#criteria").jqxGrid('selectrow', event.args.rowindex);
-            }
-            else {
-                $("#criteria").jqxGrid('unselectrow', event.args.rowindex);
-            }
         });
     });
 
@@ -112,50 +94,39 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#players").jqxGrid({
             width: 750,
-            editable: true,
-            selectionmode: 'none',
+            selectionmode: 'checkbox',
+            altrows: true,
             autoheight: true,
             source: dataAdapter,
             columns: [
-                { text: '', datafield: 'selected', columntype: 'checkbox', width: 50 },
-                { text: 'Id', editable: 'false', datafield: 'userId', width: 100 },
-                { text: 'Name', editable: 'false', datafield: 'name', width: 300 },
-                { text: 'Email', editable: 'false', datafield: 'email', width: 300 }
+                { text: 'Id', datafield: 'userId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Email', datafield: 'email' }
             ]
-        });
-        $("#players").bind('cellendedit', function (event) {
-            if (event.args.value) {
-                $("#players").jqxGrid('selectrow', event.args.rowindex);
-            }
-            else {
-                $("#players").jqxGrid('unselectrow', event.args.rowindex);
-            }
         });
     });
 
     $scope.create_game = function () {
-        var requirements = $("#requirements").jqxGrid("getrows");
+        var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
         var gameRequirements = [];
-        for (var i = 0; i < requirements.length; i++) {
-            if (requirements[i].selected === true) {
-                gameRequirements.push(requirements[i].requirementId);
-            }
+        var i;
+        for (i = 0; i < selectedRequirements.length; i++) {
+            var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]).requirementId;
+            gameRequirements.push(selectedRequirement);
         }
 
-        var criteria = $("#criteria").jqxGrid("getrows");
+        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
         var gameCriteria = [];
-        for (var j = 0; j < criteria.length; j++) {
-            if (criteria[j].selected === true) {
-                gameCriteria.push(criteria[j].criteriaId);
-            }
+        for (i = 0; i < selectedCriteria.length; i++) {
+            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
+            gameCriteria.push(selectedCriterion);
         }
 
-        var players = $("#players").jqxGrid("getrows");
+        var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
         var gamePlayers = [];
-        for (var k = 0; k < players.length; k++) {
-            if (players[k].selected === true) {
-                gamePlayers.push(players[k].userId);
-            }
+        for (i = 0; i < selectedPlayers.length; i++) {
+            var selectedPlayer = $("#players").jqxGrid('getrowdata', selectedPlayers[i]).userId;
+            gamePlayers.push(selectedPlayer);
         }
 
         $http.post('supersede-dm-app/garp/game/newgame', {},
