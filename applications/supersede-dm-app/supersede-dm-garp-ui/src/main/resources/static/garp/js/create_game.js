@@ -141,8 +141,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 gameRequirements.push(requirements[i].requirementId);
             }
         }
-        console.log("Requirement ids:");
-        console.log(gameRequirements);
 
         var criteria = $("#criteria").jqxGrid("getrows");
         var gameCriteria = [];
@@ -151,8 +149,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 gameCriteria.push(criteria[j].criteriaId);
             }
         }
-        console.log("Criteria ids:");
-        console.log(gameCriteria);
 
         var players = $("#players").jqxGrid("getrows");
         var gamePlayers = [];
@@ -161,8 +157,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 gamePlayers.push(players[k].userId);
             }
         }
-        console.log("Players ids:");
-        console.log(gamePlayers);
 
         $http.post('supersede-dm-app/garp/game/newgame', {},
             {params: {gameRequirements: gameRequirements, gameCriteria: gameCriteria, gamePlayers: gamePlayers}})

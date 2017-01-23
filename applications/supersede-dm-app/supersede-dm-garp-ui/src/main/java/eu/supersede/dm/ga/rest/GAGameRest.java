@@ -53,12 +53,6 @@ public class GAGameRest
         return virtualDb.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
-    @RequestMapping(value = "/newrandom", method = RequestMethod.GET)
-    public GAGameSummary createNewRandomGame(Authentication authentication)
-    {
-        return virtualDb.createRandomGame(((DatabaseUser) authentication.getPrincipal()).getUserId());
-    }
-
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
     public void createNewGame(Authentication authentication, String[] gameRequirements, String[] gameCriteria,
             String[] gamePlayers)
@@ -69,19 +63,16 @@ public class GAGameRest
 
         for (String id : gameRequirements)
         {
-            log.info("Game Requirement: " + id);
             requirements.add(new Long(id));
         }
 
         for (String id : gameCriteria)
         {
-            log.info("Game Criterion: " + id);
             criteria.add(new Long(id));
         }
 
         for (String id : gamePlayers)
         {
-            log.info("Game Player: " + id);
             players.add(new Long(id));
         }
 
