@@ -26,17 +26,26 @@ import org.springframework.data.jpa.repository.Query;
 import eu.supersede.gr.model.Game;
 import eu.supersede.gr.model.User;
 
-public interface GamesJpa extends JpaRepository<Game, Long> {
+public interface GamesJpa extends JpaRepository<Game, Long>
+{
+    /**
+     * Get a List of Game that are finished
+     * @param finished
+     */
+    List<Game> findByFinished(Boolean finished);
 
-	// Get a List of Game that are finished
-	List<Game> findByFinished(Boolean finished);
-	
-	// Get a List of Game where there is a specific player
-	@Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1")
-	List<Game> findByPlayerContains(User player);
+    /**
+     * Get a List of Game where there is a specific player
+     * @param player
+     */
+    @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1")
+    List<Game> findByPlayerContains(User player);
 
-	// Get a List of Game where there is a specific player and that are finished
-	@Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1 and game.finished = ?2")
-	List<Game> findByPlayerContainsAndFinished(User player, Boolean finished);
-	
+    /**
+     * Get a List of Game where there is a specific player and that are finished
+     * @param player
+     * @param finished
+     */
+    @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1 and game.finished = ?2")
+    List<Game> findByPlayerContainsAndFinished(User player, Boolean finished);
 }

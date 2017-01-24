@@ -35,19 +35,19 @@ app.controllerProvider.register('judge_act', function($scope, $http, $location) 
 			});
 	});
     
-	 $http.get('supersede-dm-app/ahprp/requirementchoice')
-		.success(function(data) {
-			$scope.requirementsChoices.length = 0;
-			for(var i = 0; i < data.length; i++)
-			{
-				$scope.requirementsChoices.push(data[i]);
-			}
-		});
-	 
-	 $scope.insertJudgeVote = function(){
-		 $http.put('supersede-dm-app/ahprp/judgeact/' + $scope.judgeActId + '/vote/' + $scope.selectedRequirementsChoice.selected)
-	    	.success(function(data) {
-	    		$location.url('/supersede-dm-app/ahprp/judge_acts');
-    	});
-	 };	
+    $http.get('supersede-dm-app/requirementchoice')
+    .success(function(data) {
+        $scope.requirementsChoices.length = 0;
+        for(var i = 0; i < data.length; i++)
+        {
+            $scope.requirementsChoices.push(data[i]);
+        }
+    });
+
+    $scope.insertJudgeVote = function(){
+     $http.put('supersede-dm-app/ahprp/judgeact/' + $scope.judgeActId + '/vote/' + $scope.selectedRequirementsChoice.selected)
+        .success(function(data) {
+            $location.url('/supersede-dm-app/ahprp/judge_acts');
+    });
+    };	
 });

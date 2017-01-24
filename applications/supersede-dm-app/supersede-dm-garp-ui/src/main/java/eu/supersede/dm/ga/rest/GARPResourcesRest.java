@@ -90,8 +90,15 @@ public class GARPResourcesRest
 
                 Logger log = LoggerFactory.getLogger(this.getClass());
 
-                log.info("Criteria: " + virtualDb.getCriteria(gameId).size());
-                algo.setCriteria(virtualDb.getCriteria(gameId));
+                List<Long> criteria = virtualDb.getCriteria(gameId);
+                List<String> gameCriteria = new ArrayList<>();
+
+                for (Long criterionId : criteria)
+                {
+                    gameCriteria.add("" + criterionId);
+                }
+
+                algo.setCriteria(gameCriteria);
 
                 for (Long rid : virtualDb.getRequirements(gameId))
                 {
@@ -123,7 +130,7 @@ public class GARPResourcesRest
                     }
                 }
 
-                algo.addDefaultPlayerWeights(virtualDb.getCriteria(gameId), players);
+                algo.addDefaultPlayerWeights(gameCriteria, players);
 
                 List<Map<String, Double>> prioritizations = null;
 

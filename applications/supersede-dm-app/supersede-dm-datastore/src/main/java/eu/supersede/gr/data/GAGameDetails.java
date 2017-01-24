@@ -1,3 +1,17 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.gr.data;
 
 import java.util.ArrayList;
@@ -12,11 +26,11 @@ import javax.persistence.Table;
 @Table(name = "ga_game_details")
 public class GAGameDetails
 {
-    GAGameSummary game;
-    List<String> criteria = new ArrayList<>();
-    List<Long> requirements = new ArrayList<>();
-    List<Long> participants = new ArrayList<>();
-    Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
+    private GAGameSummary game;
+    private List<Long> criteria = new ArrayList<>();
+    private List<Long> requirements = new ArrayList<>();
+    private List<Long> participants = new ArrayList<>();
+    private Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
 
     public GAGameSummary getGame()
     {
@@ -28,12 +42,12 @@ public class GAGameDetails
         this.game = game;
     }
 
-    public List<String> getCriteria()
+    public List<Long> getCriteria()
     {
         return criteria;
     }
 
-    public void setCriteria(List<String> criteria)
+    public void setCriteria(List<Long> criteria)
     {
         this.criteria = criteria;
     }

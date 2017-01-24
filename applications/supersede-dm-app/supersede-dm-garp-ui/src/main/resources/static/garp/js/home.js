@@ -37,6 +37,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             $("#ownedGames").jqxGrid({
                 width: 600,
                 autoheight: true,
+                altrows: true,
                 source: dataAdapter,
                 columns: [
                   { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
@@ -69,6 +70,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             $("#activeGames").jqxGrid( {
                 width: 600,
                 autoheight: true,
+                altrows: true,
                 source: dataAdapter,
                 columns: [
                   { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
@@ -81,18 +83,9 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
     };
 
     $scope.createNew = function() {
-        $http({
-            url: "supersede-dm-app/garp/game/newrandom",
-            method: 'GET'
-        }).success(function(data, status){
-            console.log(data);
-            $scope.getOwnedGames();
-            $scope.getActiveGames();
-        }).error(function(err){
-            alert(err.message);
-        });
+        $location.url('supersede-dm-app/garp/create_game');
     };
 
-    $scope.getOwnedGames();
     $scope.getActiveGames();
+    $scope.getOwnedGames();
 });

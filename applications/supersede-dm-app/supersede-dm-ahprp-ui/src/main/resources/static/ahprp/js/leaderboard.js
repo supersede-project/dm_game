@@ -19,7 +19,7 @@ app.controllerProvider.register('leaderboard', function($scope, $http) {
     $scope.users = [];
     $scope.usersCount = 0;
        
-    $http.get('supersede-dm-app/ahprp/user')
+    $http.get('supersede-dm-app/user')
 	.success(function(data) {
 		$scope.users.length = 0;
 		for(var i = 0; i < data.length; i++)

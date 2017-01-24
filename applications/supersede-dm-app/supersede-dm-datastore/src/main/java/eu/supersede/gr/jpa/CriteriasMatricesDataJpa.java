@@ -25,8 +25,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import eu.supersede.gr.model.CriteriasMatrixData;
 import eu.supersede.gr.model.Game;
 
-public interface CriteriasMatricesDataJpa extends JpaRepository<CriteriasMatrixData, Long>{
-
-	// Get a List of CriteriasMatrixData that contain a specified Game
-	List<CriteriasMatrixData> findByGame(Game g);
+public interface CriteriasMatricesDataJpa extends JpaRepository<CriteriasMatrixData, Long>
+{
+    /**
+     * Get a List of CriteriasMatrixData that contain a specified Game
+     * @param g
+     */
+    List<CriteriasMatrixData> findByGame(Game g);
 }

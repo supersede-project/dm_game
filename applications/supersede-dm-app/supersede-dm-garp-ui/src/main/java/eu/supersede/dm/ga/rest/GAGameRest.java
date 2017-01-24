@@ -1,6 +1,8 @@
 package eu.supersede.dm.ga.rest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,9 @@ import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
+import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
 @RequestMapping("/garp/game")
@@ -32,6 +36,9 @@ public class GAGameRest
 
     @Autowired
     private RequirementsJpa availableRequirements;
+
+    @Autowired
+    private ValutationCriteriaJpa availableCriteria;
 
     @Autowired
     private UsersJpa users;
@@ -51,10 +58,41 @@ public class GAGameRest
         return virtualDb.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
-    @RequestMapping(value = "/newrandom", method = RequestMethod.GET)
-    public GAGameSummary createNewRandomGame(Authentication authentication)
+    @RequestMapping(value = "/newgame", method = RequestMethod.POST)
+    public void createNewGame(Authentication authentication, String[] gameRequirements, String[] gameCriteria,
+            String[] gamePlayers)
     {
-        return virtualDb.createRandomGame(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        List<Long> requirements = new ArrayList<>();
+        List<Long> criteria = new ArrayList<>();
+        List<Long> players = new ArrayList<>();
+
+        for (String id : gameRequirements)
+        {
+            requirements.add(new Long(id));
+        }
+
+        for (String id : gameCriteria)
+        {
+            criteria.add(new Long(id));
+        }
+
+        for (String id : gamePlayers)
+        {
+            players.add(new Long(id));
+        }
+
+        GAGameSummary game = new GAGameSummary();
+        long currentTime = System.currentTimeMillis();
+        game.setId(currentTime);
+        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+        game.setDate(sdfDate.format(now));
+
+        game.setStatus("open");
+
+        virtualDb.create(game, criteria, requirements, players);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -106,9 +144,17 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
-    public List<String> getGameCriteria(Authentication authentication, Long gameId)
+    public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {
-        return virtualDb.getCriteria(gameId);
+        List<ValutationCriteria> criteria = new ArrayList<>();
+        List<Long> criteriaIds = virtualDb.getCriteria(gameId);
+
+        for (Long criterionId : criteriaIds)
+        {
+            criteria.add(availableCriteria.findOne(criterionId));
+        }
+
+        return criteria;
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
@@ -127,7 +173,15 @@ public class GAGameRest
     public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        algo.setCriteria(virtualDb.getCriteria(game));
+        List<Long> criteria = virtualDb.getCriteria(game);
+        List<String> gameCriteria = new ArrayList<>();
+
+        for (Long criterionId : criteria)
+        {
+            gameCriteria.add("" + criterionId);
+        }
+
+        algo.setCriteria(gameCriteria);
 
         for (Long rid : virtualDb.getRequirements(game.getId()))
         {

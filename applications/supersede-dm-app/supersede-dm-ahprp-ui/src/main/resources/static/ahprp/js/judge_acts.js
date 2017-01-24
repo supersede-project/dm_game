@@ -183,7 +183,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http) {
 	
 	getActs();
 		
-	$http.get('supersede-dm-app/ahprp/requirementchoice').success(function(data)
+	$http.get('supersede-dm-app/requirementchoice').success(function(data)
 	{
 		$scope.requirementsChoices.length = 0;
 		for(var i = 0; i < data.length; i++)

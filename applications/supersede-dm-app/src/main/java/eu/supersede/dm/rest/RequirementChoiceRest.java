@@ -12,11 +12,7 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
-package eu.supersede.gr.rest;
+package eu.supersede.dm.rest;
 
 import java.util.List;
 
@@ -28,15 +24,18 @@ import eu.supersede.gr.jpa.RequirementsChoicesJpa;
 import eu.supersede.gr.model.RequirementChoice;
 
 @RestController
-@RequestMapping("/ahprp/requirementchoice")
-public class RequirementChoiceRest {
-	
-	@Autowired
+@RequestMapping("/requirementchoice")
+public class RequirementChoiceRest
+{
+    @Autowired
     private RequirementsChoicesJpa requirementsChoices;
-	
-	// all the RequirementChoice
-	@RequestMapping("")
-	public List<RequirementChoice> getRequirementsChoices() {
-		return requirementsChoices.findAll();
-	}
+
+    /**
+     * Return all requirements choices.
+     */
+    @RequestMapping("")
+    public List<RequirementChoice> getRequirementsChoices()
+    {
+        return requirementsChoices.findAll();
+    }
 }

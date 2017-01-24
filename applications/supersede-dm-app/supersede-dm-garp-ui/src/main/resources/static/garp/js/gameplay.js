@@ -24,12 +24,11 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     $scope.getRequirements = function() {
         $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + criterion)
         .success(function(data) {
-        	//alert('Data' + data);
         	for (var i = 0; i < data.length; i++) {
         	    $scope.requirements.push(data[i]);
             }
             $("#sortable").jqxSortable();
-            $(".jqxexpander").jqxExpander({ theme: "summer", expanded: false, width: 200});
+            $("#sortable > div").jqxExpander({ theme: "summer", expanded: false, width: 200});
         }).error(function(err){
             alert(err.message);
         });

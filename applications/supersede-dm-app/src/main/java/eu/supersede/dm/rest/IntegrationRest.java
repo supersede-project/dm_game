@@ -40,8 +40,8 @@ import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 
 @RestController
 @RequestMapping("/api")
-public class IntegrationRest {
-
+public class IntegrationRest
+{
     @Autowired
     private NotificationUtil notificationUtil;
 
@@ -56,12 +56,10 @@ public class IntegrationRest {
     @RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
     public void notifyPublicAlert(@RequestBody Alert alert)
     {
-
         List<Requirement> requirements = getRequirements(alert);
 
         for (Requirement r : requirements)
         {
-
             r.setRequirementId(null);
             requirementsTable.save(r);
 
@@ -72,7 +70,6 @@ public class IntegrationRest {
     @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
     public void notifyAlert(@RequestBody Alert alert)
     {
-
         System.out.println("Alert received: " + alert);
         log.debug("Alert received: " + alert);
 
@@ -104,7 +101,6 @@ public class IntegrationRest {
 
     private List<Requirement> getRequirements(Alert alert)
     {
-
         // Either extract from the alert, or make a backward request to WP2
 
         List<Requirement> reqs = new ArrayList<>();
@@ -118,21 +114,17 @@ public class IntegrationRest {
     }
 
     @RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
-    public void scheduleRequirement( List<FeatureWP3> features)
+    public void scheduleRequirement(List<FeatureWP3> features)
     {
-
-        for (FeatureWP3 feature : features ) {
+        for (FeatureWP3 feature : features)
+        {
             System.out.println("Received: " + feature);
         }
-
     }
 
     @RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
     public void scheduleFeature(FeatureWP3 feature)
     {
-
         System.out.println("Received: " + feature);
-
     }
-
 }

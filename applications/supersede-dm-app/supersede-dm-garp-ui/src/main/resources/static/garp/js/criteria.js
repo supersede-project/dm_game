@@ -22,39 +22,56 @@ app.controllerProvider.register("display_criteria", function($scope, $http, $loc
 
     $http.get("supersede-dm-app/garp/game/game?gameId=" + gameId)
     .success(function(data) {
-        console.log("Game:");
         console.log(data);
-        $scope.game = data;
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'id' },
+                { name: 'owner' },
+                { name : 'date' },
+                { name : 'status' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#game").jqxGrid({
+            width: 600,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: 'Id', datafield: 'id', width: 200 },
+              { text: 'Owner', datafield: 'owner', width: 100 },
+              { text: 'Date', datafield: 'date', width: 200 },
+              { text: 'Status', datafield: 'status', width: 100 }
+            ]
+        });
     });
 
     $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
     .success(function(data) {
         console.log(data);
-        //alert('Data:' + data);
-        var data2 = {};
-        for (var m = 0; m < data.length; m++) {
-            var row = {};
-            row.id = data[m];
-            data2[m] = row;
-        }
-
         var source = {
-            datatype: "array",
+            datatype: "json",
             datafields: [
-                { name: "id" }
+                { name: 'criteriaId' },
+                { name: 'name' },
+                { name : 'description' }
             ],
-            localdata: data2
+            localdata: data
         };
         var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
             return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + "&idC=" + value + '">' + value + "</a>";
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#selectedCriteria").jqxGrid({
-            width: 500,
+            width: 750,
+            altrows: true,
             autoheight: true,
             source: dataAdapter,
             columns: [
-              { text: "Criterion Name", datafield: "id", width: 500, cellsrenderer: cellsrenderer }
+                { text: 'Id', datafield: 'criteriaId', width: 100, cellsrenderer: cellsrenderer },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
             ]
         });
     });

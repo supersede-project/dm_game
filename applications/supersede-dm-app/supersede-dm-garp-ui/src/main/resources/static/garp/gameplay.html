@@ -24,7 +24,7 @@
 </div>
 
 <div id="sortable" ng-controller="reqsCtrl">
-    <div ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}" class="jqxexpander">
+    <div ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}">
         <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
         <div style="background-color: #ffd11a">
             <strong>Description</strong>: {{x.description}}<br>

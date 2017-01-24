@@ -1,14 +1,10 @@
 package eu.supersede.dm.ga;
 
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +15,8 @@ import eu.supersede.gr.data.GAGameDetails;
 import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.EntitiesJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
-import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.UsersJpa;
-import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HEntity;
 import eu.supersede.gr.model.HGAGameSummary;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.User;
-import eu.supersede.gr.model.ValutationCriteria;
 
 @Component
 public class GAVirtualDB
@@ -40,106 +30,11 @@ public class GAVirtualDB
     @Autowired
     private EntitiesJpa entities;
 
-    @Autowired
-    private ValutationCriteriaJpa valutationCriterias;
-
-    @Autowired
-    private RequirementsJpa availableRequirements;
-
-    @Autowired
-    private UsersJpa users;
-
     //
     // @Autowired private AttributesJpa attributes;
 
     @Autowired
     private GAGameSummaryJpa gameSummaries;
-
-    public GAGameSummary createRandomGame(Long userId)
-    {
-        GAGameSummary game = new GAGameSummary();
-        long currentTime = System.currentTimeMillis();
-        game.setId(currentTime);
-        game.setOwner(userId);
-
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date now = new Date();
-        game.setDate(sdfDate.format(now));
-
-        game.setStatus("open");
-
-        List<String> gameCriteria = new ArrayList<>();
-        List<ValutationCriteria> criteria = valutationCriterias.findAll();
-        Collections.shuffle(criteria, new Random(System.nanoTime()));
-
-        for (int i = 0; i < Math.min(2, criteria.size()); i++)
-        {
-            gameCriteria.add(criteria.get(i).getName());
-        }
-
-        List<Long> gameRequirements = new ArrayList<>();
-        List<Requirement> requirements = availableRequirements.findAll();
-        Collections.shuffle(requirements, new Random(System.nanoTime()));
-        int max = new Random(System.currentTimeMillis()).nextInt(requirements.size());
-
-        for (int i = 0; i < max; i++)
-        {
-            gameRequirements.add(requirements.get(i).getRequirementId());
-        }
-
-        List<Long> gameParticipants = new ArrayList<>();
-        List<User> participants = users.findAll();
-        Collections.shuffle(participants, new Random(System.nanoTime()));
-        max = new Random(System.currentTimeMillis()).nextInt(participants.size());
-
-        for (int i = 0; i < max; i++)
-        {
-            gameParticipants.add(participants.get(i).getUserId());
-            log.info("Added user id " + participants.get(i).getUserId() + " to game id: " + game.getId());
-        }
-
-        create(game, gameCriteria, gameRequirements, gameParticipants);
-        return game;
-    }
-
-    private GAGameDetails create(GAGameSummary game)
-    {
-        GAGameDetails gi = new GAGameDetails();
-        gi.setGame(game);
-        games.put(game.getId(), gi);
-        ownedGames.put(game.getOwner(), game);
-
-        HGAGameSummary gs = new HGAGameSummary(game);
-        gameSummaries.save(gs);
-
-        // {
-        // HEntity entity = null;
-        //
-        //
-        //
-        // entity = new HEntity();
-        // entity.setClsName( "GameSummary" );
-        // entities.save( entity );
-        //
-        // setAttr( entity, "status", game.getStatus() );
-        // setAttr( entity, "date", game.getDate() );
-        // setAttr( entity, "orwner", "" + game.getOwner() );
-        //
-        //
-        //
-        // entity = new HEntity();
-        // entity.setClsName( "GameDetail");
-        // entities.save( entity );
-        //
-        //
-        //
-        //
-        //
-        //
-        // }
-
-        return gi;
-    }
 
     // private void setAttr( HEntity entity, String name, String value ) {
     // HAttribute attr = new HAttribute();
@@ -203,9 +98,16 @@ public class GAVirtualDB
         }
     }
 
-    public void create(GAGameSummary game, List<String> criteria, List<Long> requirements, List<Long> participants)
+    public void create(GAGameSummary game, List<Long> criteria, List<Long> requirements, List<Long> participants)
     {
-        GAGameDetails gi = create(game);
+        GAGameDetails gi = new GAGameDetails();
+        gi.setGame(game);
+        games.put(game.getId(), gi);
+        ownedGames.put(game.getOwner(), game);
+
+        HGAGameSummary gs = new HGAGameSummary(game);
+        gameSummaries.save(gs);
+
         gi.setRequirements(requirements);
         gi.setCriteria(criteria);
         gi.setParticipants(participants);
@@ -308,12 +210,12 @@ public class GAVirtualDB
         return gi.getParticipants();
     }
 
-    public List<String> getCriteria(GAGameSummary game)
+    public List<Long> getCriteria(GAGameSummary game)
     {
         return getCriteria(game.getId());
     }
 
-    public List<String> getCriteria(long gameId)
+    public List<Long> getCriteria(long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -348,9 +250,9 @@ public class GAVirtualDB
 
         Map<String, List<Long>> map = new HashMap<>();
 
-        for (String c : gi.getCriteria())
+        for (Long c : gi.getCriteria())
         {
-            map.put(c, gi.getRequirements());
+            map.put("" + c, gi.getRequirements());
         }
 
         return map;

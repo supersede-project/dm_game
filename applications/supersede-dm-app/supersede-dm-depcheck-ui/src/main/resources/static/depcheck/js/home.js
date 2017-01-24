@@ -17,7 +17,7 @@ var app = angular.module('w5app');
 app.controllerProvider.register('depcheck_editor', function($scope, $http, $location) {
 	
     $scope.getRequirements = function() {
-        $http.get('supersede-dm-app/ahprp/requirement')
+        $http.get('supersede-dm-app/requirement')
         .success(function(data) {
         	var source = [];
         	for(var i = 0; i < data.length; i++) {

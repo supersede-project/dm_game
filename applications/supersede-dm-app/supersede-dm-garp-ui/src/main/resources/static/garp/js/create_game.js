@@ -16,102 +16,115 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 
-	$scope.now = function()
-	{
-		return new Date().toJSON().slice(0,19).replace("T", " ");
-	}
-	
-    $scope.players = [];
-    $scope.requirements = [];
-    $scope.criterias = [];
+    $http.get('supersede-dm-app/requirement')
+    .success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'requirementId' },
+                { name: 'name' },
+                { name : 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#requirements").jqxGrid({
+            width: 750,
+            selectionmode: 'checkbox',
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'requirementId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
+            ]
+        });
+    });
 
-    $scope.currentPlayer = undefined;
-    $scope.currentRequirement= undefined;
-    $scope.currentCriteria = undefined;
-    
-    $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-    
-    $scope.currentPage = 'page1';
-    
-    $scope.requirementsChoices = [];
-    
-    $scope.choices = {};
-    
+    $http.get('supersede-dm-app/criteria')
+    .success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'criteriaId' },
+                { name: 'name' },
+                { name : 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#criteria").jqxGrid({
+            width: 750,
+            selectionmode: 'checkbox',
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'criteriaId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
+            ]
+        });
+    });
+
     $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.players.push(data[i]);
-		}
-	});
-    
-    $http.get('supersede-dm-app/ahprp/requirement')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirements.push(data[i]);
-		}
-	});
-    
-    $http.get('supersede-dm-app/ahprp/criteria')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.criterias.push(data[i]);
-		}
-	});
+    .success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'userId' },
+                { name: 'name' },
+                { name : 'email' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#players").jqxGrid({
+            width: 750,
+            selectionmode: 'checkbox',
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Email', datafield: 'email' }
+            ]
+        });
+    });
 
-    $http.get('supersede-dm-app/ahprp/requirementchoice')
-	.success(function(data) {
-		$scope.requirementsChoices.length = 0;
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirementsChoices.push(data[i]);
-		}
-	});
-    
-    $scope.toggleSelection = function(array, item)
-	{
-	    var idx = array.indexOf(item);
-	    if (idx > -1) {
-	    	array.splice(idx, 1);
-	    }
-	    else {
-	    	array.push(item);
-	    }
-	};
-	
-	$scope.toPage = function(p)
-	{
-		if(p == 3)
-		{
-			if($scope.game.players.length > 0 &&
-					$scope.game.requirements.length > 1 &&
-					$scope.game.criterias.length > 1)
-			{
-				$scope.currentPage = 'page3';
-			}
-		}
-		else
-		{
-			$scope.currentPage = 'page' + p;
-		}
-	}
-	
-	$scope.createGame = function()
-	{
-		$http({
-			url: "supersede-dm-app/ahprp/game",
-	        data: $scope.game,
-	        method: 'POST',
-	        params: {criteriaValues : $scope.choices}
-	    }).success(function(data){
-	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-	    	$scope.choices = {};
-	    	$scope.currentPage = 'page1';
-	    	$location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
-	    }).error(function(err){
-	    	console.log(err);
-	    });
-	};
+    $scope.create_game = function () {
+        var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
+        var gameRequirements = [];
+        var i;
+        for (i = 0; i < selectedRequirements.length; i++) {
+            var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]).requirementId;
+            gameRequirements.push(selectedRequirement);
+        }
+
+        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
+        var gameCriteria = [];
+        for (i = 0; i < selectedCriteria.length; i++) {
+            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
+            gameCriteria.push(selectedCriterion);
+        }
+
+        var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
+        var gamePlayers = [];
+        for (i = 0; i < selectedPlayers.length; i++) {
+            var selectedPlayer = $("#players").jqxGrid('getrowdata', selectedPlayers[i]).userId;
+            gamePlayers.push(selectedPlayer);
+        }
+
+        $http.post('supersede-dm-app/garp/game/newgame', {},
+            {params: {gameRequirements: gameRequirements, gameCriteria: gameCriteria, gamePlayers: gamePlayers}})
+        .success(function(data) {
+            console.log("success");
+        }).error(function(err){
+            console.log(err);
+        });
+
+        $location.url('supersede-dm-app/garp/home');
+    };
 });
