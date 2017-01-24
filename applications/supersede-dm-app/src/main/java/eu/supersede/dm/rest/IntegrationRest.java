@@ -29,22 +29,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.dm.datamodel.Alert;
-import eu.supersede.dm.datamodel.Condition;
-import eu.supersede.dm.datamodel.Feature;
-import eu.supersede.dm.datamodel.FeatureList;
-import eu.supersede.dm.datamodel.UserRequest;
-import eu.supersede.dm.interfaces.FeatureManager;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.logics.Datastore;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.integration.api.dm.types.Alert;
+import eu.supersede.integration.api.dm.types.Condition;
+import eu.supersede.integration.api.dm.types.UserRequest;
+import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 
 @RestController
 @RequestMapping("/api")
-public class IntegrationRest implements // AlertManager,
-        FeatureManager
-{
+public class IntegrationRest {
 
     @Autowired
     private NotificationUtil notificationUtil;
@@ -121,20 +117,18 @@ public class IntegrationRest implements // AlertManager,
         return reqs;
     }
 
-    @Override
     @RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
-    public void scheduleRequirement(FeatureList features)
+    public void scheduleRequirement( List<FeatureWP3> features)
     {
 
-        for (Feature feature : features.list())
-        {
+        for (FeatureWP3 feature : features ) {
             System.out.println("Received: " + feature);
         }
 
     }
 
     @RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
-    public void scheduleFeature(Feature feature)
+    public void scheduleFeature(FeatureWP3 feature)
     {
 
         System.out.println("Received: " + feature);

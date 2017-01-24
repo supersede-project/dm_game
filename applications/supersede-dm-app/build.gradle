@@ -118,6 +118,13 @@ dependencies {
     compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
+    
+    compile("com.google.code.gson:gson:2.8.0")
+	
+	compile files ('./lib/andes-client-3.1.1.jar')
+	compile files ('./lib/geronimo-jms_1.1_spec-1.1.0.wso2v1.jar')
+	compile files ('./lib/org.wso2.carbon.logging-4.4.1.jar')
+	compile files ('./lib/org.wso2.securevault-1.0.0-wso2v2.jar')
 
     compile project(":supersede-dm-core")
     compile project(":supersede-dm-datastore")
