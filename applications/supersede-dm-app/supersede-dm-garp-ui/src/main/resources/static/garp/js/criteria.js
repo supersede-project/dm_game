@@ -22,9 +22,29 @@ app.controllerProvider.register("display_criteria", function($scope, $http, $loc
 
     $http.get("supersede-dm-app/garp/game/game?gameId=" + gameId)
     .success(function(data) {
-        console.log("Game:");
         console.log(data);
-        $scope.game = data;
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'id' },
+                { name: 'owner' },
+                { name : 'date' },
+                { name : 'status' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#game").jqxGrid({
+            width: 600,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+              { text: 'Id', datafield: 'id', width: 200 },
+              { text: 'Owner', datafield: 'owner', width: 100 },
+              { text: 'Date', datafield: 'date', width: 200 },
+              { text: 'Status', datafield: 'status', width: 100 }
+            ]
+        });
     });
 
     $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
