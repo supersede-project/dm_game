@@ -78,7 +78,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-mail:${springBootVersion}")
 
     compile("org.springframework.session:spring-session:1.2.2.RELEASE")
-    compile("org.springframework.boot:spring-boot-starter-redis:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
 
     compile("org.apache.commons:commons-math3:3.6.1")
 
