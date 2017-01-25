@@ -26,8 +26,9 @@ public class RequirementsRest {
 			{
 				XTopic t = db.save( new XTopic( "Topic" ) );
 				XRequirement r = new XRequirement( "R1", "Requirement 1", t );
-
+				System.out.println( r.getText() );
 				r = db.save( r );
+				db.commit();
 			}
 
 			{

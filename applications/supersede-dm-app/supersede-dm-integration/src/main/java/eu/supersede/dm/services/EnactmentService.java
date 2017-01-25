@@ -26,9 +26,7 @@ public class EnactmentService {
 	/*
 	 * Temporary Method - to be finalized
 	 */
-	public void send( FeatureList features, String addr ) {
-
-		IReplanController replan = new ReplanControllerProxy();
+	public void send( FeatureList features, boolean useIF ) {
 
 		List<FeatureWP3> list = new ArrayList<>();
 
@@ -57,22 +55,29 @@ public class EnactmentService {
 			p.setEvaluationTime( "" );
 			p.setFeatures( list );
 
-			String json = new Gson().toJson( p );
+			if( useIF ) {
+				IReplanController replan = new ReplanControllerProxy();
+				replan.addFeaturesToProjectById( p, 0 );
+			}
+			else {
+				
+				String json = new Gson().toJson( p );
+				
+				json = json.replaceAll( "\\bevaluationTime\\b", "evaluation_time" );
+				json = json.replaceAll( "\\bhardDependencies\\b", "hard_dependencies" );
+				json = json.replaceAll( "\\bsoftDependencies\\b", "soft_dependencies" );
+				
+				System.out.println( json );
+				
+				RESTClient client = new RESTClient( "http://62.14.219.13:8280/replan" );
+				
+				client.post( "projects/1/features" )
+				.header( "Content-Type", "application/json" )
+				.header( "Cache-Control", "no-cache" )
+				.send( json );
+				
+			}
 
-			json = json.replaceAll( "\\bevaluationTime\\b", "evaluation_time" );
-			json = json.replaceAll( "\\bhardDependencies\\b", "hard_dependencies" );
-			json = json.replaceAll( "\\bsoftDependencies\\b", "soft_dependencies" );
-
-			System.out.println( json );
-
-//			RESTClient client = new RESTClient( "http://62.14.219.13:8280/replan" );
-//
-//			client.post( "projects/1/features" )
-//			.header( "Content-Type", "application/json" )
-//			.header( "Cache-Control", "no-cache" )
-//			.send( json );
-
-			replan.addFeaturesToProjectById( p, 0 );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

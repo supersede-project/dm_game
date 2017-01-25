@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
-import eu.supersede.fe.application.ApplicationUtil;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
@@ -26,9 +25,6 @@ import eu.supersede.integration.api.pubsub.TopicSubscriber;
 public class ModuleLoader {
 
 	@Autowired
-	private ApplicationUtil au;
-
-	@Autowired
 	private RequirementsJpa requirementsTable;
 
 
@@ -38,32 +34,37 @@ public class ModuleLoader {
 
 	@PostConstruct
 	public void init() {
-		TopicSubscriber subscriber = null;
-		try {
-			subscriber = new TopicSubscriber(SubscriptionTopic.ANALISIS_DM_EVENT_TOPIC);
-			subscriber.openTopicConnection();
-			TextMessageListener messageListener = new TextMessageListener();
-			subscriber.createTopicSubscriptionAndKeepListening (messageListener);
-			//					try {
-			//						while (!messageReceived) {
-			//							Thread.sleep(1000); //FIXME Configure sleeping time
-			//						}
-			//					}catch (InterruptedException e) {
-			//						e.printStackTrace();
-			//					}
-			//					subscriber.closeSubscription();
-			//					subscriber.closeTopicConnection();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			if (subscriber != null){
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				TopicSubscriber subscriber = null;
 				try {
+					subscriber = new TopicSubscriber(SubscriptionTopic.ANALISIS_DM_EVENT_TOPIC);
+					subscriber.openTopicConnection();
+					TextMessageListener messageListener = new TextMessageListener();
+					subscriber.createTopicSubscriptionAndKeepListening (messageListener);
+					try {
+						while( true ) {
+							Thread.sleep(1000); //FIXME Configure sleeping time
+						}
+					} catch( InterruptedException e ) {
+						e.printStackTrace();
+					}
+					subscriber.closeSubscription();
 					subscriber.closeTopicConnection();
-				} catch (JMSException e) {
-					throw new RuntimeException("Error in closing topic connection", e);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					if (subscriber != null){
+						try {
+							subscriber.closeTopicConnection();
+						} catch (JMSException e) {
+							throw new RuntimeException( "Error in closing topic connection", e );
+						}
+					}
 				}
-			}
-		}
+			}} ).start();
 	}
 
 	public class TextMessageListener implements MessageListener {
@@ -85,6 +86,9 @@ public class ModuleLoader {
 
 		public void onMessage(Message message) {
 			try {
+				
+				System.out.println( requirementsTable );
+				
 				System.out.println("Got the Message : " + ((TextMessage) message).getText());
 
 				String text = ((TextMessage) message).getText();

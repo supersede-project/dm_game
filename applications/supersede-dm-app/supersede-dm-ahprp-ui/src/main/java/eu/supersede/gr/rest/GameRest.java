@@ -311,8 +311,10 @@ public class GameRest
 	}
 
 	@RequestMapping(value = "/enact/{gameId}", method = RequestMethod.PUT)
-	public void doEnactGame(@PathVariable Long gameId)
+	public void doEnactGame( @PathVariable Long gameId, @RequestParam("useIF") Boolean useIf )
 	{
+		System.out.println( "Sending requirements fo enactment - useIF = " + useIf.booleanValue() );
+		
 		Game g = games.findOne(gameId);
 		
 		double max = 1;
