@@ -342,7 +342,7 @@ public class GameRest
 			list.list().add( feature );
 		}
 
-		EnactmentService.get().send( list, "" );
+		EnactmentService.get().send( list, (useIf != null ? useIf.booleanValue() : true) );
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
