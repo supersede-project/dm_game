@@ -1,110 +1,110 @@
 <script src="supersede-dm-app/ahprp/js/player_moves.js"></script>
 
-<style type="text/css"> 
-	 table, th, td {
-		border: 1px solid rgb(197,197,197);
-		border-collapse: collapse;
-		text-align: center;
-	}
-	th {
-		background-color: rgb(232,232,232);
-	}
+<style type="text/css">
+     table, th, td {
+        border: 1px solid rgb(197,197,197);
+        border-collapse: collapse;
+        text-align: center;
+    }
+    th {
+        background-color: rgb(232,232,232);
+    }
 </style>
 
 <div ng-controller="player_moves" style="height: 720px;">
 
-	<div>  	
-		<table style="width: 100%;">
-			<thead>
-				<tr>
-					<th>Votes&nbsp;</th>							
-					<th>Accomplishment Percentage&nbsp;</th>
-					<th>Position in voting&nbsp;</th>	
-					<th>Status&nbsp;</th>
-					<th>Agreement Index&nbsp;</th>		
-					<th>Total Points&nbsp;</th>
-					<th>Position&nbsp;</th>													
-				</tr>
-			</thead>
-	
-			<tbody>
-				<tr>
-					<td>
-						{{game.movesDone}}					
-					</td>													
-					<td>
-						{{ (Math.round(game.playerProgress * 1000) / 1000) }} %
-					</td>
-					<td>
-						{{gamePlayerPoints.positionInVoting}}
-					</td>	
-					<td>
-						<p ng-show="gameCompleted">Complete</p>
-						<p ng-show="!gameCompleted">Not complete</p>	
-					</td>
-					<td>
-						{{agreementIndex}}
-					</td>	
-					<td>
-						
-					</td>
-					<td rowspan="2">
-						<div align="center">
-							<img ng-show="gamePlayerPoints.virtualPosition == 1" src="/supersede-dm-app/ahprp/img/medal_gold.png" height="100" width="100"> 
-							<img ng-show="gamePlayerPoints.virtualPosition == 2" src="/supersede-dm-app/ahprp/img/medal_silver.png" height="100" width="100"> 
-							<img ng-show="gamePlayerPoints.virtualPosition == 3" src="/supersede-dm-app/ahprp/img/medal_bronze.png" height="100" width="100"> 
-							
-							<p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP</p>
-						</div>
-					</td>		
-				</tr>
-				<tr>
-					<td>
-						<b>+{{movesPoints}}pt</b>
-					</td>													
-					<td>
-						<b>+{{gameProgressPoints}}pt</b>
-					</td>
-					<td>
-						<b>+{{positionInVotingPoints}}pt</b>
-					</td>	
-					<td>
-						<b ng-show="gameStatusPoints != 0">{{gameStatusPoints}}pt</b>
-						<b ng-show="gameStatusPoints == 0">Completed</b>
-					</td>
-					<td>
-						<b>+{{gamePlayerPoints.agreementIndex}}pt</b>
-					</td>
-					<td>
-						<div align="center">
-							<h2><b>{{gamePlayerPoints.points}}</b></h2>
-						</div>				
-					</td>			
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <div>
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Votes&nbsp;</th>
+                    <th>Accomplishment Percentage&nbsp;</th>
+                    <th>Position in voting&nbsp;</th>
+                    <th>Status&nbsp;</th>
+                    <th>Agreement Index&nbsp;</th>
+                    <th>Total Points&nbsp;</th>
+                    <th>Position&nbsp;</th>
+                </tr>
+            </thead>
 
-	<div style="float: left; width: 50%;">	
-		<h3>Filter by criteria: </h3>
-		<select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
-			<option value="{{undefined}}"></option>
-			<option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
-		</select>
-	</div>
-	<div style="clear: both;"></div>
+            <tbody>
+                <tr>
+                    <td>
+                        {{game.movesDone}}
+                    </td>
+                    <td>
+                        {{ (Math.round(game.playerProgress * 1000) / 1000) }} %
+                    </td>
+                    <td>
+                        {{gamePlayerPoints.positionInVoting}}
+                    </td>
+                    <td>
+                        <p ng-show="gameCompleted">Complete</p>
+                        <p ng-show="!gameCompleted">Not complete</p>
+                    </td>
+                    <td>
+                        {{agreementIndex}}
+                    </td>
+                    <td>
 
-	<div id='jqxTabs'>
-		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
-			<li>Available actions</li>
-			<li>Finished actions</li>
-		</ul>
-		<div>
-			<jqx-grid id="openGrid" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
-		</div>
-		<div>
-			<jqx-grid id="closedGrid" jqx-create="createWidgetClosed" jqx-settings="closedSettings"></jqx-grid>
-		</div>
-	</div>
+                    </td>
+                    <td rowspan="2">
+                        <div align="center">
+                            <img ng-show="gamePlayerPoints.virtualPosition == 1" src="/supersede-dm-app/ahprp/img/medal_gold.png" height="100" width="100">
+                            <img ng-show="gamePlayerPoints.virtualPosition == 2" src="/supersede-dm-app/ahprp/img/medal_silver.png" height="100" width="100">
+                            <img ng-show="gamePlayerPoints.virtualPosition == 3" src="/supersede-dm-app/ahprp/img/medal_bronze.png" height="100" width="100">
+
+                            <p ng-show="gamePlayerPoints.virtualPosition > 3">NOT IN TOP</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>+{{movesPoints}}pt</b>
+                    </td>
+                    <td>
+                        <b>+{{gameProgressPoints}}pt</b>
+                    </td>
+                    <td>
+                        <b>+{{positionInVotingPoints}}pt</b>
+                    </td>
+                    <td>
+                        <b ng-show="gameStatusPoints != 0">{{gameStatusPoints}}pt</b>
+                        <b ng-show="gameStatusPoints == 0">Completed</b>
+                    </td>
+                    <td>
+                        <b>+{{gamePlayerPoints.agreementIndex}}pt</b>
+                    </td>
+                    <td>
+                        <div align="center">
+                            <h2><b>{{gamePlayerPoints.points}}</b></h2>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="float: left; width: 50%;">
+        <h3>Filter by criteria: </h3>
+        <select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
+            <option value="{{undefined}}"></option>
+            <option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
+        </select>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div id='jqxTabs'>
+        <ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
+            <li>Available actions</li>
+            <li>Finished actions</li>
+        </ul>
+        <div>
+            <jqx-grid id="openGrid" jqx-create="createWidgetOpen" jqx-settings="openSettings"></jqx-grid>
+        </div>
+        <div>
+            <jqx-grid id="closedGrid" jqx-create="createWidgetClosed" jqx-settings="closedSettings"></jqx-grid>
+        </div>
+    </div>
 
 </div>  
