@@ -53,25 +53,30 @@ app.controllerProvider.register("display_criteria", function($scope, $http, $loc
         var source = {
             datatype: "json",
             datafields: [
-                { name: 'criteriaId' },
                 { name: 'name' },
-                { name : 'description' }
+                { name : 'description' },
+                { name: 'criteriaId' }
             ],
             localdata: data
         };
         var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-            return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + "&idC=" + value + '">' + value + "</a>";
+            //return '<a href="#/supersede-dm-app/garp/gameplay?id=' + gameId + "&idC=" + value + '">' + value + "</a>";
+            var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+            r = r.concat('<jqx-link-button jqx-width="200" jqx-height="25"><a href="#/supersede-dm-app/garp/gameplay?id=');
+            r = r.concat(gameId + "&idC=" + value + '">Define requirements priority</a></jqx-link-button></div>');
+            return r;
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#selectedCriteria").jqxGrid({
-            width: 750,
+            width: 650,
             altrows: true,
             autoheight: true,
             source: dataAdapter,
+            rowsheight: 32,
             columns: [
-                { text: 'Id', datafield: 'criteriaId', width: 100, cellsrenderer: cellsrenderer },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Description', datafield: 'description' }
+                { text: 'Name', datafield: 'name', width: 100 },
+                { text: 'Description', datafield: 'description', width: 300 },
+                { text: '', datafield: 'criteriaId', width: 250, cellsrenderer: cellsrenderer }
             ]
         });
     });
