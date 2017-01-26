@@ -14,7 +14,7 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('player_moves', function($scope, $http, $location, $interval,  $rootScope) {
+app.controllerProvider.register('player_moves', function($scope, $http, $location, $interval) {
 
     $scope.Math = Math;
 
