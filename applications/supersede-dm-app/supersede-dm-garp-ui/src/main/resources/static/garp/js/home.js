@@ -23,15 +23,18 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             var source = {
                 datatype: "json",
                 datafields: [
-                    { name: 'id' },
                     { name: 'owner' },
                     { name : 'date' },
-                    { name : 'status' }
+                    { name : 'status' },
+                    { name: 'id' }
                 ],
                 localdata: data
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="#/supersede-dm-app/garp/results' + value + '">' + value + "</a>";
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/results');
+                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
+                return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({
@@ -39,11 +42,12 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 autoheight: true,
                 altrows: true,
                 source: dataAdapter,
+                rowsheight: 32,
                 columns: [
-                  { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
                   { text: 'Owner', datafield: 'owner', width: 100 },
                   { text: 'Date', datafield: 'date', width: 200 },
-                  { text: 'Status', datafield: 'status', width: 100 }
+                  { text: 'Status', datafield: 'status', width: 100 },
+                  { text: '', datafield: 'id', width: 200, cellsrenderer: cellsrenderer }
                 ]
             });
         });
@@ -56,15 +60,18 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             var source = {
                 datatype: "json",
                 datafields: [
-                    { name: 'id' },
                     { name: 'owner' },
                     { name : 'date' },
-                    { name : 'status' }
+                    { name : 'status' },
+                    { name: 'id' }
                 ],
                 localdata: data
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                return '<a href="#/supersede-dm-app/garp/criteria?id=' + value + '">' + value + "</a>";
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/criteria?id=');
+                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
+                return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#activeGames").jqxGrid( {
@@ -72,11 +79,12 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 autoheight: true,
                 altrows: true,
                 source: dataAdapter,
+                rowsheight: 32,
                 columns: [
-                  { text: 'Id', datafield: 'id', width: 200, cellsrenderer: cellsrenderer },
                   { text: 'Owner', datafield: 'owner', width: 100 },
                   { text: 'Date', datafield: 'date', width: 200 },
-                  { text: 'Status', datafield: 'status', width: 100 }
+                  { text: 'Status', datafield: 'status', width: 100 },
+                  { text: '', datafield: 'id', width: 200, cellsrenderer: cellsrenderer }
                 ]
             });
         });
