@@ -85,14 +85,13 @@
         </table>
     </div>
 
-    <div style="float: left; width: 50%;">
+    <div>
         <h3>Filter by criteria:
         <select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
             <option value="{{undefined}}"></option>
             <option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
         </select></h3>
     </div>
-    <div style="clear: both;"></div>
 
     <div id='jqxTabs'>
         <ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">

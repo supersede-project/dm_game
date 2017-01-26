@@ -14,9 +14,12 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('judge_acts', function($scope, $http, $interval) {
+app.controllerProvider.register('judge_acts', function($scope, $http, $location, $interval) {
 
     $scope.Math = Math;
+
+    $scope.selectedGame = $location.search().gameId;
+
     $scope.requirementsChoices = [];
 
     $scope.open_acts = [];
@@ -25,27 +28,11 @@ app.controllerProvider.register('judge_acts', function($scope, $http, $interval)
     $scope.selectedCriteria = undefined;
     $scope.criterias = [];
 
-    $scope.selectedGame = undefined;
-    $scope.games = [];
-
     var criteriasContains = function(criteria)
     {
         for (var i = 0; i < $scope.criterias.length; i++)
         {
             if ($scope.criterias[i].criteriaId == criteria.criteriaId)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    var gamesContains = function(game)
-    {
-        for (var i = 0; i < $scope.games.length; i++)
-        {
-            if ($scope.games[i].gameId == game.gameId)
             {
                 return true;
             }
@@ -82,19 +69,6 @@ app.controllerProvider.register('judge_acts', function($scope, $http, $interval)
                     if (!criteriasContains(data[j].requirementsMatrixData.criteria))
                     {
                         $scope.criterias.push(data[j].requirementsMatrixData.criteria);
-                    }
-                }
-            }
-
-            if (!$scope.selectedGame)
-            {
-                $scope.games.length = 0;
-
-                for (var k = 0; k < data.length; k++)
-                {
-                    if (!gamesContains(data[k].requirementsMatrixData.game))
-                    {
-                        $scope.games.push(data[k].requirementsMatrixData.game);
                     }
                 }
             }
