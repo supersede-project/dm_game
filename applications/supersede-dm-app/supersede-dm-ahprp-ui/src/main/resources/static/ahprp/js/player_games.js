@@ -15,54 +15,56 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('player_games', function($scope, $http, $location) {
-    
+
     $scope.playerGames = [];
-       
+
     $http.get('supersede-dm-app/ahprp/game', {params:{byUser: true, finished:false}})
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.playerGames.push(data[i]);
-		}
-		
-		// prepare the data
-		var source =
-		{
-			datatype: "json",
-			datafields: [
-				{ name: 'title'},
-				{ name: 'progress'},
-				{ name: 'gameId'}
-			],
-			id: 'gameId',
-			localdata: $scope.playerGames
-		};
-		var dataAdapter = new $.jqx.dataAdapter(source);
-		$scope.gridSettings =
-		{
-			width: '100%',
-			autoheight: true,
-			pageable: true,
-			source: dataAdapter,
-			rowsheight: 31,
-			columns: [
-			    { text: 'Title', width: '83%', datafield: 'title' },
-			    { text: 'Progress', width: '7%', datafield: 'progress', cellsRenderer: function (row, columnDataField, value) {
-					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat((Math.round(value * 1000) / 1000) + "%");
-					return r.concat("</div>");
-					}
-			    },
-			    { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
-					var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-					r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/player_moves?gameId=" + value + "'>Enter</a></jqx-link-button>");
-					return r.concat("</div>");
-					}
-			    }
-			]
-		};
-		$scope.createWidget = true;
-	});
-    
-    
+    .success(function(data) {
+        for (var i = 0; i < data.length; i++)
+        {
+            $scope.playerGames.push(data[i]);
+        }
+
+        // prepare the data
+        var source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'title'},
+                { name: 'progress'},
+                { name: 'gameId'}
+            ],
+            id: 'gameId',
+            localdata: $scope.playerGames
+        };
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        $scope.gridSettings =
+        {
+            width: '100%',
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            rowsheight: 31,
+            columns: [
+                { text: 'Title', width: '83%', datafield: 'title' },
+                { text: 'Progress', width: '7%', datafield: 'progress', cellsRenderer: function (row, columnDataField, value) {
+                    var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                    r = r.concat((Math.round(value * 1000) / 1000) + "%");
+                    return r.concat("</div>");
+                    }
+                },
+                { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
+                    var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                    r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/player_moves?gameId=" +
+                    value + "'>Enter</a></jqx-link-button>");
+                    return r.concat("</div>");
+                    }
+                }
+            ]
+        };
+
+        $scope.createWidget = true;
+    });
 });

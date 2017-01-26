@@ -30,9 +30,9 @@ app.controllerProvider.register('judge_acts', function($scope, $http, $interval)
 
     var criteriasContains = function(criteria)
     {
-        for(var i = 0; i < $scope.criterias.length; i++)
+        for (var i = 0; i < $scope.criterias.length; i++)
         {
-            if($scope.criterias[i].criteriaId == criteria.criteriaId)
+            if ($scope.criterias[i].criteriaId == criteria.criteriaId)
             {
                 return true;
             }
@@ -43,9 +43,9 @@ app.controllerProvider.register('judge_acts', function($scope, $http, $interval)
 
     var gamesContains = function(game)
     {
-        for(var i = 0; i < $scope.games.length; i++)
+        for (var i = 0; i < $scope.games.length; i++)
         {
-            if($scope.games[i].gameId == game.gameId)
+            if ($scope.games[i].gameId == game.gameId)
             {
                 return true;
             }
@@ -195,7 +195,7 @@ app.controllerProvider.register('judge_acts', function($scope, $http, $interval)
     $http.get('supersede-dm-app/requirementchoice').success(function(data)
     {
         $scope.requirementsChoices.length = 0;
-        for(var i = 0; i < data.length; i++)
+        for (var i = 0; i < data.length; i++)
         {
             $scope.requirementsChoices.push(data[i]);
         }

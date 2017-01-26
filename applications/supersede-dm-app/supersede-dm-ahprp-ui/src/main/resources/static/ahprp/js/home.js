@@ -15,24 +15,23 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $rootScope) {
-	
-	$http.get('/supersede-dm-app/user/current')
-	.success(function(data) {
-		$scope.user = data;
-	});
-		
-	$scope.hasRole = function(role){
-		if($rootScope.user && $rootScope.user.authorities)
-		{
-			for(var i = 0; i < $rootScope.user.authorities.length; i++)
-			{
-				if($rootScope.user.authorities[i].authority == "ROLE_" + role)
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 
+    $http.get('/supersede-dm-app/user/current')
+    .success(function(data) {
+        $scope.user = data;
+    });
+
+    $scope.hasRole = function(role){
+        if ($rootScope.user && $rootScope.user.authorities)
+        {
+            for (var i = 0; i < $rootScope.user.authorities.length; i++)
+            {
+                if ($rootScope.user.authorities[i].authority == "ROLE_" + role)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
 });
