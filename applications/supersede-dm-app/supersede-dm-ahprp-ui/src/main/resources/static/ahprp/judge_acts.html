@@ -86,19 +86,19 @@
     </div>
 
        <div style="float: left; width: 50%;">
-        <h3>Filter by criteria: </h3>
+        <h3>Filter by criteria:
         <select class="form-control" name="selectCriteria" id="selectCriteria" ng-model="selectedCriteria" ng-change="changeCriteria()">
             <option value="{{undefined}}"></option>
             <option ng-repeat="criteria in criterias" value="{{criteria.criteriaId}}">{{criteria.name}}</option>
-        </select>
+        </select></h3>
         </div>
 
     <div style="float: right; width: 50%;">
-        <h3>Filter by process name: </h3>
+        <h3>Filter by process name:
         <select class="form-control" name="selectGame" id="selectGame" ng-model="selectedGame" ng-change="changeGame()">
             <option value="{{undefined}}"></option>
             <option ng-repeat="game in games" value="{{game.gameId}}">{{game.title}}</option>
-        </select>
+        </select></h3>
     </div>
     <div style="clear: both;"></div>
 

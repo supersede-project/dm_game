@@ -1,43 +1,43 @@
 <script src="supersede-dm-app/ahprp/js/criterias_leaderboard.js"></script>
 <div class="container">
- 	<div class="row" ng-controller="criterias_leaderboard">
-		<h1>Leaderboard for {{selectedCriteria.name}}</h1>
-		<select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChanged()" ng-options="selectedCriteria as selectedCriteria.name for selectedCriteria in valutationCriterias" >
- 	   	 	<option style="display:none" value="">Select a criteria</option>
-		</select>
-		<div ng-hide="!criteriaUsers.length">
-			<br>	
-			<table class="table table-striped table-condensed table-hover">		
-				<thead>
-					<tr>
-						<th class="id">Id&nbsp;</th>
-						<th class="name">Name&nbsp;</th>
-						<th class="name">Email&nbsp;</th>
-						<th class="name">Points&nbsp;</th>				
-					</tr>
-				</thead>
-		
-				<tbody>
-					<tr	ng-repeat="user in criteriaUsers">
-						<td>{{user.userId}}</td>
-						<td>{{user.name}}</td>
-						<td>{{user.email}}</td>
-						<td>
-							<div ng-repeat="criteriaPoints in user.userCriteriaPoints">
-								<div ng-show="{{criteriaPoints.valutationCriteria.criteriaId == selectedCriteria.criteriaId}}">
-									<b>{{criteriaPoints.points}}</b>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</tbody>		
-			</table>
-		</div>
-		<div align="center" ng-hide="criteriaUsers.length">
-			<br>	
-			<p class="lead">There are no users in this field!</p>
-		</div>			 		
-	</div>
+     <div class="row" ng-controller="criterias_leaderboard">
+        <h1>Leaderboard for {{selectedCriteria.name}}</h1>
+        <select class="form-control" ng-model="selectedCriteria" ng-change="selectedCriteriaChanged()" ng-options="selectedCriteria as selectedCriteria.name for selectedCriteria in valutationCriterias" >
+                 <option style="display:none" value="">Select a criteria</option>
+        </select>
+        <div ng-hide="!criteriaUsers.length">
+            <br>
+            <table class="table table-striped table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="id">Id&nbsp;</th>
+                        <th class="name">Name&nbsp;</th>
+                        <th class="name">Email&nbsp;</th>
+                        <th class="name">Points&nbsp;</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr    ng-repeat="user in criteriaUsers">
+                        <td>{{user.userId}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            <div ng-repeat="criteriaPoints in user.userCriteriaPoints">
+                                <div ng-show="{{criteriaPoints.valutationCriteria.criteriaId == selectedCriteria.criteriaId}}">
+                                    <b>{{criteriaPoints.points}}</b>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div align="center" ng-hide="criteriaUsers.length">
+            <br>
+            <p class="lead">There are no users in this field!</p>
+        </div>
+    </div>
 </div>
 
 

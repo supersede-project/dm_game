@@ -1,93 +1,93 @@
 <script src="supersede-dm-app/ahprp/js/game.js"></script>
-	
+
 <div ng-controller="game">
 
-	<div style="float: left; width: 45%;">
-		<h2>Decision making process details</h2>
-		<p>Title: <b>{{game.title}}</b></p>
-		<p>Progress (Negotiators votes): 
-			<jqx-progress-bar ng-model="game.progress" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
-		</p>
-		<p>Progress (Opinion Providers votes): 
-			<jqx-progress-bar ng-model="game.usersProgress" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
-		</p>
-		<p ng-show="game.description">Description: <b>{{game.description}}</b></p>
-		<p>Criterias: <b ng-repeat="criteria in game.criterias">{{criteria.name  + ($index +1 != game.criterias.length ? ', ' : '')}}</b></p>
-		<p>Requirements: <b ng-repeat="requirement in game.requirements">{{requirement.name + ($index +1 != game.requirements.length ? ', ' : '')}}</b></p>
-		
-		<p>Export actions: 
-			<a ng-click="exportGameData()">
-				<img src="supersede-dm-app/ahprp/img/csv.png" title="Data" height="42" width="42">
-			</a>
-		</p>
-		<p>Export results: 
-			<a ng-click="exportGameResults()">
-				<img src="supersede-dm-app/ahprp/img/csv.png" title="Results" height="42" width="42">
-			</a>
-		</p>
-	</div>
-	
-	<div style="float: right; width: 55%;">
-		<h2>Calculate requirements ranks</h2>
-		
-		<jqx-chart id='chartContainer' jqx-settings="chartSettings" jqx-create="createChart" style="width: '100%'; height: 450px"></jqx-chart>				
-	
-		
-		<div align="center" style="margin-top: 15px;">
-			<jqx-button ng-click="computeAHP(game.gameId)">Compute rank</jqx-button>
-		</div></div>
-	
-	<div style="clear: both;"></div>
-	
-	<div ng-hide="game.finished">
-		<div align="center">
-		<div>
-			<jqx-button ng-click="enact(game.gameId,true)">Enact prioritized requirements</jqx-button>
-		</div>
-		<div>
-			<jqx-button ng-click="enact(game.gameId,false)">Enact prioritized requirements (direct IP call)</jqx-button>
-		</div>
-		<div>
-			<jqx-button ng-click="gameEnd(game.gameId)">Close decision making process</jqx-button>
-		</div>
-		</div>	
-	</div>
-	
-	
-	<!-- TODO:
-	<div class="modal fade" id="{{game.gameId}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="myModalLabel">Set the new vote for the criterias:</h4>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="col-md-12">
-								<div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
-									<div ng-repeat="other_criteria in game.criterias" ng-if="$index > $parent.$index">
-										<div>
-											<div style="float: left; width: 15%">{{criteria.name}}</div>
-											<div style="float: left; width: 70%; text-align: center;">
-												<label ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
-													<input type="radio" ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
-												</label>
-											</div>
-											<div style="float: right; width: 15%; text-align: right;">{{other_criteria.name}}</div>
-											<div style="clear: both;"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>	  -->
+    <div style="float: left; width: 45%;">
+        <h2>Decision making process details</h2>
+        <p>Title: <b>{{game.title}}</b></p>
+        <p>Progress (Negotiators votes):
+            <jqx-progress-bar ng-model="game.progress" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
+        </p>
+        <p>Progress (Opinion Providers votes):
+            <jqx-progress-bar ng-model="game.usersProgress" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
+        </p>
+        <p ng-show="game.description">Description: <b>{{game.description}}</b></p>
+        <p>Criterias: <b ng-repeat="criteria in game.criterias">{{criteria.name  + ($index +1 != game.criterias.length ? ', ' : '')}}</b></p>
+        <p>Requirements: <b ng-repeat="requirement in game.requirements">{{requirement.name + ($index +1 != game.requirements.length ? ', ' : '')}}</b></p>
+
+        <p>Export actions:
+            <a ng-click="exportGameData()">
+                <img src="supersede-dm-app/ahprp/img/csv.png" title="Data" height="42" width="42">
+            </a>
+        </p>
+        <p>Export results:
+            <a ng-click="exportGameResults()">
+                <img src="supersede-dm-app/ahprp/img/csv.png" title="Results" height="42" width="42">
+            </a>
+        </p>
+    </div>
+
+    <div style="float: right; width: 55%;">
+        <h2>Calculate requirements ranks</h2>
+
+        <jqx-chart id='chartContainer' jqx-settings="chartSettings" jqx-create="createChart" style="width: '100%'; height: 450px"></jqx-chart>
+
+
+        <div align="center" style="margin-top: 15px;">
+            <jqx-button ng-click="computeAHP(game.gameId)">Compute rank</jqx-button>
+        </div></div>
+
+    <div style="clear: both;"></div>
+
+    <div ng-hide="game.finished">
+        <div align="center">
+        <div>
+            <jqx-button ng-click="enact(game.gameId,true)">Enact prioritized requirements</jqx-button>
+        </div>
+        <div>
+            <jqx-button ng-click="enact(game.gameId,false)">Enact prioritized requirements (direct IP call)</jqx-button>
+        </div>
+        <div>
+            <jqx-button ng-click="gameEnd(game.gameId)">Close decision making process</jqx-button>
+        </div>
+        </div>
+    </div>
+
+
+    <!-- TODO:
+    <div class="modal fade" id="{{game.gameId}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Set the new vote for the criterias:</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
+                                    <div ng-repeat="other_criteria in game.criterias" ng-if="$index > $parent.$index">
+                                        <div>
+                                            <div style="float: left; width: 15%">{{criteria.name}}</div>
+                                            <div style="float: left; width: 70%; text-align: center;">
+                                                <label ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
+                                                    <input type="radio" ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
+                                                </label>
+                                            </div>
+                                            <div style="float: right; width: 15%; text-align: right;">{{other_criteria.name}}</div>
+                                            <div style="clear: both;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>      -->
 </div>
