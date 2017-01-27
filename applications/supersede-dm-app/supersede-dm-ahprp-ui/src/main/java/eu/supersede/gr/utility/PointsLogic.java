@@ -29,7 +29,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.supersede.fe.multitenant.MultiJpaProvider;
 import eu.supersede.gr.jpa.CriteriasMatricesDataJpa;
 import eu.supersede.gr.jpa.GamesJpa;
 import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
@@ -67,7 +66,16 @@ public class PointsLogic
     private UserCriteriaPointsJpa userCriteriaPoints;
 
     @Autowired
-    MultiJpaProvider multiJpaProvider;
+    private GamesPlayersPointsJpa gamesPlayersPointsRepository;
+
+    @Autowired
+    private CriteriasMatricesDataJpa criteriaMatricesRepository;
+
+    @Autowired
+    private RequirementsMatricesDataJpa requirementsMatricesRepository;
+
+    @Autowired
+    private GamesJpa gamesRepository;
 
     private Double M = 20.0;
 
@@ -117,161 +125,140 @@ public class PointsLogic
 
     private void computePoints()
     {
-        // used for clear the cache
-        multiJpaProvider.clearTenants();
+        List<GamePlayerPoint> gamesPlayersPoints = gamesPlayersPointsRepository.findAll();
 
-        Map<String, GamesPlayersPointsJpa> gamesPlayersPointsRepositories = multiJpaProvider
-                .getRepositories(GamesPlayersPointsJpa.class);
-        Map<String, CriteriasMatricesDataJpa> criteriasMatricesDataRepositories = multiJpaProvider
-                .getRepositories(CriteriasMatricesDataJpa.class);
-        Map<String, GamesJpa> gamesRepositories = multiJpaProvider.getRepositories(GamesJpa.class);
-        Map<String, RequirementsMatricesDataJpa> requirementsMatricesDataRepositories = multiJpaProvider
-                .getRepositories(RequirementsMatricesDataJpa.class);
-
-        for (String tenant : gamesPlayersPointsRepositories.keySet())
+        // cycle on every gamesPlayersPoints
+        for (int i = 0; i < gamesPlayersPoints.size(); i++)
         {
-            GamesPlayersPointsJpa gamesPlayersPointsRepository = gamesPlayersPointsRepositories.get(tenant);
-            CriteriasMatricesDataJpa criteriasMatricesRepository = criteriasMatricesDataRepositories.get(tenant);
-            GamesJpa gamesRepository = gamesRepositories.get(tenant);
-            RequirementsMatricesDataJpa requirementsMatricesRepository = requirementsMatricesDataRepositories
-                    .get(tenant);
+            Game g = gamesRepository.findOne(gamesPlayersPoints.get(i).getGame().getGameId());
 
-            List<GamePlayerPoint> gamesPlayersPoints = gamesPlayersPointsRepository.findAll();
+            // set currentPlayer that is used for other methods
+            g.setCurrentPlayer(gamesPlayersPoints.get(i).getUser());
 
-            // cycle on every gamesPlayersPoints
-            for (int i = 0; i < gamesPlayersPoints.size(); i++)
+            List<CriteriasMatrixData> criteriasMatrixDataList = criteriaMatricesRepository.findByGame(g);
+
+            // calculate the agreementIndex for every gamesPlayersPoints of a game and a specific user
+
+            Map<String, Double> resultTotal = AHPRest.CalculateAHP(g.getCriterias(), g.getRequirements(),
+                    criteriasMatrixDataList, g.getRequirementsMatrixData());
+            Map<String, Double> resultPersonal = AHPRest.CalculatePersonalAHP(
+                    gamesPlayersPoints.get(i).getUser().getUserId(), g.getCriterias(), g.getRequirements(),
+                    criteriasMatrixDataList, g.getRequirementsMatrixData());
+            List<Requirement> gameRequirements = g.getRequirements();
+            Double sum = 0.0;
+
+            for (int j = 0; j < resultTotal.size(); j++)
             {
-                Game g = gamesRepository.findOne(gamesPlayersPoints.get(i).getGame().getGameId());
+                Double requirementValueTotal = resultTotal.get(gameRequirements.get(j).getRequirementId().toString());
+                Double requirementValuePersonal = resultPersonal
+                        .get(gameRequirements.get(j).getRequirementId().toString());
+                sum = sum
+                        + (Math.abs(requirementValueTotal - requirementValuePersonal) * (1.0 - requirementValueTotal));
+            }
 
-                // set currentPlayer that is used for other methods
-                g.setCurrentPlayer(gamesPlayersPoints.get(i).getUser());
+            Double agreementIndex = M - (M * sum);
+            gamesPlayersPoints.get(i).setAgreementIndex(agreementIndex.longValue());
 
-                List<CriteriasMatrixData> criteriasMatrixDataList = criteriasMatricesRepository.findByGame(g);
+            // calculate the positionInVoting for every gamesPlayersPoints of a game and a specific user
 
-                // calculate the agreementIndex for every gamesPlayersPoints of a game and a specific user
+            List<User> players = g.getPlayers();
+            List<RequirementsMatrixData> lrmd = requirementsMatricesRepository.findByGame(g);
+            Map<User, Float> gamePlayerVotes = new HashMap<>();
 
-                Map<String, Double> resultTotal = AHPRest.CalculateAHP(g.getCriterias(), g.getRequirements(),
-                        criteriasMatrixDataList, g.getRequirementsMatrixData());
-                Map<String, Double> resultPersonal = AHPRest.CalculatePersonalAHP(
-                        gamesPlayersPoints.get(i).getUser().getUserId(), g.getCriterias(), g.getRequirements(),
-                        criteriasMatrixDataList, g.getRequirementsMatrixData());
-                List<Requirement> gameRequirements = g.getRequirements();
-                Double sum = 0.0;
+            for (User player : players)
+            {
+                Integer total = 0;
+                Integer voted = 0;
 
-                for (int j = 0; j < resultTotal.size(); j++)
+                if (lrmd != null)
                 {
-                    Double requirementValueTotal = resultTotal
-                            .get(gameRequirements.get(j).getRequirementId().toString());
-                    Double requirementValuePersonal = resultPersonal
-                            .get(gameRequirements.get(j).getRequirementId().toString());
-                    sum = sum + (Math.abs(requirementValueTotal - requirementValuePersonal)
-                            * (1.0 - requirementValueTotal));
-                }
-
-                Double agreementIndex = M - (M * sum);
-                gamesPlayersPoints.get(i).setAgreementIndex(agreementIndex.longValue());
-
-                // calculate the positionInVoting for every gamesPlayersPoints of a game and a specific user
-
-                List<User> players = g.getPlayers();
-                List<RequirementsMatrixData> lrmd = requirementsMatricesRepository.findByGame(g);
-                Map<User, Float> gamePlayerVotes = new HashMap<>();
-
-                for (User player : players)
-                {
-                    Integer total = 0;
-                    Integer voted = 0;
-
-                    if (lrmd != null)
+                    for (RequirementsMatrixData data : lrmd)
                     {
-                        for (RequirementsMatrixData data : lrmd)
+                        for (PlayerMove pm : data.getPlayerMoves())
                         {
-                            for (PlayerMove pm : data.getPlayerMoves())
+                            if (pm.getPlayer().getUserId().equals(player.getUserId()))
                             {
-                                if (pm.getPlayer().getUserId().equals(player.getUserId()))
-                                {
-                                    total++;
+                                total++;
 
-                                    if (pm.getPlayed() == true && pm.getValue() != null && !pm.getValue().equals(-1l))
-                                    {
-                                        voted++;
-                                    }
+                                if (pm.getPlayed() == true && pm.getValue() != null && !pm.getValue().equals(-1l))
+                                {
+                                    voted++;
                                 }
                             }
                         }
                     }
-
-                    gamePlayerVotes.put(player, total.equals(0) ? 0f : ((new Float(voted) / new Float(total)) * 100));
                 }
 
-                LinkedHashMap<User, Float> orderedList = sortHashMapByValues(gamePlayerVotes);
-                List<User> indexes = new ArrayList<>(orderedList.keySet());
-                Integer index = indexes.indexOf(gamesPlayersPoints.get(i).getUser());
-                Double positionInVoting = (orderedList.size() - (new Double(index) + 1.0)) + 1.0;
-                gamesPlayersPoints.get(i).setPositionInVoting(positionInVoting.longValue());
-
-                // calculate the virtualPosition of a user base on his/her points in a particular game
-
-                GamePlayerPoint gpp = gamesPlayersPointsRepository
-                        .findByUserAndGame(gamesPlayersPoints.get(i).getUser(), g);
-                List<GamePlayerPoint> specificGamePlayersPoints = gamesPlayersPointsRepository.findByGame(g);
-
-                Collections.sort(specificGamePlayersPoints, new CustomComparator());
-
-                Long virtualPosition = specificGamePlayersPoints.indexOf(gpp) + 1l;
-                gamesPlayersPoints.get(i).setVirtualPosition(virtualPosition);
-
-                Long movesPoints = 0l;
-                Long gameProgressPoints = 0l;
-                Long positionInVotingPoints = 0l;
-                Long gameStatusPoints = 0l;
-                Long agreementIndexPoints = 0l;
-                Long totalPoints = 0l;
-
-                // set the movesPoints
-                movesPoints = g.getMovesDone().longValue();
-
-                // setGameProgressPoints
-                gameProgressPoints = (long) Math.floor(g.getPlayerProgress() / 10);
-
-                // setPositionInVotingPoints
-                if (positionInVoting == 1)
-                {
-                    positionInVotingPoints = 5l;
-                }
-                else if (positionInVoting == 2)
-                {
-                    positionInVotingPoints = 3l;
-                }
-                else if (positionInVoting == 3)
-                {
-                    positionInVotingPoints = 2l;
-                }
-
-                // setGameStatusPoints
-                if (g.getPlayerProgress() != 100)
-                {
-                    gameStatusPoints = -20l;
-                }
-                else
-                {
-                    gameStatusPoints = 0l;
-                }
-
-                // set AgreementIndexPoints
-                agreementIndexPoints = agreementIndex.longValue();
-                totalPoints = movesPoints.longValue() + gameProgressPoints + positionInVotingPoints + gameStatusPoints
-                        + agreementIndexPoints;
-
-                // set totalPoints 0 if the totalPoints are negative
-                if (totalPoints < 0)
-                {
-                    totalPoints = 0l;
-                }
-
-                gamesPlayersPoints.get(i).setPoints(totalPoints);
-                gamesPlayersPointsRepository.save(gamesPlayersPoints.get(i));
+                gamePlayerVotes.put(player, total.equals(0) ? 0f : ((new Float(voted) / new Float(total)) * 100));
             }
+
+            LinkedHashMap<User, Float> orderedList = sortHashMapByValues(gamePlayerVotes);
+            List<User> indexes = new ArrayList<>(orderedList.keySet());
+            Integer index = indexes.indexOf(gamesPlayersPoints.get(i).getUser());
+            Double positionInVoting = (orderedList.size() - (new Double(index) + 1.0)) + 1.0;
+            gamesPlayersPoints.get(i).setPositionInVoting(positionInVoting.longValue());
+
+            // calculate the virtualPosition of a user base on his/her points in a particular game
+
+            GamePlayerPoint gpp = gamesPlayersPointsRepository.findByUserAndGame(gamesPlayersPoints.get(i).getUser(),
+                    g);
+            List<GamePlayerPoint> specificGamePlayersPoints = gamesPlayersPointsRepository.findByGame(g);
+
+            Collections.sort(specificGamePlayersPoints, new CustomComparator());
+
+            Long virtualPosition = specificGamePlayersPoints.indexOf(gpp) + 1l;
+            gamesPlayersPoints.get(i).setVirtualPosition(virtualPosition);
+
+            Long movesPoints = 0l;
+            Long gameProgressPoints = 0l;
+            Long positionInVotingPoints = 0l;
+            Long gameStatusPoints = 0l;
+            Long agreementIndexPoints = 0l;
+            Long totalPoints = 0l;
+
+            // set the movesPoints
+            movesPoints = g.getMovesDone().longValue();
+
+            // setGameProgressPoints
+            gameProgressPoints = (long) Math.floor(g.getPlayerProgress() / 10);
+
+            // setPositionInVotingPoints
+            if (positionInVoting == 1)
+            {
+                positionInVotingPoints = 5l;
+            }
+            else if (positionInVoting == 2)
+            {
+                positionInVotingPoints = 3l;
+            }
+            else if (positionInVoting == 3)
+            {
+                positionInVotingPoints = 2l;
+            }
+
+            // setGameStatusPoints
+            if (g.getPlayerProgress() != 100)
+            {
+                gameStatusPoints = -20l;
+            }
+            else
+            {
+                gameStatusPoints = 0l;
+            }
+
+            // set AgreementIndexPoints
+            agreementIndexPoints = agreementIndex.longValue();
+            totalPoints = movesPoints.longValue() + gameProgressPoints + positionInVotingPoints + gameStatusPoints
+                    + agreementIndexPoints;
+
+            // set totalPoints 0 if the totalPoints are negative
+            if (totalPoints < 0)
+            {
+                totalPoints = 0l;
+            }
+
+            gamesPlayersPoints.get(i).setPoints(totalPoints);
+            gamesPlayersPointsRepository.save(gamesPlayersPoints.get(i));
         }
 
         System.out.println("Finished computing votes");
