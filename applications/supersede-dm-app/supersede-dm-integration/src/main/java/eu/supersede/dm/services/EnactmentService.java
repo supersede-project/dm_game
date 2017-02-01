@@ -69,7 +69,7 @@ public class EnactmentService {
 				
 				System.out.println( json );
 				
-				RESTClient client = new RESTClient( "http://62.14.219.13:8280/replan" );
+				RESTClient client = new RESTClient( "http://supersede.es.atos.net:8280/replan" );
 				
 				client.post( "projects/1/features" )
 				.header( "Content-Type", "application/json" )

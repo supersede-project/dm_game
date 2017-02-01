@@ -4,6 +4,26 @@ import java.util.List;
 
 public class Alert {
 	
+	String				ID;
+	String				applicationID;
+	long				timestamp;
+	String				tenant;
+	List<Condition>		conditions;
+	List<UserRequest>	requests;
+	
+	
+	public Alert(	String iD, String applicationID, long timestamp, 
+					String tenant, List<Condition> conditions, List<UserRequest>	requests ) {
+		super();
+		ID = iD;
+		this.applicationID = applicationID;
+		this.timestamp = timestamp;
+		this.tenant = tenant;
+		this.conditions = conditions;
+		this.requests = requests;
+	}
+
+
 	public List<UserRequest> getRequests() {
 		return requests;
 	}
@@ -36,26 +56,6 @@ public class Alert {
 
 	public void setConditions(List<Condition> conditions) {
 		this.conditions = conditions;
-	}
-
-
-	String				ID;
-	String				applicationID;
-	long				timestamp;
-	String				tenant;
-	List<Condition>		conditions;
-	List<UserRequest>	requests;
-	
-	
-	public Alert(	String iD, String applicationID, long timestamp, 
-					String tenant, List<Condition> conditions, List<UserRequest>	requests ) {
-		super();
-		ID = iD;
-		this.applicationID = applicationID;
-		this.timestamp = timestamp;
-		this.tenant = tenant;
-		this.conditions = conditions;
-		this.requests = requests;
 	}
 
 

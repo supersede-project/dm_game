@@ -52,6 +52,56 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		}
 	});
     
+    $http.get('supersede-dm-app/alerts/biglist').success(function(data) {
+    	
+//    	console.log( data );
+    	
+        var source =
+        {
+            datatype: "json",
+            localdata: data,
+            datafields: [
+                { name: 'applicationID', map: 'applicationID' },
+                { name: 'alertID' },
+                { name: 'id' },
+                { name: 'timestamp' },
+                { name: 'description' },
+                { name: 'classification' },
+                { name: 'accuracy' },
+                { name: 'pos' },
+                { name: 'neg' },
+                { name: 'overall' },
+            ],
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#jqxgrid").jqxGrid(
+        {
+            width: 900,
+            source: dataAdapter,
+//            pageable: true,
+//            columnsResize: true,
+//            altRows: true,
+            groupable: true,
+//            ready: function () {
+//                $("#treeGrid").jqxTreeGrid('expandRow', "0");
+//            },
+            columns: [
+              { text: 'App', dataField: 'applicationID', width: 50 },
+              { text: 'Alert', dataField: 'alertID', width: 50 },
+              { text: 'ID', dataField: 'id', width: 50 },
+              { text: 'Timestamp', dataField: 'timestamp', width: 100 },
+              { text: 'Description', dataField: 'description', minWidth: 100, width: 200 },
+              { text: 'Classification', dataField: 'classification', minWidth: 100, width: 150 },
+              { text: 'Accuracy', dataField: 'accuracy', width: 50 },
+              { text: 'Pos.', dataField: 'pos', width: 58 },
+              { text: 'Neg.', dataField: 'neg', width: 58 },
+              { text: 'Overall.', dataField: 'overall', width: 50 }
+//              { text: 'Features.', dataField: 'features', width: 120 }
+            ]
+        ,groups: ['applicationID', 'alertID']
+        });
+    });
+    
 	$scope.toPage = function(page) {
 		alert(page);
 		$scope.currentPage = page;
