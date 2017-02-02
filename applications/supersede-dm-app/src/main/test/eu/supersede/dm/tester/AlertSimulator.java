@@ -1,4 +1,4 @@
-package eu.supersede.dm;
+package eu.supersede.dm.tester;
 
 import java.util.ArrayList;
 import java.util.Random;
