@@ -14,7 +14,13 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
+import eu.supersede.gr.jpa.JpaAlerts;
+import eu.supersede.gr.jpa.JpaApps;
+import eu.supersede.gr.jpa.JpaReceivedUserRequests;
 import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HApp;
+import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
 import eu.supersede.integration.api.dm.types.UserRequest;
@@ -24,8 +30,11 @@ import eu.supersede.integration.api.pubsub.TopicSubscriber;
 @Component
 public class ModuleLoader {
 
-	@Autowired
-	private RequirementsJpa requirementsTable;
+	@Autowired RequirementsJpa requirementsTable;
+	
+	@Autowired JpaApps					jpaApps;
+	@Autowired JpaAlerts				jpaAlerts;
+	@Autowired JpaReceivedUserRequests	jpaReceivedUserRequests;
 
 
 	public ModuleLoader() {
@@ -39,7 +48,7 @@ public class ModuleLoader {
 			public void run() {
 				TopicSubscriber subscriber = null;
 				try {
-					subscriber = new TopicSubscriber(SubscriptionTopic.ANALISIS_DM_EVENT_TOPIC);
+					subscriber = new TopicSubscriber(SubscriptionTopic.ANALISIS_DM_EVOLUTION_EVENT_TOPIC);
 					subscriber.openTopicConnection();
 					TextMessageListener messageListener = new TextMessageListener();
 					subscriber.createTopicSubscriptionAndKeepListening (messageListener);
@@ -69,16 +78,16 @@ public class ModuleLoader {
 
 	public class TextMessageListener implements MessageListener {
 
-		private List<Requirement> getRequirements(Alert alert)
-		{
+		private List<Requirement> getRequirements(Alert alert) {
 
 			// Either extract from the alert, or make a backward request to WP2
 
 			List<Requirement> reqs = new ArrayList<>();
-
-			for (UserRequest request : alert.getRequests())
-			{
-				reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
+			
+			for (UserRequest request : alert.getRequests()) {
+				reqs.add(
+						new Requirement(
+								request.getId() + ": " + request.getDescription(), ""));
 			}
 
 			return reqs;
@@ -94,8 +103,37 @@ public class ModuleLoader {
 				String text = ((TextMessage) message).getText();
 
 				Alert alert = new Gson().fromJson( text, Alert.class );
-
-
+				
+				HApp app = jpaApps.findOne( alert.getApplicationID() );
+				
+				if( app == null ) {
+					app = new HApp();
+					app = jpaApps.save( app );
+					
+					HAlert halert = jpaAlerts.findOne( alert.getID() );
+					
+					if( halert == null ) {
+						halert = new HAlert( alert.getID(), alert.getTimestamp() );
+						halert = jpaAlerts.save( halert );
+					}
+					
+					for (UserRequest request : alert.getRequests()) {
+						
+						HReceivedUserRequest hrur = new HReceivedUserRequest();
+						
+						hrur.setAccuracy( request.getAccuracy() );
+						hrur.setClassification( request.getClassification().name());
+						hrur.setDescription( request.getDescription() );
+						hrur.setNegativeSentiment( request.getNegativeSentiment() );
+						hrur.setPositiveSentiment( request.getPositiveSentiment() );
+						hrur.setOverallSentiment( request.getOverallSentiment() );
+						jpaReceivedUserRequests.save( hrur );
+						
+					}
+					
+				}
+				
+				
 				List<Requirement> requirements = getRequirements(alert);
 
 				for (Requirement r : requirements)

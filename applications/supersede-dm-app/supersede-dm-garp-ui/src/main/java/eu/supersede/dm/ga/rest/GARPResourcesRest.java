@@ -26,8 +26,6 @@ import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -88,7 +86,7 @@ public class GARPResourcesRest
 
                 IGAAlgorithm algo = new IGAAlgorithm();
 
-                Logger log = LoggerFactory.getLogger(this.getClass());
+//                Logger log = LoggerFactory.getLogger(this.getClass());
 
                 List<Long> criteria = virtualDb.getCriteria(gameId);
                 List<String> gameCriteria = new ArrayList<>();
@@ -246,16 +244,6 @@ public class GARPResourcesRest
             System.out.println("Serving page " + finalPath);
 
             Resource resource = resourceLoader.getResource("classpath:static/garp/" + finalPath);
-
-            try
-            {
-                System.out.println(resource.getFile().getAbsolutePath());
-            }
-            catch (IOException e1)
-            {
-                e1.printStackTrace();
-            }
-            // Resource resource = resourceLoader.getResource("classpath:static/game.html");
 
             try
             {
