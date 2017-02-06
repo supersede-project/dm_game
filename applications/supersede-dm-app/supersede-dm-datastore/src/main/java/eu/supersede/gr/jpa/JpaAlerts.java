@@ -25,9 +25,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HAlert;
 
-public interface JpaAlerts extends JpaRepository<HAlert, String> {
-	
-    @Query("SELECT alert FROM HAlert alert WHERE alert.applicationID = ?1")
-    List<HAlert> findAlertsForApp( String applicationID);
-    
+public interface JpaAlerts extends JpaRepository<HAlert, String>
+{
+    @Query("SELECT alert FROM HAlert alert WHERE alert.getApplicationId() = ?1")
+    List<HAlert> findAlertsForApp(String applicationID);
 }
