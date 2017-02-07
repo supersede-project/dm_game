@@ -36,120 +36,119 @@ import eu.supersede.gr.model.HReceivedUserRequest;
 @RequestMapping("alerts")
 public class AlertsRest
 {
-	//    @Autowired
-	//    private RequirementsJpa requirements;
+    // @Autowired
+    // private RequirementsJpa requirements;
 
-	@Autowired JpaApps						jpaApps;
-	@Autowired JpaAlerts					jpaAlerts;
-	@Autowired JpaReceivedUserRequests		jpaReceivedUserRequests;
+    @Autowired
+    JpaApps jpaApps;
 
-	/**
-	 * Return all the requirements.
-	 */
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<Alert> getAlerts()
-	{
-		List<Alert> list = new ArrayList<>();
+    @Autowired
+    JpaAlerts jpaAlerts;
 
-		List<HApp> apps = jpaApps.findAll();
+    @Autowired
+    JpaReceivedUserRequests jpaReceivedUserRequests;
 
-		for( HApp app : apps ) {
+    /**
+     * Return all the requirements.
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<Alert> getAlerts()
+    {
+        List<Alert> list = new ArrayList<>();
+        List<HApp> apps = jpaApps.findAll();
 
-			List<HAlert> alerts = jpaAlerts.findAlertsForApp( app.id );
+        for (HApp app : apps)
+        {
+            List<HAlert> alerts = jpaAlerts.findAlertsForApp(app.getId());
 
-			for( HAlert alert : alerts ) {
+            for (HAlert alert : alerts)
+            {
+                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
 
-				List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert( alert.id );
+                if (requests.size() < 1)
+                {
+                    continue;
+                }
 
-				if( requests.size() < 1 ) {
-					continue;
-				}
+                Alert a = new Alert();
 
-				Alert a = new Alert();
+                a.setApplicationID(app.getId());
+                a.setID(alert.getId());
+                a.setTimestamp(alert.getTimestamp());
 
-				a.setApplicationID( app.id );
-				a.setID( alert.id );
-				a.setTimestamp( alert.timestamp );
+                for (HReceivedUserRequest ur : requests)
+                {
+                    UserRequest r = new UserRequest();
+                    r.setAccuracy(ur.getAccuracy());
+                    r.setClassification(RequestClassification.valueOf(ur.getClassification()));
+                    r.setDescription(ur.getDescription());
+                    r.setId(ur.getId());
+                    r.setNegativeSentiment(ur.getNegativeSentiment());
+                    r.setPositiveSentiment(ur.getPositiveSentiment());
+                    r.setOverallSentiment(ur.getOverallSentiment());
+                    a.getRequests().add(r);
+                }
 
-				for( HReceivedUserRequest ur : requests ) {
-					UserRequest r = new UserRequest();
-					r.setAccuracy( ur.getAccuracy() );
-					r.setClassification( RequestClassification.valueOf( ur.getClassification() ) );
-					r.setDescription( ur.getDescription() );
-					r.setId( ur.getID() );
-					r.setNegativeSentiment( ur.getNegativeSentiment() );
-					r.setPositiveSentiment( ur.getPositiveSentiment() );
-					r.setOverallSentiment( ur.getOverallSentiment() );
-					a.getRequests().add( r );
-				}
-				
-				list.add( a );
+                list.add(a);
+            }
+        }
 
-			}
+        return list;
+    }
 
-		}
+    public static class FlattenedAlert
+    {
+        public String id;
+        public String alertID;
+        public String applicationID;
+        public long timestamp;
+        public String description;
+        public RequestClassification classification;
+        public double accuracy;
+        public int pos;
+        public int neg;
+        public int overall;
+    }
 
-		return list;
-	}
-	
-	public static class FlattenedAlert {
+    @RequestMapping(value = "/biglist", method = RequestMethod.GET)
+    public List<FlattenedAlert> getAlertsTree()
+    {
+        List<FlattenedAlert> list = new ArrayList<>();
+        List<HApp> apps = jpaApps.findAll();
 
-		public String					id;
-		public String					alertID;
-		public String					applicationID;
-		public long						timestamp;
-		public String					description;
-		public RequestClassification	classification;
-		public double					accuracy;
-		public int						pos;
-		public int						neg;
-		public int						overall;
-		
-	}
-	
-	@RequestMapping(value = "/biglist", method = RequestMethod.GET)
-	public List<FlattenedAlert> getAlertsTree()
-	{
-		List<FlattenedAlert> list = new ArrayList<>();
-		
-		List<HApp> apps = jpaApps.findAll();
+        for (HApp app : apps)
+        {
+            List<HAlert> alerts = jpaAlerts.findAll();
 
-		for( HApp app : apps ) {
+            for (HAlert alert : alerts)
+            {
+                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
 
-			List<HAlert> alerts = jpaAlerts.findAll();
+                if (requests.size() < 1)
+                {
+                    continue;
+                }
 
-			for( HAlert alert : alerts ) {
+                for (HReceivedUserRequest ur : requests)
+                {
+                    FlattenedAlert fa = new FlattenedAlert();
 
-				List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert( alert.id );
+                    fa.applicationID = app.getId();
+                    fa.alertID = alert.getId();
+                    fa.timestamp = alert.getTimestamp();
+                    fa.accuracy = ur.getAccuracy();
+                    fa.classification = RequestClassification.valueOf(ur.getClassification());
+                    fa.description = ur.getDescription();
+                    fa.id = ur.getId();
+                    fa.neg = ur.getNegativeSentiment();
+                    fa.pos = ur.getPositiveSentiment();
+                    fa.overall = ur.getOverallSentiment();
 
-				if( requests.size() < 1 ) {
-					continue;
-				}
+                    list.add(fa);
+                }
+            }
+        }
 
-				for( HReceivedUserRequest ur : requests ) {
-					
-					FlattenedAlert fa = new FlattenedAlert();
-					
-					fa.applicationID = app.id;
-					fa.alertID = alert.id;
-					fa.timestamp = alert.timestamp;
-					fa.accuracy = ur.getAccuracy();
-					fa.classification = RequestClassification.valueOf( ur.getClassification() );
-					fa.description = ur.getDescription();
-					fa.id = ur.getID();
-					fa.neg = ur.getNegativeSentiment();
-					fa.pos = ur.getPositiveSentiment();
-					fa.overall = ur.getOverallSentiment();
-					
-					list.add( fa );
-					
-				}
-
-			}
-
-		}
-
-		return list;
-	}
-
+        return list;
+    }
 }

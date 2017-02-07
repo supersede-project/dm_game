@@ -25,9 +25,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HReceivedUserRequest;
 
-public interface JpaReceivedUserRequests extends JpaRepository<HReceivedUserRequest, String> {
+public interface JpaReceivedUserRequests extends JpaRepository<HReceivedUserRequest, String>
+{
 
-    @Query("SELECT ur FROM HReceivedUserRequest ur WHERE ur.alertID = ?1")
-    List<HReceivedUserRequest> findRequestsForAlert( String alertID );
-    
+    @Query("SELECT ur FROM HReceivedUserRequest ur WHERE ur.getAlertId() = ?1")
+    List<HReceivedUserRequest> findRequestsForAlert(String alertID);
+
 }

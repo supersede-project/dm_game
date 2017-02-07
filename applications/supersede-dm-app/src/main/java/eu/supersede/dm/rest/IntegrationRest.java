@@ -48,136 +48,148 @@ import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 @RequestMapping("/api")
 public class IntegrationRest
 {
-	@Autowired
-	private NotificationUtil notificationUtil;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private RequirementsJpa requirementsTable;
+    @Autowired
+    private NotificationUtil notificationUtil;
 
-	@Autowired JpaApps					jpaApps;
-	@Autowired JpaAlerts				jpaAlerts;
-	@Autowired JpaReceivedUserRequests	jpaReceivedUserRequests;
+    @Autowired
+    private RequirementsJpa requirementsTable;
 
+    @Autowired
+    private JpaApps jpaApps;
 
-	@Autowired
-	private Datastore datastore;
+    @Autowired
+    private JpaAlerts jpaAlerts;
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private JpaReceivedUserRequests jpaReceivedUserRequests;
 
-	@RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
-	public void notifyPublicAlert(@RequestBody Alert alert)
-	{
+    @Autowired
+    private Datastore datastore;
 
-		HApp app = jpaApps.findOne( alert.getApplicationID() );
+    @RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
+    public void notifyPublicAlert(@RequestBody Alert alert)
+    {
+        System.out.println("Posting alert: ");
+        System.out.println(alert.getID());
+        System.out.println(alert.getApplicationID());
+        System.out.println(alert.getTenant());
+        System.out.println(alert.getTimestamp() + "");
 
-		if( app == null ) {
-			app = new HApp( alert.getApplicationID() );
-			app = jpaApps.save( app );
-		}
+        HApp app = jpaApps.findOne(alert.getApplicationID());
 
-		if( alert.getID() == null ) {
-			System.err.println( "alert.getID() IS NULL!" );
-			alert.setID( "id-" + System.currentTimeMillis() );
-		}
+        if (app == null)
+        {
+            app = new HApp(alert.getApplicationID());
+            app = jpaApps.save(app);
+        }
 
-		HAlert halert = jpaAlerts.findOne( alert.getID() );
+        if (alert.getID() == null)
+        {
+            System.err.println("alert.getID() IS NULL!");
+            alert.setID("id-" + System.currentTimeMillis());
+        }
 
-		if( halert == null ) {
-			halert = new HAlert( alert.getID(), alert.getTimestamp() );
-			halert.applicationID = app.id;
-			halert = jpaAlerts.save( halert );
-		}
+        HAlert halert = jpaAlerts.findOne(alert.getID());
 
-		for (UserRequest request : alert.getRequests()) {
+        if (halert == null)
+        {
+            halert = new HAlert(alert.getID(), alert.getTimestamp());
+            halert.setApplicationId(app.getId());
+            halert = jpaAlerts.save(halert);
+        }
 
-			HReceivedUserRequest hrur = new HReceivedUserRequest( request.getId() );
-			
-			if( hrur.getID() == null ) {
-				System.err.println( "hrur.getID() IS NULL!" );
-				hrur.setID( "UR" + System.currentTimeMillis() );
-			}
-			
-			hrur.alertID = alert.getID();
-			hrur.setAccuracy( request.getAccuracy() );
-			hrur.setClassification( request.getClassification().name());
-			hrur.setDescription( request.getDescription() );
-			hrur.setNegativeSentiment( request.getNegativeSentiment() );
-			hrur.setPositiveSentiment( request.getPositiveSentiment() );
-			hrur.setOverallSentiment( request.getOverallSentiment() );
-			jpaReceivedUserRequests.save( hrur );
+        for (UserRequest request : alert.getRequests())
+        {
+            HReceivedUserRequest hrur = new HReceivedUserRequest(request.getId());
 
-		}
+            if (hrur.getId() == null)
+            {
+                System.err.println("hrur.getID() IS NULL!");
+                hrur.setId("UR" + System.currentTimeMillis());
+            }
 
+            hrur.setAlertId(alert.getID());
+            hrur.setAccuracy(request.getAccuracy());
+            hrur.setClassification(request.getClassification().name());
+            hrur.setDescription(request.getDescription());
+            hrur.setNegativeSentiment(request.getNegativeSentiment());
+            hrur.setPositiveSentiment(request.getPositiveSentiment());
+            hrur.setOverallSentiment(request.getOverallSentiment());
+            jpaReceivedUserRequests.save(hrur);
 
-		List<Requirement> requirements = getRequirements(alert);
+        }
 
-		for (Requirement r : requirements)
-		{
-			r.setRequirementId(null);
-			requirementsTable.save(r);
+        List<Requirement> requirements = getRequirements(alert);
 
-//			datastore.storeAsNew(r);
-		}
-	}
+        for (Requirement r : requirements)
+        {
+            r.setRequirementId(null);
+            requirementsTable.save(r);
 
-	@RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
-	public void notifyAlert(@RequestBody Alert alert)
-	{
-		System.out.println("Alert received: " + alert);
-		log.debug("Alert received: " + alert);
+            // datastore.storeAsNew(r);
+        }
+    }
 
-		String msg = "Alert {";
-		msg += "ID:" + alert.getID();
-		msg += "appID;" + alert.getApplicationID();
-		msg += "tenant;" + alert.getTenant();
-		msg += "timestamp;" + alert.getTimestamp();
-		msg += "} = ";
+    @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
+    public void notifyAlert(@RequestBody Alert alert)
+    {
+        System.out.println("Alert received: " + alert);
+        log.debug("Alert received: " + alert);
 
-		for (Condition c : alert.getConditions())
-		{
-			msg += "(";
-			msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
-			msg += ")";
-		}
+        String msg = "Alert {";
+        msg += "ID:" + alert.getID();
+        msg += "appID;" + alert.getApplicationID();
+        msg += "tenant;" + alert.getTenant();
+        msg += "timestamp;" + alert.getTimestamp();
+        msg += "} = ";
 
-		notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
+        for (Condition c : alert.getConditions())
+        {
+            msg += "(";
+            msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
+            msg += ")";
+        }
 
-		List<Requirement> requirements = getRequirements(alert);
+        notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
 
-		for (Requirement r : requirements)
-		{
-			datastore.storeAsNew(r);
-		}
+        List<Requirement> requirements = getRequirements(alert);
 
-		return;
-	}
+        for (Requirement r : requirements)
+        {
+            datastore.storeAsNew(r);
+        }
 
-	private List<Requirement> getRequirements(Alert alert)
-	{
-		// Either extract from the alert, or make a backward request to WP2
+        return;
+    }
 
-		List<Requirement> reqs = new ArrayList<>();
+    private List<Requirement> getRequirements(Alert alert)
+    {
+        // Either extract from the alert, or make a backward request to WP2
 
-		for (UserRequest request : alert.getRequests())
-		{
-			reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
-		}
+        List<Requirement> reqs = new ArrayList<>();
 
-		return reqs;
-	}
+        for (UserRequest request : alert.getRequests())
+        {
+            reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
+        }
 
-	@RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
-	public void scheduleRequirement(List<FeatureWP3> features)
-	{
-		for (FeatureWP3 feature : features)
-		{
-			System.out.println("Received: " + feature);
-		}
-	}
+        return reqs;
+    }
 
-	@RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
-	public void scheduleFeature(FeatureWP3 feature)
-	{
-		System.out.println("Received: " + feature);
-	}
+    @RequestMapping(value = "/api/features/schedule", method = RequestMethod.POST)
+    public void scheduleRequirement(List<FeatureWP3> features)
+    {
+        for (FeatureWP3 feature : features)
+        {
+            System.out.println("Received: " + feature);
+        }
+    }
+
+    @RequestMapping(value = "/api/features/{feature_id}/modify", method = RequestMethod.PUT)
+    public void scheduleFeature(FeatureWP3 feature)
+    {
+        System.out.println("Received: " + feature);
+    }
 }

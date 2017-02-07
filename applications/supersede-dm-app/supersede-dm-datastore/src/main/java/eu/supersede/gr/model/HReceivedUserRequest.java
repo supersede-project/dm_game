@@ -9,70 +9,106 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "h_received_userrequests")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class HReceivedUserRequest {
-	
-	@Id
-	String					ID;
-    
-	public String			alertID;
-	
-	String					classification;
-	double					accuracy;
-	String					description;
-	int						positiveSentiment;
-	int						negativeSentiment;
-	int						overallSentiment;
-//	String[]				feedbackIDs;
-//	String[]				features;
-	
-	public HReceivedUserRequest() {}
-	
-	public HReceivedUserRequest( String id ) {
-		this.ID = id;
-	}
-	
-    public String getID() {
-		return ID;
-	}
-	public String getClassification() {
-		return classification;
-	}
-	public void setClassification(String classification) {
-		this.classification = classification;
-	}
-	public double getAccuracy() {
-		return accuracy;
-	}
-	public void setAccuracy(double accuracy) {
-		this.accuracy = accuracy;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public int getPositiveSentiment() {
-		return positiveSentiment;
-	}
-	public void setPositiveSentiment(int positiveSentiment) {
-		this.positiveSentiment = positiveSentiment;
-	}
-	public int getNegativeSentiment() {
-		return negativeSentiment;
-	}
-	public void setNegativeSentiment(int negativeSentiment) {
-		this.negativeSentiment = negativeSentiment;
-	}
-	public int getOverallSentiment() {
-		return overallSentiment;
-	}
-	public void setOverallSentiment(int overallSentiment) {
-		this.overallSentiment = overallSentiment;
-	}
+public class HReceivedUserRequest
+{
+    @Id
+    private String id;
+    private String alertId;
+    private String classification;
+    private double accuracy;
+    private String description;
+    private int positiveSentiment;
+    private int negativeSentiment;
+    private int overallSentiment;
+    // private String[] feedbackIDs;
+    // private String[] features;
 
-	public void setID( String id ) {
-		this.ID = id;
-	}
-	
+    public HReceivedUserRequest()
+    {
+    }
+
+    public HReceivedUserRequest(String id)
+    {
+        this.id = id;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getAlertId()
+    {
+        return alertId;
+    }
+
+    public void setAlertId(String alertId)
+    {
+        this.alertId = alertId;
+    }
+
+    public String getClassification()
+    {
+        return classification;
+    }
+
+    public void setClassification(String classification)
+    {
+        this.classification = classification;
+    }
+
+    public double getAccuracy()
+    {
+        return accuracy;
+    }
+
+    public void setAccuracy(double accuracy)
+    {
+        this.accuracy = accuracy;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public int getPositiveSentiment()
+    {
+        return positiveSentiment;
+    }
+
+    public void setPositiveSentiment(int positiveSentiment)
+    {
+        this.positiveSentiment = positiveSentiment;
+    }
+
+    public int getNegativeSentiment()
+    {
+        return negativeSentiment;
+    }
+
+    public void setNegativeSentiment(int negativeSentiment)
+    {
+        this.negativeSentiment = negativeSentiment;
+    }
+
+    public int getOverallSentiment()
+    {
+        return overallSentiment;
+    }
+
+    public void setOverallSentiment(int overallSentiment)
+    {
+        this.overallSentiment = overallSentiment;
+    }
 }
