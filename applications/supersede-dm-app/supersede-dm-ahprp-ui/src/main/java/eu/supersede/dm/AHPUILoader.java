@@ -65,6 +65,6 @@ public class AHPUILoader
         roles = new ArrayList<>();
         roles.add("DM_ADMIN");
         roles.add("DECISION_SCOPE_PROVIDER");
-        au.addApplicationPage("supersede-dm-app", "requirements_criterias_editing", labels, roles);
+        au.addApplicationPage("supersede-dm-app", "ahprp/requirements_criterias_editing", labels, roles);
     }
 }
