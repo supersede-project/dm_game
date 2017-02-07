@@ -107,7 +107,7 @@ public class ModuleLoader {
 				HApp app = jpaApps.findOne( alert.getApplicationID() );
 				
 				if( app == null ) {
-					app = new HApp();
+					app = new HApp( alert.getApplicationID() );
 					app = jpaApps.save( app );
 					
 					HAlert halert = jpaAlerts.findOne( alert.getID() );
