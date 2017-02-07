@@ -1,10 +1,15 @@
 package eu.supersede.dm;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +25,7 @@ import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
 import eu.supersede.integration.api.dm.types.UserRequest;
-import eu.supersede.integration.api.pubsub.evolution.EvolutionAlertMessageListener;
+import eu.supersede.integration.api.json.JsonUtils;
 import eu.supersede.integration.api.pubsub.evolution.EvolutionSubscriber;
 import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 
@@ -32,8 +37,10 @@ public class ModuleLoader
 
     @Autowired
     JpaApps jpaApps;
+
     @Autowired
     JpaAlerts jpaAlerts;
+
     @Autowired
     JpaReceivedUserRequests jpaReceivedUserRequests;
 
@@ -55,17 +62,16 @@ public class ModuleLoader
                 {
                     subscriber = new EvolutionSubscriber();
                     subscriber.openTopicConnection();
-                    EvolutionAlertMessageListener messageListener = subscriber
-                            .createEvolutionAlertSubscriptionAndKeepListening();
+                    EvolutionAlertMessageListener messageListener = new EvolutionAlertMessageListener();
+                    subscriber.createEvolutionAlertSubscriptionAndKeepListening(messageListener);
 
                     try
                     {
                         while (true)
                         {
-                            if (messageListener.isMessageReceived())
+                            if (messageListener.messagesReceived())
                             {
-                                handleAlert(messageListener.getAlert());
-                                messageListener.resetMessageReceived();
+                                handleAlert(messageListener.getNextAlert());
                             }
                             else
                             {
@@ -109,7 +115,6 @@ public class ModuleLoader
 
     private List<Requirement> getRequirements(Alert alert)
     {
-
         // Either extract from the alert, or make a backward request to WP2
 
         List<Requirement> reqs = new ArrayList<>();
@@ -124,11 +129,8 @@ public class ModuleLoader
 
     public void handleAlert(Alert alert)
     {
-        System.out.println("Handling alert:");
-        System.out.println(alert.getID());
-        System.out.println(alert.getApplicationID());
-        System.out.println(alert.getTenant());
-        System.out.println(alert.getTimestamp() + "");
+        System.out.println("Handling alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
+                + alert.getTenant() + ", " + alert.getTimestamp());
         HApp app = jpaApps.findOne(alert.getApplicationID());
 
         if (app == null)
@@ -147,7 +149,6 @@ public class ModuleLoader
 
             for (UserRequest request : alert.getRequests())
             {
-
                 HReceivedUserRequest hrur = new HReceivedUserRequest();
                 hrur.setId(request.getId());
                 hrur.setAccuracy(request.getAccuracy());
@@ -157,9 +158,7 @@ public class ModuleLoader
                 hrur.setPositiveSentiment(request.getPositiveSentiment());
                 hrur.setOverallSentiment(request.getOverallSentiment());
                 jpaReceivedUserRequests.save(hrur);
-
             }
-
         }
 
         List<Requirement> requirements = getRequirements(alert);
@@ -181,4 +180,38 @@ public class ModuleLoader
         }
     }
 
+    private class EvolutionAlertMessageListener implements MessageListener
+    {
+        private Queue<Alert> alerts;
+
+        public EvolutionAlertMessageListener()
+        {
+            alerts = new LinkedList<>();
+        }
+
+        @Override
+        public void onMessage(Message message)
+        {
+            try
+            {
+                String json = ((TextMessage) message).getText();
+                System.out.println("Received JSON Message : " + json);
+                alerts.offer(JsonUtils.deserializeJsonStringAsObject(json, Alert.class));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        public Alert getNextAlert()
+        {
+            return alerts.poll();
+        }
+
+        public boolean messagesReceived()
+        {
+            return alerts.size() > 0;
+        }
+    }
 }

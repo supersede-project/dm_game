@@ -80,8 +80,8 @@ public class AlertSimulator
 
         alert.setID("id1");
         alert.setApplicationID("appId1");
-        alert.setTimestamp(1481717773760L);
-        alert.setTenant("Delta");
+        alert.setTimestamp(System.currentTimeMillis());
+        alert.setTenant("Atos");
 
         List<Condition> conditions = new ArrayList<>();
         conditions.add(new Condition(DataID.UNSPECIFIED, Operator.GEq, 10.5));
@@ -104,15 +104,22 @@ public class AlertSimulator
         try
         {
             publisher = new EvolutionPublisher(true);
-            Alert alert = createAlert();
-            publisher.publishEvolutionAlertMesssage(alert);
-            System.out.println("Sending alert:");
-            System.out.println(alert.getID());
-            System.out.println(alert.getApplicationID());
-            System.out.println(alert.getTenant());
-            System.out.println(alert.getTimestamp() + "");
+
+            for (int i = 0; i < 5; i++)
+            {
+                Alert alert = createAlert();
+                publisher.publishEvolutionAlertMesssage(alert);
+                System.out.println("Sending alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
+                        + alert.getTenant() + ", " + alert.getTimestamp());
+
+                Thread.sleep(1000);
+            }
         }
         catch (JMSException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }
