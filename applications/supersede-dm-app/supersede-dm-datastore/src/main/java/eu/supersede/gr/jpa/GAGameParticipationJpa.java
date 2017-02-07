@@ -10,24 +10,26 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 package eu.supersede.gr.jpa;
 
-// package eu.supersede.dm.ga.jpa;
-//
-// import java.util.List;
-//
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
-//
-// import eu.supersede.dm.ga.db.HGAGameParticipation;
-//
-// public interface GAGameParticipationJpa extends JpaRepository<HGAGameParticipation, Long> {
-//
-// @Query("SELECT userId FROM ga_game_participations WHERE gameId = ?1")
-// List<Long> findParticipants( Long gameId );
-//
-// @Query("SELECT * FROM ga_game_participations WHERE userId = ?1 AND role = ?2")
-// List<HGAGameParticipation> findGames( Long userId, String roleName );
-//
-// }
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import eu.supersede.gr.model.HGAGameParticipation;
+
+public interface GAGameParticipationJpa extends JpaRepository<HGAGameParticipation, Long> {
+
+//    @Query("SELECT alert FROM HAlert alert WHERE alert.applicationID = ?1")
+	@Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = 'Opinion Provider'")
+	List<Long> findOpinionProviders( Long gameId );
+
+	@Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = ?2")
+	List<Long> findParticipants( Long gameId, String roleName );
+
+	@Query("SELECT gameId FROM HGAGameParticipation participation WHERE userId = ?1 AND role = ?2")
+	List<Long> findGames( Long userId, String roleName );
+
+}

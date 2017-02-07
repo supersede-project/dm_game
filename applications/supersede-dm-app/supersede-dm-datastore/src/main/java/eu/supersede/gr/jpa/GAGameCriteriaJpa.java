@@ -10,16 +10,19 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
-
+ */
 package eu.supersede.gr.jpa;
 
-// package eu.supersede.dm.ga.jpa;
-//
-// import org.springframework.data.jpa.repository.JpaRepository;
-//
-// import eu.supersede.dm.ga.db.HGAGameDetails;
-//
-// public interface GAGameDetailsJpa extends JpaRepository<HGAGameDetails, Long> {
-//
-// }
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import eu.supersede.gr.model.HGAGameCriterion;
+
+public interface GAGameCriteriaJpa extends JpaRepository<HGAGameCriterion, Long> {
+
+	@Query("SELECT criterionId FROM HGAGameCriterion criterion WHERE gameId = ?1")
+	List<Long> findByGame( Long gameId );
+
+}

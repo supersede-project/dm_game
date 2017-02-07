@@ -18,6 +18,7 @@ public class GAGameSummary
 {
     private Long id;
     private Long owner;
+    private String name = "" + System.currentTimeMillis();
     private String date = "";
     private String status = "open";
 
@@ -60,4 +61,12 @@ public class GAGameSummary
     {
         this.status = status;
     }
+    
+    public void setName( String name ) {
+    	this.name = name;
+    }
+    
+	public String getName() {
+		return name;
+	}
 }

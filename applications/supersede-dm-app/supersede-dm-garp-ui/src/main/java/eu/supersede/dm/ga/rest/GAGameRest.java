@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.ga.GAVirtualDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
@@ -44,7 +45,7 @@ public class GAGameRest
     private UsersJpa users;
 
     @Autowired
-    private GAVirtualDB virtualDb;
+    private GAPersistentDB virtualDb;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
     public List<GAGameSummary> getOwnedGames(Authentication authentication)

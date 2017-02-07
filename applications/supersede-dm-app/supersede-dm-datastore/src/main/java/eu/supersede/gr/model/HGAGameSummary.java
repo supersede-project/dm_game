@@ -21,81 +21,79 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import eu.supersede.gr.data.GAGameSummary;
 
 @Entity
-@Table(name = "ga_games")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@Table(name = "h_ga_games")
 public class HGAGameSummary
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    
+    private Long activityId;
+    
+    String name = "";
+    
     @Column(name = "owner")
     private Long owner;
 
     @Column(name = "date")
     private String date = "";
-    // @Column(columnDefinition= "TIMESTAMP WITH TIME ZONE")
-    // @Temporal(TemporalType.TIMESTAMP)
-    // private Date startTime;
 
     @Column(name = "status")
     private String status = "open";
 
-    public HGAGameSummary()
-    {
+    public HGAGameSummary() {
 
     }
 
-    public HGAGameSummary(GAGameSummary game)
-    {
+    public HGAGameSummary(Long activityId, GAGameSummary game) {
+    	this.activityId = activityId;
         this.id = game.getId();
         this.owner = game.getOwner();
         this.date = game.getDate();
         this.status = game.getStatus();
+        this.name = game.getName();
     }
-
-    public Long getId()
-    {
+    
+    public Long getActivityId() {
+    	return this.activityId;
+    }
+    
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getOwner()
-    {
+    public Long getOwner() {
         return this.owner;
     }
 
-    public void setOwner(Long owner)
-    {
+    public void setOwner(Long owner) {
         this.owner = owner;
     }
 
-    public String getDate()
-    {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(String date)
-    {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public String getStatus()
-    {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public String getName() {
+    	return this.name;
     }
 }

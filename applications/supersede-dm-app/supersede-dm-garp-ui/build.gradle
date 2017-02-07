@@ -103,7 +103,9 @@ dependencies {
     compile("org.wso2.carbon:org.wso2.carbon.utils:4.2.0")
 
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
-}
+    
+   compile("com.google.code.gson:gson:2.3.1");
+ }
 
 eclipse {
     classpath {

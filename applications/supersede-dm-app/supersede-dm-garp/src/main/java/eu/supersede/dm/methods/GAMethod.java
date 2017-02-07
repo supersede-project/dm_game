@@ -11,6 +11,8 @@ import eu.supersede.dm.DMRoleSpec;
 
 public class GAMethod implements DMMethod {
 	
+	public static final String NAME = "Genetic Algorithm based prioritization";
+	
 	static List<DMRoleSpec> roles = new ArrayList<>();
 	
 	static {
@@ -21,7 +23,7 @@ public class GAMethod implements DMMethod {
 	
 	@Override
 	public String getName() {
-		return "Genetic Algorithm based prioritization";
+		return NAME;
 	}
 
 	@Override

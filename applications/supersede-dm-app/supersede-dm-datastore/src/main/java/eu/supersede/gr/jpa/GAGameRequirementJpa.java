@@ -14,10 +14,16 @@
 
 package eu.supersede.gr.jpa;
 
-// package eu.supersede.dm.ga.jpa;
-//
-// import org.springframework.data.jpa.repository.JpaRepository;
-//
-// import eu.supersede.dm.ga.db.HGAGameRequirement;
-//
-// public interface GAGameRequirementJpa extends JpaRepository<HGAGameRequirement,Long> {}
+ import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import eu.supersede.gr.model.HGAGameRequirement;
+
+ public interface GAGameRequirementJpa extends JpaRepository<HGAGameRequirement,Long> {
+	 
+	 @Query("SELECT reqId FROM HGAGameRequirement req WHERE gameId = ?1")
+	 public List<Long> findRequirementIdsByGame( Long gameId );
+	 
+ }

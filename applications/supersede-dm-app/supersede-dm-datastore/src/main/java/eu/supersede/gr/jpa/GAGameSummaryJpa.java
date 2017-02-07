@@ -10,16 +10,20 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 package eu.supersede.gr.jpa;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.model.HGAGameSummary;
 
 public interface GAGameSummaryJpa extends JpaRepository<HGAGameSummary, Long>
 {
-    // @Query("SELECT game FROM ga_games WHERE owner = ?1")
-    // List<GAGameSummary> findByOwner( Long playerId );
+	@Query("SELECT id FROM HGAGameSummary summary WHERE owner = ?1 AND status = ?2")
+	List<GAGameSummary> findByOwnerAndStatus( Long playerId, String status );
 }

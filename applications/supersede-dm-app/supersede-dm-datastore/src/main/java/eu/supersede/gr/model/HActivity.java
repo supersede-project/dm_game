@@ -7,14 +7,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "h_ga_game_requirements")
-public class HGAGameRequirement {
+@Table(name = "h_activity_instances")
+public class HActivity {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long			id;
+    public Long id;
     
-	public Long		gameId;
-	public Long		reqId;
-	
+    public String methodName;
+    
 }
