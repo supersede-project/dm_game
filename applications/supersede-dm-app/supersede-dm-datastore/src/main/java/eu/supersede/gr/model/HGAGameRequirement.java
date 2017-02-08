@@ -8,13 +8,42 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "h_ga_game_requirements")
-public class HGAGameRequirement {
-	
+public class HGAGameRequirement
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long			id;
-    
-	public Long		gameId;
-	public Long		reqId;
-	
+    private Long id;
+
+    private Long gameId;
+    private Long requirementId;
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public Long getGameId()
+    {
+        return gameId;
+    }
+
+    public void setGameId(Long gameId)
+    {
+        this.gameId = gameId;
+    }
+
+    public Long getRequirementId()
+    {
+        return requirementId;
+    }
+
+    public void setRequirementId(Long requirementId)
+    {
+        this.requirementId = requirementId;
+    }
 }

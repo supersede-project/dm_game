@@ -23,10 +23,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HReceivedUserRequest;
 
-public interface JpaAlerts extends JpaRepository<HAlert, String>
+public interface ReceivedUserRequestsJpa extends JpaRepository<HReceivedUserRequest, String>
 {
-    @Query("SELECT alert FROM HAlert alert WHERE alert.getApplicationId() = ?1")
-    List<HAlert> findAlertsForApp(String applicationID);
+    @Query("SELECT ur FROM HReceivedUserRequest ur WHERE ur.getAlertId() = ?1")
+    List<HReceivedUserRequest> findRequestsForAlert(String alertID);
 }

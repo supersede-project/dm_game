@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
-import eu.supersede.dm.ga.GAVirtualDB;
+import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.Requirement;
@@ -48,13 +48,13 @@ import eu.supersede.gr.model.Requirement;
 @RequestMapping("/garp")
 public class GARPResourcesRest
 {
+    private static Map<Long, String> requirements = new HashMap<>();
+
     @Autowired
     private RequirementsJpa availableRequirements;
 
     @Autowired
-    private GAVirtualDB virtualDb;
-
-    private static Map<Long, String> requirements = new HashMap<>();
+    private GAPersistentDB persistentDB;
 
     interface ResourceProvider
     {
@@ -86,9 +86,7 @@ public class GARPResourcesRest
 
                 IGAAlgorithm algo = new IGAAlgorithm();
 
-//                Logger log = LoggerFactory.getLogger(this.getClass());
-
-                List<Long> criteria = virtualDb.getCriteria(gameId);
+                List<Long> criteria = persistentDB.getCriteria(gameId);
                 List<String> gameCriteria = new ArrayList<>();
 
                 for (Long criterionId : criteria)
@@ -98,13 +96,13 @@ public class GARPResourcesRest
 
                 algo.setCriteria(gameCriteria);
 
-                for (Long rid : virtualDb.getRequirements(gameId))
+                for (Long rid : persistentDB.getRequirements(gameId))
                 {
                     algo.addRequirement(requirements.get(rid), new ArrayList<>());
                 }
 
                 // get all the players in this game
-                List<Long> participantIds = virtualDb.getParticipants(gameId);
+                List<Long> participantIds = persistentDB.getParticipants(gameId);
 
                 // get the rankings of each player for each criterion
                 List<String> players = new ArrayList<>();
@@ -113,7 +111,7 @@ public class GARPResourcesRest
                 {
                     String player = "P" + userId; // users.getOne(userId).getName();
                     players.add(player);
-                    Map<String, List<Long>> userRanking = virtualDb.getRanking(gameId, userId);
+                    Map<String, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
 
                     if (userRanking != null)
                     {

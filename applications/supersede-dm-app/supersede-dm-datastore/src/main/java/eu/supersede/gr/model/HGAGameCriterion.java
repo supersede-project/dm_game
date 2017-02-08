@@ -21,24 +21,64 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "h_ga_game_riteria")
-public class HGAGameCriterion {
-
+@Table(name = "h_ga_game_criteria")
+public class HGAGameCriterion
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long		id;
-    
-	Long		gameId;
-	
-	Long		criterionId;
-	
-	Boolean		inverse = false;
-	
-	HGAGameCriterion() {}
-	
-	public HGAGameCriterion( Long gameid, Long criterionid ) {
-		this.gameId = gameid;
-		this.criterionId = criterionid;
-	}
+    private Long id;
 
+    private Long gameId;
+    private Long criterionId;
+    private Boolean inverse = false;
+
+    HGAGameCriterion()
+    {
+    }
+
+    public HGAGameCriterion(Long gameid, Long criterionid)
+    {
+        this.gameId = gameid;
+        this.criterionId = criterionid;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public Long getGameId()
+    {
+        return gameId;
+    }
+
+    public void setGameId(Long gameId)
+    {
+        this.gameId = gameId;
+    }
+
+    public Long getCriterionId()
+    {
+        return criterionId;
+    }
+
+    public void setCriterionId(Long criterionId)
+    {
+        this.criterionId = criterionId;
+    }
+
+    public Boolean isInverse()
+    {
+        return inverse;
+    }
+
+    public void setInverse(Boolean inverse)
+    {
+        this.inverse = inverse;
+    }
 }

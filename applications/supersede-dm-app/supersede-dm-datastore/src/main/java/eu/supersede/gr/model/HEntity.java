@@ -28,16 +28,16 @@ public class HEntity
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @Column(name = "className")
-    String clsName;
+    private String clsName;
 
     @Column(name = "type")
-    String type;
+    private String type;
 
     @Column(name = "variant")
-    String variant;
+    private String variant;
 
     public Long getId()
     {

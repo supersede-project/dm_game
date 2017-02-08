@@ -1,3 +1,17 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.dm.ga;
 
 import java.lang.reflect.Type;
@@ -18,12 +32,12 @@ import eu.supersede.dm.methods.GAMethod;
 import eu.supersede.gr.data.GAGameDetails;
 import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.data.GARole;
+import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.GAGameRankingsJpa;
 import eu.supersede.gr.jpa.GAGameRequirementJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
-import eu.supersede.gr.jpa.JpaActivities;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HGAGameCriterion;
@@ -36,290 +50,303 @@ import eu.supersede.gr.model.Requirement;
 @Component
 public class GAPersistentDB
 {
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	//    DuplicateMap<Long, GAGameSummary> ownedGames = new DuplicateMap<>();
-	//    DuplicateMap<Long, GAGameSummary> activeGames = new DuplicateMap<>();
+    @Autowired
+    private RequirementsJpa requirements;
 
+    @Autowired
+    private GAGameSummaryJpa games;
 
-	@Autowired RequirementsJpa			requirements;
+    @Autowired
+    private GAGameCriteriaJpa criteriaJpa;
 
-	@Autowired GAGameSummaryJpa			games;
+    @Autowired
+    private GAGameParticipationJpa participationJpa;
 
-	@Autowired GAGameCriteriaJpa		criteriaJpa;
+    @Autowired
+    private ActivitiesJpa activitiesJpa;
 
-	@Autowired GAGameParticipationJpa	participationJpa;
+    @Autowired
+    private GAGameRequirementJpa gameRequirementsJpa;
 
-	@Autowired JpaActivities			activitiesJpa;
+    @Autowired
+    private GAGameRankingsJpa rankingsJpa;
 
-	@Autowired GAGameRequirementJpa		gameRequirementsJpa;
-	
-	@Autowired GAGameRankingsJpa		rankingsJpa;
+    public void create(GAGameSummary game, List<Long> criteria, List<Long> requirements, List<Long> participants)
+    {
+        HActivity activity = new HActivity();
+        activity.setMethodName(GAMethod.NAME);
+        activitiesJpa.save(activity);
 
+        game.setId(null);
+        HGAGameSummary info = new HGAGameSummary(activity.getId(), game);
+        games.save(info);
 
-	public void create(GAGameSummary game, List<Long> criteria, List<Long> requirements, List<Long> participants)
-	{
-		HActivity activity = new HActivity();
-		activity.methodName = GAMethod.NAME;
-		activitiesJpa.save( activity );
+        for (Long cId : criteria)
+        {
+            HGAGameCriterion c = new HGAGameCriterion(info.getId(), cId);
+            criteriaJpa.save(c);
+        }
 
+        for (Long rId : requirements)
+        {
+            Requirement r = this.requirements.findOne(rId);
 
-		game.setId( null );
-		HGAGameSummary info = new HGAGameSummary( activity.id, game );
-		games.save( info );
+            if (r == null)
+            {
+                continue;
+            }
 
-		for( Long cId : criteria ) {
-			HGAGameCriterion c = new HGAGameCriterion( info.getId(), cId );
-			criteriaJpa.save( c );
-		}
+            HGAGameRequirement req = new HGAGameRequirement();
+            req.setGameId(info.getId());
+            req.setRequirementId(r.getRequirementId());
+            this.gameRequirementsJpa.save(req);
+        }
 
-		for( Long rId : requirements ) {
-			Requirement r = this.requirements.findOne( rId );
-			if( r == null ) {
-				continue;
-			}
-			HGAGameRequirement req = new HGAGameRequirement();
-			req.gameId = info.getId();
-			req.reqId = r.getRequirementId();
-			this.gameRequirementsJpa.save( req );
-		}
+        for (Long uId : participants)
+        {
+            HGAGameParticipation p = new HGAGameParticipation();
+            p.setGameId(info.getId());
+            p.setUserId(uId);
+            p.setRole(GARole.OpinionProvider.name());
+            participationJpa.save(p);
+        }
 
-		for( Long uId : participants ) {
-			HGAGameParticipation p = new HGAGameParticipation();
-			p.gameId = info.getId();
-			p.userId = uId;
-			p.role = GARole.OpinionProvider.name();
-			participationJpa.save( p );
-		}
+        // Save owner
+        HGAGameParticipation p = new HGAGameParticipation();
+        p.setGameId(info.getId());
+        p.setUserId(game.getOwner());
+        p.setRole(GARole.Supervisor.name());
+        participationJpa.save(p);
 
-		// Save owner
-		{
-			HGAGameParticipation p = new HGAGameParticipation();
-			p.gameId = info.getId();
-			p.userId = game.getOwner();
-			p.role = GARole.Supervisor.name();
-			participationJpa.save( p );
-		}
+        log.info("Created game: " + game.getId() + ", requirements: " + requirements.size() + ", criteria: "
+                + criteria.size() + ", participants: " + participants.size());
+    }
 
-		log.info( 
-				"Created game: " + game.getId() + 
-				", requirements: " + requirements.size() + 
-				", criteria: " + criteria.size() + 
-				", participants: " + participants.size());
-	}
+    public List<GAGameSummary> getOwnedGames(Long owner)
+    {
+        return getGamesByRole(owner, GARole.Supervisor.name());
+    }
 
-	public List<GAGameSummary> getOwnedGames(Long owner) {
-		return getGamesByRole( owner, GARole.Supervisor.name() );
-	}
+    public List<GAGameSummary> getActiveGames(Long userId)
+    {
+        return getGamesByRole(userId, GARole.OpinionProvider.name());
+    }
 
-	public List<GAGameSummary> getActiveGames(Long userId) {
-		return getGamesByRole( userId, GARole.OpinionProvider.name() );
-	}
+    private List<GAGameSummary> getGamesByRole(Long userId, String roleName)
+    {
+        List<GAGameSummary> games = new ArrayList<>();
+        List<Long> gameList = this.participationJpa.findGames(userId, roleName);
 
-	private List<GAGameSummary> getGamesByRole(Long userId, String roleName ) {
+        for (Long gameId : gameList)
+        {
+            HGAGameSummary info = this.games.findOne(gameId);
 
-		List<GAGameSummary> games = new ArrayList<>();
+            if (info == null)
+            {
+                continue;
+            }
 
-		List<Long> gameList = this.participationJpa.findGames( userId, roleName );
+            GAGameSummary summary = extract(info);
+            games.add(summary);
+        }
 
-		for( Long gameId : gameList ) {
-			HGAGameSummary info = this.games.findOne( gameId );
-			if( info == null ) {
-				continue;
-			}
-			GAGameSummary summary = extract( info );
-			games.add( summary );
-		}
+        return games;
+    }
 
-		return games;
-	}
-	
-	private GAGameSummary extract( HGAGameSummary info ) {
-		GAGameSummary summary = new GAGameSummary();
-		summary.setId( info.getId() );
-		summary.setDate( info.getDate() );
-		summary.setOwner( info.getOwner() );
-		summary.setStatus( info.getStatus() );
-		summary.setName( info.getName() );
-		return summary;
-	}
-	
-	public void setRanking(Long gameId, Long userId, Map<String, List<Long>> reqs)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+    private GAGameSummary extract(HGAGameSummary info)
+    {
+        GAGameSummary summary = new GAGameSummary();
+        summary.setId(info.getId());
+        summary.setDate(info.getDate());
+        summary.setOwner(info.getOwner());
+        summary.setStatus(info.getStatus());
+        summary.setName(info.getName());
+        return summary;
+    }
 
-		if (gi == null)
-		{
-			return;
-		}
+    public void setRanking(Long gameId, Long userId, Map<String, List<Long>> reqs)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
 
-		Map<String, List<Long>> map = gi.getRankings().get(userId);
+        if (gi == null)
+        {
+            return;
+        }
 
-		if (map == null)
-		{
-			map = new HashMap<>();
-			gi.getRankings().put(userId, map);
-		}
+        Map<String, List<Long>> map = gi.getRankings().get(userId);
 
-		for (String key : reqs.keySet())
-		{
-			map.put(key, reqs.get(key));
-		}
-		
-		HGARankingInfo ranking = new HGARankingInfo();
-		
-		ranking.setUserId( userId );
-		ranking.setGameId( gameId );
-		
-		String jsonizedRanking = serializeRankings( map );
-		ranking.setJsonizedRanking( jsonizedRanking );
-		
-//		this.rankingsJpa.save(entities)
-	}
+        if (map == null)
+        {
+            map = new HashMap<>();
+            gi.getRankings().put(userId, map);
+        }
 
-	public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+        for (String key : reqs.keySet())
+        {
+            map.put(key, reqs.get(key));
+        }
 
-		if (gi == null)
-		{
-			return null;
-		}
+        HGARankingInfo ranking = new HGARankingInfo();
 
-		Map<String, List<Long>> map = gi.getRankings().get(userId);
+        ranking.setUserId(userId);
+        ranking.setGameId(gameId);
 
-		if (map == null)
-		{
-			return null;
-		}
+        String jsonizedRanking = serializeRankings(map);
+        ranking.setJsonizedRanking(jsonizedRanking);
 
-		return map.get(criterion);
-	}
+        rankingsJpa.save(ranking);
+    }
 
-	public Map<String, List<Long>> getRanking(Long gameId, Long userId)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
-		return gi.getRankings().get(userId);
-	}
+    public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
 
-	public GAGameDetails getGameInfo(Long gameId)
-	{
-		HGAGameSummary info = games.findOne( gameId );
-		if( info == null ) {
-			return null;
-		}
-		
-		GAGameDetails d = new GAGameDetails();
-		
-		d.setGame( extract( info ) );
-		
-		// add criteria
-		{
-			List<Long> criteriaList = this.criteriaJpa.findByGame( info.getId() );
-			d.setCriteria( criteriaList );
-		}
-		
-		// add requirements
-		{
-			List<Long> reqsList = this.gameRequirementsJpa.findRequirementIdsByGame( info.getId() );
-			d.setRequirements( reqsList );
-		}
-		
-		// add users
-		List<Long> participantsList = this.participationJpa.findParticipants( info.getId(), GARole.OpinionProvider.name() );
-		d.setParticipants( participantsList );
-		
-		Map<Long, Map<String, List<Long>>> rankings = new HashMap<Long, Map<String, List<Long>>>();
-		
-		// add rankings
-		for( Long userId : participantsList ) {
-			String json = this.rankingsJpa.findRankingByGameAndUser( info.getId(), userId );
-			Map<String, List<Long>> map = deserializeRankings( json );
-			rankings.put( userId, map );
-		}
-		d.setRankings( rankings );
-		
-		return d;
-	}
+        if (gi == null)
+        {
+            return null;
+        }
 
-	private String serializeRankings(Map<String, List<Long>> map) {
-		return new Gson().toJson( map );
-	}
+        Map<String, List<Long>> map = gi.getRankings().get(userId);
 
-	private Map<String, List<Long>> deserializeRankings(String json) {
-		Type type = new TypeToken<Map<String, List<Long>>>(){}.getType();
-		return new Gson().fromJson( json, type );
-	}
+        if (map == null)
+        {
+            return null;
+        }
 
-	public List<Long> getParticipants(GAGameSummary game)
-	{
-		GAGameDetails gi = getGameInfo(game.getId());
+        return map.get(criterion);
+    }
 
-		if (gi == null)
-		{
-			return new ArrayList<>();
-		}
+    public Map<String, List<Long>> getRanking(Long gameId, Long userId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+        return gi.getRankings().get(userId);
+    }
 
-		return gi.getParticipants();
-	}
+    public GAGameDetails getGameInfo(Long gameId)
+    {
+        HGAGameSummary info = games.findOne(gameId);
 
-	public List<Long> getParticipants(Long gameId)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+        if (info == null)
+        {
+            return null;
+        }
 
-		if (gi == null)
-		{
-			return new ArrayList<>();
-		}
+        GAGameDetails d = new GAGameDetails();
 
-		return gi.getParticipants();
-	}
+        d.setGame(extract(info));
 
-	public List<Long> getCriteria(GAGameSummary game)
-	{
-		return getCriteria(game.getId());
-	}
+        // add criteria
+        List<Long> criteriaList = this.criteriaJpa.findByGame(info.getId());
+        d.setCriteria(criteriaList);
 
-	public List<Long> getCriteria(long gameId)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+        // add requirements
+        List<Long> reqsList = this.gameRequirementsJpa.findRequirementIdsByGame(info.getId());
+        d.setRequirements(reqsList);
 
-		if (gi == null)
-		{
-			return new ArrayList<>();
-		}
+        // add users
+        List<Long> participantsList = this.participationJpa.findParticipants(info.getId(),
+                GARole.OpinionProvider.name());
+        d.setParticipants(participantsList);
 
-		return gi.getCriteria();
-	}
+        Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
 
-	public List<Long> getRequirements(Long gameId)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+        // add rankings
+        for (Long userId : participantsList)
+        {
+            String json = this.rankingsJpa.findRankingByGameAndUser(info.getId(), userId);
+            Map<String, List<Long>> map = deserializeRankings(json);
+            rankings.put(userId, map);
+        }
 
-		if (gi == null)
-		{
-			return new ArrayList<>();
-		}
+        d.setRankings(rankings);
 
-		return gi.getRequirements();
-	}
+        return d;
+    }
 
-	public Map<String, List<Long>> getRequirements(Long gameId, Long userId)
-	{
-		GAGameDetails gi = getGameInfo(gameId);
+    private String serializeRankings(Map<String, List<Long>> map)
+    {
+        return new Gson().toJson(map);
+    }
 
-		if (gi == null)
-		{
-			return new HashMap<>();
-		}
+    private Map<String, List<Long>> deserializeRankings(String json)
+    {
+        Type type = new TypeToken<Map<String, List<Long>>>()
+        {
+        }.getType();
+        return new Gson().fromJson(json, type);
+    }
 
-		Map<String, List<Long>> map = new HashMap<>();
+    public List<Long> getParticipants(GAGameSummary game)
+    {
+        GAGameDetails gi = getGameInfo(game.getId());
 
-		for (Long c : gi.getCriteria())
-		{
-			map.put("" + c, gi.getRequirements());
-		}
+        if (gi == null)
+        {
+            return new ArrayList<>();
+        }
 
-		return map;
-	}
+        return gi.getParticipants();
+    }
+
+    public List<Long> getParticipants(Long gameId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return gi.getParticipants();
+    }
+
+    public List<Long> getCriteria(GAGameSummary game)
+    {
+        return getCriteria(game.getId());
+    }
+
+    public List<Long> getCriteria(long gameId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return gi.getCriteria();
+    }
+
+    public List<Long> getRequirements(Long gameId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return gi.getRequirements();
+    }
+
+    public Map<String, List<Long>> getRequirements(Long gameId, Long userId)
+    {
+        GAGameDetails gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new HashMap<>();
+        }
+
+        Map<String, List<Long>> map = new HashMap<>();
+
+        for (Long c : gi.getCriteria())
+        {
+            map.put("" + c, gi.getRequirements());
+        }
+
+        return map;
+    }
 }

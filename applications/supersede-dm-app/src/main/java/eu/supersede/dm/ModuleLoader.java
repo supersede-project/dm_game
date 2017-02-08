@@ -15,9 +15,9 @@ import javax.naming.NamingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.supersede.gr.jpa.JpaAlerts;
-import eu.supersede.gr.jpa.JpaApps;
-import eu.supersede.gr.jpa.JpaReceivedUserRequests;
+import eu.supersede.gr.jpa.AlertsJpa;
+import eu.supersede.gr.jpa.AppsJpa;
+import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HApp;
@@ -33,16 +33,16 @@ import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 public class ModuleLoader
 {
     @Autowired
-    RequirementsJpa requirementsTable;
+    private RequirementsJpa requirementsTable;
 
     @Autowired
-    JpaApps jpaApps;
+    private AppsJpa jpaApps;
 
     @Autowired
-    JpaAlerts jpaAlerts;
+    private AlertsJpa jpaAlerts;
 
     @Autowired
-    JpaReceivedUserRequests jpaReceivedUserRequests;
+    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
     public ModuleLoader()
     {
@@ -58,6 +58,7 @@ public class ModuleLoader
             public void run()
             {
                 iEvolutionSubscriber subscriber = null;
+
                 try
                 {
                     subscriber = new EvolutionSubscriber();
@@ -165,8 +166,8 @@ public class ModuleLoader
 
         for (Requirement r : requirements)
         {
-
             r.setRequirementId(null);
+
             if (requirementsTable != null)
             {
                 requirementsTable.save(r);
@@ -175,8 +176,6 @@ public class ModuleLoader
             {
                 System.out.println("requirementsTable is NULL");
             }
-
-            // datastore.storeAsNew(r);
         }
     }
 

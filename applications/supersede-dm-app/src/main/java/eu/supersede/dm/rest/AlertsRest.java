@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.datamodel.Alert;
 import eu.supersede.dm.datamodel.RequestClassification;
 import eu.supersede.dm.datamodel.UserRequest;
-import eu.supersede.gr.jpa.JpaAlerts;
-import eu.supersede.gr.jpa.JpaApps;
-import eu.supersede.gr.jpa.JpaReceivedUserRequests;
+import eu.supersede.gr.jpa.AlertsJpa;
+import eu.supersede.gr.jpa.AppsJpa;
+import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HApp;
 import eu.supersede.gr.model.HReceivedUserRequest;
@@ -40,13 +40,13 @@ public class AlertsRest
     // private RequirementsJpa requirements;
 
     @Autowired
-    JpaApps jpaApps;
+    AppsJpa jpaApps;
 
     @Autowired
-    JpaAlerts jpaAlerts;
+    AlertsJpa jpaAlerts;
 
     @Autowired
-    JpaReceivedUserRequests jpaReceivedUserRequests;
+    ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
     /**
      * Return all the requirements.

@@ -25,19 +25,19 @@ public class HAttribute
 {
     @Id
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "entityId")
-    Long entityId;
+    private Long entityId;
 
     @Column(name = "name")
-    String name;
+    private String name;
 
     @Column(name = "value")
-    String value;
+    private String value;
 
     @Column(name = "type")
-    int type;
+    private Long type;
 
     public Long getId()
     {
@@ -79,12 +79,12 @@ public class HAttribute
         this.value = value;
     }
 
-    public int getType()
+    public Long getType()
     {
         return type;
     }
 
-    public void setType(int type)
+    public void setType(Long type)
     {
         this.type = type;
     }

@@ -12,17 +12,17 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.jpa;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HApp;
+import eu.supersede.gr.model.HAlert;
 
-public interface JpaApps extends JpaRepository<HApp, String>
+public interface AlertsJpa extends JpaRepository<HAlert, String>
 {
-
+    @Query("SELECT alert FROM HAlert alert WHERE alert.getApplicationId() = ?1")
+    List<HAlert> findAlertsForApp(String applicationID);
 }

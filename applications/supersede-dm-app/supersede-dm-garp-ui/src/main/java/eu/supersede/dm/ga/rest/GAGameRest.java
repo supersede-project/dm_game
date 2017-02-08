@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ga.GAPersistentDB;
-import eu.supersede.dm.ga.GAVirtualDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameSummary;
@@ -45,18 +44,18 @@ public class GAGameRest
     private UsersJpa users;
 
     @Autowired
-    private GAPersistentDB virtualDb;
+    private GAPersistentDB persistentDB;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
     public List<GAGameSummary> getOwnedGames(Authentication authentication)
     {
-        return virtualDb.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        return persistentDB.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
     public List<GAGameSummary> getActiveGames(Authentication authentication)
     {
-        return virtualDb.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        return persistentDB.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
@@ -93,7 +92,7 @@ public class GAGameRest
 
         game.setStatus("open");
 
-        virtualDb.create(game, criteria, requirements, players);
+        persistentDB.create(game, criteria, requirements, players);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -108,14 +107,14 @@ public class GAGameRest
                     + reqs.get(key));
         }
 
-        virtualDb.setRanking(gameId, userId, reqs);
+        persistentDB.setRanking(gameId, userId, reqs);
     }
 
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)
     public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
-        List<Long> reqs = virtualDb.getRankingsCriterion(gameId, userId, criterion);
+        List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
 
         if (reqs != null)
@@ -127,7 +126,7 @@ public class GAGameRest
         }
         else
         {
-            List<Long> tmp = virtualDb.getRequirements(gameId);
+            List<Long> tmp = persistentDB.getRequirements(gameId);
 
             for (Long requirementId : tmp)
             {
@@ -141,14 +140,14 @@ public class GAGameRest
     @RequestMapping(value = "/game", method = RequestMethod.GET)
     public GAGameSummary getGame(Authentication authentication, Long gameId)
     {
-        return virtualDb.getGameInfo(gameId).getGame();
+        return persistentDB.getGameInfo(gameId).getGame();
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
     public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {
         List<ValutationCriteria> criteria = new ArrayList<>();
-        List<Long> criteriaIds = virtualDb.getCriteria(gameId);
+        List<Long> criteriaIds = persistentDB.getCriteria(gameId);
 
         for (Long criterionId : criteriaIds)
         {
@@ -167,14 +166,14 @@ public class GAGameRest
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
     public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
-        return virtualDb.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
+        return persistentDB.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
     public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        List<Long> criteria = virtualDb.getCriteria(game);
+        List<Long> criteria = persistentDB.getCriteria(game);
         List<String> gameCriteria = new ArrayList<>();
 
         for (Long criterionId : criteria)
@@ -184,19 +183,19 @@ public class GAGameRest
 
         algo.setCriteria(gameCriteria);
 
-        for (Long rid : virtualDb.getRequirements(game.getId()))
+        for (Long rid : persistentDB.getRequirements(game.getId()))
         {
             algo.addRequirement("" + rid, new ArrayList<>());
         }
 
         // get all the players in this game
-        List<Long> participantIds = virtualDb.getParticipants(game);
+        List<Long> participantIds = persistentDB.getParticipants(game);
 
         // get the rankings of each player for each criterion
         for (Long userId : participantIds)
         {
             String player = users.getOne(userId).getName();
-            Map<String, List<Long>> userRanking = virtualDb.getRanking(game.getId(), userId);
+            Map<String, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
             Map<String, List<String>> userRankingStr = new HashMap<>();
 
             for (Entry<String, List<Long>> entry : userRanking.entrySet())

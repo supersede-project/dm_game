@@ -1,6 +1,5 @@
 package eu.supersede.gr.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,20 +7,54 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="h_roles")
-public class HGAGameParticipation {
+@Table(name = "h_roles")
+public class HGAGameParticipation
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+    private Long gameId;
+    private Long userId;
+    private String role;
 
-	@Column(name="gameId")
-	public Long	gameId;
+    public Long getId()
+    {
+        return id;
+    }
 
-	@Column(name="userId")
-	public Long	userId;
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
 
-	@Column(name="role")
-	public String	role;
+    public Long getGameId()
+    {
+        return gameId;
+    }
 
+    public void setGameId(Long gameId)
+    {
+        this.gameId = gameId;
+    }
+
+    public Long getUserId()
+    {
+        return userId;
+    }
+
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
+
+    public String getRole()
+    {
+        return role;
+    }
+
+    public void setRole(String role)
+    {
+        this.role = role;
+    }
 }

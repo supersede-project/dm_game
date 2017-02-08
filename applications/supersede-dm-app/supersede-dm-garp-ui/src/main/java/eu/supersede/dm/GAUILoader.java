@@ -47,16 +47,5 @@ public class GAUILoader
         roles.add("OPINION_PROVIDER");
         roles.add("DECISION_SCOPE_PROVIDER");
         roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "garp/home", labels, roles);
-
-        // labels = new HashMap<>();
-        // labels.put( "", "APP Home" );
-        // roles = new ArrayList<>();
-        // roles = new ArrayList<>();
-        // roles.add( "DM_ADMIN" );
-        // roles.add( "OPINION_PROVIDER" );
-        // roles.add( "DECISION_SCOPE_PROVIDER" );
-        // roles.add( "OPINION_NEGOTIATOR" );
-        // au.addApplicationPage( "supersede-dm-app", "garp/game_page", labels, roles );
     }
 }

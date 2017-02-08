@@ -14,7 +14,6 @@
 
 package eu.supersede.gr.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,70 +29,75 @@ public class HGAGameSummary
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     private Long activityId;
-    
-    String name = "";
-    
-    @Column(name = "owner")
+    private String name = "";
     private Long owner;
-
-    @Column(name = "date")
     private String date = "";
-
-    @Column(name = "status")
     private String status = "open";
 
-    public HGAGameSummary() {
+    public HGAGameSummary()
+    {
 
     }
 
-    public HGAGameSummary(Long activityId, GAGameSummary game) {
-    	this.activityId = activityId;
+    public HGAGameSummary(Long activityId, GAGameSummary game)
+    {
+        this.activityId = activityId;
         this.id = game.getId();
         this.owner = game.getOwner();
         this.date = game.getDate();
         this.status = game.getStatus();
         this.name = game.getName();
     }
-    
-    public Long getActivityId() {
-    	return this.activityId;
+
+    public Long getActivityId()
+    {
+        return this.activityId;
     }
-    
-    public Long getId() {
+
+    public Long getId()
+    {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public Long getOwner() {
+    public Long getOwner()
+    {
         return this.owner;
     }
 
-    public void setOwner(Long owner) {
+    public void setOwner(Long owner)
+    {
         this.owner = owner;
     }
 
-    public String getDate() {
+    public String getDate()
+    {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(String date)
+    {
         this.date = date;
     }
 
-    public String getStatus() {
+    public String getStatus()
+    {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status)
+    {
         this.status = status;
     }
-    
-    public String getName() {
-    	return this.name;
+
+    public String getName()
+    {
+        return this.name;
     }
 }

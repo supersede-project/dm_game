@@ -14,7 +14,7 @@ public class HAlert
     @Id
     private String id;
     private String applicationId;
-    private long timestamp;
+    private Long timestamp;
 
     public HAlert()
     {
@@ -46,12 +46,12 @@ public class HAlert
         this.applicationId = applicationId;
     }
 
-    public long getTimestamp()
+    public Long getTimestamp()
     {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp)
+    public void setTimestamp(Long timestamp)
     {
         this.timestamp = timestamp;
     }

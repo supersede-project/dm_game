@@ -20,16 +20,15 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HGAGameParticipation;
 
-public interface GAGameParticipationJpa extends JpaRepository<HGAGameParticipation, Long> {
+public interface GAGameParticipationJpa extends JpaRepository<HGAGameParticipation, Long>
+{
+    @Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = 'Opinion Provider'")
+    List<Long> findOpinionProviders(Long gameId);
 
-//    @Query("SELECT alert FROM HAlert alert WHERE alert.applicationID = ?1")
-	@Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = 'Opinion Provider'")
-	List<Long> findOpinionProviders( Long gameId );
+    @Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = ?2")
+    List<Long> findParticipants(Long gameId, String roleName);
 
-	@Query("SELECT userId FROM HGAGameParticipation participation WHERE gameId = ?1 AND role = ?2")
-	List<Long> findParticipants( Long gameId, String roleName );
-
-	@Query("SELECT gameId FROM HGAGameParticipation participation WHERE userId = ?1 AND role = ?2")
-	List<Long> findGames( Long userId, String roleName );
+    @Query("SELECT gameId FROM HGAGameParticipation participation WHERE userId = ?1 AND role = ?2")
+    List<Long> findGames(Long userId, String roleName);
 
 }

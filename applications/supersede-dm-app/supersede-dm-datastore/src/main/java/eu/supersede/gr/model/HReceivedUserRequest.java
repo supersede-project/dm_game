@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "h_received_userrequests")
+@Table(name = "h_received_user_requests")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class HReceivedUserRequest
 {
@@ -15,11 +15,11 @@ public class HReceivedUserRequest
     private String id;
     private String alertId;
     private String classification;
-    private double accuracy;
+    private Double accuracy;
     private String description;
-    private int positiveSentiment;
-    private int negativeSentiment;
-    private int overallSentiment;
+    private Integer positiveSentiment;
+    private Integer negativeSentiment;
+    private Integer overallSentiment;
     // private String[] feedbackIDs;
     // private String[] features;
 
@@ -82,32 +82,32 @@ public class HReceivedUserRequest
         this.description = description;
     }
 
-    public int getPositiveSentiment()
+    public Integer getPositiveSentiment()
     {
         return positiveSentiment;
     }
 
-    public void setPositiveSentiment(int positiveSentiment)
+    public void setPositiveSentiment(Integer positiveSentiment)
     {
         this.positiveSentiment = positiveSentiment;
     }
 
-    public int getNegativeSentiment()
+    public Integer getNegativeSentiment()
     {
         return negativeSentiment;
     }
 
-    public void setNegativeSentiment(int negativeSentiment)
+    public void setNegativeSentiment(Integer negativeSentiment)
     {
         this.negativeSentiment = negativeSentiment;
     }
 
-    public int getOverallSentiment()
+    public Integer getOverallSentiment()
     {
         return overallSentiment;
     }
 
-    public void setOverallSentiment(int overallSentiment)
+    public void setOverallSentiment(Integer overallSentiment)
     {
         this.overallSentiment = overallSentiment;
     }

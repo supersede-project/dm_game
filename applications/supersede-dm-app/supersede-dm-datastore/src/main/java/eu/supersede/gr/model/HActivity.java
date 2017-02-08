@@ -8,12 +8,31 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "h_activity_instances")
-public class HActivity {
-	
+public class HActivity
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long id;
-    
-    public String methodName;
-    
+    private Long id;
+
+    private String methodName;
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public String getMethodName()
+    {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName)
+    {
+        this.methodName = methodName;
+    }
 }

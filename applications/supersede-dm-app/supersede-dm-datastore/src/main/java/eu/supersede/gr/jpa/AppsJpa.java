@@ -12,18 +12,17 @@
    limitations under the License.
 */
 
+/**
+* @author Andrea Sosi
+**/
+
 package eu.supersede.gr.jpa;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HGAGameRequirement;
+import eu.supersede.gr.model.HApp;
 
-public interface GAGameRequirementJpa extends JpaRepository<HGAGameRequirement, Long>
+public interface AppsJpa extends JpaRepository<HApp, String>
 {
-    @Query("SELECT requirementId FROM HGAGameRequirement req WHERE gameId = ?1")
-    public List<Long> findRequirementIdsByGame(Long gameId);
 
 }

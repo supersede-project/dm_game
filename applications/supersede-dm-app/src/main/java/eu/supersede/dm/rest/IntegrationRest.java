@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.fe.notification.NotificationUtil;
-import eu.supersede.gr.jpa.JpaAlerts;
-import eu.supersede.gr.jpa.JpaApps;
-import eu.supersede.gr.jpa.JpaReceivedUserRequests;
+import eu.supersede.gr.jpa.AlertsJpa;
+import eu.supersede.gr.jpa.AppsJpa;
+import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.logics.Datastore;
 import eu.supersede.gr.model.HAlert;
@@ -57,13 +57,13 @@ public class IntegrationRest
     private RequirementsJpa requirementsTable;
 
     @Autowired
-    private JpaApps jpaApps;
+    private AppsJpa jpaApps;
 
     @Autowired
-    private JpaAlerts jpaAlerts;
+    private AlertsJpa jpaAlerts;
 
     @Autowired
-    private JpaReceivedUserRequests jpaReceivedUserRequests;
+    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
     @Autowired
     private Datastore datastore;

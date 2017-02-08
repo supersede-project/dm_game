@@ -12,23 +12,13 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.jpa;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HReceivedUserRequest;
+import eu.supersede.gr.model.HActivity;
 
-public interface JpaReceivedUserRequests extends JpaRepository<HReceivedUserRequest, String>
+public interface ActivitiesJpa extends JpaRepository<HActivity, Long>
 {
-
-    @Query("SELECT ur FROM HReceivedUserRequest ur WHERE ur.getAlertId() = ?1")
-    List<HReceivedUserRequest> findRequestsForAlert(String alertID);
 
 }
