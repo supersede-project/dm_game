@@ -238,16 +238,15 @@ public class GAPersistentDB
         d.setGame(extract(info));
 
         // add criteria
-        List<Long> criteriaList = this.criteriaJpa.findByGame(info.getId());
+        List<Long> criteriaList = criteriaJpa.findByGame(info.getId());
         d.setCriteria(criteriaList);
 
         // add requirements
-        List<Long> reqsList = this.gameRequirementsJpa.findRequirementIdsByGame(info.getId());
+        List<Long> reqsList = gameRequirementsJpa.findRequirementIdsByGame(info.getId());
         d.setRequirements(reqsList);
 
         // add users
-        List<Long> participantsList = this.participationJpa.findParticipants(info.getId(),
-                GARole.OpinionProvider.name());
+        List<Long> participantsList = participationJpa.findParticipants(info.getId(), GARole.OpinionProvider.name());
         d.setParticipants(participantsList);
 
         Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
@@ -255,7 +254,7 @@ public class GAPersistentDB
         // add rankings
         for (Long userId : participantsList)
         {
-            String json = this.rankingsJpa.findRankingByGameAndUser(info.getId(), userId);
+            String json = rankingsJpa.findRankingByGameAndUser(info.getId(), userId);
             Map<String, List<Long>> map = deserializeRankings(json);
             rankings.put(userId, map);
         }
