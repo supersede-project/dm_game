@@ -44,7 +44,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param game
      * @param criteria
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndGameAndCriteria(User player, HAHPGame game, ValutationCriteria criteria);
 
@@ -53,7 +53,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param player
      * @param game
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndGame(User player, HAHPGame game);
 
@@ -62,7 +62,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param player
      * @param criteria
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndCriteria(User player, ValutationCriteria criteria);
 
@@ -70,7 +70,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * Get a List of PlayerMove of a specific player of the Games that are not finished
      * @param player
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndGameNotFinished(User player);
 
@@ -82,7 +82,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param criteria
      * @return
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndGameAndCriteriaAndGameNotFinished(User player, HAHPGame game,
             ValutationCriteria criteria);
@@ -92,7 +92,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param player
      * @param game
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndGameAndGameNotFinished(User player, HAHPGame game);
 
@@ -101,7 +101,7 @@ public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
      * @param player
      * @param criteria
      */
-    @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
+    @Query("SELECT pm FROM HAHPPlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
     List<HAHPPlayerMove> findByPlayerAndCriteriaAndGameNotFinished(User player, ValutationCriteria criteria);
 

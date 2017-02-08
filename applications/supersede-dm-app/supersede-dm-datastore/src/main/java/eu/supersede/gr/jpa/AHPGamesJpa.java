@@ -38,7 +38,7 @@ public interface AHPGamesJpa extends JpaRepository<HAHPGame, Long>
      * Get a List of Game where there is a specific player
      * @param player
      */
-    @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1")
+    @Query("SELECT game FROM HAHPGame game JOIN game.players player WHERE player = ?1")
     List<HAHPGame> findByPlayerContains(User player);
 
     /**
@@ -46,6 +46,6 @@ public interface AHPGamesJpa extends JpaRepository<HAHPGame, Long>
      * @param player
      * @param finished
      */
-    @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1 and game.finished = ?2")
+    @Query("SELECT game FROM HAHPGame game JOIN game.players player WHERE player = ?1 and game.finished = ?2")
     List<HAHPGame> findByPlayerContainsAndFinished(User player, Boolean finished);
 }
