@@ -23,23 +23,23 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.User;
 
-public interface GamesJpa extends JpaRepository<Game, Long>
+public interface AHPGamesJpa extends JpaRepository<HAHPGame, Long>
 {
     /**
      * Get a List of Game that are finished
      * @param finished
      */
-    List<Game> findByFinished(Boolean finished);
+    List<HAHPGame> findByFinished(Boolean finished);
 
     /**
      * Get a List of Game where there is a specific player
      * @param player
      */
     @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1")
-    List<Game> findByPlayerContains(User player);
+    List<HAHPGame> findByPlayerContains(User player);
 
     /**
      * Get a List of Game where there is a specific player and that are finished
@@ -47,5 +47,5 @@ public interface GamesJpa extends JpaRepository<Game, Long>
      * @param finished
      */
     @Query("SELECT game FROM Game game JOIN game.players player WHERE player = ?1 and game.finished = ?2")
-    List<Game> findByPlayerContainsAndFinished(User player, Boolean finished);
+    List<HAHPGame> findByPlayerContainsAndFinished(User player, Boolean finished);
 }

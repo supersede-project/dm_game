@@ -20,9 +20,9 @@ package eu.supersede.gr.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.supersede.gr.model.RequirementChoice;
+import eu.supersede.gr.model.HAHPRequirementChoice;
 
-public interface RequirementsChoicesJpa extends JpaRepository<RequirementChoice, Long>
+public interface AHPRequirementsChoicesJpa extends JpaRepository<HAHPRequirementChoice, Long>
 {
 
 }

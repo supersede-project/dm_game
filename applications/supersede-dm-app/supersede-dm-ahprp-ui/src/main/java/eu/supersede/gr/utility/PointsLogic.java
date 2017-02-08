@@ -29,21 +29,21 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.supersede.gr.jpa.CriteriasMatricesDataJpa;
-import eu.supersede.gr.jpa.GamesJpa;
+import eu.supersede.gr.jpa.AHPCriteriasMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.PointsJpa;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.UserCriteriaPointsJpa;
 import eu.supersede.gr.jpa.UserPointsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.CriteriasMatrixData;
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPCriteriasMatrixData;
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.GamePlayerPoint;
-import eu.supersede.gr.model.PlayerMove;
+import eu.supersede.gr.model.HAHPPlayerMove;
 import eu.supersede.gr.model.Point;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.UserCriteriaPoint;
 import eu.supersede.gr.model.UserPoint;
@@ -69,13 +69,13 @@ public class PointsLogic
     private GamesPlayersPointsJpa gamesPlayersPointsRepository;
 
     @Autowired
-    private CriteriasMatricesDataJpa criteriaMatricesRepository;
+    private AHPCriteriasMatricesDataJpa criteriaMatricesRepository;
 
     @Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesRepository;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesRepository;
 
     @Autowired
-    private GamesJpa gamesRepository;
+    private AHPGamesJpa gamesRepository;
 
     private Double M = 20.0;
 
@@ -130,12 +130,12 @@ public class PointsLogic
         // cycle on every gamesPlayersPoints
         for (int i = 0; i < gamesPlayersPoints.size(); i++)
         {
-            Game g = gamesRepository.findOne(gamesPlayersPoints.get(i).getGame().getGameId());
+            HAHPGame g = gamesRepository.findOne(gamesPlayersPoints.get(i).getGame().getGameId());
 
             // set currentPlayer that is used for other methods
             g.setCurrentPlayer(gamesPlayersPoints.get(i).getUser());
 
-            List<CriteriasMatrixData> criteriasMatrixDataList = criteriaMatricesRepository.findByGame(g);
+            List<HAHPCriteriasMatrixData> criteriasMatrixDataList = criteriaMatricesRepository.findByGame(g);
 
             // calculate the agreementIndex for every gamesPlayersPoints of a game and a specific user
 
@@ -162,7 +162,7 @@ public class PointsLogic
             // calculate the positionInVoting for every gamesPlayersPoints of a game and a specific user
 
             List<User> players = g.getPlayers();
-            List<RequirementsMatrixData> lrmd = requirementsMatricesRepository.findByGame(g);
+            List<HAHPRequirementsMatrixData> lrmd = requirementsMatricesRepository.findByGame(g);
             Map<User, Float> gamePlayerVotes = new HashMap<>();
 
             for (User player : players)
@@ -172,9 +172,9 @@ public class PointsLogic
 
                 if (lrmd != null)
                 {
-                    for (RequirementsMatrixData data : lrmd)
+                    for (HAHPRequirementsMatrixData data : lrmd)
                     {
-                        for (PlayerMove pm : data.getPlayerMoves())
+                        for (HAHPPlayerMove pm : data.getPlayerMoves())
                         {
                             if (pm.getPlayer().getUserId().equals(player.getUserId()))
                             {

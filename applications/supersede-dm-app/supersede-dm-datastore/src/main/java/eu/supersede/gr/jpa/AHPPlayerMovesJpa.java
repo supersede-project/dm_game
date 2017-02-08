@@ -24,19 +24,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.supersede.gr.model.Game;
-import eu.supersede.gr.model.PlayerMove;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPPlayerMove;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
+public interface AHPPlayerMovesJpa extends JpaRepository<HAHPPlayerMove, Long>
 {
     /**
      * Get a List of PlayerMove of a specific player
      * @param player
      */
-    List<PlayerMove> findByPlayer(User player);
+    List<HAHPPlayerMove> findByPlayer(User player);
 
     /**
      * Get a List of PlayerMove of a specific player, in a specific Game and on a particular ValutationCriteria
@@ -46,7 +46,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3")
     @Transactional
-    List<PlayerMove> findByPlayerAndGameAndCriteria(User player, Game game, ValutationCriteria criteria);
+    List<HAHPPlayerMove> findByPlayerAndGameAndCriteria(User player, HAHPGame game, ValutationCriteria criteria);
 
     /**
      * Get a List of PlayerMove of a specific player and in a specific Game
@@ -55,7 +55,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2")
     @Transactional
-    List<PlayerMove> findByPlayerAndGame(User player, Game game);
+    List<HAHPPlayerMove> findByPlayerAndGame(User player, HAHPGame game);
 
     /**
      * Get a List of PlayerMove of a specific player and on a particular ValutationCriteria
@@ -64,7 +64,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2")
     @Transactional
-    List<PlayerMove> findByPlayerAndCriteria(User player, ValutationCriteria criteria);
+    List<HAHPPlayerMove> findByPlayerAndCriteria(User player, ValutationCriteria criteria);
 
     /**
      * Get a List of PlayerMove of a specific player of the Games that are not finished
@@ -72,7 +72,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<PlayerMove> findByPlayerAndGameNotFinished(User player);
+    List<HAHPPlayerMove> findByPlayerAndGameNotFinished(User player);
 
     /**
      * Get a List of PlayerMove of a specific player, in a specific Game on a particular ValutationCriteria and the
@@ -84,7 +84,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.criteria = ?3 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<PlayerMove> findByPlayerAndGameAndCriteriaAndGameNotFinished(User player, Game game,
+    List<HAHPPlayerMove> findByPlayerAndGameAndCriteriaAndGameNotFinished(User player, HAHPGame game,
             ValutationCriteria criteria);
 
     /**
@@ -94,7 +94,7 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.game = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<PlayerMove> findByPlayerAndGameAndGameNotFinished(User player, Game game);
+    List<HAHPPlayerMove> findByPlayerAndGameAndGameNotFinished(User player, HAHPGame game);
 
     /**
      * Get a List of PlayerMove of a specific player on a particular ValutationCriteria and the Games are not finished
@@ -103,11 +103,11 @@ public interface PlayerMovesJpa extends JpaRepository<PlayerMove, Long>
      */
     @Query("SELECT pm FROM PlayerMove pm WHERE pm.player = ?1 AND pm.requirementsMatrixData.criteria = ?2 AND pm.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<PlayerMove> findByPlayerAndCriteriaAndGameNotFinished(User player, ValutationCriteria criteria);
+    List<HAHPPlayerMove> findByPlayerAndCriteriaAndGameNotFinished(User player, ValutationCriteria criteria);
 
     /**
      * Get a List of PlayerMove of a specific RequirementsMatrixData
      * @param requirementMatrixData
      */
-    List<PlayerMove> findByRequirementsMatrixData(RequirementsMatrixData requirementMatrixData);
+    List<HAHPPlayerMove> findByRequirementsMatrixData(HAHPRequirementsMatrixData requirementMatrixData);
 }

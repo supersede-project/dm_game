@@ -41,7 +41,7 @@ public class GamePlayerPoint
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
+    private HAHPGame game;
 
     private Long points;
     private Long agreementIndex;
@@ -83,12 +83,12 @@ public class GamePlayerPoint
         this.user = user;
     }
 
-    public Game getGame()
+    public HAHPGame getGame()
     {
         return game;
     }
 
-    public void setGame(Game game)
+    public void setGame(HAHPGame game)
     {
         this.game = game;
     }

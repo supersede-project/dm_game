@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "requirements_choices")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class RequirementChoice
+public class HAHPRequirementChoice
 {
     @Id
     private Long requirementsChoiceId;
@@ -39,7 +39,7 @@ public class RequirementChoice
     private Long value;
     private String label;
 
-    public RequirementChoice()
+    public HAHPRequirementChoice()
     {
     }
 

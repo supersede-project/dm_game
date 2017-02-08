@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import eu.supersede.fe.exception.NotFoundException;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
@@ -41,7 +41,7 @@ public class CriteriaRest
     private ValutationCriteriaJpa valutationCriterias;
 
     @Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesData;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
     /**
      * Return the criterion with the given id.
@@ -104,7 +104,7 @@ public class CriteriaRest
     {
         ValutationCriteria criteria = valutationCriterias.findOne(criteriaId);
 
-        List<RequirementsMatrixData> list = requirementsMatricesData.findByCriteria(criteria);
+        List<HAHPRequirementsMatrixData> list = requirementsMatricesData.findByCriteria(criteria);
 
         if (list.isEmpty())
         {

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "criterias_matrices_data")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class CriteriasMatrixData
+public class HAHPCriteriasMatrixData
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,7 +45,7 @@ public class CriteriasMatrixData
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
+    private HAHPGame game;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "criteria_row_id", nullable = false)
@@ -58,7 +58,7 @@ public class CriteriasMatrixData
     @Column(nullable = false)
     private Long value;
 
-    public CriteriasMatrixData()
+    public HAHPCriteriasMatrixData()
     {
     }
 
@@ -72,12 +72,12 @@ public class CriteriasMatrixData
         this.criteriasMatrixDataId = criteriasMatrixDataId;
     }
 
-    public Game getGame()
+    public HAHPGame getGame()
     {
         return game;
     }
 
-    public void setGame(Game game)
+    public void setGame(HAHPGame game)
     {
         this.game = game;
     }

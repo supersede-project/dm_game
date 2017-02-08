@@ -33,14 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.jpa.GamesJpa;
-import eu.supersede.gr.jpa.PlayerMovesJpa;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.jpa.AHPPlayerMovesJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.Game;
-import eu.supersede.gr.model.PlayerMove;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPPlayerMove;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.gr.utility.PointsLogic;
@@ -53,19 +53,19 @@ public class PlayerMoveRest
     private PointsLogic pointsLogic;
 
     @Autowired
-    private GamesJpa games;
+    private AHPGamesJpa games;
 
     @Autowired
     private UsersJpa users;
 
     @Autowired
-    private PlayerMovesJpa playerMoves;
+    private AHPPlayerMovesJpa playerMoves;
 
     @Autowired
     private ValutationCriteriaJpa criterias;
 
     @Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesData;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
     /**
      * Get all the playerMoves of the logged user.
@@ -76,12 +76,12 @@ public class PlayerMoveRest
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     @Transactional
-    public List<PlayerMove> getPlayerMoves(Authentication authentication, @RequestParam(required = false) Long gameId,
+    public List<HAHPPlayerMove> getPlayerMoves(Authentication authentication, @RequestParam(required = false) Long gameId,
             @RequestParam(required = false) Long criteriaId,
             @RequestParam(defaultValue = "false") Boolean gameNotFinished)
     {
 
-        List<PlayerMove> moves;
+        List<HAHPPlayerMove> moves;
 
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         User player = users.findOne(currentUser.getUserId());
@@ -90,13 +90,13 @@ public class PlayerMoveRest
         {
             if (gameId != null && criteriaId != null)
             {
-                Game game = games.getOne(gameId);
+                HAHPGame game = games.getOne(gameId);
                 ValutationCriteria criteria = criterias.getOne(criteriaId);
                 moves = playerMoves.findByPlayerAndGameAndCriteriaAndGameNotFinished(player, game, criteria);
             }
             else if (gameId != null)
             {
-                Game game = games.getOne(gameId);
+                HAHPGame game = games.getOne(gameId);
                 moves = playerMoves.findByPlayerAndGameAndGameNotFinished(player, game);
             }
             else if (criteriaId != null)
@@ -113,13 +113,13 @@ public class PlayerMoveRest
         {
             if (gameId != null && criteriaId != null)
             {
-                Game game = games.getOne(gameId);
+                HAHPGame game = games.getOne(gameId);
                 ValutationCriteria criteria = criterias.getOne(criteriaId);
                 moves = playerMoves.findByPlayerAndGameAndCriteria(player, game, criteria);
             }
             else if (gameId != null)
             {
-                Game game = games.getOne(gameId);
+                HAHPGame game = games.getOne(gameId);
                 moves = playerMoves.findByPlayerAndGame(player, game);
             }
             else if (criteriaId != null)
@@ -141,9 +141,9 @@ public class PlayerMoveRest
      * @param playerMoveId
      */
     @RequestMapping("/{playerMoveId}")
-    public PlayerMove getPlayerMove(@PathVariable Long playerMoveId)
+    public HAHPPlayerMove getPlayerMove(@PathVariable Long playerMoveId)
     {
-        PlayerMove playerMove = playerMoves.findOne(playerMoveId);
+        HAHPPlayerMove playerMove = playerMoves.findOne(playerMoveId);
 
         if (playerMove == null)
         {
@@ -159,11 +159,11 @@ public class PlayerMoveRest
      * @return
      */
     @RequestMapping("/requirementsmatrixdata/{requirementsMatrixDataId}")
-    public List<PlayerMove> getRequirementsMatrixDataPlayerMove(@PathVariable Long requirementsMatrixDataId)
+    public List<HAHPPlayerMove> getRequirementsMatrixDataPlayerMove(@PathVariable Long requirementsMatrixDataId)
     {
-        RequirementsMatrixData rmd = requirementsMatricesData.findOne(requirementsMatrixDataId);
+        HAHPRequirementsMatrixData rmd = requirementsMatricesData.findOne(requirementsMatrixDataId);
 
-        List<PlayerMove> listPlayerMoves = playerMoves.findByRequirementsMatrixData(rmd);
+        List<HAHPPlayerMove> listPlayerMoves = playerMoves.findByRequirementsMatrixData(rmd);
 
         return listPlayerMoves;
     }
@@ -182,13 +182,13 @@ public class PlayerMoveRest
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         User user = users.findOne(currentUser.getUserId());
 
-        PlayerMove playerMove = playerMoves.findOne(playerMoveId);
+        HAHPPlayerMove playerMove = playerMoves.findOne(playerMoveId);
         playerMove.setValue(vote);
         playerMove.setPlayed(true);
         playerMove.setPlayedTime(new Date());
         playerMoves.save(playerMove);
 
-        RequirementsMatrixData rmd = requirementsMatricesData
+        HAHPRequirementsMatrixData rmd = requirementsMatricesData
                 .findOne(playerMove.getRequirementsMatrixData().getRequirementsMatrixDataId());
 
         Long criteriaId = rmd.getCriteria().getCriteriaId();
@@ -206,7 +206,7 @@ public class PlayerMoveRest
     @RequestMapping(method = RequestMethod.PUT, value = "/open/{playerMoveId}")
     public void openPlayerMove(@PathVariable Long playerMoveId)
     {
-        PlayerMove playerMove = playerMoves.findOne(playerMoveId);
+        HAHPPlayerMove playerMove = playerMoves.findOne(playerMoveId);
         playerMove.setValue(null);
         playerMove.setPlayedTime(null);
         playerMove.setPlayed(false);
@@ -221,9 +221,9 @@ public class PlayerMoveRest
     @RequestMapping("/players/{requirementsMatrixDataId}")
     public List<User> getPlayerMovePlayers(@PathVariable Long requirementsMatrixDataId)
     {
-        RequirementsMatrixData requirementMatrixData = requirementsMatricesData.getOne(requirementsMatrixDataId);
+        HAHPRequirementsMatrixData requirementMatrixData = requirementsMatricesData.getOne(requirementsMatrixDataId);
 
-        List<PlayerMove> listPlayerMoves = playerMoves.findByRequirementsMatrixData(requirementMatrixData);
+        List<HAHPPlayerMove> listPlayerMoves = playerMoves.findByRequirementsMatrixData(requirementMatrixData);
         List<User> movePlayers = new ArrayList<>();
         for (int i = 0; i < listPlayerMoves.size(); i++)
         {

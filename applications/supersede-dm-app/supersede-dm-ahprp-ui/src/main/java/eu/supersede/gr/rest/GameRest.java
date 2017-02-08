@@ -50,22 +50,22 @@ import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.mail.SupersedeMailSender;
 import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.jpa.CriteriasMatricesDataJpa;
-import eu.supersede.gr.jpa.GamesJpa;
+import eu.supersede.gr.jpa.AHPCriteriasMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.jpa.AHPJudgeActsJpa;
+import eu.supersede.gr.jpa.AHPPlayerMovesJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
-import eu.supersede.gr.jpa.JudgeActsJpa;
-import eu.supersede.gr.jpa.PlayerMovesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.CriteriasMatrixData;
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPCriteriasMatrixData;
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.GamePlayerPoint;
-import eu.supersede.gr.model.JudgeAct;
-import eu.supersede.gr.model.PlayerMove;
+import eu.supersede.gr.model.HAHPJudgeAct;
+import eu.supersede.gr.model.HAHPPlayerMove;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.gr.utility.PointsLogic;
@@ -90,7 +90,7 @@ public class GameRest
     private PointsLogic pointsLogic;
 
     @Autowired
-    private GamesJpa games;
+    private AHPGamesJpa games;
 
     @Autowired
     private UsersJpa users;
@@ -102,16 +102,16 @@ public class GameRest
     private ValutationCriteriaJpa criterias;
 
     @Autowired
-    private CriteriasMatricesDataJpa criteriasMatricesData;
+    private AHPCriteriasMatricesDataJpa criteriasMatricesData;
 
     @Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesData;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
     @Autowired
-    private PlayerMovesJpa playerMoves;
+    private AHPPlayerMovesJpa playerMoves;
 
     @Autowired
-    private JudgeActsJpa judgeActs;
+    private AHPJudgeActsJpa judgeActs;
 
     @Autowired
     private ProxyWrapper proxy;
@@ -120,12 +120,12 @@ public class GameRest
     private NotificationUtil notificationUtil;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Game> getGames(Authentication authentication, @RequestParam(required = false) Boolean finished,
+    public List<HAHPGame> getGames(Authentication authentication, @RequestParam(required = false) Boolean finished,
             @RequestParam(defaultValue = "false") Boolean byUser)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         User user = users.findOne(currentUser.getUserId());
-        List<Game> gs;
+        List<HAHPGame> gs;
 
         if (!byUser && userIsGameMaster(currentUser))
         {
@@ -149,7 +149,7 @@ public class GameRest
                 gs = games.findByPlayerContainsAndFinished(user, finished);
             }
 
-            for (Game g : gs)
+            for (HAHPGame g : gs)
             {
                 g.setCurrentPlayer(user);
             }
@@ -182,11 +182,11 @@ public class GameRest
     }
 
     @RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
-    public Game getGame(Authentication authentication, @PathVariable Long gameId)
+    public HAHPGame getGame(Authentication authentication, @PathVariable Long gameId)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         User user = users.findOne(currentUser.getUserId());
-        Game g = games.findOne(gameId);
+        HAHPGame g = games.findOne(gameId);
 
         if (g == null)
         {
@@ -201,7 +201,7 @@ public class GameRest
     @RequestMapping("/{gameId}/exportGameData")
     public ResponseEntity<?> exportGameData(@PathVariable Long gameId)
     {
-        Game g = games.findOne(gameId);
+        HAHPGame g = games.findOne(gameId);
 
         if (g == null)
         {
@@ -214,9 +214,9 @@ public class GameRest
                 .append(SEPARATOR).append("USER").append(SEPARATOR).append("VOTE").append(SEPARATOR).append("VOTE_TIME")
                 .append(NEW_LINE);
 
-        for (RequirementsMatrixData rmd : g.getRequirementsMatrixData())
+        for (HAHPRequirementsMatrixData rmd : g.getRequirementsMatrixData())
         {
-            for (PlayerMove pm : rmd.getPlayerMoves())
+            for (HAHPPlayerMove pm : rmd.getPlayerMoves())
             {
                 if (pm.getPlayed())
                 {
@@ -249,7 +249,7 @@ public class GameRest
     @RequestMapping("/{gameId}/exportGameResults")
     public ResponseEntity<?> exportGameResults(@PathVariable Long gameId)
     {
-        Game g = games.findOne(gameId);
+        HAHPGame g = games.findOne(gameId);
 
         if (g == null)
         {
@@ -259,7 +259,7 @@ public class GameRest
         StringBuilder result = new StringBuilder();
 
         result.append("REQUIREMENT").append(SEPARATOR).append("RESULT").append(NEW_LINE);
-        List<CriteriasMatrixData> criteriasMatrixDataList = criteriasMatricesData.findByGame(g);
+        List<HAHPCriteriasMatrixData> criteriasMatrixDataList = criteriasMatricesData.findByGame(g);
         Map<String, Double> rs = AHPRest.CalculateAHP(g.getCriterias(), g.getRequirements(), criteriasMatrixDataList,
                 g.getRequirementsMatrixData());
 
@@ -279,18 +279,18 @@ public class GameRest
     @RequestMapping(value = "/end/{gameId}", method = RequestMethod.PUT)
     public void setGameFinished(@PathVariable Long gameId)
     {
-        Game g = games.findOne(gameId);
+        HAHPGame g = games.findOne(gameId);
         g.setFinished(true);
         games.save(g);
 
         // set all judgeActs voted and playerMoves played
-        List<RequirementsMatrixData> rmdList = g.getRequirementsMatrixData();
+        List<HAHPRequirementsMatrixData> rmdList = g.getRequirementsMatrixData();
 
         for (int i = 0; i < rmdList.size(); i++)
         {
-            RequirementsMatrixData rmd = rmdList.get(i);
-            List<JudgeAct> jaList = judgeActs.findByRequirementsMatrixData(rmd);
-            List<PlayerMove> pmList = playerMoves.findByRequirementsMatrixData(rmd);
+            HAHPRequirementsMatrixData rmd = rmdList.get(i);
+            List<HAHPJudgeAct> jaList = judgeActs.findByRequirementsMatrixData(rmd);
+            List<HAHPPlayerMove> pmList = playerMoves.findByRequirementsMatrixData(rmd);
 
             for (int j = 0; j < jaList.size(); j++)
             {
@@ -311,7 +311,7 @@ public class GameRest
     {
         System.out.println("Sending requirements fo enactment - useIF = " + useIf.booleanValue());
 
-        Game g = games.findOne(gameId);
+        HAHPGame g = games.findOne(gameId);
         double max = 1;
         Map<String, Double> rs = AHPRest.CalculateAHP(g.getCriterias(), g.getRequirements(),
                 criteriasMatricesData.findByGame(g), g.getRequirementsMatrixData());
@@ -340,7 +340,7 @@ public class GameRest
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createGame(Authentication auth, @RequestBody Game game,
+    public ResponseEntity<?> createGame(Authentication auth, @RequestBody HAHPGame game,
             @RequestParam(required = true) String criteriaValues)
             throws JsonParseException, JsonMappingException, IOException
     {
@@ -392,7 +392,7 @@ public class GameRest
         {
             for (int j = i + 1; j < cs.size(); j++)
             {
-                CriteriasMatrixData cmd = new CriteriasMatrixData();
+            	HAHPCriteriasMatrixData cmd = new HAHPCriteriasMatrixData();
                 cmd.setGame(game);
                 cmd.setRowCriteria(cs.get(j));
                 cmd.setColumnCriteria(cs.get(i));
@@ -418,7 +418,7 @@ public class GameRest
             {
                 for (int j = i + 1; j < rs.size(); j++)
                 {
-                    RequirementsMatrixData rmd = new RequirementsMatrixData();
+                    HAHPRequirementsMatrixData rmd = new HAHPRequirementsMatrixData();
                     rmd.setGame(game);
                     rmd.setRowRequirement(rs.get(j));
                     rmd.setColumnRequirement(rs.get(i));
@@ -428,14 +428,14 @@ public class GameRest
 
                     for (int p = 0; p < us.size(); p++)
                     {
-                        PlayerMove pm = new PlayerMove();
+                        HAHPPlayerMove pm = new HAHPPlayerMove();
                         pm.setPlayer(us.get(p));
                         pm.setRequirementsMatrixData(rmd);
                         pm.setPlayed(false);
                         playerMoves.save(pm);
                     }
 
-                    JudgeAct ja = new JudgeAct();
+                    HAHPJudgeAct ja = new HAHPJudgeAct();
                     ja.setVoted(false);
                     ja.setRequirementsMatrixData(rmd);
                     judgeActs.save(ja);

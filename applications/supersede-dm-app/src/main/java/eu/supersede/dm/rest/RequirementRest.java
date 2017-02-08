@@ -29,9 +29,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 
 @RestController
 @RequestMapping("requirement")
@@ -41,7 +41,7 @@ public class RequirementRest
     private RequirementsJpa requirements;
 
     @Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesData;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
     /**
      * Return the requirement with the given id.
@@ -103,8 +103,8 @@ public class RequirementRest
     {
         Requirement requirement = requirements.findOne(requirementId);
 
-        List<RequirementsMatrixData> listRow = requirementsMatricesData.findByRowRequirement(requirement);
-        List<RequirementsMatrixData> listColumn = requirementsMatricesData.findByColumnRequirement(requirement);
+        List<HAHPRequirementsMatrixData> listRow = requirementsMatricesData.findByRowRequirement(requirement);
+        List<HAHPRequirementsMatrixData> listColumn = requirementsMatricesData.findByColumnRequirement(requirement);
 
         if (listRow.isEmpty() && listColumn.isEmpty())
         {

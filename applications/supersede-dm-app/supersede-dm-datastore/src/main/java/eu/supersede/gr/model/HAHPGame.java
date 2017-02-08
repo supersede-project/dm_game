@@ -49,7 +49,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "games")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Game
+public class HAHPGame
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -80,12 +80,12 @@ public class Game
     private Boolean finished;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "game")
-    private List<RequirementsMatrixData> requirementsMatrixData;
+    private List<HAHPRequirementsMatrixData> requirementsMatrixData;
 
     @Transient
     private User currentPlayer;
 
-    public Game()
+    public HAHPGame()
     {
     }
 
@@ -181,13 +181,13 @@ public class Game
     }
 
     @JsonIgnore
-    public List<RequirementsMatrixData> getRequirementsMatrixData()
+    public List<HAHPRequirementsMatrixData> getRequirementsMatrixData()
     {
         return requirementsMatrixData;
     }
 
     @JsonIgnore
-    public void setRequirementsMatrixData(List<RequirementsMatrixData> requirementsMatrixData)
+    public void setRequirementsMatrixData(List<HAHPRequirementsMatrixData> requirementsMatrixData)
     {
         this.requirementsMatrixData = requirementsMatrixData;
     }
@@ -199,7 +199,7 @@ public class Game
 
         if (getRequirementsMatrixData() != null)
         {
-            for (RequirementsMatrixData data : getRequirementsMatrixData())
+            for (HAHPRequirementsMatrixData data : getRequirementsMatrixData())
             {
                 total++;
                 if (data.getValue() != null && !data.getValue().equals(-1l))
@@ -218,9 +218,9 @@ public class Game
 
         if (getRequirementsMatrixData() != null)
         {
-            for (RequirementsMatrixData data : getRequirementsMatrixData())
+            for (HAHPRequirementsMatrixData data : getRequirementsMatrixData())
             {
-                for (PlayerMove playerMove : data.getPlayerMoves())
+                for (HAHPPlayerMove playerMove : data.getPlayerMoves())
                 {
                     total++;
                     if (playerMove.getValue() != null && !playerMove.getValue().equals(-1l))
@@ -252,9 +252,9 @@ public class Game
         {
             if (getRequirementsMatrixData() != null)
             {
-                for (RequirementsMatrixData data : getRequirementsMatrixData())
+                for (HAHPRequirementsMatrixData data : getRequirementsMatrixData())
                 {
-                    for (PlayerMove pm : data.getPlayerMoves())
+                    for (HAHPPlayerMove pm : data.getPlayerMoves())
                     {
                         if (pm.getPlayer().getUserId().equals(currentPlayer.getUserId()))
                         {
@@ -289,9 +289,9 @@ public class Game
         {
             if (getRequirementsMatrixData() != null)
             {
-                for (RequirementsMatrixData data : getRequirementsMatrixData())
+                for (HAHPRequirementsMatrixData data : getRequirementsMatrixData())
                 {
-                    for (PlayerMove pm : data.getPlayerMoves())
+                    for (HAHPPlayerMove pm : data.getPlayerMoves())
                     {
                         if (pm.getPlayer().getUserId().equals(currentPlayer.getUserId()))
                         {

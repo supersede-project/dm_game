@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "requirements_matrices_data")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class RequirementsMatrixData
+public class HAHPRequirementsMatrixData
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,7 +49,7 @@ public class RequirementsMatrixData
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
+    private HAHPGame game;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "criteria_id", nullable = false)
@@ -67,9 +67,9 @@ public class RequirementsMatrixData
     private Long value;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "requirementsMatrixData")
-    private List<PlayerMove> playerMoves;
+    private List<HAHPPlayerMove> playerMoves;
 
-    public RequirementsMatrixData()
+    public HAHPRequirementsMatrixData()
     {
     }
 
@@ -83,12 +83,12 @@ public class RequirementsMatrixData
         this.requirementsMatrixDataId = requirementsMatrixDataId;
     }
 
-    public Game getGame()
+    public HAHPGame getGame()
     {
         return game;
     }
 
-    public void setGame(Game game)
+    public void setGame(HAHPGame game)
     {
         this.game = game;
     }
@@ -134,13 +134,13 @@ public class RequirementsMatrixData
     }
 
     @JsonIgnore
-    public List<PlayerMove> getPlayerMoves()
+    public List<HAHPPlayerMove> getPlayerMoves()
     {
         return playerMoves;
     }
 
     @JsonIgnore
-    public void setPlayerMoves(List<PlayerMove> playerMoves)
+    public void setPlayerMoves(List<HAHPPlayerMove> playerMoves)
     {
         this.playerMoves = playerMoves;
     }

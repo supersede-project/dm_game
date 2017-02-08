@@ -24,18 +24,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.supersede.gr.model.Game;
-import eu.supersede.gr.model.JudgeAct;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPJudgeAct;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
+public interface AHPJudgeActsJpa extends JpaRepository<HAHPJudgeAct, Long>
 {
     /**
      * Get a List of JudgeAct that contain a specified RequirementsMatrixData
      * @param rmd
      */
-    List<JudgeAct> findByRequirementsMatrixData(RequirementsMatrixData rmd);
+    List<HAHPJudgeAct> findByRequirementsMatrixData(HAHPRequirementsMatrixData rmd);
 
     /**
      * Get a List of JudgeAct that contain a specified Game and a specified ValutationCriteria
@@ -44,7 +44,7 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.game = ?1 AND ja.requirementsMatrixData.criteria = ?2")
     @Transactional
-    List<JudgeAct> findByGameAndCriteria(Game game, ValutationCriteria criteria);
+    List<HAHPJudgeAct> findByGameAndCriteria(HAHPGame game, ValutationCriteria criteria);
 
     /**
      * Get a List of JudgeAct that contain a specified Game
@@ -52,7 +52,7 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.game = ?1")
     @Transactional
-    List<JudgeAct> findByGame(Game game);
+    List<HAHPJudgeAct> findByGame(HAHPGame game);
 
     /**
      * Get a List of JudgeAct that contain a specified ValutationCriteria
@@ -60,7 +60,7 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.criteria = ?1")
     @Transactional
-    List<JudgeAct> findByCriteria(ValutationCriteria criteria);
+    List<HAHPJudgeAct> findByCriteria(ValutationCriteria criteria);
 
     /**
      * Get a List of JudgeAct that contain a specified Game, a specified ValutationCriteria and the Game has not to be
@@ -70,7 +70,7 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.game = ?1 AND ja.requirementsMatrixData.criteria = ?2 AND ja.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<JudgeAct> findByGameAndCriteriaAndGameNotFinished(Game game, ValutationCriteria criteria);
+    List<HAHPJudgeAct> findByGameAndCriteriaAndGameNotFinished(HAHPGame game, ValutationCriteria criteria);
 
     /**
      * Get a List of JudgeAct that contain a specified Game but the Game has not to be finished
@@ -78,7 +78,7 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.game = ?1 AND ja.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<JudgeAct> findByGameAndGameNotFinished(Game game);
+    List<HAHPJudgeAct> findByGameAndGameNotFinished(HAHPGame game);
 
     /**
      * Get a List of JudgeAct that contain a specified ValutationCriteria but the Game has not to be finished
@@ -86,12 +86,12 @@ public interface JudgeActsJpa extends JpaRepository<JudgeAct, Long>
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.criteria = ?1 AND ja.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<JudgeAct> findByCriteriaAndGameNotFinished(ValutationCriteria criteria);
+    List<HAHPJudgeAct> findByCriteriaAndGameNotFinished(ValutationCriteria criteria);
 
     /**
      * Get a List of JudgeAct where the game are not finished
      */
     @Query("SELECT ja FROM JudgeAct ja WHERE ja.requirementsMatrixData.game.finished = FALSE")
     @Transactional
-    List<JudgeAct> findAllAndGameNotFinished();
+    List<HAHPJudgeAct> findAllAndGameNotFinished();
 }

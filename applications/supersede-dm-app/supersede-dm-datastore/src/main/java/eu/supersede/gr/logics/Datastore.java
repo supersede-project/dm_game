@@ -17,16 +17,17 @@ package eu.supersede.gr.logics;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
-@Service
+@Component
 public class Datastore
 {
     @Autowired
@@ -73,4 +74,9 @@ public class Datastore
     {
         return getRequirementsJpa().findAll();
     }
+    
+    public void setRequirementStatus( Long reqId, RequirementStatus status ) {
+    	
+    }
+    
 }

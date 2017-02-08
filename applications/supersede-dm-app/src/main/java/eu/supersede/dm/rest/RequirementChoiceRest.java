@@ -20,21 +20,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.gr.jpa.RequirementsChoicesJpa;
-import eu.supersede.gr.model.RequirementChoice;
+import eu.supersede.gr.jpa.AHPRequirementsChoicesJpa;
+import eu.supersede.gr.model.HAHPRequirementChoice;
 
 @RestController
 @RequestMapping("/requirementchoice")
 public class RequirementChoiceRest
 {
     @Autowired
-    private RequirementsChoicesJpa requirementsChoices;
+    private AHPRequirementsChoicesJpa requirementsChoices;
 
     /**
      * Return all requirements choices.
      */
     @RequestMapping("")
-    public List<RequirementChoice> getRequirementsChoices()
+    public List<HAHPRequirementChoice> getRequirementsChoices()
     {
         return requirementsChoices.findAll();
     }

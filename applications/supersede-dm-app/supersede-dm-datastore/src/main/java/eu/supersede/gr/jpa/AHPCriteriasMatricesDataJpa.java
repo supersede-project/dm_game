@@ -22,14 +22,14 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.supersede.gr.model.CriteriasMatrixData;
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPCriteriasMatrixData;
+import eu.supersede.gr.model.HAHPGame;
 
-public interface CriteriasMatricesDataJpa extends JpaRepository<CriteriasMatrixData, Long>
+public interface AHPCriteriasMatricesDataJpa extends JpaRepository<HAHPCriteriasMatrixData, Long>
 {
     /**
      * Get a List of CriteriasMatrixData that contain a specified Game
      * @param g
      */
-    List<CriteriasMatrixData> findByGame(Game g);
+    List<HAHPCriteriasMatrixData> findByGame(HAHPGame g);
 }

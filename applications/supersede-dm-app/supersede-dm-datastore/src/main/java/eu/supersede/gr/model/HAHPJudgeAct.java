@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "judge_acts")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class JudgeAct
+public class HAHPJudgeAct
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,7 +50,7 @@ public class JudgeAct
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "requirements_matrix_data_id", nullable = false)
-    private RequirementsMatrixData requirementsMatrixData;
+    private HAHPRequirementsMatrixData requirementsMatrixData;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "judge_id")
@@ -62,7 +62,7 @@ public class JudgeAct
     @Temporal(TemporalType.TIMESTAMP)
     private Date votedTime;
 
-    public JudgeAct()
+    public HAHPJudgeAct()
     {
 
     }
@@ -77,12 +77,12 @@ public class JudgeAct
         this.judgeActId = judgeActId;
     }
 
-    public RequirementsMatrixData getRequirementsMatrixData()
+    public HAHPRequirementsMatrixData getRequirementsMatrixData()
     {
         return requirementsMatrixData;
     }
 
-    public void setRequirementsMatrixData(RequirementsMatrixData requirementsMatrixData)
+    public void setRequirementsMatrixData(HAHPRequirementsMatrixData requirementsMatrixData)
     {
         this.requirementsMatrixData = requirementsMatrixData;
     }

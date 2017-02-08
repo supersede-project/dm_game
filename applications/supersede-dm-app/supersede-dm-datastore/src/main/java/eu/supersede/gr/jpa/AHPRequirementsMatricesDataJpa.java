@@ -22,30 +22,30 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.ValutationCriteria;
 
-public interface RequirementsMatricesDataJpa extends JpaRepository<RequirementsMatrixData, Long>
+public interface AHPRequirementsMatricesDataJpa extends JpaRepository<HAHPRequirementsMatrixData, Long>
 {
     /**
      * Get a List of RequirementsMatrixData from the ValutationCriteria
      * @param criteria
      */
-    List<RequirementsMatrixData> findByCriteria(ValutationCriteria criteria);
+    List<HAHPRequirementsMatrixData> findByCriteria(ValutationCriteria criteria);
 
     /**
      * Get a List of RequirementsMatrixData from the RowRequirement
      * @param requirement
      */
-    List<RequirementsMatrixData> findByRowRequirement(Requirement requirement);
+    List<HAHPRequirementsMatrixData> findByRowRequirement(Requirement requirement);
 
     /**
      * Get a List of RequirementsMatrixData from the ColumnRequirement
      * @param requirement
      */
-    List<RequirementsMatrixData> findByColumnRequirement(Requirement requirement);
+    List<HAHPRequirementsMatrixData> findByColumnRequirement(Requirement requirement);
 
-    List<RequirementsMatrixData> findByGame(Game g);
+    List<HAHPRequirementsMatrixData> findByGame(HAHPGame g);
 }
