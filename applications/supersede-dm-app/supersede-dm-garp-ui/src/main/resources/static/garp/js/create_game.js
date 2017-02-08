@@ -16,6 +16,14 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 
+    $scope.currentPage = "page1";
+
+    $scope.to_page = function(page) {
+        $scope.currentPage = 'page' + page;
+        console.log("current page: ");
+        console.log($scope.currentPage);
+    }
+
     $http.get('supersede-dm-app/requirement')
     .success(function(data) {
         var source = {
