@@ -18,7 +18,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $scope.currentPage = "page1";
 
+    $scope.gameRequirements = [];
+    $scope.gameCriteria = [];
+    $scope.gamePlayers = [];
+
     $scope.to_page = function(page) {
+        if (page == "2") {
+            defineGameData();
+        }
+
         $scope.currentPage = 'page' + page;
         console.log("current page: ");
         console.log($scope.currentPage);
@@ -102,32 +110,32 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     });
 
-    $scope.create_game = function () {
+    var defineGameData = function() {
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
-        var gameRequirements = [];
         var i;
         for (i = 0; i < selectedRequirements.length; i++) {
             var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]).requirementId;
-            gameRequirements.push(selectedRequirement);
+            $scope.gameRequirements.push(selectedRequirement);
         }
 
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
-        var gameCriteria = [];
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
-            gameCriteria.push(selectedCriterion);
+            $scope.gameCriteria.push(selectedCriterion);
         }
 
         var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
-        var gamePlayers = [];
         for (i = 0; i < selectedPlayers.length; i++) {
             var selectedPlayer = $("#players").jqxGrid('getrowdata', selectedPlayers[i]).userId;
-            gamePlayers.push(selectedPlayer);
+            $scope.gamePlayers.push(selectedPlayer);
         }
+    }
 
+    $scope.create_game = function () {
         var gameCriteriaWeights = {};
-        for (i = 0; i < gameCriteria.length; i++) {
-            gameCriteriaWeights[gameCriteria[i]] = 1.0;
+
+        for (i = 0; i < $scope.gameCriteria.length; i++) {
+            gameCriteriaWeights[$scope.gameCriteria[i]] = 1.0;
         }
 
         console.log("gameCriteriaWeights:");
