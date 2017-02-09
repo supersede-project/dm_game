@@ -25,10 +25,10 @@
 
     <div id="page2" ng-show="currentPage == 'page2'">
         <h2>Define Criteria Weights</h2>
-        <div ng-repeat="x in fullCriteria">
+        <div ng-repeat="x in fullCriteria" id="{{'criterion' + x.criteriaId}}">
             <span>{{x.criteriaId}}: {{x.name}}</span>
-            <jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
-                jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"></jqx-slider>
+            <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
+                jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true"></div>
             <br/>
         </div>
         <br/>

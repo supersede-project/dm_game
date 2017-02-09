@@ -144,7 +144,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         var i;
 
         for (i = 0; i < $scope.gameCriteria.length; i++) {
-            gameCriteriaWeights[$scope.gameCriteria[i]] = 1.0;
+            var criterionValue = $("#criterion" + $scope.gameCriteria[i] + " > div").jqxSlider('value');
+            gameCriteriaWeights[$scope.gameCriteria[i]] = criterionValue;
         }
 
         console.log("gameCriteriaWeights:");
