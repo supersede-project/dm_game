@@ -22,7 +22,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         $scope.currentPage = 'page' + page;
         console.log("current page: ");
         console.log($scope.currentPage);
-    }
+    };
 
     $http.get('supersede-dm-app/requirement')
     .success(function(data) {
@@ -125,12 +125,26 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             gamePlayers.push(selectedPlayer);
         }
 
-        $http.post('supersede-dm-app/garp/game/newgame', {},
-            {params: {gameRequirements: gameRequirements, gameCriteria: gameCriteria, gamePlayers: gamePlayers}})
+        var gameCriteriaWeights = {};
+        for (i = 0; i < gameCriteria.length; i++) {
+            gameCriteriaWeights[gameCriteria[i]] = 1.0;
+        }
+
+        console.log("gameCriteriaWeights:");
+        console.log(gameCriteriaWeights);
+
+        $http({
+            method: 'POST',
+            url: "supersede-dm-app/garp/game/newgame",
+            data: gameCriteriaWeights,
+            params: {gameRequirements: gameRequirements, gamePlayers: gamePlayers}
+        })
         .success(function(data) {
-            console.log("success");
-        }).error(function(err){
+            console.log("success sending data:");
+            console.log(data);
+        }).error(function(err, data){
             console.log(err);
+            console.log(data);
         });
 
         $location.url('supersede-dm-app/garp/home');

@@ -73,7 +73,8 @@ public class GAPersistentDB
     @Autowired
     private GAGameRankingsJpa rankingsJpa;
 
-    public void create(GAGameSummary game, List<Long> criteria, List<Long> requirements, List<Long> participants)
+    public void create(GAGameSummary game, HashMap<Long, Double> criteriaWeights, List<Long> requirements,
+            List<Long> participants)
     {
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
@@ -83,9 +84,9 @@ public class GAPersistentDB
         HGAGameSummary info = new HGAGameSummary(activity.getId(), game);
         games.save(info);
 
-        for (Long cId : criteria)
+        for (Long cId : criteriaWeights.keySet())
         {
-            HGAGameCriterion c = new HGAGameCriterion(info.getId(), cId);
+            HGAGameCriterion c = new HGAGameCriterion(info.getId(), cId, criteriaWeights.get(cId));
             criteriaJpa.save(c);
         }
 
@@ -121,7 +122,7 @@ public class GAPersistentDB
         participationJpa.save(p);
 
         log.info("Created game: " + game.getId() + ", requirements: " + requirements.size() + ", criteria: "
-                + criteria.size() + ", participants: " + participants.size());
+                + criteriaWeights.size() + ", participants: " + participants.size());
     }
 
     public List<GAGameSummary> getOwnedGames(Long owner)
@@ -226,27 +227,35 @@ public class GAPersistentDB
 
     public GAGameDetails getGameInfo(Long gameId)
     {
-        HGAGameSummary info = games.findOne(gameId);
+        HGAGameSummary gameInfo = games.findOne(gameId);
 
-        if (info == null)
+        if (gameInfo == null)
         {
             return null;
         }
 
         GAGameDetails d = new GAGameDetails();
 
-        d.setGame(extract(info));
+        d.setGame(extract(gameInfo));
 
         // add criteria
-        List<Long> criteriaList = criteriaJpa.findByGame(info.getId());
-        d.setCriteria(criteriaList);
+        HashMap<Long, Double> criteriaWeights = new HashMap<>();
+        List<Long> criteriaList = criteriaJpa.findCriteriaByGame(gameInfo.getId());
+
+        for (Long criterionId : criteriaList)
+        {
+            criteriaWeights.put(criterionId, criteriaJpa.findCriterionWeightByGame(gameInfo.getId(), criterionId));
+        }
+
+        d.setCriteriaWeights(criteriaWeights);
 
         // add requirements
-        List<Long> reqsList = gameRequirementsJpa.findRequirementIdsByGame(info.getId());
+        List<Long> reqsList = gameRequirementsJpa.findRequirementIdsByGame(gameInfo.getId());
         d.setRequirements(reqsList);
 
         // add users
-        List<Long> participantsList = participationJpa.findParticipants(info.getId(), GARole.OpinionProvider.name());
+        List<Long> participantsList = participationJpa.findParticipants(gameInfo.getId(),
+                GARole.OpinionProvider.name());
         d.setParticipants(participantsList);
 
         Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
@@ -254,7 +263,7 @@ public class GAPersistentDB
         // add rankings
         for (Long userId : participantsList)
         {
-            String json = rankingsJpa.findRankingByGameAndUser(info.getId(), userId);
+            String json = rankingsJpa.findRankingByGameAndUser(gameInfo.getId(), userId);
             Map<String, List<Long>> map = deserializeRankings(json);
             rankings.put(userId, map);
         }
@@ -301,21 +310,21 @@ public class GAPersistentDB
         return gi.getParticipants();
     }
 
-    public List<Long> getCriteria(GAGameSummary game)
+    public HashMap<Long, Double> getCriteriaWeights(GAGameSummary game)
     {
-        return getCriteria(game.getId());
+        return getCriteriaWeights(game.getId());
     }
 
-    public List<Long> getCriteria(long gameId)
+    public HashMap<Long, Double> getCriteriaWeights(long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
-        return gi.getCriteria();
+        return gi.getCriteriaWeights();
     }
 
     public List<Long> getRequirements(Long gameId)
@@ -341,7 +350,7 @@ public class GAPersistentDB
 
         Map<String, List<Long>> map = new HashMap<>();
 
-        for (Long c : gi.getCriteria())
+        for (Long c : gi.getCriteriaWeights().keySet())
         {
             map.put("" + c, gi.getRequirements());
         }

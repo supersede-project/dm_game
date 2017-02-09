@@ -30,16 +30,18 @@ public class HGAGameCriterion
 
     private Long gameId;
     private Long criterionId;
+    private Double criterionWeight;
     private Boolean inverse = false;
 
     HGAGameCriterion()
     {
     }
 
-    public HGAGameCriterion(Long gameid, Long criterionid)
+    public HGAGameCriterion(Long gameid, Long criterionid, Double criterionWeight)
     {
         this.gameId = gameid;
         this.criterionId = criterionid;
+        this.criterionWeight = criterionWeight;
     }
 
     public Long getId()
@@ -70,6 +72,16 @@ public class HGAGameCriterion
     public void setCriterionId(Long criterionId)
     {
         this.criterionId = criterionId;
+    }
+
+    public Double getCriterionWeight()
+    {
+        return criterionWeight;
+    }
+
+    public void setCriterionWeight(Double criterionWeight)
+    {
+        this.criterionWeight = criterionWeight;
     }
 
     public Boolean isInverse()

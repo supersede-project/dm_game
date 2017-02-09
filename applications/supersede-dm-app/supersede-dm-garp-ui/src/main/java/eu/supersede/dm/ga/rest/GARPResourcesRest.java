@@ -86,12 +86,13 @@ public class GARPResourcesRest
 
                 IGAAlgorithm algo = new IGAAlgorithm();
 
-                List<Long> criteria = persistentDB.getCriteria(gameId);
+                HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
                 List<String> gameCriteria = new ArrayList<>();
 
-                for (Long criterionId : criteria)
+                for (Long criterionId : criteriaWeights.keySet())
                 {
                     gameCriteria.add("" + criterionId);
+                    algo.setCriterionWeight("" + criterionId, criteriaWeights.get(criterionId));
                 }
 
                 algo.setCriteria(gameCriteria);

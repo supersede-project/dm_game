@@ -19,15 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "ga_game_details")
 public class GAGameDetails
 {
     private GAGameSummary game;
-    private List<Long> criteria = new ArrayList<>();
+    private HashMap<Long, Double> criteriaWeights = new HashMap<>();
     private List<Long> requirements = new ArrayList<>();
     private List<Long> participants = new ArrayList<>();
     private Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
@@ -42,14 +37,14 @@ public class GAGameDetails
         this.game = game;
     }
 
-    public List<Long> getCriteria()
+    public HashMap<Long, Double> getCriteriaWeights()
     {
-        return criteria;
+        return criteriaWeights;
     }
 
-    public void setCriteria(List<Long> criteria)
+    public void setCriteriaWeights(HashMap<Long, Double> criteriaWeights)
     {
-        this.criteria = criteria;
+        this.criteriaWeights = criteriaWeights;
     }
 
     public List<Long> getRequirements()
