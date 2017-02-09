@@ -22,6 +22,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     $scope.gameCriteria = [];
     $scope.gamePlayers = [];
 
+    $scope.fullCriteria = [];
+
     $scope.to_page = function(page) {
         if (page == "2") {
             defineGameData();
@@ -122,6 +124,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
             $scope.gameCriteria.push(selectedCriterion);
+
+            $http.get("supersede-dm-app/garp/game/gamecriterion?criterionId=" + selectedCriterion)
+            .success(function(data) {
+            console.log(data);
+            $scope.fullCriteria.push(data);
+            });
         }
 
         var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
@@ -133,6 +141,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $scope.create_game = function () {
         var gameCriteriaWeights = {};
+        var i;
 
         for (i = 0; i < $scope.gameCriteria.length; i++) {
             gameCriteriaWeights[$scope.gameCriteria[i]] = 1.0;
@@ -145,7 +154,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
             data: gameCriteriaWeights,
-            params: {gameRequirements: gameRequirements, gamePlayers: gamePlayers}
+            params: {gameRequirements: $scope.gameRequirements, gamePlayers: $scope.gamePlayers}
         })
         .success(function(data) {
             console.log("success sending data:");

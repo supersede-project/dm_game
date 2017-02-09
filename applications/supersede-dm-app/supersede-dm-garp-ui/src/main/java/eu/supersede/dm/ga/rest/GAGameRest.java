@@ -163,6 +163,12 @@ public class GAGameRest
         return criteria;
     }
 
+    @RequestMapping(value = "/gamecriterion", method = RequestMethod.GET)
+    public ValutationCriteria getGameCriterion(Authentication authentication, Long criterionId)
+    {
+        return availableCriteria.findOne(criterionId);
+    }
+
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
     public Requirement getRequirement(Authentication authentication, Long requirementId)
     {
