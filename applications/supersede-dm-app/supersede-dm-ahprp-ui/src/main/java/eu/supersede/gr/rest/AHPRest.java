@@ -36,8 +36,8 @@ import eu.supersede.gr.jpa.AHPGamesJpa;
 import eu.supersede.gr.model.HAHPCriteriasMatrixData;
 import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.HAHPPlayerMove;
-import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController

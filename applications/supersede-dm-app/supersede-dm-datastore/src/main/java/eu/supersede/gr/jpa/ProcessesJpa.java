@@ -1,3 +1,4 @@
+package eu.supersede.gr.jpa;
 /*
    (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
 
@@ -12,22 +13,11 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
-package eu.supersede.gr.jpa;
-
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HReceivedUserRequest;
+import eu.supersede.gr.model.HProcess;
 
-public interface ReceivedUserRequestsJpa extends JpaRepository<HReceivedUserRequest, String>
+public interface ProcessesJpa extends JpaRepository<HProcess, String>
 {
-//    @Query("SELECT jsonizedRanking FROM HGARankingInfo rankings WHERE gameId = ?1 AND userId = ?2")
-    @Query("SELECT ur FROM HReceivedUserRequest ur WHERE alertId = ?1")
-    List<HReceivedUserRequest> findRequestsForAlert(String alertID);
+
 }

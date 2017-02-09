@@ -6,23 +6,29 @@
 	<div class="row">
 		<div class="col-md-6">
 
-			<h2>Received alerts</h2>
+			<h2>Queued alerts: {{alertsNum}}</h2>
 
-			<div id="jqxgrid"></div>
+<!-- 			<div id="jqxgrid"></div> -->
 
 		</div>
 
-	</div>
+<!-- 	</div> -->
 	
-	<div class="row" style="margin-top:64px">
+<!-- 	<div class="row" style="margin-top:64px"> -->
 		<div class="col-md-6">
-
-			<h2>Requirements</h2>
-
-			<div id='jqxListBox' style="width: 100%"></div>
-
+			<h2>Queued requirements: {{reqNum}}</h2>
+<!-- 			<div id='jqxListBox' style="width: 100%"></div> -->
 		</div>
-
+		
+		<div class="col-md-6">
+			<h2>Ongoing processes: {{procNum}}
+	        <input type="button" value="Create new" id='btnNewProcess' />
+<!-- 				<jqx-button style="margin-left:64px" jqx-height="30" on-click="exportGameData()"> -->
+<!-- 				Create new -->
+<!-- 				</jqx-link-button> -->
+				</h2>
+		</div>
+		
 	</div>
 	
 

@@ -113,6 +113,8 @@ public class AlertsRest
     @RequestMapping(value = "/biglist", method = RequestMethod.GET)
     public List<FlattenedAlert> getAlertsTree()
     {
+//    	return new ArrayList<>();
+//    	
         List<FlattenedAlert> list = new ArrayList<>();
         List<HApp> apps = jpaApps.findAll();
 
@@ -120,7 +122,7 @@ public class AlertsRest
         {
             List<HAlert> alerts = jpaAlerts.findAll();
 
-            for (HAlert alert : alerts)
+            for (HAlert alert : alerts) try
             {
                 List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
 
@@ -146,6 +148,9 @@ public class AlertsRest
 
                     list.add(fa);
                 }
+            }
+            catch( Exception ex ) {
+            	ex.printStackTrace();
             }
         }
 
