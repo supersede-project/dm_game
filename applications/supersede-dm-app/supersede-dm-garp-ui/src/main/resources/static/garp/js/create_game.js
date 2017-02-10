@@ -16,6 +16,24 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 
+    $scope.currentPage = "page1";
+
+    $scope.gameRequirements = [];
+    $scope.gameCriteria = [];
+    $scope.gamePlayers = [];
+
+    $scope.fullCriteria = [];
+
+    $scope.to_page = function(page) {
+        if (page == "2") {
+            defineGameData();
+        }
+
+        $scope.currentPage = 'page' + page;
+        console.log("current page: ");
+        console.log($scope.currentPage);
+    };
+
     $http.get('supersede-dm-app/requirement')
     .success(function(data) {
         var source = {
@@ -94,35 +112,57 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     });
 
-    $scope.create_game = function () {
+    var defineGameData = function() {
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
-        var gameRequirements = [];
         var i;
         for (i = 0; i < selectedRequirements.length; i++) {
             var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]).requirementId;
-            gameRequirements.push(selectedRequirement);
+            $scope.gameRequirements.push(selectedRequirement);
         }
 
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
-        var gameCriteria = [];
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
-            gameCriteria.push(selectedCriterion);
+            $scope.gameCriteria.push(selectedCriterion);
+
+            $http.get("supersede-dm-app/garp/game/gamecriterion?criterionId=" + selectedCriterion)
+            .success(function(data) {
+            console.log(data);
+            $scope.fullCriteria.push(data);
+            });
         }
 
         var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
-        var gamePlayers = [];
         for (i = 0; i < selectedPlayers.length; i++) {
             var selectedPlayer = $("#players").jqxGrid('getrowdata', selectedPlayers[i]).userId;
-            gamePlayers.push(selectedPlayer);
+            $scope.gamePlayers.push(selectedPlayer);
+        }
+    }
+
+    $scope.create_game = function () {
+        var gameCriteriaWeights = {};
+        var i;
+
+        for (i = 0; i < $scope.gameCriteria.length; i++) {
+            var criterionValue = $("#criterion" + $scope.gameCriteria[i] + " > div").jqxSlider('value');
+            gameCriteriaWeights[$scope.gameCriteria[i]] = criterionValue;
         }
 
-        $http.post('supersede-dm-app/garp/game/newgame', {},
-            {params: {gameRequirements: gameRequirements, gameCriteria: gameCriteria, gamePlayers: gamePlayers}})
+        console.log("gameCriteriaWeights:");
+        console.log(gameCriteriaWeights);
+
+        $http({
+            method: 'POST',
+            url: "supersede-dm-app/garp/game/newgame",
+            data: gameCriteriaWeights,
+            params: {gameRequirements: $scope.gameRequirements, gamePlayers: $scope.gamePlayers}
+        })
         .success(function(data) {
-            console.log("success");
-        }).error(function(err){
+            console.log("success sending data:");
+            console.log(data);
+        }).error(function(err, data){
             console.log(err);
+            console.log(data);
         });
 
         $location.url('supersede-dm-app/garp/home');

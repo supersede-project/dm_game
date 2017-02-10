@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -47,41 +48,46 @@ public class GAGameRest
     private GAPersistentDB persistentDB;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
-    public List<GAGameSummary> getOwnedGames(Authentication authentication)
+    public List<HGAGameSummary> getOwnedGames(Authentication authentication)
     {
         return persistentDB.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
-    public List<GAGameSummary> getActiveGames(Authentication authentication)
+    public List<HGAGameSummary> getActiveGames(Authentication authentication)
     {
         return persistentDB.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(Authentication authentication, String[] gameRequirements, String[] gameCriteria,
-            String[] gamePlayers)
+    public void createNewGame(Authentication authentication, @RequestParam Long[] gameRequirements,
+            @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gamePlayers)
     {
         List<Long> requirements = new ArrayList<>();
-        List<Long> criteria = new ArrayList<>();
+        HashMap<Long, Double> criteriaWeights = new HashMap<>();
         List<Long> players = new ArrayList<>();
 
-        for (String id : gameRequirements)
+        for (Long id : gameRequirements)
         {
-            requirements.add(new Long(id));
+            requirements.add(id);
         }
 
-        for (String id : gameCriteria)
+        System.out.println("criteria weights: " + gameCriteriaWeights);
+        System.out.println("criteria weights size: " + gameCriteriaWeights.size());
+
+        for (Long id : gameCriteriaWeights.keySet())
         {
-            criteria.add(new Long(id));
+            System.out.println("id: " + id);
+            System.out.println("weight: " + gameCriteriaWeights.get(id));
+            criteriaWeights.put(id, gameCriteriaWeights.get(id));
         }
 
-        for (String id : gamePlayers)
+        for (Long id : gamePlayers)
         {
-            players.add(new Long(id));
+            players.add(id);
         }
 
-        GAGameSummary game = new GAGameSummary();
+        HGAGameSummary game = new HGAGameSummary();
         long currentTime = System.currentTimeMillis();
         game.setId(currentTime);
         game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
@@ -92,7 +98,7 @@ public class GAGameRest
 
         game.setStatus("open");
 
-        persistentDB.create(game, criteria, requirements, players);
+        persistentDB.create(game, criteriaWeights, requirements, players);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -138,7 +144,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)
-    public GAGameSummary getGame(Authentication authentication, Long gameId)
+    public HGAGameSummary getGame(Authentication authentication, Long gameId)
     {
         return persistentDB.getGameInfo(gameId).getGame();
     }
@@ -147,7 +153,7 @@ public class GAGameRest
     public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {
         List<ValutationCriteria> criteria = new ArrayList<>();
-        List<Long> criteriaIds = persistentDB.getCriteria(gameId);
+        Set<Long> criteriaIds = persistentDB.getCriteriaWeights(gameId).keySet();
 
         for (Long criterionId : criteriaIds)
         {
@@ -155,6 +161,12 @@ public class GAGameRest
         }
 
         return criteria;
+    }
+
+    @RequestMapping(value = "/gamecriterion", method = RequestMethod.GET)
+    public ValutationCriteria getGameCriterion(Authentication authentication, Long criterionId)
+    {
+        return availableCriteria.findOne(criterionId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
@@ -170,15 +182,16 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
+    public List<Map<String, Double>> calcRanking(Authentication authentication, HGAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        List<Long> criteria = persistentDB.getCriteria(game);
+        HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(game);
         List<String> gameCriteria = new ArrayList<>();
 
-        for (Long criterionId : criteria)
+        for (Long criterionId : criteriaWeights.keySet())
         {
             gameCriteria.add("" + criterionId);
+            algo.setCriterionWeight("" + criterionId, criteriaWeights.get(criterionId));
         }
 
         algo.setCriteria(gameCriteria);

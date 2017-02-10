@@ -27,6 +27,8 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
         	for (var i = 0; i < data.length; i++) {
         	    $scope.requirements.push(data[i]);
             }
+            console.log("current requirements:");
+            console.log($scope.requirements);
             $("#sortable").jqxSortable();
             $("#sortable > div").jqxExpander({ theme: "summer", expanded: false, width: 200});
         }).error(function(err){
@@ -62,6 +64,4 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     };	
 
     $scope.getRequirements();
-    console.log("current requirements:");
-    console.log($scope.requirements);
 });

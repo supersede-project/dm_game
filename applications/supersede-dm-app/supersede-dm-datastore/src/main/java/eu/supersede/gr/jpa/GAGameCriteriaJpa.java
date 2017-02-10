@@ -20,9 +20,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HGAGameCriterion;
 
-public interface GAGameCriteriaJpa extends JpaRepository<HGAGameCriterion, Long> {
+public interface GAGameCriteriaJpa extends JpaRepository<HGAGameCriterion, Long>
+{
+    @Query("SELECT criterionId FROM HGAGameCriterion criterion WHERE gameId = ?1")
+    List<Long> findCriteriaByGame(Long gameId);
 
-	@Query("SELECT criterionId FROM HGAGameCriterion criterion WHERE gameId = ?1")
-	List<Long> findByGame( Long gameId );
-
+    @Query("SELECT criterionWeight FROM HGAGameCriterion criterion WHERE gameId = ?1 AND criterionId = ?2")
+    Double findCriterionWeightByGame(Long gameId, Long criterionId);
 }

@@ -20,8 +20,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import eu.supersede.gr.data.GAGameSummary;
-
 @Entity
 @Table(name = "h_ga_games")
 public class HGAGameSummary
@@ -41,21 +39,6 @@ public class HGAGameSummary
 
     }
 
-    public HGAGameSummary(Long activityId, GAGameSummary game)
-    {
-        this.activityId = activityId;
-        this.id = game.getId();
-        this.owner = game.getOwner();
-        this.date = game.getDate();
-        this.status = game.getStatus();
-        this.name = game.getName();
-    }
-
-    public Long getActivityId()
-    {
-        return this.activityId;
-    }
-
     public Long getId()
     {
         return this.id;
@@ -64,6 +47,26 @@ public class HGAGameSummary
     public void setId(Long id)
     {
         this.id = id;
+    }
+
+    public Long getActivityId()
+    {
+        return this.activityId;
+    }
+
+    public void setActivityId(Long activityId)
+    {
+        this.activityId = activityId;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public Long getOwner()
@@ -94,10 +97,5 @@ public class HGAGameSummary
     public void setStatus(String status)
     {
         this.status = status;
-    }
-
-    public String getName()
-    {
-        return this.name;
     }
 }

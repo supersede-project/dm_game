@@ -19,11 +19,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.model.HGAGameSummary;
 
 public interface GAGameSummaryJpa extends JpaRepository<HGAGameSummary, Long>
 {
-	@Query("SELECT id FROM HGAGameSummary summary WHERE owner = ?1 AND status = ?2")
-	List<GAGameSummary> findByOwnerAndStatus( Long playerId, String status );
+    @Query("SELECT id FROM HGAGameSummary summary WHERE owner = ?1 AND status = ?2")
+    List<HGAGameSummary> findByOwnerAndStatus(Long playerId, String status);
 }
