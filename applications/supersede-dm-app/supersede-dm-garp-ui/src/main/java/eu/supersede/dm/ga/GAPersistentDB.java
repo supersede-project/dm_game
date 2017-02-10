@@ -30,7 +30,6 @@ import com.google.gson.reflect.TypeToken;
 
 import eu.supersede.dm.methods.GAMethod;
 import eu.supersede.gr.data.GAGameDetails;
-import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.data.GARole;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
@@ -73,16 +72,15 @@ public class GAPersistentDB
     @Autowired
     private GAGameRankingsJpa rankingsJpa;
 
-    public void create(GAGameSummary game, HashMap<Long, Double> criteriaWeights, List<Long> requirements,
+    public void create(HGAGameSummary game, HashMap<Long, Double> criteriaWeights, List<Long> requirements,
             List<Long> participants)
     {
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
-        activitiesJpa.save(activity);
+        HActivity persistentActivity = activitiesJpa.save(activity);
 
-        game.setId(null);
-        HGAGameSummary info = new HGAGameSummary(activity.getId(), game);
-        games.save(info);
+        game.setActivityId(persistentActivity.getId());
+        HGAGameSummary info = games.save(game);
 
         for (Long cId : criteriaWeights.keySet())
         {
@@ -117,27 +115,27 @@ public class GAPersistentDB
         // Save owner
         HGAGameParticipation p = new HGAGameParticipation();
         p.setGameId(info.getId());
-        p.setUserId(game.getOwner());
+        p.setUserId(info.getOwner());
         p.setRole(GARole.Supervisor.name());
         participationJpa.save(p);
 
-        log.info("Created game: " + game.getId() + ", requirements: " + requirements.size() + ", criteria: "
+        log.info("Created game: " + info.getId() + ", requirements: " + requirements.size() + ", criteria: "
                 + criteriaWeights.size() + ", participants: " + participants.size());
     }
 
-    public List<GAGameSummary> getOwnedGames(Long owner)
+    public List<HGAGameSummary> getOwnedGames(Long owner)
     {
         return getGamesByRole(owner, GARole.Supervisor.name());
     }
 
-    public List<GAGameSummary> getActiveGames(Long userId)
+    public List<HGAGameSummary> getActiveGames(Long userId)
     {
         return getGamesByRole(userId, GARole.OpinionProvider.name());
     }
 
-    private List<GAGameSummary> getGamesByRole(Long userId, String roleName)
+    private List<HGAGameSummary> getGamesByRole(Long userId, String roleName)
     {
-        List<GAGameSummary> games = new ArrayList<>();
+        List<HGAGameSummary> games = new ArrayList<>();
         List<Long> gameList = this.participationJpa.findGames(userId, roleName);
 
         for (Long gameId : gameList)
@@ -149,16 +147,16 @@ public class GAPersistentDB
                 continue;
             }
 
-            GAGameSummary summary = extract(info);
+            HGAGameSummary summary = extract(info);
             games.add(summary);
         }
 
         return games;
     }
 
-    private GAGameSummary extract(HGAGameSummary info)
+    private HGAGameSummary extract(HGAGameSummary info)
     {
-        GAGameSummary summary = new GAGameSummary();
+        HGAGameSummary summary = new HGAGameSummary();
         summary.setId(info.getId());
         summary.setDate(info.getDate());
         summary.setOwner(info.getOwner());
@@ -286,7 +284,7 @@ public class GAPersistentDB
         return new Gson().fromJson(json, type);
     }
 
-    public List<Long> getParticipants(GAGameSummary game)
+    public List<Long> getParticipants(HGAGameSummary game)
     {
         GAGameDetails gi = getGameInfo(game.getId());
 
@@ -310,7 +308,7 @@ public class GAPersistentDB
         return gi.getParticipants();
     }
 
-    public HashMap<Long, Double> getCriteriaWeights(GAGameSummary game)
+    public HashMap<Long, Double> getCriteriaWeights(HGAGameSummary game)
     {
         return getCriteriaWeights(game.getId());
     }

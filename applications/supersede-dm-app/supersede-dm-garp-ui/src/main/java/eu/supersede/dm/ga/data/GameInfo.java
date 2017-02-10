@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.supersede.gr.data.GAGameSummary;
+import eu.supersede.gr.model.HGAGameSummary;
 
 public class GameInfo
 {
-    private GAGameSummary game;
+    private HGAGameSummary game;
     private List<String> criteria;
     private List<Long> requirements;
     private List<Long> participants;
@@ -23,12 +23,12 @@ public class GameInfo
         rankings = new HashMap<>();
     }
 
-    public GAGameSummary getGame()
+    public HGAGameSummary getGame()
     {
         return game;
     }
 
-    public void setGame(GAGameSummary game)
+    public void setGame(HGAGameSummary game)
     {
         this.game = game;
     }

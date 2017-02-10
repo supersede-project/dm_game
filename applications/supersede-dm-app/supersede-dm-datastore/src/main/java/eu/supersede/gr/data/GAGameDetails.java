@@ -19,20 +19,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.supersede.gr.model.HGAGameSummary;
+
 public class GAGameDetails
 {
-    private GAGameSummary game;
+    private HGAGameSummary game;
     private HashMap<Long, Double> criteriaWeights = new HashMap<>();
     private List<Long> requirements = new ArrayList<>();
     private List<Long> participants = new ArrayList<>();
     private Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
 
-    public GAGameSummary getGame()
+    public HGAGameSummary getGame()
     {
         return game;
     }
 
-    public void setGame(GAGameSummary game)
+    public void setGame(HGAGameSummary game)
     {
         this.game = game;
     }

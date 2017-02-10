@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.data.GAGameSummary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -48,13 +48,13 @@ public class GAGameRest
     private GAPersistentDB persistentDB;
 
     @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
-    public List<GAGameSummary> getOwnedGames(Authentication authentication)
+    public List<HGAGameSummary> getOwnedGames(Authentication authentication)
     {
         return persistentDB.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
 
     @RequestMapping(value = "/activegames", method = RequestMethod.GET)
-    public List<GAGameSummary> getActiveGames(Authentication authentication)
+    public List<HGAGameSummary> getActiveGames(Authentication authentication)
     {
         return persistentDB.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
@@ -87,7 +87,7 @@ public class GAGameRest
             players.add(id);
         }
 
-        GAGameSummary game = new GAGameSummary();
+        HGAGameSummary game = new HGAGameSummary();
         long currentTime = System.currentTimeMillis();
         game.setId(currentTime);
         game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
@@ -144,7 +144,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)
-    public GAGameSummary getGame(Authentication authentication, Long gameId)
+    public HGAGameSummary getGame(Authentication authentication, Long gameId)
     {
         return persistentDB.getGameInfo(gameId).getGame();
     }
@@ -182,7 +182,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, GAGameSummary game)
+    public List<Map<String, Double>> calcRanking(Authentication authentication, HGAGameSummary game)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
         HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(game);
