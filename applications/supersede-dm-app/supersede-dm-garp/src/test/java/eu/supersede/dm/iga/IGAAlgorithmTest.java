@@ -89,12 +89,12 @@ public class IGAAlgorithmTest
         Map<String, Double> weightsC1 = new HashMap<>();
         weightsC1.put(p1, 1.0);
         weightsC1.put(p2, 1.0);
-        igaAlgorithm.addPlayerRanking(c1, weightsC1);
+        igaAlgorithm.setPlayerWeights(c1, weightsC1);
 
         Map<String, Double> weightsC2 = new HashMap<>();
         weightsC2.put(p1, 1.0);
         weightsC2.put(p2, 1.0);
-        igaAlgorithm.addPlayerRanking(c2, weightsC2);
+        igaAlgorithm.setPlayerWeights(c2, weightsC2);
 
         // invoke the algorithm
         List<Map<String, Double>> rankings = igaAlgorithm.calc();

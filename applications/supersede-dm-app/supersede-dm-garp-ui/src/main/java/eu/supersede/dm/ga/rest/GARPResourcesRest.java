@@ -127,7 +127,7 @@ public class GARPResourcesRest
                     }
                 }
 
-                algo.addDefaultPlayerWeights(gameCriteria, players);
+                algo.setDefaultPlayerWeights(gameCriteria, players);
 
                 List<Map<String, Double>> prioritizations = null;
 

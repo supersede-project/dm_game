@@ -166,12 +166,12 @@ public class IGAAlgorithm
      * @param criterion: name/ID of criterion
      * @param weights: Map<Player, Weight>
      */
-    public void addPlayerRanking(String criterion, Map<String, Double> weights)
+    public void setPlayerWeights(String criterion, Map<String, Double> weights)
     {
         playerWeights.put(criterion, weights);
     }
 
-    public void addDefaultPlayerWeights(List<String> criteria, List<String> players)
+    public void setDefaultPlayerWeights(List<String> criteria, List<String> players)
     {
         for (String criterion : criteria)
         {
@@ -182,7 +182,7 @@ public class IGAAlgorithm
                 weights.put(player, 1d);
             }
 
-            addPlayerRanking(criterion, weights);
+            setPlayerWeights(criterion, weights);
         }
     }
 }
