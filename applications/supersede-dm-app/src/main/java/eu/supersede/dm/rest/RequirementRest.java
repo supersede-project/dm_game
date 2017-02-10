@@ -30,8 +30,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
-import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.Requirement;
 
 @RestController
 @RequestMapping("requirement")

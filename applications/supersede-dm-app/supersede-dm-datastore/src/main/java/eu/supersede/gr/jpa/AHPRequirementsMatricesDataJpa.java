@@ -23,8 +23,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import eu.supersede.gr.model.HAHPGame;
-import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
 public interface AHPRequirementsMatricesDataJpa extends JpaRepository<HAHPRequirementsMatrixData, Long>

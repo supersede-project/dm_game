@@ -1,0 +1,36 @@
+<script src="supersede-dm-app/js/requirements.js"></script>
+<div class="container" ng-controller="requirements">
+
+	Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
+
+	<div class="row">
+		<div class="col-md-6">
+
+			<h2>Received alerts</h2>
+
+			<div id="jqxgrid"></div>
+
+		</div>
+
+	</div>
+	
+	<div class="row" style="margin-top:64px">
+		<div class="col-md-6">
+
+			<h2>Requirements</h2>
+
+			<div id='jqxListBox' style="width: 100%"></div>
+
+		</div>
+
+	</div>
+	
+
+	<jqx-link-button jqx-width="200" jqx-height="30"> <a
+		href="#/supersede-dm-app/ahprp/home">Prioritize with AHP</a>
+	</jqx-link-button>
+	<jqx-link-button jqx-width="200" jqx-height="30"> <a
+		href="#/supersede-dm-app/plan">Plan decision making process</a>
+	</jqx-link-button>
+
+</div>
