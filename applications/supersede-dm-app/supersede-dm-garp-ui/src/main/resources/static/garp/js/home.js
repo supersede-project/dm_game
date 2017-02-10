@@ -16,6 +16,17 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('display_games', function($scope, $http, $location) {
 
+    function compareGamesByDate(a, b) {
+        if (a.date < b.date) {
+            return 1;
+        }
+        if (a.date > b.date) {
+            return -1;
+        }
+
+        return 0;
+    }
+
     $scope.getActiveGames = function() {
         $http.get('supersede-dm-app/garp/game/activegames')
         .success(function(data) {
@@ -28,7 +39,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                     { name: 'status' },
                     { name: 'id' }
                 ],
-                localdata: data
+                localdata: data.sort(compareGamesByDate)
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
@@ -66,7 +77,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                     { name: 'status' },
                     { name: 'id' }
                 ],
-                localdata: data
+                localdata: data.sort(compareGamesByDate)
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
