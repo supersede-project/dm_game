@@ -69,7 +69,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/criteria?id=');
+                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/gameplay?id=');
                 r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
                 return r;
             };

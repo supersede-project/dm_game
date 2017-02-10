@@ -20,22 +20,18 @@
     }
 </style>
 <div ng-controller="reqsCtrl">
-    <h1>Requirements Ordering for Criterion {{criterion}}</h1>
-</div>
+    <h1>Requirements Ordering for Criterion {{currentCriterion.criteriaId}}</h1>
 
-<div id="sortable" ng-controller="reqsCtrl">
-    <div ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}">
-        <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
-        <div style="background-color: #ffd11a">
-            <strong>Description</strong>: {{x.description}}<br>
+    <div id="sortable">
+        <div jqx-expander ng-repeat="x in requirements"  style="min-width: 500px" id="{{x.requirementId}}"
+                jqx-theme="summer" jqx-expanded="false" jqx-width="200">
+            <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
+            <div style="background-color: #ffd11a">
+                <strong>Description</strong>: {{x.description}}<br>
+            </div>
         </div>
     </div>
-</div>
 
-<div ng-controller="reqsCtrl">
-	<jqx-button ng-click="submitPrio()">Submit prioritized requirements</jqx-button>
-</div> 
-<br/>
-<div ng-controller="reqsCtrl">
-	<jqx-button ng-click="retour()">Retour criteria</jqx-button>
-</div> 
+	<jqx-button ng-show="!lastCriterion" ng-click="saveCurrentOrdering()">Go to the next criterion</jqx-button>
+    <jqx-button ng-show="lastCriterion" ng-click="submitPriorities()">Submit priorities</jqx-button>
+</div>
