@@ -3,9 +3,7 @@ package eu.supersede.dm;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import eu.supersede.dm.jmetal.DMJMetalMultiMethodPlanner;
 import eu.supersede.dm.methods.AHPRequirementsPrioritizationMethod;
-import eu.supersede.dm.methods.DMLibrary;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
@@ -22,7 +19,7 @@ import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @Service
-public class OrchestratorDemo
+public class OrchestratorUtil
 {
 	@Autowired
 	private RequirementsJpa requirements;
@@ -33,7 +30,7 @@ public class OrchestratorDemo
 	@Autowired
 	private UsersJpa users;
 
-	public OrchestratorDemo()
+	public OrchestratorUtil()
 	{
 		// clients.put( AHPRequirementsPrioritizationMethod.NAME, new AHPRPProcessClient() );
 	}
@@ -435,197 +432,10 @@ public class OrchestratorDemo
 					status.addRequirement(r);
 				}
 
-				ProcessClient client = clients.get(activity.methodName);
-
-				if (client != null)
-				{
-					client.manage(status, method);
-				}
-
 			}
 
 		}
 
 	}
-
-	Map<String, ProcessClient> clients = new HashMap<>();
-
-	public interface ProcessClient
-	{
-		public void manage(DMStatus status, DMMethod method);
-	}
-
-	// public static class AHPRPProcessClient implements ProcessClient {
-	//
-	// Map<String,Class<?>> taskClients = new HashMap<>();
-	//
-	// public AHPRPProcessClient() {
-	// taskClients.put( "gameSetup", TSupervisorCreateGame.class );
-	// taskClients.put( "vote", TOpinionProviderVote.class );
-	// taskClients.put( "negotiate", TNegotiatorResolve.class );
-	// taskClients.put( "gameFinalization", TSupervisorTerminateGame.class );
-	// }
-	//
-	// TaskClient createTaskClient( DMTask task, AHPRequirementsPrioritizationMethod method, DMStatus status ) {
-	// Class<?> cls = taskClients.get( task.getId() );
-	// TaskClient client = null;
-	// try {
-	// client = (TaskClient)cls.newInstance();
-	// client.setMethod( method );
-	// client.setTask( task );
-	// client.setStatus( status );
-	// } catch (InstantiationException | IllegalAccessException e) {
-	// e.printStackTrace();
-	// }
-	// return client;
-	// }
-	//
-	// @Override
-	// public void manage( DMStatus status, DMMethod generic_method ) {
-	//
-	// AHPRequirementsPrioritizationMethod method = (AHPRequirementsPrioritizationMethod) generic_method;
-	//
-	// method.init( status );
-	//
-	// Set<String> done = new HashSet<>();
-	//
-	// while( !method.isComplete( status ) ) {
-	//
-	// List<DMTask> tasks = method.getActiveTasks( status );
-	//
-	//// out.println( "Found " + tasks.size() + " active tasks" );
-	//
-	// while( tasks.size() > 0 ) {
-	//
-	// DMTask task = tasks.get( 0 );
-	//
-	// tasks.remove( 0 );
-	//
-	// if( done.contains( task.getId() ) ) {
-	// continue;
-	// }
-	//
-	// done.add( task.getId() );
-	//
-	// TaskClient taskClient = createTaskClient( task, method, status );
-	//
-	//// taskClient.run();
-	//
-	// Thread thread = new Thread( taskClient );
-	// thread.setDaemon( true );
-	// thread.start();
-	//
-	// }
-	//
-	// }
-	//
-	// out.println( "done" );
-	//
-	// }
-	//
-	// }
-
-	public static abstract class TaskClient implements Runnable
-	{
-
-		AHPRequirementsPrioritizationMethod method;
-		DMTask task;
-		DMStatus status;
-
-		public void setMethod(AHPRequirementsPrioritizationMethod method)
-		{
-			this.method = method;
-		}
-
-		public void setStatus(DMStatus status)
-		{
-			this.status = status;
-		}
-
-		public void setTask(DMTask task)
-		{
-			this.task = task;
-		}
-
-		public DMTask getTask()
-		{
-			return this.task;
-		}
-
-	}
-
-	// public static class TSupervisorCreateGame extends TaskClient {
-	//
-	// AHPRequirementsPrioritizationMethod getMethod() {
-	// return (AHPRequirementsPrioritizationMethod)method;
-	// }
-	//
-	// @Override
-	// public void run() {
-	// out.println( getTask().getId() + ": Game master opens the game" );
-	// getMethod().createGame( status );
-	// getMethod().completeTask( status, getTask() );
-	// }
-	//
-	// }
-	//
-	// public static class TSupervisorTerminateGame extends TaskClient {
-	//
-	// AHPRequirementsPrioritizationMethod getMethod() {
-	// return (AHPRequirementsPrioritizationMethod)method;
-	// }
-	//
-	// @Override
-	// public void run() {
-	// try {
-	// Thread.sleep( 1000 );
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// out.println( getTask().getId() + ": Game master calculates the final rank" );
-	// getMethod().callAHP( status );
-	// out.println( getTask().getId() + ": Game master closes the game" );
-	// getMethod().completeTask( status, getTask() );
-	// }
-	//
-	// }
-
-	// public static class TOpinionProviderVote extends TaskClient {
-	//
-	// AHPRequirementsPrioritizationMethod getMethod() {
-	// return (AHPRequirementsPrioritizationMethod)method;
-	// }
-	//
-	// @Override
-	// public void run() {
-	// out.println( getTask().getId() + ": Users voting" );
-	// try {
-	// Thread.sleep( 1000 );
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// getMethod().completeTask( status, getTask() );
-	// }
-	//
-	// }
-	//
-	// public static class TNegotiatorResolve extends TaskClient {
-	//
-	// AHPRequirementsPrioritizationMethod getMethod() {
-	// return (AHPRequirementsPrioritizationMethod)method;
-	// }
-	//
-	// @Override
-	// public void run() {
-	// out.println( getTask().getId() + ": Negotiator resolves conflicts" );
-	// try {
-	// Thread.sleep( 1000 );
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// getMethod().completeTask( status, getTask() );
-	// }
-	//
-	// }
 
 }
