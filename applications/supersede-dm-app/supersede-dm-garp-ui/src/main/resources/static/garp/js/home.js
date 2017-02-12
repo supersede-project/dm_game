@@ -16,6 +16,55 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('display_games', function($scope, $http, $location) {
 
+    function compareGamesByDate(a, b) {
+        if (a.date < b.date) {
+            return 1;
+        }
+        if (a.date > b.date) {
+            return -1;
+        }
+
+        return 0;
+    }
+
+    $scope.getActiveGames = function() {
+        $http.get('supersede-dm-app/garp/game/activegames')
+        .success(function(data) {
+            console.log(data);
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'owner' },
+                    { name: 'date' },
+                    { name: 'status' },
+                    { name: 'id' }
+                ],
+                localdata: data.sort(compareGamesByDate)
+            };
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/gameplay?id=');
+                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
+                return r;
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#activeGames").jqxGrid( {
+                width: 600,
+                autoheight: true,
+                pageable: true,
+                altrows: true,
+                source: dataAdapter,
+                rowsheight: 32,
+                columns: [
+                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
+                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
+                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
+                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                ]
+            });
+        });
+    };
+
     $scope.getOwnedGames = function() {
         $http.get('supersede-dm-app/garp/game/ownedgames')
         .success(function(data) {
@@ -24,11 +73,11 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
                 datatype: "json",
                 datafields: [
                     { name: 'owner' },
-                    { name : 'date' },
-                    { name : 'status' },
+                    { name: 'date' },
+                    { name: 'status' },
                     { name: 'id' }
                 ],
-                localdata: data
+                localdata: data.sort(compareGamesByDate)
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
@@ -40,51 +89,15 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             $("#ownedGames").jqxGrid({
                 width: 600,
                 autoheight: true,
+                pageable: true,
                 altrows: true,
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100 },
-                  { text: 'Date', datafield: 'date', width: 200 },
-                  { text: 'Status', datafield: 'status', width: 100 },
-                  { text: '', datafield: 'id', width: 200, cellsrenderer: cellsrenderer }
-                ]
-            });
-        });
-    };
-
-    $scope.getActiveGames = function() {
-        $http.get('supersede-dm-app/garp/game/activegames')
-        .success(function(data) {
-            console.log(data);
-            var source = {
-                datatype: "json",
-                datafields: [
-                    { name: 'owner' },
-                    { name : 'date' },
-                    { name : 'status' },
-                    { name: 'id' }
-                ],
-                localdata: data
-            };
-            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/criteria?id=');
-                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
-                return r;
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#activeGames").jqxGrid( {
-                width: 600,
-                autoheight: true,
-                altrows: true,
-                source: dataAdapter,
-                rowsheight: 32,
-                columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100 },
-                  { text: 'Date', datafield: 'date', width: 200 },
-                  { text: 'Status', datafield: 'status', width: 100 },
-                  { text: '', datafield: 'id', width: 200, cellsrenderer: cellsrenderer }
+                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
+                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
+                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
+                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });

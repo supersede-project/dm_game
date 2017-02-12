@@ -14,54 +14,78 @@
 
 var app = angular.module('w5app');
 app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
-	 
-    var gameId = $location.search().id;
-	var criterion = $location.search().idC;
-	
- 	$scope.criterion = criterion;
-    $scope.requirements = [];
 
-    $scope.getRequirements = function() {
-        $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + criterion)
+    $scope.currentCriterion = {};
+    $scope.requirements = [];
+    $scope.lastCriterion = false;
+
+    var gameId = $location.search().id;
+    var currentCriterionIndex = 0;
+    var rankings = {};
+    var criteria = [];
+
+    var getCurrentCriterion = function() {
+        $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
         .success(function(data) {
-        	for (var i = 0; i < data.length; i++) {
-        	    $scope.requirements.push(data[i]);
-            }
-            console.log("current requirements:");
-            console.log($scope.requirements);
-            $("#sortable").jqxSortable();
-            $("#sortable > div").jqxExpander({ theme: "summer", expanded: false, width: 200});
+            criteria = data;
+            console.log("criteria:");
+            console.log(criteria);
+            $scope.currentCriterion = criteria[currentCriterionIndex];
+            console.log("current criterion:");
+            console.log($scope.currentCriterion);
+            getRequirements();
         }).error(function(err){
             alert(err.message);
         });
     };
 
-    $scope.submitPrio = function() {
-    	var data = $("#sortable").jqxSortable("toArray");
-    	//alert('Criterion :' + criterion);
-    	//alert('Requirements :' + data);
+    var getRequirements = function() {
+        console.log("current criterion:");
+        console.log($scope.currentCriterion);
+        $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + $scope.currentCriterion.criteriaId)
+        .success(function(data) {
+            $scope.requirements = data;
+            console.log("current requirements:");
+            console.log($scope.requirements);
+            $("#sortable").jqxSortable();
+        }).error(function(err){
+            alert(err.message);
+        });
+    };
 
-    	var rankings = {};
-    	rankings[criterion] = data;
-    	
-    	//alert('rankings :' + rankings);
-    	
-    	$http({
+    $scope.saveCurrentOrdering = function() {
+        var data = $("#sortable").jqxSortable("toArray");
+        rankings[$scope.currentCriterion.criteriaId] = data;
+        console.log("current rankings:");
+        console.log(rankings);
+
+        if ($scope.lastCriterion === false) {
+            currentCriterionIndex++;
+            console.log("current index:");
+            console.log(currentCriterionIndex);
+
+            if (currentCriterionIndex == criteria.length - 1) {
+                $scope.lastCriterion = true;
+                console.log("last criterion is true");
+            }
+        }
+
+        getCurrentCriterion();
+    };
+
+    $scope.submitPriorities = function() {
+        $http({
             url: "supersede-dm-app/garp/game/submit",
             data: rankings,
             method: 'POST',
             params: {gameId : gameId}
         }).success(function(){
-        	alert('Your prioritization was saved!');
-            $location.url('supersede-dm-app/garp/criteria?id=' + gameId);
+            alert('Your prioritization was saved!');
+            $location.url('supersede-dm-app/garp/home');
         }).error(function(err){
             alert(err.message);
         });
-    };	
-    
-    $scope.retour = function() {
-      $location.url('supersede-dm-app/garp/criteria?id=' + gameId);
-    };	
+    };
 
-    $scope.getRequirements();
+    getCurrentCriterion();
 });
