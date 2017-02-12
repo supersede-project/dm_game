@@ -21,22 +21,21 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.supersede.fe.application.ApplicationUtil;
+import eu.supersede.dm.ga.GAGuiManager;
+import eu.supersede.dm.methods.GAMethod;
 
 @Component
 public class GAUILoader
 {
-    @Autowired
-    private ApplicationUtil au;
-
     @PostConstruct
     public void load()
     {
         System.out.println("Registering GA app");
-
+        
+        DMGuiManager.get().registerGui( GAMethod.NAME, new GAGuiManager() );
+        
         Map<String, String> labels = new HashMap<>();
         List<String> roles;
 

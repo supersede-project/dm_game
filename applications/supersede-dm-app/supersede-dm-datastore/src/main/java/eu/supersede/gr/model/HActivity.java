@@ -13,8 +13,18 @@ public class HActivity
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    private Long processId;
 
-    private String methodName;
+    public Long getProcessId() {
+		return processId;
+	}
+
+	public void setProcessId(Long processId) {
+		this.processId = processId;
+	}
+
+	private String methodName;
 
     public Long getId()
     {

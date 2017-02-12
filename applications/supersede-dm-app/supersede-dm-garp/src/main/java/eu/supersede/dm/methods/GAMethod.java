@@ -3,11 +3,13 @@ package eu.supersede.dm.methods;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRole;
 import eu.supersede.dm.DMRoleSpec;
+import eu.supersede.dm.DMStatus;
 
 public class GAMethod implements DMMethod {
 	
@@ -40,5 +42,20 @@ public class GAMethod implements DMMethod {
 	public List<DMRoleSpec> getRoleList() {
 		return roles;
 	}
-
+	
+	@Override
+	public List<DMCondition> preconditions() {
+		List<DMCondition> list = new ArrayList<DMCondition>();
+		list.add( new DMCondition() {
+			@Override
+			public boolean isTrue( DMStatus status ) {
+				if( status.getRequirementsCount() < 1 ) {
+					return false;
+				}
+				// TODO: check that requirements status if "confirmed"
+				return true;
+			}} );
+		return list;
+	}
+	
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
@@ -18,7 +19,6 @@ import eu.supersede.dm.DMTask;
 import eu.supersede.dm.DMTopic;
 import eu.supersede.dm.ahp.algorithm.AHPStructure;
 import eu.supersede.dm.ahp.algorithm.Ahp;
-import eu.supersede.dm.exec.BPMNExecutor;
 
 public class AHPRequirementsPrioritizationMethod implements DMMethod {
 	
@@ -191,6 +191,21 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 			
 		}
 		System.out.println( "SENDINGG RESULTS AHEAD FOR ENACTMENT" );
+	}
+
+	@Override
+	public List<DMCondition> preconditions() {
+		List<DMCondition> list = new ArrayList<DMCondition>();
+		list.add( new DMCondition() {
+			@Override
+			public boolean isTrue( DMStatus status ) {
+				if( status.getRequirementsCount() < 1 ) {
+					return false;
+				}
+				// TODO: check that requirements status if "confirmed"
+				return true;
+			}} );
+		return list;
 	}
 
 }

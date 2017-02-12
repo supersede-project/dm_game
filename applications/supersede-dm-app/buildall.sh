@@ -1,9 +1,9 @@
-cd supersede-dm-core
-echo -e "\nBuilding supersede-dm-core...\n"
+cd supersede-dm-datastore
+echo -e "\nBuilding supersede-dm-datastore...\n"
 ./gradlew build
 
-cd ../supersede-dm-datastore
-echo -e "\nBuilding supersede-dm-datastore...\n"
+cd ../supersede-dm-core
+echo -e "\nBuilding supersede-dm-core...\n"
 ./gradlew build
 
 cd ../supersede-dm-integration
@@ -42,9 +42,9 @@ cd ../supersede-dm-planning-jmetal
 echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 ./gradlew build
 
-cd ../supersede-dm-orchestrator
-echo -e "\nBuilding supersede-dm-orchestrator...\n"
-./gradlew build
+#cd ../supersede-dm-orchestrator
+#echo -e "\nBuilding supersede-dm-orchestrator...\n"
+#./gradlew build
 
 cd ../
 echo -e "\nBuilding supersede-dm-app...\n"

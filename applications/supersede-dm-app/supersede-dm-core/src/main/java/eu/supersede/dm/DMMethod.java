@@ -11,5 +11,7 @@ public interface DMMethod {
 	public List<DMRoleSpec>		getRoleList();
 	
 	public List<DMOption>		getOptions();
+	
+	public List<DMCondition>	preconditions();
 
 }

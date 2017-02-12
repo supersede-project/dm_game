@@ -86,6 +86,7 @@ dependencies {
     compile("eu.supersede:supersede-client:0.2.1-SNAPSHOT"){changing = true}
     compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
 
+    compile files("../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar")
     compile files("../supersede-dm-garp/build/libs/supersede-dm-garp-0.0.2-SNAPSHOT.jar")
     compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.0.2-SNAPSHOT.jar")
 

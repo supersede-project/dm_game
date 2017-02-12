@@ -1,7 +1,7 @@
-cd supersede-dm-core
+cd supersede-dm-datastore
 gradle build --refresh-dependencies
 cd ..
-cd supersede-dm-datastore
+cd supersede-dm-core
 gradle build --refresh-dependencies
 cd ..
 cd supersede-dm-integration
@@ -22,8 +22,8 @@ cd ..
 cd supersede-dm-planning-jmetal
 gradle build --refresh-dependencies
 cd ..
-cd supersede-dm-orchestrator
-gradle build --refresh-dependencies
-cd ..
+#cd supersede-dm-orchestrator
+#gradle build --refresh-dependencies
+#cd ..
 gradle build --refresh-dependencies
 cd ..
