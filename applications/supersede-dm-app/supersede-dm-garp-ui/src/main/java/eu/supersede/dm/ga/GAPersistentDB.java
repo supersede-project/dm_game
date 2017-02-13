@@ -15,7 +15,9 @@
 package eu.supersede.dm.ga;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +25,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import eu.supersede.dm.methods.GAMethod;
+import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameDetails;
 import eu.supersede.gr.data.GARole;
 import eu.supersede.gr.jpa.ActivitiesJpa;
@@ -52,10 +56,10 @@ public class GAPersistentDB
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RequirementsJpa requirements;
+    private RequirementsJpa requirementsJpa;
 
     @Autowired
-    private GAGameSummaryJpa games;
+    private GAGameSummaryJpa gamesJpa;
 
     @Autowired
     private GAGameCriteriaJpa criteriaJpa;
@@ -72,15 +76,51 @@ public class GAPersistentDB
     @Autowired
     private GAGameRankingsJpa rankingsJpa;
 
-    public void create(HGAGameSummary game, HashMap<Long, Double> criteriaWeights, List<Long> requirements,
-            List<Long> opinionProviders, List<Long> negotiators)
+    public void create(Authentication authentication, Long[] gameRequirements, Map<Long, Double> gameCriteriaWeights,
+            Long[] gameOpinionProviders, Long[] gameNegotiators)
     {
+        List<Long> requirements = new ArrayList<>();
+        HashMap<Long, Double> criteriaWeights = new HashMap<>();
+        List<Long> opinionProviders = new ArrayList<>();
+        List<Long> negotiators = new ArrayList<>();
+
+        for (Long id : gameRequirements)
+        {
+            requirements.add(id);
+        }
+
+        for (Long id : gameCriteriaWeights.keySet())
+        {
+            criteriaWeights.put(id, gameCriteriaWeights.get(id));
+        }
+
+        for (Long id : gameOpinionProviders)
+        {
+            opinionProviders.add(id);
+        }
+
+        for (Long id : gameNegotiators)
+        {
+            negotiators.add(id);
+        }
+
+        HGAGameSummary game = new HGAGameSummary();
+        long currentTime = System.currentTimeMillis();
+        game.setId(currentTime);
+        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+        game.setDate(sdfDate.format(now));
+
+        game.setStatus("open");
+
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
         HActivity persistentActivity = activitiesJpa.save(activity);
 
         game.setActivityId(persistentActivity.getId());
-        HGAGameSummary info = games.save(game);
+        HGAGameSummary info = gamesJpa.save(game);
 
         for (Long cId : criteriaWeights.keySet())
         {
@@ -90,7 +130,7 @@ public class GAPersistentDB
 
         for (Long rId : requirements)
         {
-            Requirement r = this.requirements.findOne(rId);
+            Requirement r = requirementsJpa.findOne(rId);
 
             if (r == null)
             {
@@ -100,7 +140,7 @@ public class GAPersistentDB
             HGAGameRequirement req = new HGAGameRequirement();
             req.setGameId(info.getId());
             req.setRequirementId(r.getRequirementId());
-            this.gameRequirementsJpa.save(req);
+            gameRequirementsJpa.save(req);
         }
 
         for (Long uId : opinionProviders)
@@ -147,11 +187,11 @@ public class GAPersistentDB
     private List<HGAGameSummary> getGamesByRole(Long userId, String roleName)
     {
         List<HGAGameSummary> games = new ArrayList<>();
-        List<Long> gameList = this.participationJpa.findGames(userId, roleName);
+        List<Long> gameList = participationJpa.findGames(userId, roleName);
 
         for (Long gameId : gameList)
         {
-            HGAGameSummary info = this.games.findOne(gameId);
+            HGAGameSummary info = gamesJpa.findOne(gameId);
 
             if (info == null)
             {
@@ -209,20 +249,20 @@ public class GAPersistentDB
         rankingsJpa.save(ranking);
     }
 
-    public List<Long> getRankingsCriterion(Long gameId, Long userId, String criterion)
+    public List<Long> getRankingsCriterion(Long gameId, Long userId, Long criterion)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
         if (gi == null)
         {
-            return null;
+            return new ArrayList<>();
         }
 
         Map<String, List<Long>> map = gi.getRankings().get(userId);
 
         if (map == null)
         {
-            return null;
+            return new ArrayList<>();
         }
 
         return map.get(criterion);
@@ -236,7 +276,7 @@ public class GAPersistentDB
 
     public GAGameDetails getGameInfo(Long gameId)
     {
-        HGAGameSummary gameInfo = games.findOne(gameId);
+        HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
 
         if (gameInfo == null)
         {

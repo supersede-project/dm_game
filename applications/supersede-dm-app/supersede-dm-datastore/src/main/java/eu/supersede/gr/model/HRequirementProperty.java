@@ -16,23 +16,25 @@ public class HRequirementProperty
 
     private String name;
     private String value;
-    
-//    private Double priority;
 
-    public String getValue() {
-		return value;
-	}
+    // private Double priority;
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getValue()
+    {
+        return value;
+    }
 
-	public Long getGameId()
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
+
+    public Long getGameId()
     {
         return id;
     }
 
-    public void setGameId( Long id )
+    public void setGameId(Long id)
     {
         this.id = id;
     }
@@ -46,5 +48,4 @@ public class HRequirementProperty
     {
         this.name = name;
     }
-
 }

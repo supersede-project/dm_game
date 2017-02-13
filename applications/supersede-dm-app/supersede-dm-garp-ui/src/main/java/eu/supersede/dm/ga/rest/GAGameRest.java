@@ -1,8 +1,6 @@
 package eu.supersede.dm.ga.rest;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,48 +62,8 @@ public class GAGameRest
             @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gameOpinionProviders,
             @RequestParam Long[] gameNegotiators)
     {
-        List<Long> requirements = new ArrayList<>();
-        HashMap<Long, Double> criteriaWeights = new HashMap<>();
-        List<Long> opinionProviders = new ArrayList<>();
-        List<Long> negotiators = new ArrayList<>();
-
-        for (Long id : gameRequirements)
-        {
-            requirements.add(id);
-        }
-
-        System.out.println("criteria weights: " + gameCriteriaWeights);
-        System.out.println("criteria weights size: " + gameCriteriaWeights.size());
-
-        for (Long id : gameCriteriaWeights.keySet())
-        {
-            System.out.println("id: " + id);
-            System.out.println("weight: " + gameCriteriaWeights.get(id));
-            criteriaWeights.put(id, gameCriteriaWeights.get(id));
-        }
-
-        for (Long id : gameOpinionProviders)
-        {
-            opinionProviders.add(id);
-        }
-
-        for (Long id : gameNegotiators)
-        {
-            negotiators.add(id);
-        }
-
-        HGAGameSummary game = new HGAGameSummary();
-        long currentTime = System.currentTimeMillis();
-        game.setId(currentTime);
-        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
-
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date now = new Date();
-        game.setDate(sdfDate.format(now));
-
-        game.setStatus("open");
-
-        persistentDB.create(game, criteriaWeights, requirements, opinionProviders, negotiators);
+        persistentDB.create(authentication, gameRequirements, gameCriteriaWeights, gameOpinionProviders,
+                gameNegotiators);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -123,8 +81,14 @@ public class GAGameRest
         persistentDB.setRanking(gameId, userId, reqs);
     }
 
+    @RequestMapping(value = "/ranking", method = RequestMethod.POST)
+    public List<Long> getRanking(@RequestParam Long gameId, @RequestParam Long userId, @RequestParam Long criterionId)
+    {
+        return persistentDB.getRankingsCriterion(gameId, userId, criterionId);
+    }
+
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)
-    public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
+    public List<Requirement> getRequirements(Authentication authentication, Long gameId, Long criterion)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
         List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);

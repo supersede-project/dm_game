@@ -113,15 +113,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             };
             var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
             $("#requirements").jqxGrid({
-                width: 750,
+                width: '100%',
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
-                    { text: 'Id', datafield: 'requirementId', width: 100 },
-                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Id', datafield: 'requirementId', width: '15%' },
+                    { text: 'Name', datafield: 'name', width: '25%' },
                     { text: 'Description', datafield: 'description' }
                 ]
             });
@@ -142,15 +142,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             };
             var dataAdapter = new $.jqx.dataAdapter(availableCriteria);
             $("#criteria").jqxGrid({
-                width: 750,
+                width: '100%',
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
-                    { text: 'Id', datafield: 'criteriaId', width: 100 },
-                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Id', datafield: 'criteriaId', width: '15%' },
+                    { text: 'Name', datafield: 'name', width: '25%' },
                     { text: 'Description', datafield: 'description' }
                 ]
             });
@@ -171,29 +171,29 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             };
             var dataAdapter1 = new $.jqx.dataAdapter(availablePlayers);
             $("#opinion_providers").jqxGrid({
-                width: 750,
+                width: '100%',
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
                 pageable: true,
                 source: dataAdapter1,
                 columns: [
-                    { text: 'Id', datafield: 'userId', width: 100 },
-                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Id', datafield: 'userId', width: '20%' },
+                    { text: 'Name', datafield: 'name', width: '40%' },
                     { text: 'Email', datafield: 'email' }
                 ]
             });
             var dataAdapter2 = new $.jqx.dataAdapter(availablePlayers);
             $("#negotiators").jqxGrid({
-                width: 750,
+                width: '100%',
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
                 pageable: true,
                 source: dataAdapter2,
                 columns: [
-                    { text: 'Id', datafield: 'userId', width: 100 },
-                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Id', datafield: 'userId', width: '20%' },
+                    { text: 'Name', datafield: 'name', width: '40%' },
                     { text: 'Email', datafield: 'email' }
                 ]
             });
@@ -265,15 +265,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     function showGameRequirements() {
         var dataAdapter = new $.jqx.dataAdapter(gameRequirements);
         $("#game_requirements").jqxGrid({
-            width: 750,
+            width: '100%',
             altrows: true,
             autoheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
-                { text: 'Id', datafield: 'requirementId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Description', datafield: 'description' }
+                { text: 'Id', datafield: 'requirementId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Description', datafield: 'description', width: '60%' }
             ]
         });
     }
@@ -281,16 +281,16 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     function showGameCriteria() {
         var dataAdapter = new $.jqx.dataAdapter(gameCriteriaWeights);
         $("#game_criteria").jqxGrid({
-            width: 750,
+            width: '100%',
             altrows: true,
             autoheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
-                { text: 'Id', datafield: 'criteriaId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 250 },
-                { text: 'Description', datafield: 'description', widht: 200 },
-                { text: 'Weight', datafield: 'weight', width: 200 }
+                { text: 'Id', datafield: 'criteriaId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '20%' },
+                { text: 'Description', datafield: 'description', widht: '55%' },
+                { text: 'Weight', datafield: 'weight', width: '20%' }
             ]
         });
     }
@@ -298,15 +298,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     function showGameOpinionProviders() {
         var dataAdapter = new $.jqx.dataAdapter(gameOpinionProviders);
         $("#game_opinion_providers").jqxGrid({
-            width: 750,
+            width: '100%',
             altrows: true,
             autoheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
-                { text: 'Id', datafield: 'userId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Email', datafield: 'email' }
+                { text: 'Id', datafield: 'userId', width: '20%' },
+                { text: 'Name', datafield: 'name', width: '40%' },
+                { text: 'Email', datafield: 'email', width: '40%' }
             ]
         });
     }
@@ -320,9 +320,9 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             pageable: true,
             source: dataAdapter,
             columns: [
-                { text: 'Id', datafield: 'userId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Email', datafield: 'email' }
+                { text: 'Id', datafield: 'userId', width: '20%' },
+                { text: 'Name', datafield: 'name', width: '40%' },
+                { text: 'Email', datafield: 'email', width: '40%' }
             ]
         });
     }

@@ -49,17 +49,17 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#activeGames").jqxGrid( {
-                width: 600,
+                width: '100%',
                 autoheight: true,
                 pageable: true,
                 altrows: true,
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                  { text: 'Owner', datafield: 'owner', width: '25%', align: 'center', cellsalign: 'center' },
+                  { text: 'Date', datafield: 'date', width: '25%%', align: 'center', cellsalign: 'center' },
+                  { text: 'Status', datafield: 'status', width: '25%', align: 'center', cellsalign: 'center' },
+                  { text: '', datafield: 'id', width: '25%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
@@ -87,17 +87,17 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#ownedGames").jqxGrid({
-                width: 600,
+                width: '100%',
                 autoheight: true,
                 pageable: true,
                 altrows: true,
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                  { text: 'Owner', datafield: 'owner', width: '25%', align: 'center', cellsalign: 'center' },
+                  { text: 'Date', datafield: 'date', width: '25%', align: 'center', cellsalign: 'center' },
+                  { text: 'Status', datafield: 'status', width: '25%', align: 'center', cellsalign: 'center' },
+                  { text: '', datafield: 'id', width: '25%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
