@@ -26,26 +26,77 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     var availableRequirements = {};
     var availableCriteria = {};
     var availablePlayers = {};
+    var gameCriteriaWeightsId = {};
 
-    var gameRequirements = [];
-    $scope.gameCriteria = [];
-    var gameOpinionProviders = [];
-    var gameNegotiators = [];
+    var gameRequirements = {
+        datatype: "json",
+        datafields: [
+            { name: 'requirementId' },
+            { name: 'name' },
+            { name: 'description' }
+        ],
+        localdata: []
+    };
 
-    $scope.to_page = function(page) {
+    $scope.gameCriteria = {
+        datatype: "json",
+        datafields: [
+            { name: 'criteriaId' },
+            { name: 'name' },
+            { name: 'description' }
+        ],
+        localdata: []
+    };
+
+
+    var gameOpinionProviders = {
+        datatype: "json",
+        datafields: [
+            { name: 'userId' },
+            { name: 'name' },
+            { name: 'email' }
+        ],
+        localdata: []
+    };
+
+    var gameNegotiators = {
+        datatype: "json",
+        datafields: [
+            { name: 'userId' },
+            { name: 'name' },
+            { name: 'email' }
+        ],
+        localdata: []
+    };
+
+    var gameCriteriaWeights = {
+        datatype: "json",
+        datafields: [
+            { name: 'criteriaId' },
+            { name: 'name' },
+            { name: 'description' },
+            { name: 'weight' }
+        ],
+        localdata: []
+    };
+
+    function setCurrentPage(page) {
         $scope.currentPage = 'page' + page;
         console.log("current page: ");
-        console.log($scope.currentPage);
+    }
 
-        if (page == "2") {
-            defineGameData();
-        }
-        else if (page == "3") {
-            showGameRequirements();
-            showGameCriteria();
-            showGameOpinionProviders();
-            showGameNegotiators();
-        }
+    $scope.defineWeights = function() {
+        defineGameData();
+        setCurrentPage(2);
+    };
+
+    $scope.showSummary = function() {
+        defineCriteriaWeights();
+        setCurrentPage(3);
+        showGameRequirements();
+        showGameCriteria();
+        showGameOpinionProviders();
+        showGameNegotiators();
     };
 
     function getAvailableRequirements() {
@@ -56,18 +107,17 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 datafields: [
                     { name: 'requirementId' },
                     { name: 'name' },
-                    { name : 'description' }
+                    { name: 'description' }
                 ],
                 localdata: data
             };
-            console.log("available requirements:");
-            console.log(availableRequirements);
             var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
             $("#requirements").jqxGrid({
                 width: 750,
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                pageable: true,
                 source: dataAdapter,
                 columns: [
                     { text: 'Id', datafield: 'requirementId', width: 100 },
@@ -86,7 +136,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 datafields: [
                     { name: 'criteriaId' },
                     { name: 'name' },
-                    { name : 'description' }
+                    { name: 'description' }
                 ],
                 localdata: data
             };
@@ -96,6 +146,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                pageable: true,
                 source: dataAdapter,
                 columns: [
                     { text: 'Id', datafield: 'criteriaId', width: 100 },
@@ -114,7 +165,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 datafields: [
                     { name: 'userId' },
                     { name: 'name' },
-                    { name : 'email' }
+                    { name: 'email' }
                 ],
                 localdata: data
             };
@@ -124,6 +175,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                pageable: true,
                 source: dataAdapter1,
                 columns: [
                     { text: 'Id', datafield: 'userId', width: 100 },
@@ -137,6 +189,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                pageable: true,
                 source: dataAdapter2,
                 columns: [
                     { text: 'Id', datafield: 'userId', width: 100 },
@@ -148,16 +201,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function defineGameData() {
-        gameRequirements = {
-            datatype: "json",
-            datafields: [
-                { name: 'requirementId' },
-                { name: 'name' },
-                { name : 'description' }
-            ],
-            localdata: []
-        };
-
         var i;
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
 
@@ -167,16 +210,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             $scope.gameRequirementsId.push(selectedRequirement.requirementId);
         }
 
-        $scope.gameCriteria = {
-            datatype: "json",
-            datafields: [
-                { name: 'criteriaId' },
-                { name: 'name' },
-                { name : 'description' }
-            ],
-            localdata: []
-        };
-
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
@@ -184,32 +217,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             $scope.gameCriteriaId.push(selectedCriterion.criteriaId);
         }
 
-        gameOpinionProviders = {
-            datatype: "json",
-            datafields: [
-                { name: 'userId' },
-                { name: 'name' },
-                { name : 'email' }
-            ],
-            localdata: []
-        };
-
         var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedOpinionProviders.length; i++) {
             var selectedOpinionProvider = $("#opinion_providers").jqxGrid('getrowdata', selectedOpinionProviders[i]);
             gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
-
-        gameNegotiators = {
-            datatype: "json",
-            datafields: [
-                { name: 'userId' },
-                { name: 'name' },
-                { name : 'email' }
-            ],
-            localdata: []
-        };
 
         var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedNegotiators.length; i++) {
@@ -219,28 +232,28 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         }
     }
 
-    $scope.create_game = function () {
-        var gameCriteriaWeights = {};
+    function defineCriteriaWeights() {
         var i;
 
-        for (i = 0; i < $scope.gameCriteria.length; i++) {
-            var criterionValue = $("#criterion" + $scope.gameCriteria[i] + " > div").jqxSlider('value');
-            gameCriteriaWeights[$scope.gameCriteria[i]] = criterionValue;
+        for (i = 0; i < $scope.gameCriteria.localdata.length; i++) {
+            var currentCriterion = $scope.gameCriteria.localdata[i];
+            var criterionValue = $("#criterion" + currentCriterion.criteriaId + " > div").jqxSlider('value');
+            gameCriteriaWeights.localdata.push(currentCriterion);
+            gameCriteriaWeights.localdata[i].weight = criterionValue;
+            gameCriteriaWeightsId[currentCriterion.criteriaId] = criterionValue;
         }
+    }
 
-        console.log("gameCriteriaWeights:");
-        console.log(gameCriteriaWeights);
-
+    $scope.create_game = function () {
         $http({
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
-            data: gameCriteriaWeights,
+            data: gameCriteriaWeightsId,
             params: {gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
                 gameNegotiators: $scope.gameNegotiatorsId}
         })
         .success(function(data) {
-            console.log("success sending data:");
-            console.log(data);
+            console.log("Game created successfully");
         }).error(function(err, data){
             console.log(err);
             console.log(data);
@@ -250,13 +263,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     };
 
     function showGameRequirements() {
-        console.log("game requirements:");
-        console.log(gameRequirements);
         var dataAdapter = new $.jqx.dataAdapter(gameRequirements);
         $("#game_requirements").jqxGrid({
             width: 750,
             altrows: true,
             autoheight: true,
+            pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'requirementId', width: 100 },
@@ -267,18 +279,18 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function showGameCriteria() {
-        console.log("game criteria: ");
-        console.log($scope.gameCriteria);
-        var dataAdapter = new $.jqx.dataAdapter($scope.gameCriteria);
+        var dataAdapter = new $.jqx.dataAdapter(gameCriteriaWeights);
         $("#game_criteria").jqxGrid({
             width: 750,
             altrows: true,
             autoheight: true,
+            pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'criteriaId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Description', datafield: 'description' }
+                { text: 'Name', datafield: 'name', width: 250 },
+                { text: 'Description', datafield: 'description', widht: 200 },
+                { text: 'Weight', datafield: 'weight', width: 200 }
             ]
         });
     }
@@ -289,6 +301,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: 750,
             altrows: true,
             autoheight: true,
+            pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'userId', width: 100 },
@@ -304,6 +317,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: 750,
             altrows: true,
             autoheight: true,
+            pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'userId', width: 100 },
