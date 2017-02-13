@@ -68,11 +68,11 @@ public class GAGameRest
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public void submitAllPriorities(Authentication authentication, @RequestParam Long gameId,
-            @RequestBody Map<String, List<Long>> reqs)
+            @RequestBody Map<Long, List<Long>> reqs)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
 
-        for (String key : reqs.keySet())
+        for (Long key : reqs.keySet())
         {
             log.info("Sending priorities: game " + gameId + " user " + userId + " criterion " + key + " reqs "
                     + reqs.get(key));
@@ -179,29 +179,24 @@ public class GAGameRest
         for (Long userId : participantIds)
         {
             String player = users.getOne(userId).getName();
-            Map<String, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
+            Map<Long, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
             Map<String, List<String>> userRankingStr = new HashMap<>();
 
-            for (Entry<String, List<Long>> entry : userRanking.entrySet())
+            for (Entry<Long, List<Long>> entry : userRanking.entrySet())
             {
-                userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+                List<String> requirements = new ArrayList<>();
+
+                for (Long requirement : entry.getValue())
+                {
+                    requirements.add("" + requirement);
+                }
+
+                userRankingStr.put("" + entry.getKey(), requirements);
             }
 
             algo.addRanking(player, userRankingStr);
         }
 
         return algo.calc();
-    }
-
-    private List<String> idToString(List<Long> ids)
-    {
-        List<String> strings = new ArrayList<>();
-
-        for (Long id : ids)
-        {
-            strings.add(availableRequirements.getOne(id).getName());
-        }
-
-        return strings;
     }
 }

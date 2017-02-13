@@ -27,7 +27,7 @@ public class GAGameDetails
     private HashMap<Long, Double> criteriaWeights = new HashMap<>();
     private List<Long> requirements = new ArrayList<>();
     private List<Long> participants = new ArrayList<>();
-    private Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
+    private Map<Long, Map<Long, List<Long>>> rankings = new HashMap<>();
 
     public HGAGameSummary getGame()
     {
@@ -69,12 +69,12 @@ public class GAGameDetails
         this.participants = participants;
     }
 
-    public Map<Long, Map<String, List<Long>>> getRankings()
+    public Map<Long, Map<Long, List<Long>>> getRankings()
     {
         return rankings;
     }
 
-    public void setRankings(Map<Long, Map<String, List<Long>>> rankings)
+    public void setRankings(Map<Long, Map<Long, List<Long>>> rankings)
     {
         this.rankings = rankings;
     }

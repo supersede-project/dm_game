@@ -216,7 +216,7 @@ public class GAPersistentDB
         return summary;
     }
 
-    public void setRanking(Long gameId, Long userId, Map<String, List<Long>> reqs)
+    public void setRanking(Long gameId, Long userId, Map<Long, List<Long>> reqs)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -225,7 +225,7 @@ public class GAPersistentDB
             return;
         }
 
-        Map<String, List<Long>> map = gi.getRankings().get(userId);
+        Map<Long, List<Long>> map = gi.getRankings().get(userId);
 
         if (map == null)
         {
@@ -233,7 +233,7 @@ public class GAPersistentDB
             gi.getRankings().put(userId, map);
         }
 
-        for (String key : reqs.keySet())
+        for (Long key : reqs.keySet())
         {
             map.put(key, reqs.get(key));
         }
@@ -258,7 +258,7 @@ public class GAPersistentDB
             return new ArrayList<>();
         }
 
-        Map<String, List<Long>> map = gi.getRankings().get(userId);
+        Map<Long, List<Long>> map = gi.getRankings().get(userId);
 
         if (map == null)
         {
@@ -268,7 +268,7 @@ public class GAPersistentDB
         return map.get(criterion);
     }
 
-    public Map<String, List<Long>> getRanking(Long gameId, Long userId)
+    public Map<Long, List<Long>> getRanking(Long gameId, Long userId)
     {
         GAGameDetails gi = getGameInfo(gameId);
         return gi.getRankings().get(userId);
@@ -307,13 +307,13 @@ public class GAPersistentDB
                 GARole.OpinionProvider.name());
         d.setParticipants(participantsList);
 
-        Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
+        Map<Long, Map<Long, List<Long>>> rankings = new HashMap<>();
 
         // add rankings
         for (Long userId : participantsList)
         {
             String json = rankingsJpa.findRankingByGameAndUser(gameInfo.getId(), userId);
-            Map<String, List<Long>> map = deserializeRankings(json);
+            Map<Long, List<Long>> map = deserializeRankings(json);
             rankings.put(userId, map);
         }
 
@@ -322,12 +322,12 @@ public class GAPersistentDB
         return d;
     }
 
-    private String serializeRankings(Map<String, List<Long>> map)
+    private String serializeRankings(Map<Long, List<Long>> map)
     {
         return new Gson().toJson(map);
     }
 
-    private Map<String, List<Long>> deserializeRankings(String json)
+    private Map<Long, List<Long>> deserializeRankings(String json)
     {
         Type type = new TypeToken<Map<String, List<Long>>>()
         {
