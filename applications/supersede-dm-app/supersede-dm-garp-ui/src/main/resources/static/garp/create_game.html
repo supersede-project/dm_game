@@ -15,22 +15,60 @@
             <div id="criteria"></div>
         </div>
 
-        <h2>Players</h2>
+        <h2>Opinion Providers</h2>
         <div style="font-size: 13px; font-family: Verdana">
-            <div id="players"></div>
+            <div id="opinion_providers"></div>
         </div>
 
-        <jqx-button ng-click="to_page(2)">Define Weights</jqx-button>
+        <h2>Negotiators</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="negotiators"></div>
+        </div>
+
+        <br />
+        <jqx-button ng-click="to_page(2)">Next</jqx-button>
     </div>
 
     <div id="page2" ng-show="currentPage == 'page2'">
         <h2>Define Criteria Weights</h2>
-        <div ng-repeat="x in fullCriteria" id="{{'criterion' + x.criteriaId}}">
+        <div ng-repeat="x in gameCriteria" id="{{'criterion' + x.criteriaId}}">
             <span>{{x.criteriaId}}: {{x.name}}</span>
             <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
                 jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true"></div>
             <br/>
         </div>
+
+        <br/>
+        <jqx-button ng-click="to_page(3)">Next</jqx-button>
+    </div>
+
+    <div id="page3" ng-show="currentPage == 'page3'">
+        <h2>New Game Summary</h2>
+        <h3>Requirements</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_requirements"></div>
+        </div>
+
+        <h3>Criteria</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_criteria"></div>
+        </div>
+
+        <h3>Opinion Providers</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_opinion_providers"></div>
+        </div>
+
+        <h3>Negotiators</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_negotiators"></div>
+        </div>
+
+        <h3>Criteria Weights</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_criteria_weights"></div>
+        </div>
+
         <br/>
         <jqx-button ng-click="create_game()">Create Game</jqx-button>
     </div>

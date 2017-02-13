@@ -61,11 +61,13 @@ public class GAGameRest
 
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
     public void createNewGame(Authentication authentication, @RequestParam Long[] gameRequirements,
-            @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gamePlayers)
+            @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gameOpinionProviders,
+            @RequestParam Long[] gameNegotiators)
     {
         List<Long> requirements = new ArrayList<>();
         HashMap<Long, Double> criteriaWeights = new HashMap<>();
-        List<Long> players = new ArrayList<>();
+        List<Long> opinionProviders = new ArrayList<>();
+        List<Long> negotiators = new ArrayList<>();
 
         for (Long id : gameRequirements)
         {
@@ -82,9 +84,14 @@ public class GAGameRest
             criteriaWeights.put(id, gameCriteriaWeights.get(id));
         }
 
-        for (Long id : gamePlayers)
+        for (Long id : gameOpinionProviders)
         {
-            players.add(id);
+            opinionProviders.add(id);
+        }
+
+        for (Long id : gameNegotiators)
+        {
+            negotiators.add(id);
         }
 
         HGAGameSummary game = new HGAGameSummary();
@@ -98,7 +105,7 @@ public class GAGameRest
 
         game.setStatus("open");
 
-        persistentDB.create(game, criteriaWeights, requirements, players);
+        persistentDB.create(game, criteriaWeights, requirements, opinionProviders, negotiators);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)

@@ -18,124 +18,204 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $scope.currentPage = "page1";
 
-    $scope.gameRequirements = [];
-    $scope.gameCriteria = [];
-    $scope.gamePlayers = [];
+    $scope.gameRequirementsId = [];
+    $scope.gameCriteriaId = [];
+    $scope.gameOpinionProvidersId = [];
+    $scope.gameNegotiatorsId = [];
 
-    $scope.fullCriteria = [];
+    var availableRequirements = {};
+    var availableCriteria = {};
+    var availablePlayers = {};
+
+    var gameRequirements = [];
+    $scope.gameCriteria = [];
+    var gameOpinionProviders = [];
+    var gameNegotiators = [];
 
     $scope.to_page = function(page) {
-        if (page == "2") {
-            defineGameData();
-        }
-
         $scope.currentPage = 'page' + page;
         console.log("current page: ");
         console.log($scope.currentPage);
+
+        if (page == "2") {
+            defineGameData();
+        }
+        else if (page == "3") {
+            showGameRequirements();
+            showGameCriteria();
+            showGameOpinionProviders();
+            showGameNegotiators();
+        }
     };
 
-    $http.get('supersede-dm-app/requirement')
-    .success(function(data) {
-        var source = {
+    function getAvailableRequirements() {
+        $http.get('supersede-dm-app/requirement')
+        .success(function(data) {
+            availableRequirements = {
+                datatype: "json",
+                datafields: [
+                    { name: 'requirementId' },
+                    { name: 'name' },
+                    { name : 'description' }
+                ],
+                localdata: data
+            };
+            console.log("available requirements:");
+            console.log(availableRequirements);
+            var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
+            $("#requirements").jqxGrid({
+                width: 750,
+                selectionmode: 'checkbox',
+                altrows: true,
+                autoheight: true,
+                source: dataAdapter,
+                columns: [
+                    { text: 'Id', datafield: 'requirementId', width: 100 },
+                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Description', datafield: 'description' }
+                ]
+            });
+        });
+    }
+
+    function getAvailableCriteria() {
+        $http.get('supersede-dm-app/criteria')
+        .success(function(data) {
+            availableCriteria = {
+                datatype: "json",
+                datafields: [
+                    { name: 'criteriaId' },
+                    { name: 'name' },
+                    { name : 'description' }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(availableCriteria);
+            $("#criteria").jqxGrid({
+                width: 750,
+                selectionmode: 'checkbox',
+                altrows: true,
+                autoheight: true,
+                source: dataAdapter,
+                columns: [
+                    { text: 'Id', datafield: 'criteriaId', width: 100 },
+                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Description', datafield: 'description' }
+                ]
+            });
+        });
+    }
+
+    function getAvailablePlayers() {
+        $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
+        .success(function(data) {
+            availablePlayers = {
+                datatype: "json",
+                datafields: [
+                    { name: 'userId' },
+                    { name: 'name' },
+                    { name : 'email' }
+                ],
+                localdata: data
+            };
+            var dataAdapter1 = new $.jqx.dataAdapter(availablePlayers);
+            $("#opinion_providers").jqxGrid({
+                width: 750,
+                selectionmode: 'checkbox',
+                altrows: true,
+                autoheight: true,
+                source: dataAdapter1,
+                columns: [
+                    { text: 'Id', datafield: 'userId', width: 100 },
+                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Email', datafield: 'email' }
+                ]
+            });
+            var dataAdapter2 = new $.jqx.dataAdapter(availablePlayers);
+            $("#negotiators").jqxGrid({
+                width: 750,
+                selectionmode: 'checkbox',
+                altrows: true,
+                autoheight: true,
+                source: dataAdapter2,
+                columns: [
+                    { text: 'Id', datafield: 'userId', width: 100 },
+                    { text: 'Name', datafield: 'name', width: 300 },
+                    { text: 'Email', datafield: 'email' }
+                ]
+            });
+        });
+    }
+
+    function defineGameData() {
+        gameRequirements = {
             datatype: "json",
             datafields: [
                 { name: 'requirementId' },
                 { name: 'name' },
                 { name : 'description' }
             ],
-            localdata: data
+            localdata: []
         };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $("#requirements").jqxGrid({
-            width: 750,
-            selectionmode: 'checkbox',
-            altrows: true,
-            autoheight: true,
-            source: dataAdapter,
-            columns: [
-                { text: 'Id', datafield: 'requirementId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Description', datafield: 'description' }
-            ]
-        });
-    });
 
-    $http.get('supersede-dm-app/criteria')
-    .success(function(data) {
-        var source = {
+        var i;
+        var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
+
+        for (i = 0; i < selectedRequirements.length; i++) {
+            var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]);
+            gameRequirements.localdata.push(selectedRequirement);
+            $scope.gameRequirementsId.push(selectedRequirement.requirementId);
+        }
+
+        $scope.gameCriteria = {
             datatype: "json",
             datafields: [
                 { name: 'criteriaId' },
                 { name: 'name' },
                 { name : 'description' }
             ],
-            localdata: data
+            localdata: []
         };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $("#criteria").jqxGrid({
-            width: 750,
-            selectionmode: 'checkbox',
-            altrows: true,
-            autoheight: true,
-            source: dataAdapter,
-            columns: [
-                { text: 'Id', datafield: 'criteriaId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Description', datafield: 'description' }
-            ]
-        });
-    });
 
-    $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
-    .success(function(data) {
-        var source = {
+        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
+        for (i = 0; i < selectedCriteria.length; i++) {
+            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
+            $scope.gameCriteria.localdata.push(selectedCriterion);
+            $scope.gameCriteriaId.push(selectedCriterion.criteriaId);
+        }
+
+        gameOpinionProviders = {
             datatype: "json",
             datafields: [
                 { name: 'userId' },
                 { name: 'name' },
                 { name : 'email' }
             ],
-            localdata: data
+            localdata: []
         };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $("#players").jqxGrid({
-            width: 750,
-            selectionmode: 'checkbox',
-            altrows: true,
-            autoheight: true,
-            source: dataAdapter,
-            columns: [
-                { text: 'Id', datafield: 'userId', width: 100 },
-                { text: 'Name', datafield: 'name', width: 300 },
-                { text: 'Email', datafield: 'email' }
-            ]
-        });
-    });
 
-    var defineGameData = function() {
-        var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
-        var i;
-        for (i = 0; i < selectedRequirements.length; i++) {
-            var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]).requirementId;
-            $scope.gameRequirements.push(selectedRequirement);
+        var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
+        for (i = 0; i < selectedOpinionProviders.length; i++) {
+            var selectedOpinionProvider = $("#opinion_providers").jqxGrid('getrowdata', selectedOpinionProviders[i]);
+            gameOpinionProviders.localdata.push(selectedOpinionProvider);
+            $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
 
-        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedCriteria.length; i++) {
-            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]).criteriaId;
-            $scope.gameCriteria.push(selectedCriterion);
+        gameNegotiators = {
+            datatype: "json",
+            datafields: [
+                { name: 'userId' },
+                { name: 'name' },
+                { name : 'email' }
+            ],
+            localdata: []
+        };
 
-            $http.get("supersede-dm-app/garp/game/gamecriterion?criterionId=" + selectedCriterion)
-            .success(function(data) {
-            console.log(data);
-            $scope.fullCriteria.push(data);
-            });
-        }
-
-        var selectedPlayers = $("#players").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedPlayers.length; i++) {
-            var selectedPlayer = $("#players").jqxGrid('getrowdata', selectedPlayers[i]).userId;
-            $scope.gamePlayers.push(selectedPlayer);
+        var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
+        for (i = 0; i < selectedNegotiators.length; i++) {
+            var selectedNegotiator = $("#negotiators").jqxGrid('getrowdata', selectedNegotiators[i]);
+            gameNegotiators.localdata.push(selectedNegotiator);
+            $scope.gameNegotiatorsId.push(selectedNegotiator.userId);
         }
     }
 
@@ -155,7 +235,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
             data: gameCriteriaWeights,
-            params: {gameRequirements: $scope.gameRequirements, gamePlayers: $scope.gamePlayers}
+            params: {gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
+                gameNegotiators: $scope.gameNegotiatorsId}
         })
         .success(function(data) {
             console.log("success sending data:");
@@ -167,4 +248,72 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
         $location.url('supersede-dm-app/garp/home');
     };
+
+    function showGameRequirements() {
+        console.log("game requirements:");
+        console.log(gameRequirements);
+        var dataAdapter = new $.jqx.dataAdapter(gameRequirements);
+        $("#game_requirements").jqxGrid({
+            width: 750,
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'requirementId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
+            ]
+        });
+    }
+
+    function showGameCriteria() {
+        console.log("game criteria: ");
+        console.log($scope.gameCriteria);
+        var dataAdapter = new $.jqx.dataAdapter($scope.gameCriteria);
+        $("#game_criteria").jqxGrid({
+            width: 750,
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'criteriaId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Description', datafield: 'description' }
+            ]
+        });
+    }
+
+    function showGameOpinionProviders() {
+        var dataAdapter = new $.jqx.dataAdapter(gameOpinionProviders);
+        $("#game_opinion_providers").jqxGrid({
+            width: 750,
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Email', datafield: 'email' }
+            ]
+        });
+    }
+
+    function showGameNegotiators() {
+        var dataAdapter = new $.jqx.dataAdapter(gameNegotiators);
+        $("#game_negotiators").jqxGrid({
+            width: 750,
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: 100 },
+                { text: 'Name', datafield: 'name', width: 300 },
+                { text: 'Email', datafield: 'email' }
+            ]
+        });
+    }
+
+    getAvailableRequirements();
+    getAvailableCriteria();
+    getAvailablePlayers();
 });

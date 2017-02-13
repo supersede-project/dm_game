@@ -73,7 +73,7 @@ public class GAPersistentDB
     private GAGameRankingsJpa rankingsJpa;
 
     public void create(HGAGameSummary game, HashMap<Long, Double> criteriaWeights, List<Long> requirements,
-            List<Long> participants)
+            List<Long> opinionProviders, List<Long> negotiators)
     {
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
@@ -103,12 +103,21 @@ public class GAPersistentDB
             this.gameRequirementsJpa.save(req);
         }
 
-        for (Long uId : participants)
+        for (Long uId : opinionProviders)
         {
             HGAGameParticipation p = new HGAGameParticipation();
             p.setGameId(info.getId());
             p.setUserId(uId);
             p.setRole(GARole.OpinionProvider.name());
+            participationJpa.save(p);
+        }
+
+        for (Long uId : negotiators)
+        {
+            HGAGameParticipation p = new HGAGameParticipation();
+            p.setGameId(info.getId());
+            p.setUserId(uId);
+            p.setRole(GARole.Negotiator.name());
             participationJpa.save(p);
         }
 
@@ -119,8 +128,10 @@ public class GAPersistentDB
         p.setRole(GARole.Supervisor.name());
         participationJpa.save(p);
 
-        log.info("Created game: " + info.getId() + ", requirements: " + requirements.size() + ", criteria: "
-                + criteriaWeights.size() + ", participants: " + participants.size());
+        log.info(
+                "Created game: " + info.getId() + ", requirements: " + requirements.size() + ", criteria: "
+                        + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),
+                ", negotiators: " + negotiators.size());
     }
 
     public List<HGAGameSummary> getOwnedGames(Long owner)
