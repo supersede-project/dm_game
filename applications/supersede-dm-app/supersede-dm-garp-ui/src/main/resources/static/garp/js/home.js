@@ -85,7 +85,7 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                 r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
-                r = r.concat('ng-click="showResults(' + value + ')">Show Results</jqx-button>');
+                r = r.concat('ng-click="showSolutions(' + value + ')">Show Solutions</jqx-button>');
                 r = r.concat('<jqx-button jqx-width="120" jqx-height="25" ng-click="selectSolution(' + value);
                 r = r.concat(')">Select Solution</jqx-button></div>');
                 return r;
@@ -120,8 +120,8 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
         $location.url('supersede-dm-app/garp/gameplay').search('id', gameId);
     };
 
-    $scope.showResults = function(gameId) {
-        $location.url('supersede-dm-app/garp/results').search('gameId', gameId);
+    $scope.showSolutions = function(gameId) {
+        $location.url('supersede-dm-app/garp/solutions').search('gameId', gameId);
     };
 
     $scope.getActiveGames();

@@ -12,22 +12,37 @@
    limitations under the License.
 */
 
-var app = angular.module('w5app');
+var app = angular.module("w5app");
 
-app.controllerProvider.register('results', function($scope, $http, $location) {
+app.controllerProvider.register("solutions", function($scope, $http, $location) {
     var gameId = $location.search().gameId;
-    var results = [];
+    var gameRequirements = {};
 
-    function getResults() {
+    $scope.solutions = [];
+
+    $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+    .success(function(data) {
+
+        for (var i = 0; i < data.length; i++) {
+            var requirementId = data[i].requirementId;
+            gameRequirements[requirementId] = data[i];
+        }
+
+        getSolutions();
+    }).error(function(err){
+        alert(err.message);
+    });
+
+    function getSolutions() {
         $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
         .success(function(data) {
-            results = data;
-            console.log("results:");
-            console.log(results);
+            $scope.solutions = data;
         }).error(function(err){
             alert(err.message);
         });
     }
 
-    getResults();
+    $scope.getRequirement = function(requirementId) {
+        return gameRequirements[requirementId];
+    }
 });

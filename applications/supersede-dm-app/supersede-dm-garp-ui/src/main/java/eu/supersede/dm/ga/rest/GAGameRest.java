@@ -21,7 +21,6 @@ import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.Requirement;
@@ -34,13 +33,10 @@ public class GAGameRest
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RequirementsJpa availableRequirements;
+    private RequirementsJpa requirementsJpa;
 
     @Autowired
-    private ValutationCriteriaJpa availableCriteria;
-
-    @Autowired
-    private UsersJpa users;
+    private ValutationCriteriaJpa criteriaJpa;
 
     @Autowired
     private GAPersistentDB persistentDB;
@@ -98,7 +94,7 @@ public class GAGameRest
         {
             for (Long requirementId : reqs)
             {
-                requirements.add(availableRequirements.findOne(requirementId));
+                requirements.add(requirementsJpa.findOne(requirementId));
             }
         }
         else
@@ -107,7 +103,7 @@ public class GAGameRest
 
             for (Long requirementId : tmp)
             {
-                requirements.add(availableRequirements.findOne(requirementId));
+                requirements.add(requirementsJpa.findOne(requirementId));
             }
         }
 
@@ -128,7 +124,7 @@ public class GAGameRest
 
         for (Long criterionId : criteriaIds)
         {
-            criteria.add(availableCriteria.findOne(criterionId));
+            criteria.add(criteriaJpa.findOne(criterionId));
         }
 
         return criteria;
@@ -137,19 +133,27 @@ public class GAGameRest
     @RequestMapping(value = "/gamecriterion", method = RequestMethod.GET)
     public ValutationCriteria getGameCriterion(Authentication authentication, Long criterionId)
     {
-        return availableCriteria.findOne(criterionId);
+        return criteriaJpa.findOne(criterionId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
     public Requirement getRequirement(Authentication authentication, Long requirementId)
     {
-        return availableRequirements.findOne(requirementId);
+        return requirementsJpa.findOne(requirementId);
     }
 
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
-    public Map<Long, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
+    public List<Requirement> getGameRequirements(Authentication authentication, Long gameId)
     {
-        return persistentDB.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
+        List<Requirement> requirements = new ArrayList<>();
+        List<Long> requirementsId = persistentDB.getRequirements(gameId);
+
+        for (Long requirementId : requirementsId)
+        {
+            requirements.add(requirementsJpa.findOne(requirementId));
+        }
+
+        return requirements;
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
