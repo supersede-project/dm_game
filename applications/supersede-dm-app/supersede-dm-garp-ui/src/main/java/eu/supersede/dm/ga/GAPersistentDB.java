@@ -329,7 +329,7 @@ public class GAPersistentDB
 
     private Map<Long, List<Long>> deserializeRankings(String json)
     {
-        Type type = new TypeToken<Map<String, List<Long>>>()
+        Type type = new TypeToken<Map<Long, List<Long>>>()
         {
         }.getType();
         return new Gson().fromJson(json, type);
@@ -388,7 +388,7 @@ public class GAPersistentDB
         return gi.getRequirements();
     }
 
-    public Map<String, List<Long>> getRequirements(Long gameId, Long userId)
+    public Map<Long, List<Long>> getRequirements(Long gameId, Long userId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -397,11 +397,11 @@ public class GAPersistentDB
             return new HashMap<>();
         }
 
-        Map<String, List<Long>> map = new HashMap<>();
+        Map<Long, List<Long>> map = new HashMap<>();
 
         for (Long c : gi.getCriteriaWeights().keySet())
         {
-            map.put("" + c, gi.getRequirements());
+            map.put(c, gi.getRequirements());
         }
 
         return map;

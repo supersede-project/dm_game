@@ -94,7 +94,7 @@ public class GAGameRest
         List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
 
-        if (reqs != null)
+        if (reqs.size() > 0)
         {
             for (Long requirementId : reqs)
             {
@@ -147,7 +147,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
-    public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
+    public Map<Long, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
     {
         return persistentDB.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
     }
@@ -178,7 +178,6 @@ public class GAGameRest
         // get the rankings of each player for each criterion
         for (Long userId : participantIds)
         {
-            String player = users.getOne(userId).getName();
             Map<Long, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
             Map<String, List<String>> userRankingStr = new HashMap<>();
 
@@ -194,7 +193,7 @@ public class GAGameRest
                 userRankingStr.put("" + entry.getKey(), requirements);
             }
 
-            algo.addRanking(player, userRankingStr);
+            algo.addRanking("" + userId, userRankingStr);
         }
 
         return algo.calc();
