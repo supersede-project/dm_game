@@ -43,8 +43,8 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;">');
-                r = r.concat('<a href="#/supersede-dm-app/garp/gameplay?id=' + value + '">Open Game</a></jqx-link-button>');
+                r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+                r = r.concat('ng-click="vote(' + value + ')">Vote</jqx-button>');
                 r = r.concat('<jqx-button jqx-width="120" jqx-height="25" ng-click="selectSolution(' + value);
                 r = r.concat(')">Select Solution</jqx-button></div>');
                 r = r.concat();
@@ -84,9 +84,8 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;">');
-                r = r.concat('<a href="#/supersede-dm-app/garp/results');
-                r = r.concat(value + '">Open Game</a></jqx-link-button>');
+                r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+                r = r.concat('ng-click="showResults(' + value + ')">Show Results</jqx-button>');
                 r = r.concat('<jqx-button jqx-width="120" jqx-height="25" ng-click="selectSolution(' + value);
                 r = r.concat(')">Select Solution</jqx-button></div>');
                 return r;
@@ -115,6 +114,14 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
 
     $scope.selectSolution = function(gameId) {
         $location.url('supersede-dm-app/garp/select_solution').search('gameId', gameId);
+    };
+
+    $scope.vote = function(gameId) {
+        $location.url('supersede-dm-app/garp/gameplay').search('id', gameId);
+    };
+
+    $scope.showResults = function(gameId) {
+        $location.url('supersede-dm-app/garp/results').search('gameId', gameId);
     };
 
     $scope.getActiveGames();

@@ -82,7 +82,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     function setCurrentPage(page) {
         $scope.currentPage = 'page' + page;
-        console.log("current page: ");
     }
 
     $scope.defineWeights = function() {

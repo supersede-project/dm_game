@@ -260,7 +260,7 @@ public class GAPersistentDB
 
         Map<Long, List<Long>> map = gi.getRankings().get(userId);
 
-        if (map == null)
+        if (map == null || map.get(criterion) == null)
         {
             return new ArrayList<>();
         }

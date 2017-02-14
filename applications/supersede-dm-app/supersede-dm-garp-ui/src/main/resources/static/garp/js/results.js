@@ -12,6 +12,22 @@
    limitations under the License.
 */
 
-$(document).ready(function () {
-    $('#jqxTabs').jqxTabs({ width: 700 });
+var app = angular.module('w5app');
+
+app.controllerProvider.register('results', function($scope, $http, $location) {
+    var gameId = $location.search().gameId;
+    var results = [];
+
+    function getResults() {
+        $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
+        .success(function(data) {
+            results = data;
+            console.log("results:");
+            console.log(results);
+        }).error(function(err){
+            alert(err.message);
+        });
+    }
+
+    getResults();
 });

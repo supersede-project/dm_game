@@ -153,10 +153,10 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, HGAGameSummary game)
+    public List<Map<String, Double>> calcRanking(Authentication authentication, Long gameId)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(game);
+        HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
         List<String> gameCriteria = new ArrayList<>();
 
         for (Long criterionId : criteriaWeights.keySet())
@@ -167,35 +167,58 @@ public class GAGameRest
 
         algo.setCriteria(gameCriteria);
 
-        for (Long rid : persistentDB.getRequirements(game.getId()))
+        for (Long requirementId : persistentDB.getRequirements(gameId))
         {
-            algo.addRequirement("" + rid, new ArrayList<>());
+            algo.addRequirement("" + requirementId, new ArrayList<>());
         }
 
         // get all the players in this game
-        List<Long> participantIds = persistentDB.getParticipants(game);
+        List<Long> participantIds = persistentDB.getParticipants(gameId);
 
         // get the rankings of each player for each criterion
+        List<String> players = new ArrayList<>();
+
         for (Long userId : participantIds)
         {
-            Map<Long, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
-            Map<String, List<String>> userRankingStr = new HashMap<>();
+            String player = "" + userId;
+            players.add(player);
+            Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
 
-            for (Entry<Long, List<Long>> entry : userRanking.entrySet())
+            if (userRanking != null)
             {
-                List<String> requirements = new ArrayList<>();
+                Map<String, List<String>> userRankingStr = new HashMap<>();
 
-                for (Long requirement : entry.getValue())
+                for (Entry<Long, List<Long>> entry : userRanking.entrySet())
                 {
-                    requirements.add("" + requirement);
+                    List<String> requirements = new ArrayList<>();
+
+                    for (Long requirement : entry.getValue())
+                    {
+                        requirements.add("" + requirement);
+                    }
+
+                    userRankingStr.put("" + entry.getKey(), requirements);
                 }
 
-                userRankingStr.put("" + entry.getKey(), requirements);
+                algo.addRanking(player, userRankingStr);
             }
-
-            algo.addRanking("" + userId, userRankingStr);
         }
 
-        return algo.calc();
+        algo.setDefaultPlayerWeights(gameCriteria, players);
+
+        List<Map<String, Double>> prioritizations = null;
+
+        try
+        {
+            prioritizations = algo.calc().subList(0, 3);
+        }
+        catch (Exception e)
+        {
+            log.error("Unable to compute prioritizations!");
+            e.printStackTrace();
+            prioritizations = new ArrayList<>();
+        }
+
+        return prioritizations;
     }
 }

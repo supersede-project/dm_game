@@ -28,11 +28,7 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
         $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
         .success(function(data) {
             criteria = data;
-            console.log("criteria:");
-            console.log(criteria);
             $scope.currentCriterion = criteria[currentCriterionIndex];
-            console.log("current criterion:");
-            console.log($scope.currentCriterion);
             getRequirements();
         }).error(function(err){
             alert(err.message);
@@ -40,40 +36,35 @@ app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
     };
 
     var getRequirements = function() {
-        console.log("current criterion:");
-        console.log($scope.currentCriterion);
         $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + $scope.currentCriterion.criteriaId)
         .success(function(data) {
             $scope.requirements = data;
-            console.log("current requirements:");
-            console.log($scope.requirements);
             $("#sortable").jqxSortable();
         }).error(function(err){
             alert(err.message);
         });
     };
 
-    $scope.saveCurrentOrdering = function() {
+    function saveRanking() {
         var data = $("#sortable").jqxSortable("toArray");
         rankings[$scope.currentCriterion.criteriaId] = data;
-        console.log("current rankings:");
-        console.log(rankings);
 
         if ($scope.lastCriterion === false) {
             currentCriterionIndex++;
-            console.log("current index:");
-            console.log(currentCriterionIndex);
 
             if (currentCriterionIndex == criteria.length - 1) {
                 $scope.lastCriterion = true;
-                console.log("last criterion is true");
             }
         }
+    }
 
+    $scope.saveCurrentOrdering = function() {
+        saveRanking();
         getCurrentCriterion();
     };
 
     $scope.submitPriorities = function() {
+        saveRanking();
         $http({
             url: "supersede-dm-app/garp/game/submit",
             data: rankings,
