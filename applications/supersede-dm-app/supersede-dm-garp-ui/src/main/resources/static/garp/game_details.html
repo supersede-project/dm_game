@@ -10,13 +10,17 @@
 
     <h1>Game Details</h1>
 
-    <h2>Selected Solution</h2>
-    <p ng-repeat="(requirementId, value) in solution">
-        <strong>Id</strong>: {{requirementId}}<br>
-        <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
-        <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-        <strong>Value</strong>: {{value}}
-    </p>
+    <div ng-show="solutionSelected()">
+        <h2>Selected Solution</h2>
+        <p ng-repeat="(requirementId, value) in solution">
+            <strong>Id</strong>: {{requirementId}}<br>
+            <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
+            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+            <strong>Value</strong>: {{value}}
+        </p>
+    </div>
+
+    <p ng-show="!solutionSelected()">No solution has been selected yet</p>
 
     <br>
     <jqx-button ng-click="closeGame()">Close Game</jqx-button>
