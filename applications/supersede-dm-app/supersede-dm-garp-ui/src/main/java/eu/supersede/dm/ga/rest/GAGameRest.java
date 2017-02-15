@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.data.GAGameDetails;
+import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
@@ -51,6 +53,9 @@ public class GAGameRest
 
     @Autowired
     private ValutationCriteriaJpa criteriaJpa;
+
+    @Autowired
+    private GAGameParticipationJpa participationJpa;
 
     @Autowired
     private GAPersistentDB persistentDB;
@@ -90,6 +95,26 @@ public class GAGameRest
     public List<Long> getRanking(@RequestParam Long gameId, @RequestParam Long userId, @RequestParam Long criterionId)
     {
         return persistentDB.getRankingsCriterion(gameId, userId, criterionId);
+    }
+
+    @RequestMapping(value = "/ranking", method = RequestMethod.GET)
+    public Map<Long, Map<Long, List<Long>>> getRanking(@RequestParam Long gameId)
+    {
+        GAGameDetails gameDetails = persistentDB.getGameInfo(gameId);
+
+        Map<Long, Map<Long, List<Long>>> ranking = new HashMap<>();
+
+        for (Long userId : gameDetails.getParticipants())
+        {
+            Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
+
+            if (userRanking != null)
+            {
+                ranking.put(userId, userRanking);
+            }
+        }
+
+        return ranking;
     }
 
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)

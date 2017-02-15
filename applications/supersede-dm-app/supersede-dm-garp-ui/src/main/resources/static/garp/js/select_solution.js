@@ -18,7 +18,16 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     var gameId = $location.search().gameId;
     var gameRequirements = {};
 
+    $scope.currentPage = "page1";
+    $scope.ranking = {};
     $scope.solutions = [];
+
+    $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+    .success(function(data) {
+        $scope.ranking = data;
+    }).error(function(err){
+        alert(err.message);
+    });
 
     $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
     .success(function(data) {
@@ -33,6 +42,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         alert(err.message);
     });
 
+    function setCurrentPage(page) {
+        $scope.currentPage = 'page' + page;
+    }
+
     function getSolutions() {
         $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
         .success(function(data) {
@@ -44,5 +57,14 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
     $scope.getRequirement = function(requirementId) {
         return gameRequirements[requirementId];
-    }
+    };
+
+    $scope.showSolutions = function() {
+        setCurrentPage(2);
+    };
+
+    $scope.selectSolution = function() {
+        // TODO
+    };
+
 });

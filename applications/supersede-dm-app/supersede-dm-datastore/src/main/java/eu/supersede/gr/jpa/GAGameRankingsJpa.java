@@ -23,5 +23,4 @@ public interface GAGameRankingsJpa extends JpaRepository<HGARankingInfo, Long>
 {
     @Query("SELECT jsonizedRanking FROM HGARankingInfo rankings WHERE gameId = ?1 AND userId = ?2")
     public String findRankingByGameAndUser(Long gameId, Long userId);
-
 }
