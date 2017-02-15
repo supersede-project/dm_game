@@ -279,9 +279,11 @@ public class GAPersistentDB
         solutionsJpa.save(gaSolution);
     }
 
-    public HGASolution getSolution(Long gameId)
+    public Map<Long, Double> getSolution(Long gameId)
     {
-        return solutionsJpa.findByGameId(gameId);
+        HGASolution gaSolution = solutionsJpa.findByGameId(gameId);
+        String jsonSolution = gaSolution.getJsonizedSolution();
+        return deserializeSolution(jsonSolution);
     }
 
     public GAGameDetails getGameInfo(Long gameId)

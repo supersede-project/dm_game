@@ -10,4 +10,10 @@
 
     <h1>Chosen Solution</h1>
 
+    <p ng-repeat="(requirementId, value) in solution">
+        <strong>Id</strong>: {{requirementId}}<br>
+        <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
+        <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+        <strong>Value</strong>: {{value}}
+    </p>
 </div>

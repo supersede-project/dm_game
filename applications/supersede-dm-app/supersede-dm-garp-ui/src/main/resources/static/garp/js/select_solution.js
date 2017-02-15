@@ -81,5 +81,4 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             alert(err.message);
         });
     };
-
 });

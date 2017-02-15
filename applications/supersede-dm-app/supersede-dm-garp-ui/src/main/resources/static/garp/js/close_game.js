@@ -16,4 +16,32 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('close_game', function($scope, $http, $location) {
 
+    var gameId = $location.search().gameId;
+    var requirements = [];
+
+    $scope.gameRequirements = {};
+    $scope.solution = {};
+
+    $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
+    .success(function(data) {
+        requirements = data;
+
+        for (var i = 0; i < requirements.length; i++) {
+            var currentRequirement = requirements[i];
+            $scope.gameRequirements[currentRequirement.requirementId] = currentRequirement;
+        }
+    }).error(function(err){
+        alert(err.message);
+    });
+
+    $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
+    .success(function(data) {
+        $scope.solution = data;
+    }).error(function(err){
+        alert(err.message);
+    });
+
+    $scope.getRequirement = function(requirementId) {
+        return $scope.gameRequirements[requirementId];
+    }
 });

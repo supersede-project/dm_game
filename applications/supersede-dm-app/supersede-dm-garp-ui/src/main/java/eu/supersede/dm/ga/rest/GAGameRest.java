@@ -39,7 +39,6 @@ import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
-import eu.supersede.gr.model.HGASolution;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -125,7 +124,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/solution", method = RequestMethod.GET)
-    public HGASolution getSolution(@RequestParam Long gameId)
+    public Map<Long, Double> getSolution(@RequestParam Long gameId)
     {
         return persistentDB.getSolution(gameId);
     }
