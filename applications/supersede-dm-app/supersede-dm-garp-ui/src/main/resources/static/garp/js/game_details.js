@@ -48,14 +48,18 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.closeGame = function() {
         $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId)
         .success(function(data) {
-            alert('Game successfully closed!');
-            $location.url('supersede-dm-app/garp/home');
+            $("#game_closed").html("<strong>Game successfully closed!</strong>");
         }).error(function(err){
-            alert(err.message);
+            $("#game_closed").html("<strong>Unable to close the game!</strong>");
+            console.log(err.message);
         });
     };
 
     $scope.solutionSelected = function() {
         return Object.keys($scope.solution).length !== 0;
+    };
+
+    $scope.home = function() {
+        $location.url('supersede-dm-app/garp/home');
     };
 });

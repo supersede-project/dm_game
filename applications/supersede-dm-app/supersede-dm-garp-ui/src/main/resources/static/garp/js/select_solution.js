@@ -81,4 +81,12 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             alert(err.message);
         });
     };
+
+    $scope.emptyRanking = function() {
+        return Object.keys($scope.ranking).length === 0;
+    };
+
+    $scope.home = function() {
+        $location.url('supersede-dm-app/garp/home');
+    };
 });

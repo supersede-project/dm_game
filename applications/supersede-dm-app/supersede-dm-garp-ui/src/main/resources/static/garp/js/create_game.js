@@ -17,7 +17,6 @@ var app = angular.module('w5app');
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 
     $scope.currentPage = "page1";
-
     $scope.gameRequirementsId = [];
     $scope.gameCriteriaId = [];
     $scope.gameOpinionProvidersId = [];
@@ -83,20 +82,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     function setCurrentPage(page) {
         $scope.currentPage = 'page' + page;
     }
-
-    $scope.defineWeights = function() {
-        defineGameData();
-        setCurrentPage(2);
-    };
-
-    $scope.showSummary = function() {
-        defineCriteriaWeights();
-        setCurrentPage(3);
-        showGameRequirements();
-        showGameCriteria();
-        showGameOpinionProviders();
-        showGameNegotiators();
-    };
 
     function getAvailableRequirements() {
         $http.get('supersede-dm-app/requirement')
@@ -246,24 +231,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         }
     }
 
-    $scope.create_game = function () {
-        $http({
-            method: 'POST',
-            url: "supersede-dm-app/garp/game/newgame",
-            data: gameCriteriaWeightsId,
-            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId}
-        })
-        .success(function(data) {
-            console.log("Game created successfully");
-        }).error(function(err, data){
-            console.log(err);
-            console.log(data);
-        });
-
-        $location.url('supersede-dm-app/garp/home');
-    };
-
     function showGameRequirements() {
         var dataAdapter = new $.jqx.dataAdapter(gameRequirements);
         $("#game_requirements").jqxGrid({
@@ -328,6 +295,42 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             ]
         });
     }
+
+    $scope.defineWeights = function() {
+        defineGameData();
+        setCurrentPage(2);
+    };
+
+    $scope.showSummary = function() {
+        defineCriteriaWeights();
+        setCurrentPage(3);
+        showGameRequirements();
+        showGameCriteria();
+        showGameOpinionProviders();
+        showGameNegotiators();
+    };
+
+    $scope.create_game = function () {
+        $http({
+            method: 'POST',
+            url: "supersede-dm-app/garp/game/newgame",
+            data: gameCriteriaWeightsId,
+            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
+                gameNegotiators: $scope.gameNegotiatorsId}
+        })
+        .success(function(data) {
+            console.log("Game created successfully");
+        }).error(function(err, data){
+            console.log(err);
+            console.log(data);
+        });
+
+        $location.url('supersede-dm-app/garp/home');
+    };
+
+    $scope.home = function() {
+        $location.url('supersede-dm-app/garp/home');
+    };
 
     getAvailableRequirements();
     getAvailableCriteria();

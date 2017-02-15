@@ -23,23 +23,32 @@
 <div ng-controller="select_solution">
 
     <div id="page1" ng-show="currentPage == 'page1'">
+
         <h1>Current Ranking</h1>
 
-        <div ng-repeat="(userId, criterionRanking) in ranking">
-            <h2>Opinion Provider {{$index + 1}}</h2>
+        <div ng-show="!emptyRanking()">
+            <div ng-repeat="(userId, criterionRanking) in ranking">
+                <h2>Opinion Provider {{$index + 1}}</h2>
 
-            <div ng-repeat="(criterionId, requirements) in criterionRanking">
-                <h3>{{criterionId}}:</h3>
+                <div ng-repeat="(criterionId, requirements) in criterionRanking">
+                    <h3>{{criterionId}}:</h3>
 
-                <div ng-repeat="requirementId in requirements">
-                    <strong>Id</strong>: {{requirementId}}<br>
-                    <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
-                    <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                    <div ng-repeat="requirementId in requirements">
+                        <strong>Id</strong>: {{requirementId}}<br>
+                        <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
+                        <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                    </div>
                 </div>
             </div>
+
+            <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
         </div>
 
-        <jqx-button ng-click="showSolutions()">Show Solutions</jqx-button>
+        <div ng-show="emptyRanking()">
+            <p><strong>No ranking has been submitted yet!</strong></p>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
     </div>
 
     <div id="page2" ng-show="currentPage == 'page2'">
@@ -64,6 +73,7 @@
         <select id="selected_solution">
             <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
         </select>
-        <jqx-button ng-click="selectSolution()">Select Solution</jqx-button>
+        <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution</jqx-button>
+        <jqx-button ng-click="home()">GA Home</jqx-button>
     </div>
 </div>

@@ -83,5 +83,9 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         });
     };
 
+    $scope.home = function() {
+        $location.url('supersede-dm-app/garp/home');
+    };
+
     getCurrentCriterion();
 });
