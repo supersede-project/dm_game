@@ -14,7 +14,7 @@
 
 package eu.supersede.dm.rest;
 
-import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.dm.DMObjective;
+import eu.supersede.dm.DMGame;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HProcess;
@@ -36,15 +36,41 @@ public class ProcessRest
     @Autowired ProcessesJpa jpaProcesses;
     
     @Autowired RequirementsJpa jpaRequirements;
-
+    
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
     {
-    	HProcess proc = new HProcess();
-    	proc.setObjective( DMObjective.PrioritizeRequirements.name() );
-    	proc.setStartTime( new Date( System.currentTimeMillis() ) );
-    	jpaProcesses.save( proc );
-    	return proc.getId();
+    	return DMGame.get().createEmptyProcess().getId();
+//    	HProcess proc = new HProcess();
+//    	proc.setObjective( DMObjective.PrioritizeRequirements.name() );
+//    	proc.setStartTime( new Date( System.currentTimeMillis() ) );
+//    	proc = jpaProcesses.save( proc );
+//    	return proc.getId();
+    }
+    
+    static class JqxProcess {
+    	public String id;
+    	public String name;
+    	public String state;
+    	public String date;
+    	public String objective;
+    	public String jqxcontent;
+    }
+    
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    public List<JqxProcess> getProcessList() {
+    	List<JqxProcess> list = new ArrayList<JqxProcess>();
+    	for( HProcess p : jpaProcesses.findAll() ) {
+    		JqxProcess qp = new JqxProcess();
+    		qp.id = "" + p.getId();
+    		qp.name = p.getName();
+    		qp.state = p.getStatus().name();
+    		qp.objective = p.getObjective();
+    		qp.date = p.getStartTime().toString();
+    		qp.jqxcontent = "<div id='widget-content'>BBB</div>";
+    		list.add( qp );
+    	}
+    	return list;
     }
     
     public void addRequirements( Long procId, List<Long> reqList ) {

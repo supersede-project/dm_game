@@ -14,18 +14,23 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "h_processes")
 public class HProcess {
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-     
-    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startTime;
-    
-    private String objective;
+
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date startTime;
+
+	private String objective;
 	
-   public Long getId() {
+	private String name = "";
+	
+	private ProcessStatus status;
+	
+	
+	public Long getId() {
 		return id;
 	}
 
@@ -47,6 +52,22 @@ public class HProcess {
 
 	public void setObjective(String objective) {
 		this.objective = objective;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public ProcessStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ProcessStatus status) {
+		this.status = status;
 	}
 
 }

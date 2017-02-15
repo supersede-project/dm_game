@@ -1,4 +1,54 @@
 <script src="supersede-dm-app/js/home.js"></script>
+<style>
+        .jqx-kanban-item-color-status {
+            width: 100%;
+            height: 25px;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            position:relative;
+            margin-top:0px;
+            top: 0px;
+        }
+        .jqx-kanban-item {
+            padding-top: 0px;
+        }
+        .jqx-kanban-item-text {
+            padding-top: 6px;
+        }
+        .jqx-kanban-item-avatar {
+            top: 9px;
+        }
+        .jqx-kanban-template-icon {
+            position: absolute;
+            right: 3px;
+            top:12px;
+        }
+        
+        .sortable {
+            margin: 2px;
+            padding: 5px;
+            width: 200px;
+            border: lightblue solid 1px;
+        }
+        .sortable-container{;
+            float: left;
+            width: 220px;
+        }
+        .sortable-container span {
+            font-weight: bold;
+        }
+        .sortable div {
+            border-radius: 5px;
+            padding: 5px;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+            border: 1px solid transparent;
+         }
+         .sortable div:hover {
+            border: 1px solid #356AA0;
+          }
+    </style>
 <div class="container" ng-controller="home">
 
 	Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
@@ -21,7 +71,8 @@
 		</div>
 		
 		<div class="col-md-6">
-			<h2>Ongoing processes: {{procNum}}
+			<h2>Ongoing processes: <a
+		href="#/supersede-dm-app/requirements">{{procNum}}</a>
 	        <input type="button" value="Create new" id='btnNewProcess' />
 <!-- 				<jqx-button style="margin-left:64px" jqx-height="30" on-click="exportGameData()"> -->
 <!-- 				Create new -->
@@ -31,12 +82,31 @@
 		
 	</div>
 	
-
-	<jqx-link-button jqx-width="200" jqx-height="30"> <a
-		href="#/supersede-dm-app/ahprp/home">Prioritize with AHP</a>
-	</jqx-link-button>
-	<jqx-link-button jqx-width="200" jqx-height="30"> <a
-		href="#/supersede-dm-app/plan">Plan decision making process</a>
-	</jqx-link-button>
+	
+	<div style="border: none;" id="listbox"></div>
+	
+	
+<!-- 	<div id="kanban1"></div> -->
+<!-- 	<div> -->
+<!-- 	<div class="sortable-container"> -->
+<!--         <span>Open</span> -->
+<!--         <div id="sortable1" class="sortable"></div> -->
+<!--     </div> -->
+<!--     <div class="sortable-container"> -->
+<!--         <span>In Progress</span> -->
+<!--         <div id="sortable2" class="sortable"></div> -->
+<!--     </div> -->
+<!--     <div class="sortable-container"> -->
+<!--         <span>Closed</span> -->
+<!--         <div id="sortable3" class="sortable"></div> -->
+<!--     </div> -->
+<!-- 	</div> -->
+	
+<!-- 	<jqx-link-button jqx-width="200" jqx-height="30"> <a -->
+<!-- 		href="#/supersede-dm-app/ahprp/home">Prioritize with AHP</a> -->
+<!-- 	</jqx-link-button> -->
+<!-- 	<jqx-link-button jqx-width="200" jqx-height="30"> <a -->
+<!-- 		href="#/supersede-dm-app/plan">Plan decision making process</a> -->
+<!-- 	</jqx-link-button> -->
 
 </div>

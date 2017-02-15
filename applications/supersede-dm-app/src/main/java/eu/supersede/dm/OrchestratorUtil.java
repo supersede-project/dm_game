@@ -14,6 +14,8 @@ import eu.supersede.dm.methods.AHPRequirementsPrioritizationMethod;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.model.HTopic;
+import eu.supersede.gr.model.HUserSkill;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -153,22 +155,23 @@ public class OrchestratorUtil
 
 		for (User user : users.findAll())
 		{
-			cfg.addUser(new DMUser(user.getName(), new DMSkill[] {}));
+			cfg.addUser(new DMUser( user.getName() ));
 		}
-
-		List<DMTopic> topics = new ArrayList<>();
+		
+		List<HTopic> topics = new ArrayList<>();
 
 		{
 			for (ValutationCriteria criterion : criteria.findAll())
 			{
-				topics.add(new DMTopic(criterion.getName()));
+				topics.add(new HTopic(criterion.getName()));
 			}
 		}
 
 		{
 			for (Requirement r : requirements.findAll())
 			{
-				cfg.add(new DMRequirement("" + r.getRequirementId(), r.getName()));
+				cfg.add( r );
+//				cfg.add(new DMRequirement("" + r.getRequirementId(), r.getName()));
 			}
 		}
 
@@ -224,27 +227,34 @@ public class OrchestratorUtil
 		DMProblem.Config c = new DMProblem.Config();
 
 		// Criteria
-		DMTopic userImpact = new DMTopic("User Impact");
-		DMTopic developmentEffort = new DMTopic("Development Effort");
+		HTopic userImpact = new HTopic("User Impact");
+		HTopic developmentEffort = new HTopic("Development Effort");
 
 		// Some requirements with random topics
 		{
-			DMTopic[] topics = new DMTopic[] { userImpact, developmentEffort };
+			HTopic[] topics = new HTopic[] { userImpact, developmentEffort };
 			for (int i = 0; i < 15; i++)
 			{
-				c.add(new DMRequirement("R" + i, "Requirement " + random.nextInt(10000), topics[random.nextInt(2)]));
+				Requirement r = new Requirement();
+				r.setRequirementId( (long)i );
+				r.setName( "Requirement " + random.nextInt(10000) );
+				c.add( r );
+//				c.add(new DMRequirement(
+//						"R" + i, 
+//						"Requirement " + random.nextInt(10000), 
+//						topics[random.nextInt(2)]));
 			}
 		}
 
 		// Users
 		c.addUser(new DMUser("John",
-				new DMSkill[] { new DMSkill(userImpact, 0.8), new DMSkill(developmentEffort, 0.2) }));
+				new HUserSkill[] { new HUserSkill(userImpact, 0.8), new HUserSkill(developmentEffort, 0.2) }));
 
 		c.addUser(
-				new DMUser("Jim", new DMSkill[] { new DMSkill(userImpact, 0.6), new DMSkill(developmentEffort, 0.4) }));
+				new DMUser("Jim", new HUserSkill[] { new HUserSkill(userImpact, 0.6), new HUserSkill(developmentEffort, 0.4) }));
 
 		c.addUser(new DMUser("Jack",
-				new DMSkill[] { new DMSkill(userImpact, 0.5), new DMSkill(developmentEffort, 0.5) }));
+				new HUserSkill[] { new HUserSkill(userImpact, 0.5), new HUserSkill(developmentEffort, 0.5) }));
 
 		// Available methods
 		for (DMMethod method : DMLibrary.get().methods())
@@ -262,7 +272,7 @@ public class OrchestratorUtil
 		DMProblem problem = new DMProblem(DMObjective.PrioritizeRequirements, c);
 
 		out.println("Requirements:");
-		for (DMRequirement r : problem.getRequirements())
+		for (Requirement r : problem.getRequirements())
 		{
 			// out.println( r.getId() + ": " + r.getText() );
 			out.println(r);
@@ -296,7 +306,7 @@ public class OrchestratorUtil
 	{
 
 		out.println("Requirements:");
-		for (DMRequirement r : problem.getRequirements())
+		for (Requirement r : problem.getRequirements())
 		{
 			// out.println( r.getId() + ": " + r.getText() );
 			out.println(r);
@@ -342,27 +352,34 @@ public class OrchestratorUtil
 		DMProblem.Config c = new DMProblem.Config();
 
 		// Criteria
-		DMTopic userImpact = new DMTopic("User Impact");
-		DMTopic developmentEffort = new DMTopic("Development Effort");
+		HTopic userImpact = new HTopic("User Impact");
+		HTopic developmentEffort = new HTopic("Development Effort");
 
 		// Some requirements with random topics
 		{
-			DMTopic[] topics = new DMTopic[] { userImpact, developmentEffort };
+			HTopic[] topics = new HTopic[] { userImpact, developmentEffort };
 			for (int i = 0; i < 15; i++)
 			{
-				c.add(new DMRequirement("R" + i, "Requirement " + random.nextInt(10000), topics[random.nextInt(2)]));
+				Requirement r = new Requirement();
+				r.setRequirementId( (long)i );
+				r.setName( "Requirement " + random.nextInt(10000) );
+				c.add( r );
+//				c.add( new DMRequirement(
+//						"R" + i, 
+//						"Requirement " + random.nextInt(10000), 
+//						topics[random.nextInt(2)]));
 			}
 		}
 
 		// Users
 		c.addUser(new DMUser("John",
-				new DMSkill[] { new DMSkill(userImpact, 0.8), new DMSkill(developmentEffort, 0.2) }));
+				new HUserSkill[] { new HUserSkill(userImpact, 0.8), new HUserSkill(developmentEffort, 0.2) }));
 
 		c.addUser(
-				new DMUser("Jim", new DMSkill[] { new DMSkill(userImpact, 0.6), new DMSkill(developmentEffort, 0.4) }));
+				new DMUser("Jim", new HUserSkill[] { new HUserSkill(userImpact, 0.6), new HUserSkill(developmentEffort, 0.4) }));
 
 		c.addUser(new DMUser("Jack",
-				new DMSkill[] { new DMSkill(userImpact, 0.5), new DMSkill(developmentEffort, 0.5) }));
+				new HUserSkill[] { new HUserSkill(userImpact, 0.5), new HUserSkill(developmentEffort, 0.5) }));
 
 		// Available methods
 		for (DMMethod method : DMLibrary.get().methods())
@@ -380,7 +397,7 @@ public class OrchestratorUtil
 		DMProblem problem = new DMProblem(DMObjective.PrioritizeRequirements, c);
 
 		out.println("Requirements:");
-		for (DMRequirement r : problem.getRequirements())
+		for (Requirement r : problem.getRequirements())
 		{
 			// out.println( r.getId() + ": " + r.getText() );
 			out.println(r);
@@ -425,11 +442,11 @@ public class OrchestratorUtil
 					continue;
 				}
 
-				DMStatus status = new DMStatus();
+				SimulatedProcess status = new SimulatedProcess( 0L );
 
-				for (DMRequirement r : problem.getRequirements())
+				for (Requirement r : problem.getRequirements())
 				{
-					status.addRequirement(r);
+//					status.addRequirement(r);
 				}
 
 			}

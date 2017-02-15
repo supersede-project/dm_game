@@ -16,6 +16,8 @@ public class HActivity
     
     private Long processId;
 
+    private String methodName;
+    
     public Long getProcessId() {
 		return processId;
 	}
@@ -23,8 +25,6 @@ public class HActivity
 	public void setProcessId(Long processId) {
 		this.processId = processId;
 	}
-
-	private String methodName;
 
     public Long getId()
     {

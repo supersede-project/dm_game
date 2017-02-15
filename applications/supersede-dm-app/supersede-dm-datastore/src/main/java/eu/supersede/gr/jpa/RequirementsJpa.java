@@ -18,11 +18,16 @@
 
 package eu.supersede.gr.jpa;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.Requirement;
 
-public interface RequirementsJpa extends JpaRepository<Requirement, Long>
-{
+public interface RequirementsJpa extends JpaRepository<Requirement, Long> {
+	
+    @Query("SELECT r FROM Requirement r WHERE processId = ?1")
+    List<Requirement> findRequirementsByProcessId( Long processId );
 
 }

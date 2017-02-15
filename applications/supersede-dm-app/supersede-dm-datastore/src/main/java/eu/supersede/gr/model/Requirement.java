@@ -113,4 +113,8 @@ public class Requirement
     	}
     }
     
+    public String getTopic() {
+    	return "";
+    }
+    
 }

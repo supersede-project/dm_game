@@ -30,9 +30,10 @@ import eu.supersede.dm.DMGuiManager;
 import eu.supersede.dm.DMLibrary;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMSolution;
-import eu.supersede.dm.DMStatus;
 import eu.supersede.dm.IDMGui;
 import eu.supersede.dm.OrchestratorUtil;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.SimulatedProcess;
 
 @RestController
 @RequestMapping("/orchestration")
@@ -77,11 +78,11 @@ public class OrchestrationRest
 	@RequestMapping(value = "/available_activities", method = RequestMethod.GET)
 	public List<ActivityEntry> getNextActivities( Long procId ) {
 		
-		return findNextActivities( new DMStatus() );
+		return findNextActivities( new SimulatedProcess( procId ) );
 		
 	}
 	
-	public List<ActivityEntry> findNextActivities( DMStatus status ) {
+	public List<ActivityEntry> findNextActivities( ProcessManager status ) {
 		List<ActivityEntry> list = new ArrayList<ActivityEntry>();
 		
 		for( DMMethod m : DMLibrary.get().methods() ) {
