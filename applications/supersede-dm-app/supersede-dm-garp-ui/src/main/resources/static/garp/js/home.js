@@ -44,7 +44,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                 r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
-                r = r.concat('ng-click="closeGame(' + value + ')">Close Game</jqx-button></div>');
+                r = r.concat('ng-click="gameDetails(' + value + ')">Details</jqx-button></div>');
                 return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
@@ -147,8 +147,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
         $location.url('supersede-dm-app/garp/create_game');
     };
 
-    $scope.closeGame = function(gameId) {
-        $location.url('supersede-dm-app/garp/close_game').search('gameId', gameId);
+    $scope.gameDetails = function(gameId) {
+        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId);
     };
 
     $scope.selectSolution = function(gameId) {

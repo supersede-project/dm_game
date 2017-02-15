@@ -162,6 +162,12 @@ public class GAGameRest
         return persistentDB.getGameInfo(gameId).getGame();
     }
 
+    @RequestMapping(value = "/closegame", method = RequestMethod.POST)
+    public void closeGame(Authentication authentication, Long gameId)
+    {
+        persistentDB.closeGame(gameId);
+    }
+
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
     public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {

@@ -334,6 +334,13 @@ public class GAPersistentDB
         return d;
     }
 
+    public void closeGame(Long gameId)
+    {
+        HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
+        gameInfo.setStatus("closed");
+        gamesJpa.save(gameInfo);
+    }
+
     private String serializeRankings(Map<Long, List<Long>> map)
     {
         return new Gson().toJson(map);

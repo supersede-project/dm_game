@@ -1,4 +1,4 @@
-<script src="supersede-dm-app/garp/js/close_game.js"></script>
+<script src="supersede-dm-app/garp/js/game_details.js"></script>
 
 <style>
     h1, h2 {
@@ -6,14 +6,18 @@
     }
 </style>
 
-<div ng-controller="close_game">
+<div ng-controller="game_details">
 
-    <h1>Chosen Solution</h1>
+    <h1>Game Details</h1>
 
+    <h2>Selected Solution</h2>
     <p ng-repeat="(requirementId, value) in solution">
         <strong>Id</strong>: {{requirementId}}<br>
         <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
         <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
         <strong>Value</strong>: {{value}}
     </p>
+
+    <br>
+    <jqx-button ng-click="closeGame()">Close Game</jqx-button>
 </div>
