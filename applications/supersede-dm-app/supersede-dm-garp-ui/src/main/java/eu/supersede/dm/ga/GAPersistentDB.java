@@ -40,6 +40,7 @@ import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.GAGameRankingsJpa;
 import eu.supersede.gr.jpa.GAGameRequirementJpa;
+import eu.supersede.gr.jpa.GAGameSolutionsJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
@@ -48,6 +49,7 @@ import eu.supersede.gr.model.HGAGameParticipation;
 import eu.supersede.gr.model.HGAGameRequirement;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.HGARankingInfo;
+import eu.supersede.gr.model.HGASolution;
 import eu.supersede.gr.model.Requirement;
 
 @Component
@@ -75,6 +77,9 @@ public class GAPersistentDB
 
     @Autowired
     private GAGameRankingsJpa rankingsJpa;
+
+    @Autowired
+    private GAGameSolutionsJpa solutionsJpa;
 
     public void create(Authentication authentication, String name, Long[] gameRequirements,
             Map<Long, Double> gameCriteriaWeights, Long[] gameOpinionProviders, Long[] gameNegotiators)
@@ -265,6 +270,20 @@ public class GAPersistentDB
         return gi.getRankings().get(userId);
     }
 
+    public void selectSolution(Long gameId, Map<Long, Double> solution)
+    {
+        String jsonSolution = serializeSolution(solution);
+        HGASolution gaSolution = new HGASolution();
+        gaSolution.setGameId(gameId);
+        gaSolution.setJsonizedSolution(jsonSolution);
+        solutionsJpa.save(gaSolution);
+    }
+
+    public HGASolution getSolution(Long gameId)
+    {
+        return solutionsJpa.findByGameId(gameId);
+    }
+
     public GAGameDetails getGameInfo(Long gameId)
     {
         HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
@@ -321,6 +340,19 @@ public class GAPersistentDB
     private Map<Long, List<Long>> deserializeRankings(String json)
     {
         Type type = new TypeToken<Map<Long, List<Long>>>()
+        {
+        }.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    private String serializeSolution(Map<Long, Double> solution)
+    {
+        return new Gson().toJson(solution);
+    }
+
+    private Map<Long, Double> deserializeSolution(String json)
+    {
+        Type type = new TypeToken<Map<Long, Double>>()
         {
         }.getType();
         return new Gson().fromJson(json, type);

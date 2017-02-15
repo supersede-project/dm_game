@@ -39,6 +39,7 @@ import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
+import eu.supersede.gr.model.HGASolution;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -115,6 +116,18 @@ public class GAGameRest
         }
 
         return ranking;
+    }
+
+    @RequestMapping(value = "/solution", method = RequestMethod.POST)
+    public void selectSolution(@RequestParam Long gameId, @RequestBody Map<Long, Double> solution)
+    {
+        persistentDB.selectSolution(gameId, solution);
+    }
+
+    @RequestMapping(value = "/solution", method = RequestMethod.GET)
+    public HGASolution getSolution(@RequestParam Long gameId)
+    {
+        return persistentDB.getSolution(gameId);
     }
 
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)

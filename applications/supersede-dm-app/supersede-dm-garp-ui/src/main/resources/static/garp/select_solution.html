@@ -48,7 +48,7 @@
         <div id="solutions">
             <div ng-repeat="solution in solutions">
                 <div jqx-expander jqx-theme="summer" jqx-width="600">
-                    <div><strong>Solution {{solutions.indexOf(solution)}}</strong></div>
+                    <div><strong>Solution {{$index + 1}}</strong></div>
                     <div style="background-color: #ffd11a">
                         <p ng-repeat="(requirementId, value) in solution">
                             <strong>Id</strong>: {{requirementId}}<br>
@@ -61,6 +61,9 @@
             </div>
         </div>
 
+        <select id="selected_solution">
+            <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
+        </select>
         <jqx-button ng-click="selectSolution()">Select Solution</jqx-button>
     </div>
 </div>

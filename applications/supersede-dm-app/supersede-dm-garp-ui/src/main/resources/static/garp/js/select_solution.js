@@ -64,7 +64,22 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.selectSolution = function() {
-        // TODO
+        var solutionIndex = $("#selected_solution").val();
+        var selectedSolution = $scope.solutions[solutionIndex - 1];
+        console.log("selected solution:");
+        console.log(selectedSolution);
+
+        $http({
+            url: "supersede-dm-app/garp/game/solution",
+            data: selectedSolution,
+            method: 'POST',
+            params: {gameId : gameId}
+        }).success(function(){
+            alert('Your solution was saved!');
+            $location.url('supersede-dm-app/garp/home');
+        }).error(function(err){
+            alert(err.message);
+        });
     };
 
 });
