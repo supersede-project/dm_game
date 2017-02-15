@@ -34,6 +34,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
             var source = {
                 datatype: "json",
                 datafields: [
+                    { name: 'name'},
                     { name: 'owner' },
                     { name: 'date' },
                     { name: 'status' },
@@ -56,10 +57,11 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: '15%', align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: '35%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                    { text: 'Name', datafield: 'name', width: '30%', align: 'center', cellsalign: 'center' },
+                    { text: 'Owner', datafield: 'owner', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '20%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
@@ -72,6 +74,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
             var source = {
                 datatype: "json",
                 datafields: [
+                    { name: 'name'},
                     { name: 'owner' },
                     { name: 'date' },
                     { name: 'status' },
@@ -95,10 +98,11 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: '25%%', align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: '25%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                    { text: 'Name', datafield: 'name', width: '30%', align: 'center', cellsalign: 'center' },
+                    { text: 'Owner', datafield: 'owner', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '20%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
@@ -111,6 +115,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
             var source = {
                 datatype: "json",
                 datafields: [
+                    { name: 'name'},
                     { name: 'owner' },
                     { name: 'date' },
                     { name: 'status' },
@@ -134,11 +139,11 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: '25%%', align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: '25%', align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: '25%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
-                ]
+                    { text: 'Name', datafield: 'name', width: '30%', align: 'center', cellsalign: 'center' },
+                    { text: 'Owner', datafield: 'owner', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '20%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '20%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }                ]
             });
         });
     }

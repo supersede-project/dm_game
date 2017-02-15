@@ -27,6 +27,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     var availableCriteria = {};
     var availablePlayers = {};
     var gameCriteriaWeightsId = {};
+    var gameName;
 
     var gameRequirements = {
         datatype: "json",
@@ -47,7 +48,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         ],
         localdata: []
     };
-
 
     var gameOpinionProviders = {
         datatype: "json",
@@ -200,6 +200,9 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function defineGameData() {
+
+        gameName = $("#game_name").val();
+
         var i;
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
 
@@ -248,7 +251,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
             data: gameCriteriaWeightsId,
-            params: {gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
+            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
                 gameNegotiators: $scope.gameNegotiatorsId}
         })
         .success(function(data) {

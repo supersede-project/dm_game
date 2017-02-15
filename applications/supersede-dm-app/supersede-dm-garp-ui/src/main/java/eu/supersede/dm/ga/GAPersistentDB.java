@@ -76,8 +76,8 @@ public class GAPersistentDB
     @Autowired
     private GAGameRankingsJpa rankingsJpa;
 
-    public void create(Authentication authentication, Long[] gameRequirements, Map<Long, Double> gameCriteriaWeights,
-            Long[] gameOpinionProviders, Long[] gameNegotiators)
+    public void create(Authentication authentication, String name, Long[] gameRequirements,
+            Map<Long, Double> gameCriteriaWeights, Long[] gameOpinionProviders, Long[] gameNegotiators)
     {
         List<Long> requirements = new ArrayList<>();
         HashMap<Long, Double> criteriaWeights = new HashMap<>();
@@ -107,6 +107,7 @@ public class GAPersistentDB
         HGAGameSummary game = new HGAGameSummary();
         long currentTime = System.currentTimeMillis();
         game.setId(currentTime);
+        game.setName(name);
         game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
 
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

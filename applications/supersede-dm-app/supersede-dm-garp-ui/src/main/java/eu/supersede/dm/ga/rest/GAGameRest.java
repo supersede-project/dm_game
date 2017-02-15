@@ -63,11 +63,11 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(Authentication authentication, @RequestParam Long[] gameRequirements,
-            @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gameOpinionProviders,
-            @RequestParam Long[] gameNegotiators)
+    public void createNewGame(Authentication authentication, @RequestParam String name,
+            @RequestParam Long[] gameRequirements, @RequestBody Map<Long, Double> gameCriteriaWeights,
+            @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators)
     {
-        persistentDB.create(authentication, gameRequirements, gameCriteriaWeights, gameOpinionProviders,
+        persistentDB.create(authentication, name, gameRequirements, gameCriteriaWeights, gameOpinionProviders,
                 gameNegotiators);
     }
 

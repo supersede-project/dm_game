@@ -24,10 +24,18 @@ import eu.supersede.gr.model.HGAGameSummary;
 public class GAGameDetails
 {
     private HGAGameSummary game;
-    private HashMap<Long, Double> criteriaWeights = new HashMap<>();
-    private List<Long> requirements = new ArrayList<>();
-    private List<Long> participants = new ArrayList<>();
-    private Map<Long, Map<Long, List<Long>>> rankings = new HashMap<>();
+    private HashMap<Long, Double> criteriaWeights;
+    private List<Long> requirements;
+    private List<Long> participants;
+    private Map<Long, Map<Long, List<Long>>> rankings;
+
+    public GAGameDetails()
+    {
+        criteriaWeights = new HashMap<>();
+        requirements = new ArrayList<>();
+        participants = new ArrayList<>();
+        rankings = new HashMap<>();
+    }
 
     public HGAGameSummary getGame()
     {
