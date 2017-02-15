@@ -3,6 +3,7 @@ package eu.supersede.dm;
 import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
+import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
 
@@ -68,6 +69,24 @@ public class PersistedProcess extends AbstractProcessManager {
 		a.setProcessId( processId );
 		a.setMethodName( method.getName() );
 		return DMGame.get().jpa.activities.save( a );
+	}
+
+	@Override
+	public void addAlert(HAlert alert) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<HAlert> getAlerts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<HActivity> getOngoingActivities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

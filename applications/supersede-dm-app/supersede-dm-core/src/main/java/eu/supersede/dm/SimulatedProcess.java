@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.supersede.gr.model.HActivity;
+import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
@@ -102,6 +103,24 @@ public class SimulatedProcess extends AbstractProcessManager {
 		a.setMethodName( method.getName() );
 		list.add( a );
 		return a;
+	}
+
+	@Override
+	public void addAlert(HAlert alert) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<HAlert> getAlerts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<HActivity> getOngoingActivities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

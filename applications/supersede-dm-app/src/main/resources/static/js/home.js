@@ -74,6 +74,9 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	            	'</td>' +
 	            	'</tr><tr><td>' + 
 	            	"Created: " + datarecord.date + 
+	            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
+	            	'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a>' + 
+	            	'</jqx-link-button>' + 
 	            	'</td></tr></table>';
 	            return table;
 	        }
