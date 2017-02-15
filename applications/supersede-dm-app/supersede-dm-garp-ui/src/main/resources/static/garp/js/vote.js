@@ -76,10 +76,10 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             method: 'POST',
             params: {gameId : gameId}
         }).success(function(){
-            alert('Your prioritization was saved!');
-            $location.url('supersede-dm-app/garp/home');
+            $("#voted").html("<strong>Rankings successfully saved!</strong>");
         }).error(function(err){
-            alert(err.message);
+            $("#voted").html("<strong>Unable to save the rankings!</strong>");
+            console.log(err.message);
         });
     };
 

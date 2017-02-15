@@ -64,7 +64,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.selectSolution = function() {
-        var solutionIndex = $("#selected_solution").val();
+        var solutionIndex = $("#select_solution").val();
         var selectedSolution = $scope.solutions[solutionIndex - 1];
         console.log("selected solution:");
         console.log(selectedSolution);
@@ -75,10 +75,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             method: 'POST',
             params: {gameId : gameId}
         }).success(function(){
-            alert('Your solution was saved!');
-            $location.url('supersede-dm-app/garp/home');
+            $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
         }).error(function(err){
-            alert(err.message);
+            $("#selected_solution").html("<strong>Unable to save the solution!</strong>");
+            console.log(err.message);
         });
     };
 

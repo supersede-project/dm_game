@@ -319,13 +319,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 gameNegotiators: $scope.gameNegotiatorsId}
         })
         .success(function(data) {
-            console.log("Game created successfully");
+            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
+            $("#game_created").html("<strong>Unable to create the game!</strong>");
             console.log(err);
             console.log(data);
         });
-
-        $location.url('supersede-dm-app/garp/home');
     };
 
     $scope.home = function() {
