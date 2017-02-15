@@ -29,6 +29,11 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         .success(function(data) {
             criteria = data;
             $scope.currentCriterion = criteria[currentCriterionIndex];
+
+            if (criteria.length == 1) {
+                $scope.lastCriterion = true;
+            }
+
             getRequirements();
         }).error(function(err){
             alert(err.message);

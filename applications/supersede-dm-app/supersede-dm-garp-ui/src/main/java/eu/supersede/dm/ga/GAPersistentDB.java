@@ -34,6 +34,7 @@ import com.google.gson.reflect.TypeToken;
 import eu.supersede.dm.methods.GAMethod;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameDetails;
+import eu.supersede.gr.data.GAGameStatus;
 import eu.supersede.gr.data.GARole;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
@@ -119,7 +120,7 @@ public class GAPersistentDB
         Date now = new Date();
         game.setDate(sdfDate.format(now));
 
-        game.setStatus("open");
+        game.setStatus(GAGameStatus.Open.name());
 
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
@@ -282,6 +283,12 @@ public class GAPersistentDB
     public Map<Long, Double> getSolution(Long gameId)
     {
         HGASolution gaSolution = solutionsJpa.findByGameId(gameId);
+
+        if (gaSolution == null)
+        {
+            return new HashMap<>();
+        }
+
         String jsonSolution = gaSolution.getJsonizedSolution();
         return deserializeSolution(jsonSolution);
     }
@@ -337,7 +344,7 @@ public class GAPersistentDB
     public void closeGame(Long gameId)
     {
         HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
-        gameInfo.setStatus("closed");
+        gameInfo.setStatus(GAGameStatus.Closed.name());
         gamesJpa.save(gameInfo);
     }
 
