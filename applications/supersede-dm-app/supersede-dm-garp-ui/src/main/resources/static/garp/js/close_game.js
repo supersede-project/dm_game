@@ -12,15 +12,8 @@
    limitations under the License.
 */
 
-package eu.supersede.dm.ga;
+var app = angular.module('w5app');
 
-import eu.supersede.dm.IDMGui;
+app.controllerProvider.register('close_game', function($scope, $http, $location) {
 
-public class GAGuiManager implements IDMGui
-{
-    @Override
-    public String getEntryUrl()
-    {
-        return "garp/home";
-    }
-}
+});

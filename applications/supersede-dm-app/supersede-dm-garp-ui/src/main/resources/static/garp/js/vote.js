@@ -13,7 +13,7 @@
 */
 
 var app = angular.module('w5app');
-app.controllerProvider.register('reqsCtrl', function($scope, $location, $http) {
+app.controllerProvider.register('vote', function($scope, $location, $http) {
 
     $scope.currentCriterion = {};
     $scope.requirements = [];

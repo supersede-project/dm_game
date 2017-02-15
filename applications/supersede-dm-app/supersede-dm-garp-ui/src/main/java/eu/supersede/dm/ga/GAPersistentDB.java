@@ -174,17 +174,7 @@ public class GAPersistentDB
                 ", negotiators: " + negotiators.size());
     }
 
-    public List<HGAGameSummary> getOwnedGames(Long owner)
-    {
-        return getGamesByRole(owner, GARole.Supervisor.name());
-    }
-
-    public List<HGAGameSummary> getActiveGames(Long userId)
-    {
-        return getGamesByRole(userId, GARole.OpinionProvider.name());
-    }
-
-    private List<HGAGameSummary> getGamesByRole(Long userId, String roleName)
+    public List<HGAGameSummary> getGamesByRole(Long userId, String roleName)
     {
         List<HGAGameSummary> games = new ArrayList<>();
         List<Long> gameList = participationJpa.findGames(userId, roleName);
