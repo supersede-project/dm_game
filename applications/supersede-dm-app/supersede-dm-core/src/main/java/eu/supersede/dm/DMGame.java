@@ -2,7 +2,6 @@ package eu.supersede.dm;
 
 import java.sql.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.supersede.gr.jpa.ActivitiesJpa;
@@ -16,31 +15,44 @@ import eu.supersede.gr.model.HProcess;
 @Component
 public class DMGame {
 	
-	private static final DMGame instance = new DMGame();
+	private static DMGame instance = null;
+	
+	public static void init( JpaProvider jpa ) {
+		if( instance == null ) {
+			instance = new DMGame();
+			instance.jpa = jpa;
+		}
+	}
 	
 	public static DMGame get() {
 		return instance;
 	}
-		
-
-	@Autowired UsersJpa					jpaUsers;
-	@Autowired RequirementsJpa			jpaRequirements;
-    @Autowired ValutationCriteriaJpa	jpaCriteria;
-    @Autowired ProcessesJpa				jpaProcesses;
-    @Autowired ProcessMembersJpa		jpaMembers;
-	@Autowired ActivitiesJpa			jpaActivities;
+	
+	public static class JpaProvider {
+		public UsersJpa					users;
+		public RequirementsJpa			requirements;
+		public ValutationCriteriaJpa	criteria;
+		public ProcessesJpa				processes;
+		public ProcessMembersJpa		members;
+		public ActivitiesJpa			activities;
+	}
+	
+	JpaProvider jpa;
+	
     
     
 	public HProcess createEmptyProcess() {
     	HProcess proc = new HProcess();
     	proc.setObjective( DMObjective.PrioritizeRequirements.name() );
     	proc.setStartTime( new Date( System.currentTimeMillis() ) );
-    	proc = jpaProcesses.save( proc );
+    	proc = jpa.processes.save( proc );
+    	proc.setName( "Process " + proc.getId() );
+    	proc = jpa.processes.save( proc );
     	return proc;
     }
 	
 	public HProcess getProcess( Long processId ) {
-		return jpaProcesses.findOne( processId );
+		return jpa.processes.findOne( processId );
 	}
 	
 	public PersistedProcess getProcessStatus( Long processId ) {

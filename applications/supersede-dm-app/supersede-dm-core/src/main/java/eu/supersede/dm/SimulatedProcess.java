@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
-public class SimulatedProcess implements ProcessManager {
+public class SimulatedProcess extends AbstractProcessManager {
 	
 	private static Long counter = 0L;
 	
@@ -53,13 +51,6 @@ public class SimulatedProcess implements ProcessManager {
 				r.setStatus( status );
 			}
 		}
-	}
-	
-	private boolean isValidNextState( Integer cur, Integer nxt ) {
-		RequirementStatus status = RequirementStatus.valueOf( cur );
-		Set<RequirementStatus> nextSet = RequirementStatus.next( status );
-		RequirementStatus next = RequirementStatus.valueOf( nxt );
-		return nextSet.contains( next );
 	}
 	
 	@Override

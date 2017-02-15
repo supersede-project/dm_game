@@ -22,7 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMGame;
+import eu.supersede.dm.DMGuiManager;
+import eu.supersede.dm.DMLibrary;
+import eu.supersede.dm.DMMethod;
+import eu.supersede.dm.IDMGui;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.SimulatedProcess;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HProcess;
@@ -41,11 +48,6 @@ public class ProcessRest
     public Long newProcess()
     {
     	return DMGame.get().createEmptyProcess().getId();
-//    	HProcess proc = new HProcess();
-//    	proc.setObjective( DMObjective.PrioritizeRequirements.name() );
-//    	proc.setStartTime( new Date( System.currentTimeMillis() ) );
-//    	proc = jpaProcesses.save( proc );
-//    	return proc.getId();
     }
     
     static class JqxProcess {
@@ -54,7 +56,6 @@ public class ProcessRest
     	public String state;
     	public String date;
     	public String objective;
-    	public String jqxcontent;
     }
     
     @RequestMapping(value = "list", method = RequestMethod.GET)
@@ -67,7 +68,6 @@ public class ProcessRest
     		qp.state = p.getStatus().name();
     		qp.objective = p.getObjective();
     		qp.date = p.getStartTime().toString();
-    		qp.jqxcontent = "<div id='widget-content'>BBB</div>";
     		list.add( qp );
     	}
     	return list;
@@ -95,4 +95,60 @@ public class ProcessRest
     	}
     }
     
+	public static class ActivityEntry {
+		
+		String methodName;
+		String entryUrl;
+		
+		public String getMethodName() {
+			return methodName;
+		}
+
+		public void setMethodName(String methodName) {
+			this.methodName = methodName;
+		}
+
+		public void setEntryUrl(String entryUrl) {
+			this.entryUrl = entryUrl;
+		}
+		
+		public String getEntryUrl() {
+			return this.entryUrl;
+		}
+		
+	}
+	
+	@RequestMapping(value = "/available_activities", method = RequestMethod.GET)
+	public List<ActivityEntry> getNextActivities( Long procId ) {
+		
+		return findNextActivities( new SimulatedProcess( procId ) );
+		
+	}
+	
+	public List<ActivityEntry> findNextActivities( ProcessManager status ) {
+		List<ActivityEntry> list = new ArrayList<ActivityEntry>();
+		
+		for( DMMethod m : DMLibrary.get().methods() ) {
+			boolean match = true;
+			for( DMCondition cond : m.preconditions() ) {
+				if( !cond.isTrue( status ) ) {
+					match = false;
+				}
+			}
+			if( match == true ) {
+				// TODO: configure the activity entry
+				IDMGui gui = DMGuiManager.get().getGui( m.getName() );
+				if( gui == null ) {
+					continue;
+				}
+				ActivityEntry ae = new ActivityEntry();
+				ae.setMethodName( m.getName() );
+				ae.setEntryUrl( gui.getEntryUrl() );
+				list.add( ae );
+			}
+		}
+		
+		return list;
+	}
+	
 }

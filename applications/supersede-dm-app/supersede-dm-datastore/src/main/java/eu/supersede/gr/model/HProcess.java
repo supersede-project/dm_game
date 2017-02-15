@@ -27,7 +27,7 @@ public class HProcess {
 	
 	private String name = "";
 	
-	private ProcessStatus status;
+	private ProcessStatus status = ProcessStatus.InProgress;
 	
 	
 	public Long getId() {

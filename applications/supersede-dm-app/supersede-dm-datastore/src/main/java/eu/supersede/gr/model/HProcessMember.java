@@ -1,21 +1,24 @@
 package eu.supersede.gr.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "h_process_members")
 public class HProcessMember {
 	
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-	private
-	Long id;
+	private Long id;
 	
-	Long processId;
-	Long userId;
-	String role;
+	Long		processId;
+	Long		userId;
+	String		role;
 	
 	
 	public Long getProcessId() {

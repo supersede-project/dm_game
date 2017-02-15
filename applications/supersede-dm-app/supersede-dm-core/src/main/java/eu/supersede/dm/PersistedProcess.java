@@ -1,14 +1,12 @@
 package eu.supersede.dm;
 
 import java.util.List;
-import java.util.Set;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
-public class PersistedProcess implements ProcessManager {
+public class PersistedProcess extends AbstractProcessManager {
 	
 	Long processId;
 	
@@ -20,12 +18,12 @@ public class PersistedProcess implements ProcessManager {
 	@Override
 	public void addRequirement(Requirement r) {
 		r.setProcessId( processId );
-		DMGame.get().jpaRequirements.save( r );
+		DMGame.get().jpa.requirements.save( r );
 	}
 
 	@Override
 	public List<Requirement> requirements() {
-		return DMGame.get().jpaRequirements.findRequirementsByProcessId( processId );
+		return DMGame.get().jpa.requirements.findRequirementsByProcessId( processId );
 	}
 
 	@Override
@@ -38,16 +36,9 @@ public class PersistedProcess implements ProcessManager {
 		for( Requirement r : reqs ) {
 			if( isValidNextState( r.getStatus(), status ) ) {
 				r.setStatus( status );
-				DMGame.get().jpaRequirements.save( r );
+				DMGame.get().jpa.requirements.save( r );
 			}
 		}
-	}
-	
-	private boolean isValidNextState( Integer cur, Integer nxt ) {
-		RequirementStatus status = RequirementStatus.valueOf( cur );
-		Set<RequirementStatus> nextSet = RequirementStatus.next( status );
-		RequirementStatus next = RequirementStatus.valueOf( nxt );
-		return nextSet.contains( next );
 	}
 	
 	@Override
@@ -56,14 +47,13 @@ public class PersistedProcess implements ProcessManager {
 		m.setProcessId( processId );
 		m.setUserId( userId );
 		m.setRole( role );
-		m = DMGame.get().jpaMembers.save( m );
+		m = DMGame.get().jpa.members.save( m );
 		return m.getId();
 	}
 
 	@Override
 	public List<HProcessMember> getProcessMembers() {
-		// TODO Auto-generated method stub
-		return null;
+		return DMGame.get().jpa.members.findProcessMembers( processId );
 	}
 
 	@Override
@@ -77,7 +67,7 @@ public class PersistedProcess implements ProcessManager {
 		HActivity a = new HActivity();
 		a.setProcessId( processId );
 		a.setMethodName( method.getName() );
-		return DMGame.get().jpaActivities.save( a );
+		return DMGame.get().jpa.activities.save( a );
 	}
 
 }
