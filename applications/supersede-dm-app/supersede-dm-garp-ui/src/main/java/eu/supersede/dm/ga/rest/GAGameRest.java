@@ -117,6 +117,22 @@ public class GAGameRest
         return ranking;
     }
 
+    @RequestMapping(value = "/userranking", method = RequestMethod.GET)
+    public Map<Long, List<Long>> getUserRanking(Authentication authentication, @RequestParam Long gameId)
+    {
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+        GAGameDetails gameDetails = persistentDB.getGameInfo(gameId);
+
+        if (!gameDetails.getParticipants().contains(userId))
+        {
+            return new HashMap<>();
+        }
+        else
+        {
+            return persistentDB.getRanking(gameId, userId);
+        }
+    }
+
     @RequestMapping(value = "/solution", method = RequestMethod.POST)
     public void selectSolution(@RequestParam Long gameId, @RequestBody Map<Long, Double> solution)
     {

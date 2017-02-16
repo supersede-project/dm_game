@@ -268,7 +268,16 @@ public class GAPersistentDB
     public Map<Long, List<Long>> getRanking(Long gameId, Long userId)
     {
         GAGameDetails gi = getGameInfo(gameId);
-        return gi.getRankings().get(userId);
+        Map<Long, List<Long>> userRanking = gi.getRankings().get(userId);
+
+        if (userRanking == null)
+        {
+            return new HashMap<>();
+        }
+        else
+        {
+            return userRanking;
+        }
     }
 
     public void selectSolution(Long gameId, Map<Long, Double> solution)

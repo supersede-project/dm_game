@@ -18,11 +18,41 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     $scope.currentCriterion = {};
     $scope.requirements = [];
     $scope.lastCriterion = false;
+    $scope.solution = {};
 
     var gameId = $location.search().id;
+    var gameStatus;
+    var gameRequirements = {};
     var currentCriterionIndex = 0;
     var rankings = {};
     var criteria = [];
+    var closed = 'Closed';
+    var userRanking = {};
+
+    $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
+    .success(function (data) {
+        gameStatus = data.status;
+
+        $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
+        .success(function (data) {
+            $scope.solution = data;
+
+            $http.get('supersede-dm-app/garp/game/userranking?gameId=' + gameId)
+            .success(function (data) {
+                userRanking = data;
+
+                if ($scope.canVote()) {
+                    getCurrentCriterion();
+                }
+            }).error(function (err) {
+                alert(err.message);
+            });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     var getCurrentCriterion = function() {
         $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
@@ -44,10 +74,20 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + $scope.currentCriterion.criteriaId)
         .success(function(data) {
             $scope.requirements = data;
+
+            for (var i = 0; i < data.length; i++) {
+                var requirementId = data[i].requirementId;
+                gameRequirements[requirementId] = data[i];
+            }
+
             $("#sortable").jqxSortable();
         }).error(function(err){
             alert(err.message);
         });
+    };
+
+    $scope.getRequirement = function (requirementId) {
+        return gameRequirements[requirementId];
     };
 
     function saveRanking() {
@@ -83,9 +123,40 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         });
     };
 
-    $scope.home = function() {
-        $location.url('supersede-dm-app/garp/home');
+    $scope.solutionSelected = function() {
+        return Object.keys($scope.solution).length !== 0;
     };
 
-    getCurrentCriterion();
+    $scope.alreadyVoted = function () {
+        return Object.keys(userRanking).length !== 0;
+    };
+
+    $scope.gameClosed = function () {
+        return gameStatus == closed;
+    };
+
+    $scope.gameOpen = function () {
+        return gameStatus != closed;
+    };
+
+    $scope.canVote = function() {
+        if ($scope.gameClosed()) {
+            return false;
+        }
+        else if ($scope.alreadyVoted()) {
+            if ($scope.solutionSelected()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    };
+
+    $scope.home = function () {
+        $location.url('supersede-dm-app/garp/home');
+    };
 });
