@@ -1,5 +1,6 @@
 package eu.supersede.gr.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -11,6 +12,7 @@ public class HGASolution
     @Id
     private Long gameId;
 
+    @Column(columnDefinition = "varchar(5000)")
     private String jsonizedSolution;
 
     public Long getGameId()

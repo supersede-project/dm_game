@@ -43,7 +43,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     });
 
     function setCurrentPage(page) {
-        console.log($scope.currentPage);
+        $scope.currentPage = 'page' + page;
     }
 
     function getSolutions() {

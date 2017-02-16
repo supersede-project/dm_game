@@ -1,5 +1,6 @@
 package eu.supersede.gr.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -16,6 +17,7 @@ public class HGARankingInfo
     @Id
     private Long userId;
 
+    @Column(columnDefinition = "varchar(5000)")
     private String jsonizedRanking;
 
     public Long getGameId()
