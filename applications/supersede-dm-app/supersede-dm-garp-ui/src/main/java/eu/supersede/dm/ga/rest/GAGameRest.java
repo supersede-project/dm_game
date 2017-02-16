@@ -35,7 +35,6 @@ import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameDetails;
-import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
@@ -53,9 +52,6 @@ public class GAGameRest
 
     @Autowired
     private ValutationCriteriaJpa criteriaJpa;
-
-    @Autowired
-    private GAGameParticipationJpa participationJpa;
 
     @Autowired
     private GAPersistentDB persistentDB;
