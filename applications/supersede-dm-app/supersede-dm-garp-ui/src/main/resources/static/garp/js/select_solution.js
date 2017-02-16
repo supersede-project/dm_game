@@ -17,28 +17,41 @@ var app = angular.module("w5app");
 app.controllerProvider.register("select_solution", function($scope, $http, $location) {
     var gameId = $location.search().gameId;
     var gameRequirements = {};
+    var gameStatus;
+    var open = 'Open';
 
     $scope.currentPage = "page1";
     $scope.ranking = {};
     $scope.solutions = [];
 
-    $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
-    .success(function(data) {
-        $scope.ranking = data;
-    }).error(function(err){
-        alert(err.message);
-    });
+    $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
+    .success(function (data) {
+        gameStatus = data.status;
 
-    $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-    .success(function(data) {
+        if ($scope.canSelectSolution()) {
+            $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+            .success(function (data) {
+                $scope.ranking = data;
+                console.log("current ranking:");
+                console.log($scope.ranking);
+            }).error(function (err) {
+                alert(err.message);
+            });
 
-        for (var i = 0; i < data.length; i++) {
-            var requirementId = data[i].requirementId;
-            gameRequirements[requirementId] = data[i];
+            $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+            .success(function (data) {
+
+                for (var i = 0; i < data.length; i++) {
+                    var requirementId = data[i].requirementId;
+                    gameRequirements[requirementId] = data[i];
+                }
+
+                getSolutions();
+            }).error(function (err) {
+                alert(err.message);
+            });
         }
-
-        getSolutions();
-    }).error(function(err){
+    }).error(function (err) {
         alert(err.message);
     });
 
@@ -66,8 +79,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.selectSolution = function() {
         var solutionIndex = $("#select_solution").val();
         var selectedSolution = $scope.solutions[solutionIndex - 1];
-        console.log("selected solution:");
-        console.log(selectedSolution);
 
         $http({
             url: "supersede-dm-app/garp/game/solution",
@@ -84,6 +95,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
     $scope.emptyRanking = function() {
         return Object.keys($scope.ranking).length === 0;
+    };
+
+    $scope.canSelectSolution = function () {
+        return gameStatus == open;
     };
 
     $scope.home = function() {

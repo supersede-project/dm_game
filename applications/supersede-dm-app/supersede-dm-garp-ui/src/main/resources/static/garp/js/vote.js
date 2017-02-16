@@ -110,6 +110,8 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
 
     $scope.submitPriorities = function() {
         saveRanking();
+        console.log("saving rankings:");
+        console.log(rankings);
         $http({
             url: "supersede-dm-app/garp/game/submit",
             data: rankings,
