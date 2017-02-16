@@ -28,29 +28,27 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     .success(function (data) {
         gameStatus = data.status;
 
-        if ($scope.canSelectSolution()) {
-            $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
-            .success(function (data) {
-                $scope.ranking = data;
-                console.log("current ranking:");
-                console.log($scope.ranking);
-            }).error(function (err) {
-                alert(err.message);
-            });
+        $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+        .success(function (data) {
+            $scope.ranking = data;
 
-            $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-            .success(function (data) {
+            if (!$scope.emptyRanking()) {
+                $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+                .success(function (data) {
 
-                for (var i = 0; i < data.length; i++) {
-                    var requirementId = data[i].requirementId;
-                    gameRequirements[requirementId] = data[i];
-                }
+                    for (var i = 0; i < data.length; i++) {
+                        var requirementId = data[i].requirementId;
+                        gameRequirements[requirementId] = data[i];
+                    }
 
-                getSolutions();
-            }).error(function (err) {
-                alert(err.message);
-            });
-        }
+                    getSolutions();
+                }).error(function (err) {
+                    alert(err.message);
+                });
+            }
+        }).error(function (err) {
+            alert(err.message);
+        });
     }).error(function (err) {
         alert(err.message);
     });
@@ -97,8 +95,12 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         return Object.keys($scope.ranking).length === 0;
     };
 
-    $scope.canSelectSolution = function () {
+    $scope.gameOpen = function () {
         return gameStatus == open;
+    };
+
+    $scope.canSelectSolution = function () {
+        return $scope.gameOpen() && !$scope.emptyRanking();
     };
 
     $scope.home = function() {

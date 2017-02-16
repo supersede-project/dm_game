@@ -341,8 +341,12 @@ public class GAPersistentDB
         for (Long userId : participantsList)
         {
             String json = rankingsJpa.findRankingByGameAndUser(gameInfo.getId(), userId);
-            Map<Long, List<Long>> map = deserializeRankings(json);
-            rankings.put(userId, map);
+
+            if (json != null && !json.equals(""))
+            {
+                Map<Long, List<Long>> map = deserializeRankings(json);
+                rankings.put(userId, map);
+            }
         }
 
         d.setRankings(rankings);

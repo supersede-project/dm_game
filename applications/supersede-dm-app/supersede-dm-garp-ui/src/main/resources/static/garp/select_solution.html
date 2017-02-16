@@ -27,36 +27,30 @@
 
             <h1>Current Ranking</h1>
 
-            <div ng-show="!emptyRanking()">
-                <div ng-repeat="(userId, criterionRanking) in ranking">
-                    <h2>Opinion Provider {{$index + 1}}</h2>
+            <div ng-repeat="(userId, criterionRanking) in ranking">
+                <h2>Opinion Provider {{$index + 1}}</h2>
 
-                    <div id="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
-                        <h3>Criterion {{criterionId}}</h3>
+                <div id="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
+                    <h3>Criterion {{criterionId}}</h3>
 
-                        <div ng-repeat="requirementId in requirements">
-                            <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
-                                <div>
-                                    <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
-                                </div>
-                                <div style="background-color: #ffd11a">
-                                    <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-                                </div>
+                    <div ng-repeat="requirementId in requirements">
+                        <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                            <div>
+                                <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                            </div>
+                            <div style="background-color: #ffd11a">
+                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div align="center">
-                    <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
-                    <jqx-button ng-click="home()">GA Home</jqx-button>
-                </div>
             </div>
 
-            <div ng-show="emptyRanking()">
-                <p><strong>No ranking has been submitted yet!</strong></p>
+            <div align="center">
+                <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
                 <jqx-button ng-click="home()">GA Home</jqx-button>
             </div>
+
         </div>
 
         <div id="page2" ng-show="currentPage == 'page2'">
@@ -93,9 +87,16 @@
 
     </div>
 
-    <div ng-show="!canSelectSolution()">
+    <div ng-show="!gameOpen()">
         <div align="center">
             <p><strong>You can not select a solution because the game has been closed!</strong></p>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
+    </div>
+
+    <div ng-show="gameOpen && emptyRanking()">
+        <div align="center">
+            <p><strong>You can not select a solution because no ranking has been submitted yet!</strong></p>
             <jqx-button ng-click="home()">GA Home</jqx-button>
         </div>
     </div>

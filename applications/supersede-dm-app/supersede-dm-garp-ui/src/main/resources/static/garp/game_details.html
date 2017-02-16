@@ -15,6 +15,9 @@
     #solution > div > div:hover {
         border: 1px solid #356AA0;
     }
+    p {
+        margin: 1em;
+    }
 </style>
 
 <div ng-controller="game_details">
@@ -38,9 +41,9 @@
         </div>
     </div>
 
-    <p ng-show="!solutionSelected()">
-        <strong>No solution has been selected yet!</strong>
-    </p>
+    <div align="center" ng-show="!solutionSelected()">
+        <p></p><strong>No solution has been selected yet!</strong></p>
+    </div>
 
     <div align="center">
         <jqx-button style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>

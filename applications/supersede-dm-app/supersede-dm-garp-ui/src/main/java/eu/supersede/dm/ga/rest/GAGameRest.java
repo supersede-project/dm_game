@@ -100,21 +100,7 @@ public class GAGameRest
     @RequestMapping(value = "/ranking", method = RequestMethod.GET)
     public Map<Long, Map<Long, List<Long>>> getRanking(@RequestParam Long gameId)
     {
-        GAGameDetails gameDetails = persistentDB.getGameInfo(gameId);
-
-        Map<Long, Map<Long, List<Long>>> ranking = new HashMap<>();
-
-        for (Long userId : gameDetails.getParticipants())
-        {
-            Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
-
-            if (userRanking != null)
-            {
-                ranking.put(userId, userRanking);
-            }
-        }
-
-        return ranking;
+        return persistentDB.getGameInfo(gameId).getRankings();
     }
 
     @RequestMapping(value = "/userranking", method = RequestMethod.GET)
