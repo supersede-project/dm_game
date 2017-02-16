@@ -1,7 +1,7 @@
 <script src="supersede-dm-app/garp/js/create_game.js"></script>
 
 <style>
-    h1, h2 {
+    h1, h2, h3 {
         text-align: center;
     }
     input, form {
@@ -44,15 +44,40 @@
         <br>
 
         <div align="center">
-            <jqx-button style="margin-right: 10px" ng-click="defineWeights()">Next</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="definePlayersWeights()">Next</jqx-button>
             <jqx-button ng-click="home()">GA Home</jqx-button>
         </div>
     </div>
 
     <div id="page2" ng-show="currentPage == 'page2'">
+        <h2>Define Players Weights</h2>
+
+        <div align="center" ng-repeat="criterion in gameCriteria.localdata">
+            <h3>Criterion {{criterion.name}}</h3>
+
+            <div ng-repeat="player in gameOpinionProviders.localdata"
+                 id="{{'criterion' + criterion.criteriaId + 'player' + player.userId}}"
+                 style="margin-top: 10px; margin-bottom: 10px">
+                <span><strong>Opinion Provider</strong>: {{player.name}}</span>
+                <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
+                        jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1" jqx-tool-tip="true">
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="defineCriteriaWeights()">Next</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
+    </div>
+
+    <div id="page3" ng-show="currentPage == 'page3'">
         <h2>Define Criteria Weights</h2>
-        <div align="center" ng-repeat="x in gameCriteria.localdata" id="{{'criterion' + x.criteriaId}}">
-            <span>{{x.criteriaId}}: {{x.name}}</span>
+        <div align="center" ng-repeat="criterion in gameCriteria.localdata" id="{{'criterion' + criterion.criteriaId}}"
+             style="margin-top: 10px; margin-bottom: 10px">
+            <span><strong>Criterion</strong>: {{criterion.name}}</span>
             <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
                 jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true">
             </div>
@@ -66,7 +91,7 @@
         </div>
     </div>
 
-    <div id="page3" ng-show="currentPage == 'page3'">
+    <div id="page4" ng-show="currentPage == 'page4'">
         <h2>New Game Summary</h2>
         <h3>Requirements</h3>
         <div style="font-size: 13px; font-family: Verdana">

@@ -25,8 +25,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     var availableRequirements = {};
     var availableCriteria = {};
     var availablePlayers = {};
-    var gameCriteriaWeightsId = {};
+    var weights = {};
+    var weightsId = {};
     var gameName;
+
+    weightsId.players = {};
+    weightsId.criteria = {};
 
     var gameRequirements = {
         datatype: "json",
@@ -48,7 +52,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         localdata: []
     };
 
-    var gameOpinionProviders = {
+    $scope.gameOpinionProviders = {
         datatype: "json",
         datafields: [
             { name: 'userId' },
@@ -68,7 +72,19 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         localdata: []
     };
 
-    var gameCriteriaWeights = {
+    weights.players = {
+        datatype: "json",
+        datafields: [
+            { name: 'userId' },
+            { name: 'name' },
+            { name: 'email' },
+            { name: 'criterionId'},
+            { name: 'weight' }
+        ],
+        localdata: []
+    };
+
+    weights.criteria = {
         datatype: "json",
         datafields: [
             { name: 'criteriaId' },
@@ -207,9 +223,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedOpinionProviders.length; i++) {
             var selectedOpinionProvider = $("#opinion_providers").jqxGrid('getrowdata', selectedOpinionProviders[i]);
-            gameOpinionProviders.localdata.push(selectedOpinionProvider);
+            $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
+
+        console.log("selected opinion providers:");
+        console.log($scope.gameOpinionProviders.localdata);
 
         var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedNegotiators.length; i++) {
@@ -219,15 +238,36 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         }
     }
 
-    function defineCriteriaWeights() {
-        var i;
+    function setPlayersWeights() {
+        console.log("Set player weights");
+        for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
+            var currentCriterion = $scope.gameCriteria.localdata[i];
+            weightsId.players[currentCriterion.criteriaId] = {};
+            console.log(weightsId);
+            for (var j = 0; j < $scope.gameOpinionProviders.localdata.length; j++) {
+                var currentOpinionProvider = $scope.gameOpinionProviders.localdata[j];
+                var opinionProviderValue = $("#criterion" + currentCriterion.criteriaId + "player" + currentOpinionProvider.userId + " > div").jqxSlider('value');
+                weights.players.localdata.push(currentOpinionProvider);
+                weights.players.localdata[i].criterionId = currentCriterion.criteriaId;
+                weights.players.localdata[i].weight = opinionProviderValue;
+                weightsId.players[currentCriterion.criteriaId][currentOpinionProvider.userId] = opinionProviderValue;
+                console.log(weightsId);
+            }
+        }
+    }
 
-        for (i = 0; i < $scope.gameCriteria.localdata.length; i++) {
+    function setCriteriaWeights() {
+        console.log("Set criteria weights");
+        for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
             var currentCriterion = $scope.gameCriteria.localdata[i];
             var criterionValue = $("#criterion" + currentCriterion.criteriaId + " > div").jqxSlider('value');
-            gameCriteriaWeights.localdata.push(currentCriterion);
-            gameCriteriaWeights.localdata[i].weight = criterionValue;
-            gameCriteriaWeightsId[currentCriterion.criteriaId] = criterionValue;
+            console.log(currentCriterion.criteriaId + " = " + criterionValue);
+            console.log("criterion value:");
+            console.log(criterionValue);
+            weights.criteria.localdata.push(currentCriterion);
+            weights.criteria.localdata[i].weight = criterionValue;
+            weightsId.criteria[currentCriterion.criteriaId] = criterionValue;
+            console.log(weightsId);
         }
     }
 
@@ -248,7 +288,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function showGameCriteria() {
-        var dataAdapter = new $.jqx.dataAdapter(gameCriteriaWeights);
+        var dataAdapter = new $.jqx.dataAdapter(weights.criteria);
         $("#game_criteria").jqxGrid({
             width: '100%',
             altrows: true,
@@ -265,7 +305,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function showGameOpinionProviders() {
-        var dataAdapter = new $.jqx.dataAdapter(gameOpinionProviders);
+        var dataAdapter = new $.jqx.dataAdapter($scope.gameOpinionProviders);
         $("#game_opinion_providers").jqxGrid({
             width: '100%',
             altrows: true,
@@ -296,14 +336,19 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     }
 
-    $scope.defineWeights = function() {
+    $scope.definePlayersWeights = function() {
         defineGameData();
         setCurrentPage(2);
     };
 
-    $scope.showSummary = function() {
-        defineCriteriaWeights();
+    $scope.defineCriteriaWeights = function () {
+        setPlayersWeights();
         setCurrentPage(3);
+    };
+
+    $scope.showSummary = function() {
+        setCriteriaWeights();
+        setCurrentPage(4);
         showGameRequirements();
         showGameCriteria();
         showGameOpinionProviders();
@@ -311,10 +356,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     };
 
     $scope.create_game = function () {
+        console.log("sending weights:");
+        console.log(weightsId);
         $http({
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
-            data: gameCriteriaWeightsId,
+            data: weightsId,
             params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
                 gameNegotiators: $scope.gameNegotiatorsId}
         })
