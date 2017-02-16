@@ -78,10 +78,12 @@
                 <select id="select_solution">
                     <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
                 </select>
-                <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution</jqx-button>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
                 <jqx-button ng-click="home()">GA Home</jqx-button>
 
                 <p id="selected_solution"></p>
+                <p id="game_status"></p>
             </div>
         </div>
 

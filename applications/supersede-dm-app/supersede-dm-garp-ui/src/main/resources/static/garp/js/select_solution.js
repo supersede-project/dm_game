@@ -91,6 +91,18 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         });
     };
 
+    $scope.selectSolutionAndStop = function () {
+        $scope.selectSolution();
+
+        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId)
+        .success(function (data) {
+            $("#game_status").html("<strong>Game successfully closed!</strong>");
+        }).error(function (err) {
+            $("#game_status").html("<strong>Unable to close the game!</strong>");
+            console.log(err.message);
+        });
+    };
+
     $scope.emptyRanking = function() {
         return Object.keys($scope.ranking).length === 0;
     };
