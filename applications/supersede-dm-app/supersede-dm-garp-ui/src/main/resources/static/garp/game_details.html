@@ -46,8 +46,9 @@
     </div>
 
     <div align="center">
-        <jqx-button style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
+        <jqx-button ng-show="gameOpen()" style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
+        <jqx-button ng-show="gameClosed()" style="margin-right: 10px" ng-click="openGame()">Open Game</jqx-button>
         <jqx-button ng-click="home()">GA Home</jqx-button>
-        <p id="game_closed"></p>
+        <p id="game_status"></p>
     </div>
 </div>

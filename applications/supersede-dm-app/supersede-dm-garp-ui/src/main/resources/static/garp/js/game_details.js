@@ -18,6 +18,8 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
 
     var gameId = $location.search().gameId;
     var requirements = [];
+    var gameStatus;
+    var open = 'Open';
 
     $scope.gameRequirements = {};
     $scope.solution = {};
@@ -41,6 +43,13 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         alert(err.message);
     });
 
+    $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
+    .success(function (data) {
+        gameStatus = data.status;
+    }).error(function (err) {
+        alert(err.message);
+    });
+
     $scope.getRequirement = function(requirementId) {
         return $scope.gameRequirements[requirementId];
     };
@@ -48,15 +57,33 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.closeGame = function() {
         $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId)
         .success(function(data) {
-            $("#game_closed").html("<strong>Game successfully closed!</strong>");
+            $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function(err){
-            $("#game_closed").html("<strong>Unable to close the game!</strong>");
+            $("#game_status").html("<strong>Unable to close the game!</strong>");
+            console.log(err.message);
+        });
+    };
+
+    $scope.openGame = function () {
+        $http.post('supersede-dm-app/garp/game/opengame?gameId=' + gameId)
+        .success(function (data) {
+            $("#game_status").html("<strong>Game successfully opened!</strong>");
+        }).error(function (err) {
+            $("#game_status").html("<strong>Unable to open the game!</strong>");
             console.log(err.message);
         });
     };
 
     $scope.solutionSelected = function() {
         return Object.keys($scope.solution).length !== 0;
+    };
+
+    $scope.gameOpen = function() {
+        return gameStatus == open;
+    };
+
+    $scope.gameClosed = function() {
+        return gameStatus != open;
     };
 
     $scope.home = function() {
