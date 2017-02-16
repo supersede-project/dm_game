@@ -1,18 +1,18 @@
 <script src="supersede-dm-app/garp/js/select_solution.js"></script>
 
 <style>
-    h1 {
+    h1, h2, h3 {
         text-align: center;
     }
-    #solutions > div > div {
+    #solutions > div > div, #rankings > div > div {
         min-width: 500px;
         border-radius: 5px;
         margin: 5px auto;
     }
-    #solutions div {
+    #solutions div, #rankings div {
         padding: 5px;
     }
-    #solutions > div > div:hover {
+    #solutions > div > div:hover, #rankings > div > div:hover {
         border: 1px solid #356AA0;
     }
     p {
@@ -30,19 +30,26 @@
             <div ng-repeat="(userId, criterionRanking) in ranking">
                 <h2>Opinion Provider {{$index + 1}}</h2>
 
-                <div ng-repeat="(criterionId, requirements) in criterionRanking">
+                <div id="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
                     <h3>{{criterionId}}:</h3>
 
                     <div ng-repeat="requirementId in requirements">
-                        <strong>Id</strong>: {{requirementId}}<br>
-                        <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
-                        <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                        <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                            <div>
+                                <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                            </div>
+                            <div style="background-color: #ffd11a">
+                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
-            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <div align="center">
+                <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
+                <jqx-button ng-click="home()">GA Home</jqx-button>
+            </div>
         </div>
 
         <div ng-show="emptyRanking()">
@@ -57,7 +64,9 @@
         <div id="solutions">
             <div ng-repeat="solution in solutions">
                 <div jqx-expander jqx-theme="summer" jqx-width="600">
-                    <div><strong>Solution {{$index + 1}}</strong></div>
+                    <div>
+                        <strong>Solution {{$index + 1}}</strong>
+                    </div>
                     <div style="background-color: #ffd11a">
                         <p ng-repeat="(requirementId, value) in solution">
                             <strong>Id</strong>: {{requirementId}}<br>
@@ -70,12 +79,14 @@
             </div>
         </div>
 
-        <select id="select_solution">
-            <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
-        </select>
-        <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution</jqx-button>
-        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <div align="center">
+            <select id="select_solution">
+                <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
+            </select>
+            <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
 
-        <p id="selected_solution"></p>
+            <p id="selected_solution"></p>
+        </div>
     </div>
 </div>

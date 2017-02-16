@@ -4,27 +4,47 @@
     h1, h2 {
         text-align: center;
     }
+    #solution > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    #solution div {
+        padding: 5px;
+    }
+    #solution > div > div:hover {
+        border: 1px solid #356AA0;
+    }
 </style>
 
 <div ng-controller="game_details">
 
     <h1>Game Details</h1>
 
-    <div ng-show="solutionSelected()">
+    <div id="solution" ng-show="solutionSelected()">
         <h2>Selected Solution</h2>
-        <p ng-repeat="(requirementId, value) in solution">
-            <strong>Id</strong>: {{requirementId}}<br>
-            <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
-            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-            <strong>Value</strong>: {{value}}
-        </p>
+        <div ng-repeat="(requirementId, value) in solution">
+            <div jqx-expander jqx-theme="summer" jqx-expanded="true" jqx-width="500">
+                <div>
+                    <strong>Requirement {{$index + 1}}</strong>
+                </div>
+                <div style="background-color: #ffd11a">
+                    <strong>Id</strong>: {{requirementId}}<br>
+                    <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
+                    <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                    <strong>Value</strong>: {{value}}
+                </div>
+            </div>
+        </div>
     </div>
 
-    <p ng-show="!solutionSelected()"><strong>No solution has been selected yet!</strong></p>
+    <p ng-show="!solutionSelected()">
+        <strong>No solution has been selected yet!</strong>
+    </p>
 
-    <br>
-    <jqx-button style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
-    <jqx-button ng-click="home()">GA Home</jqx-button>
-
-    <p id="game_closed"></p>
+    <div align="center">
+        <jqx-button style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
+        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <p id="game_closed"></p>
+    </div>
 </div>

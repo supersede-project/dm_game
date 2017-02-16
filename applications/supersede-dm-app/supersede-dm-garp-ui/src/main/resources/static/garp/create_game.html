@@ -41,9 +41,10 @@
             <div id="negotiators"></div>
         </div>
 
-        <br>
-        <jqx-button style="margin-right: 10px" ng-click="defineWeights()">Next</jqx-button>
-        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="defineWeights()">Next</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
     </div>
 
     <div id="page2" ng-show="currentPage == 'page2'">
@@ -51,13 +52,14 @@
         <div ng-repeat="x in gameCriteria.localdata" id="{{'criterion' + x.criteriaId}}">
             <span>{{x.criteriaId}}: {{x.name}}</span>
             <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
-                jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true"></div>
-            <br>
+                jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true">
+            </div>
         </div>
 
-        <br>
-        <jqx-button style="margin-right: 10px" ng-click="showSummary()">Next</jqx-button>
-        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="showSummary()">Next</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
     </div>
 
     <div id="page3" ng-show="currentPage == 'page3'">
@@ -82,10 +84,10 @@
             <div id="game_negotiators"></div>
         </div>
 
-        <br>
-        <jqx-button style="margin-right: 10px" ng-click="create_game()">Create Game</jqx-button>
-        <jqx-button ng-click="home()">GA Home</jqx-button>
-
-        <p id="game_created"></p>
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="create_game()">Create Game</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <p id="game_created"></p>
+        </div>
     </div>
 </div>

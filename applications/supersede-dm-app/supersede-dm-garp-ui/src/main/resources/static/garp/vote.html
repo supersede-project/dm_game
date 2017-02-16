@@ -26,7 +26,9 @@
     <div id="sortable">
         <div ng-repeat="x in requirements" id="{{x.requirementId}}">
             <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
-                <div><strong>{{x.requirementId + ': ' + x.name}}</strong></div>
+                <div>
+                    <strong>{{x.requirementId + ': ' + x.name}}</strong>
+                </div>
                 <div style="background-color: #ffd11a">
                     <strong>Description</strong>: {{x.description}}<br>
                 </div>

@@ -43,7 +43,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     });
 
     function setCurrentPage(page) {
-        $scope.currentPage = 'page' + page;
+        console.log($scope.currentPage);
     }
 
     function getSolutions() {
@@ -59,7 +59,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         return gameRequirements[requirementId];
     };
 
-    $scope.showSolutions = function() {
+    $scope.showSolutions = function () {
         setCurrentPage(2);
     };
 
