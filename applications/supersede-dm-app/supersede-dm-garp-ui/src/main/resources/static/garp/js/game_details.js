@@ -22,7 +22,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     var open = 'Open';
 
     $scope.gameRequirements = {};
-    $scope.solution = {};
+    $scope.solution = [];
 
     $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
     .success(function(data) {
@@ -75,7 +75,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.solutionSelected = function() {
-        return Object.keys($scope.solution).length !== 0;
+        return $scope.solution.length !== 0;
     };
 
     $scope.gameOpen = function() {

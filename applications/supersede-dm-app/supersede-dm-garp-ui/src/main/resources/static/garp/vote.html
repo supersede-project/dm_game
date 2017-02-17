@@ -31,16 +31,13 @@
             <h2>Current Global Ranking</h2>
 
             <div id="global_ranking">
-                <div ng-repeat="(requirementId, value) in solution">
+                <div ng-repeat="requirementId in solution">
                     <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
                         <div>
-                            <strong>Requirement {{$index + 1}}</strong>
+                            <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
                         </div>
                         <div style="background-color: #ffd11a">
-                            <strong>Id</strong>: {{requirementId}}<br>
-                            <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
                             <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-                            <strong>Value</strong>: {{value}}
                         </div>
                     </div>
                 </div>

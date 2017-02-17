@@ -18,7 +18,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     $scope.currentCriterion = {};
     $scope.requirements = [];
     $scope.lastCriterion = false;
-    $scope.solution = {};
+    $scope.solution = [];
 
     var gameId = $location.search().id;
     var gameStatus;
@@ -126,7 +126,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     };
 
     $scope.solutionSelected = function() {
-        return Object.keys($scope.solution).length !== 0;
+        return $scope.solution.length !== 0;
     };
 
     $scope.alreadyVoted = function () {

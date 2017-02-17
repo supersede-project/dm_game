@@ -4,15 +4,15 @@
     h1, h2, h3 {
         text-align: center;
     }
-    #solutions > div > div, #rankings > div > div {
+    .solutions > div > div, .rankings > div > div {
         min-width: 500px;
         border-radius: 5px;
         margin: 5px auto;
     }
-    #solutions div, #rankings div {
+    .solutions div, .rankings div {
         padding: 5px;
     }
-    #solutions > div > div:hover, #rankings > div > div:hover {
+    .solutions > div > div:hover, .rankings > div > div:hover {
         border: 1px solid #356AA0;
     }
     p {
@@ -30,7 +30,7 @@
             <div ng-repeat="(userId, criterionRanking) in ranking">
                 <h2>Opinion Provider {{$index + 1}}</h2>
 
-                <div id="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
+                <div class="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
                     <h3>Criterion {{criterionId}}</h3>
 
                     <div ng-repeat="requirementId in requirements">
@@ -56,19 +56,16 @@
         <div id="page2" ng-show="currentPage == 'page2'">
             <h1>Solutions</h1>
 
-            <div id="solutions">
-                <div ng-repeat="solution in solutions">
-                    <div jqx-expander jqx-theme="summer" jqx-width="600">
+            <div class="solutions" ng-repeat="solution in solutions">
+                <h2>Solution {{$index + 1}}</h2>
+
+                <div ng-repeat="requirementId in solution">
+                    <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
                         <div>
-                            <strong>Solution {{$index + 1}}</strong>
+                            <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
                         </div>
                         <div style="background-color: #ffd11a">
-                            <p ng-repeat="(requirementId, value) in solution">
-                                <strong>Id</strong>: {{requirementId}}<br>
-                                <strong>Name</strong>: {{getRequirement(requirementId).name}}<br>
-                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-                                <strong>Value</strong>: {{value}}
-                            </p>
+                            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
                         </div>
                     </div>
                 </div>
@@ -86,7 +83,6 @@
                 <p id="game_status"></p>
             </div>
         </div>
-
     </div>
 
     <div ng-show="!gameOpen()">

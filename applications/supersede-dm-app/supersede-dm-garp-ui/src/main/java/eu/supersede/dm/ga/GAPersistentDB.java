@@ -295,7 +295,7 @@ public class GAPersistentDB
         }
     }
 
-    public void selectSolution(Long gameId, Map<Long, Double> solution)
+    public void selectSolution(Long gameId, List<Long> solution)
     {
         String jsonSolution = serializeSolution(solution);
         HGASolution gaSolution = new HGASolution();
@@ -304,13 +304,13 @@ public class GAPersistentDB
         solutionsJpa.save(gaSolution);
     }
 
-    public Map<Long, Double> getSolution(Long gameId)
+    public List<Long> getSolution(Long gameId)
     {
         HGASolution gaSolution = solutionsJpa.findByGameId(gameId);
 
         if (gaSolution == null)
         {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
 
         String jsonSolution = gaSolution.getJsonizedSolution();
@@ -414,14 +414,14 @@ public class GAPersistentDB
         return new Gson().fromJson(json, type);
     }
 
-    private String serializeSolution(Map<Long, Double> solution)
+    private String serializeSolution(List<Long> solution)
     {
         return new Gson().toJson(solution);
     }
 
-    private Map<Long, Double> deserializeSolution(String json)
+    private List<Long> deserializeSolution(String json)
     {
-        Type type = new TypeToken<Map<Long, Double>>()
+        Type type = new TypeToken<List<Long>>()
         {
         }.getType();
         return new Gson().fromJson(json, type);

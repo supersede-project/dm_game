@@ -155,13 +155,13 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/solution", method = RequestMethod.POST)
-    public void selectSolution(@RequestParam Long gameId, @RequestBody Map<Long, Double> solution)
+    public void selectSolution(@RequestParam Long gameId, @RequestBody List<Long> solution)
     {
         persistentDB.selectSolution(gameId, solution);
     }
 
     @RequestMapping(value = "/solution", method = RequestMethod.GET)
-    public Map<Long, Double> getSolution(@RequestParam Long gameId)
+    public List<Long> getSolution(@RequestParam Long gameId)
     {
         return persistentDB.getSolution(gameId);
     }
@@ -252,7 +252,7 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, Long gameId)
+    public List<List<String>> calcRanking(Authentication authentication, Long gameId)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
         Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
@@ -341,13 +341,31 @@ public class GAGameRest
             solutions = new ArrayList<>();
         }
 
+        List<Map<String, Double>> solutionSubset = null;
+
         if (solutions.size() > 3)
         {
-            return solutions.subList(0, 3);
+            solutionSubset = solutions.subList(0, 3);
         }
         else
         {
-            return solutions;
+            solutionSubset = solutions;
         }
+
+        List<List<String>> prioritizations = new ArrayList<>();
+
+        for (Map<String, Double> solution : solutionSubset)
+        {
+            List<String> prioritization = new ArrayList<>();
+
+            for (String requirement : solution.keySet())
+            {
+                prioritization.add(requirement);
+            }
+
+            prioritizations.add(prioritization);
+        }
+
+        return prioritizations;
     }
 }
