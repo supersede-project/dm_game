@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -252,12 +251,6 @@ public class GAGameRest
         return requirements;
     }
 
-    @RequestMapping(value = "/opinionproviders", method = RequestMethod.GET)
-    public List<Long> getOpinionProviders(Long gameId)
-    {
-        return persistentDB.getOpinionProviders(gameId);
-    }
-
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
     public List<Map<String, Double>> calcRanking(Authentication authentication, Long gameId)
     {
@@ -285,26 +278,33 @@ public class GAGameRest
         // get the rankings of each player for each criterion
         List<String> players = new ArrayList<>();
 
+        // Get opinion providers that have submitted their rankings
+        List<Long> votedPlayers = new ArrayList<>();
+
         for (Long userId : participantIds)
         {
+            System.out.println("Getting ranking of user " + userId);
             String player = "" + userId;
             players.add(player);
             Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
 
-            if (userRanking != null)
+            if (userRanking.keySet().size() > 0)
             {
+                votedPlayers.add(userId);
                 Map<String, List<String>> userRankingStr = new HashMap<>();
 
-                for (Entry<Long, List<Long>> entry : userRanking.entrySet())
+                for (Long criterionId : userRanking.keySet())
                 {
+                    System.out.println("Criterion " + criterionId);
                     List<String> requirements = new ArrayList<>();
 
-                    for (Long requirement : entry.getValue())
+                    for (Long requirement : userRanking.get(criterionId))
                     {
+                        System.out.println("Adding requirement: " + requirement);
                         requirements.add("" + requirement);
                     }
 
-                    userRankingStr.put("" + entry.getKey(), requirements);
+                    userRankingStr.put("" + criterionId, requirements);
                 }
 
                 algo.addRanking(player, userRankingStr);
@@ -318,25 +318,36 @@ public class GAGameRest
 
             for (Long userId : criterionPlayerWeights.keySet())
             {
-                algorithmPlayerWeights.put("" + userId, criterionPlayerWeights.get(userId));
+                // Add the player weight only if he submitted the rankings
+                if (votedPlayers.contains(userId))
+                {
+                    algorithmPlayerWeights.put("" + userId, criterionPlayerWeights.get(userId));
+                }
             }
 
             algo.setPlayerWeights("" + criterionId, algorithmPlayerWeights);
         }
 
-        List<Map<String, Double>> prioritizations = null;
+        List<Map<String, Double>> solutions = null;
 
         try
         {
-            prioritizations = algo.calc().subList(0, 3);
+            solutions = algo.calc();
         }
         catch (Exception e)
         {
             log.error("Unable to compute prioritizations!");
             e.printStackTrace();
-            prioritizations = new ArrayList<>();
+            solutions = new ArrayList<>();
         }
 
-        return prioritizations;
+        if (solutions.size() > 3)
+        {
+            return solutions.subList(0, 3);
+        }
+        else
+        {
+            return solutions;
+        }
     }
 }

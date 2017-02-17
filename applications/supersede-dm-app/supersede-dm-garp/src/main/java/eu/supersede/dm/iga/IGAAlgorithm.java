@@ -63,7 +63,7 @@ public class IGAAlgorithm
 
         for (String criterion : criteria)
         {
-            System.out.println("Adding critirion: " + criterion);
+            System.out.println("Adding criterion: " + criterion);
             String[] criterionDetail = { criterion, "min" };
             this.criteria.put(criterion, criterionDetail);
             criteriaWeights.put(criterion, 1.0);
