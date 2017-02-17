@@ -63,13 +63,53 @@ public class GAGameRest
         return persistentDB.getGamesByRole(userId, roleName);
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
     public void createNewGame(Authentication authentication, @RequestParam String name,
-            @RequestParam Long[] gameRequirements, @RequestBody Map<Long, Double> gameCriteriaWeights,
+            @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
             @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators)
     {
-        persistentDB.create(authentication, name, gameRequirements, gameCriteriaWeights, gameOpinionProviders,
-                gameNegotiators);
+        String criteriaKey = "criteria";
+        String playersKey = "players";
+        Map<String, Double> criteriaWeights;
+        Map<String, Map<String, Double>> playersWeights = null;
+
+        if (!weights.containsKey(criteriaKey))
+        {
+            log.error("Missing weights for criteria to create a new game");
+            return;
+        }
+
+        if (weights.get(criteriaKey) instanceof Map<?, ?>)
+        {
+            criteriaWeights = (Map<String, Double>) weights.get(criteriaKey);
+        }
+        else
+        {
+            log.error("Wrong type for criteria weights: expected Map<String, Double>, found "
+                    + weights.get(criteriaKey).getClass().getName());
+            return;
+        }
+
+        if (!weights.containsKey(playersKey))
+        {
+            log.error("Missing weights for players to create a new game");
+            return;
+        }
+
+        if (weights.get(playersKey) instanceof Map<?, ?>)
+        {
+            playersWeights = (Map<String, Map<String, Double>>) weights.get(playersKey);
+        }
+        else
+        {
+            log.error("Wrong type for players weights: expected Map<String, Map<Long, Double>>, found "
+                    + weights.get(playersKey).getClass().getName());
+            return;
+        }
+
+        persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
+                gameOpinionProviders, gameNegotiators);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -105,7 +145,7 @@ public class GAGameRest
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
         GAGameDetails gameDetails = persistentDB.getGameInfo(gameId);
 
-        if (!gameDetails.getParticipants().contains(userId))
+        if (!gameDetails.getOpinionProviders().contains(userId))
         {
             return new HashMap<>();
         }
@@ -216,7 +256,8 @@ public class GAGameRest
     public List<Map<String, Double>> calcRanking(Authentication authentication, Long gameId)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
+        Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
+        Map<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
         List<String> gameCriteria = new ArrayList<>();
 
         for (Long criterionId : criteriaWeights.keySet())
@@ -233,7 +274,7 @@ public class GAGameRest
         }
 
         // get all the players in this game
-        List<Long> participantIds = persistentDB.getParticipants(gameId);
+        List<Long> participantIds = persistentDB.getOpinionProviders(gameId);
 
         // get the rankings of each player for each criterion
         List<String> players = new ArrayList<>();
@@ -264,7 +305,18 @@ public class GAGameRest
             }
         }
 
-        algo.setDefaultPlayerWeights(gameCriteria, players);
+        for (Long criterionId : playerWeights.keySet())
+        {
+            Map<Long, Double> criterionPlayerWeights = playerWeights.get(criterionId);
+            Map<String, Double> algorithmPlayerWeights = new HashMap<>();
+
+            for (Long userId : criterionPlayerWeights.keySet())
+            {
+                algorithmPlayerWeights.put("" + userId, criterionPlayerWeights.get(userId));
+            }
+
+            algo.setPlayerWeights("" + criterionId, algorithmPlayerWeights);
+        }
 
         List<Map<String, Double>> prioritizations = null;
 

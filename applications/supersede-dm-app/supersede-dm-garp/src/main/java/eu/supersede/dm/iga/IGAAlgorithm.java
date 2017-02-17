@@ -168,7 +168,13 @@ public class IGAAlgorithm
      */
     public void setPlayerWeights(String criterion, Map<String, Double> weights)
     {
+        System.out.println("Setting player weights for criterion " + criterion);
         playerWeights.put(criterion, weights);
+
+        for (String userId : weights.keySet())
+        {
+            System.out.println("Setting weight for player id " + userId + ": " + weights.get(userId));
+        }
     }
 
     public void setDefaultPlayerWeights(List<String> criteria, List<String> players)

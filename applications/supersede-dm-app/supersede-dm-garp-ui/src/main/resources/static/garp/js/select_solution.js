@@ -40,8 +40,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
                         var requirementId = data[i].requirementId;
                         gameRequirements[requirementId] = data[i];
                     }
-
-                    getSolutions();
                 }).error(function (err) {
                     alert(err.message);
                 });
@@ -71,6 +69,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.showSolutions = function () {
+        getSolutions();
         setCurrentPage(2);
     };
 

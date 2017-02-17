@@ -43,12 +43,14 @@ import eu.supersede.gr.jpa.GAGameRankingsJpa;
 import eu.supersede.gr.jpa.GAGameRequirementJpa;
 import eu.supersede.gr.jpa.GAGameSolutionsJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
+import eu.supersede.gr.jpa.GAPlayerWeightsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HGAGameCriterion;
 import eu.supersede.gr.model.HGAGameParticipation;
 import eu.supersede.gr.model.HGAGameRequirement;
 import eu.supersede.gr.model.HGAGameSummary;
+import eu.supersede.gr.model.HGAPlayerWeight;
 import eu.supersede.gr.model.HGARankingInfo;
 import eu.supersede.gr.model.HGASolution;
 import eu.supersede.gr.model.Requirement;
@@ -80,103 +82,116 @@ public class GAPersistentDB
     private GAGameRankingsJpa rankingsJpa;
 
     @Autowired
+    private GAPlayerWeightsJpa playerWeightsJpa;
+
+    @Autowired
     private GAGameSolutionsJpa solutionsJpa;
 
     public void create(Authentication authentication, String name, Long[] gameRequirements,
-            Map<Long, Double> gameCriteriaWeights, Long[] gameOpinionProviders, Long[] gameNegotiators)
+            Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
+            Long[] gameOpinionProviders, Long[] gameNegotiators)
     {
         List<Long> requirements = new ArrayList<>();
-        HashMap<Long, Double> criteriaWeights = new HashMap<>();
         List<Long> opinionProviders = new ArrayList<>();
         List<Long> negotiators = new ArrayList<>();
 
-        for (Long id : gameRequirements)
+        for (Long requirementId : gameRequirements)
         {
-            requirements.add(id);
+            requirements.add(requirementId);
         }
 
-        for (Long id : gameCriteriaWeights.keySet())
+        for (Long userId : gameOpinionProviders)
         {
-            criteriaWeights.put(id, gameCriteriaWeights.get(id));
+            opinionProviders.add(userId);
         }
 
-        for (Long id : gameOpinionProviders)
+        for (Long userId : gameNegotiators)
         {
-            opinionProviders.add(id);
+            negotiators.add(userId);
         }
 
-        for (Long id : gameNegotiators)
-        {
-            negotiators.add(id);
-        }
-
-        HGAGameSummary game = new HGAGameSummary();
+        HGAGameSummary gameSummary = new HGAGameSummary();
         long currentTime = System.currentTimeMillis();
-        game.setId(currentTime);
-        game.setName(name);
-        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        gameSummary.setId(currentTime);
+        gameSummary.setName(name);
+        gameSummary.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
 
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
-        game.setDate(sdfDate.format(now));
+        gameSummary.setDate(sdfDate.format(now));
 
-        game.setStatus(GAGameStatus.Open.name());
+        gameSummary.setStatus(GAGameStatus.Open.name());
 
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
         HActivity persistentActivity = activitiesJpa.save(activity);
 
-        game.setActivityId(persistentActivity.getId());
-        HGAGameSummary info = gamesJpa.save(game);
+        gameSummary.setActivityId(persistentActivity.getId());
+        HGAGameSummary persistedGameSummary = gamesJpa.save(gameSummary);
+        Long gameId = persistedGameSummary.getId();
 
-        for (Long cId : criteriaWeights.keySet())
+        for (String criterionId : playersWeights.keySet())
         {
-            HGAGameCriterion c = new HGAGameCriterion(info.getId(), cId, criteriaWeights.get(cId));
-            criteriaJpa.save(c);
+            Map<String, Double> playerCriteriaWeights = playersWeights.get(criterionId);
+
+            for (String userId : playerCriteriaWeights.keySet())
+            {
+                Double weight = playerCriteriaWeights.get(userId);
+                HGAPlayerWeight playerWeight = new HGAPlayerWeight(gameId, new Long(criterionId), new Long(userId),
+                        weight);
+                playerWeightsJpa.save(playerWeight);
+            }
         }
 
-        for (Long rId : requirements)
+        for (String criterionId : criteriaWeights.keySet())
         {
-            Requirement r = requirementsJpa.findOne(rId);
+            HGAGameCriterion criterion = new HGAGameCriterion(gameId, new Long(criterionId),
+                    criteriaWeights.get(criterionId));
+            criteriaJpa.save(criterion);
+        }
 
-            if (r == null)
+        for (Long requirementId : requirements)
+        {
+            Requirement requirement = requirementsJpa.findOne(requirementId);
+
+            if (requirement == null)
             {
                 continue;
             }
 
-            HGAGameRequirement req = new HGAGameRequirement();
-            req.setGameId(info.getId());
-            req.setRequirementId(r.getRequirementId());
-            gameRequirementsJpa.save(req);
+            HGAGameRequirement gameRequirement = new HGAGameRequirement();
+            gameRequirement.setGameId(gameId);
+            gameRequirement.setRequirementId(requirement.getRequirementId());
+            gameRequirementsJpa.save(gameRequirement);
         }
 
-        for (Long uId : opinionProviders)
+        for (Long userId : opinionProviders)
         {
             HGAGameParticipation p = new HGAGameParticipation();
-            p.setGameId(info.getId());
-            p.setUserId(uId);
+            p.setGameId(gameId);
+            p.setUserId(userId);
             p.setRole(GARole.OpinionProvider.name());
             participationJpa.save(p);
         }
 
-        for (Long uId : negotiators)
+        for (Long userId : negotiators)
         {
-            HGAGameParticipation p = new HGAGameParticipation();
-            p.setGameId(info.getId());
-            p.setUserId(uId);
-            p.setRole(GARole.Negotiator.name());
-            participationJpa.save(p);
+            HGAGameParticipation gameParticipation = new HGAGameParticipation();
+            gameParticipation.setGameId(gameId);
+            gameParticipation.setUserId(userId);
+            gameParticipation.setRole(GARole.Negotiator.name());
+            participationJpa.save(gameParticipation);
         }
 
         // Save owner
-        HGAGameParticipation p = new HGAGameParticipation();
-        p.setGameId(info.getId());
-        p.setUserId(info.getOwner());
-        p.setRole(GARole.Supervisor.name());
-        participationJpa.save(p);
+        HGAGameParticipation gameParticipation = new HGAGameParticipation();
+        gameParticipation.setGameId(gameId);
+        gameParticipation.setUserId(gameSummary.getOwner());
+        gameParticipation.setRole(GARole.Supervisor.name());
+        participationJpa.save(gameParticipation);
 
         log.info(
-                "Created game: " + info.getId() + ", requirements: " + requirements.size() + ", criteria: "
+                "Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
                         + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),
                 ", negotiators: " + negotiators.size());
     }
@@ -315,30 +330,48 @@ public class GAPersistentDB
 
         d.setGame(extract(gameInfo));
 
-        // add criteria
-        HashMap<Long, Double> criteriaWeights = new HashMap<>();
-        List<Long> criteriaList = criteriaJpa.findCriteriaByGame(gameInfo.getId());
+        // add requirements
+        List<Long> gameRequirements = gameRequirementsJpa.findRequirementIdsByGame(gameInfo.getId());
+        d.setRequirements(gameRequirements);
 
-        for (Long criterionId : criteriaList)
+        // add users
+        List<Long> opinionProviders = participationJpa.findParticipants(gameInfo.getId(),
+                GARole.OpinionProvider.name());
+        d.setOpinionProviders(opinionProviders);
+
+        // add criteria weights
+        List<Long> gameCriteria = criteriaJpa.findCriteriaByGame(gameInfo.getId());
+        HashMap<Long, Double> criteriaWeights = new HashMap<>();
+
+        for (Long criterionId : gameCriteria)
         {
             criteriaWeights.put(criterionId, criteriaJpa.findCriterionWeightByGame(gameInfo.getId(), criterionId));
         }
 
         d.setCriteriaWeights(criteriaWeights);
 
-        // add requirements
-        List<Long> reqsList = gameRequirementsJpa.findRequirementIdsByGame(gameInfo.getId());
-        d.setRequirements(reqsList);
+        // add player weights
+        Map<Long, Map<Long, Double>> playerWeights = new HashMap<>();
 
-        // add users
-        List<Long> participantsList = participationJpa.findParticipants(gameInfo.getId(),
-                GARole.OpinionProvider.name());
-        d.setParticipants(participantsList);
+        for (Long criterionId : gameCriteria)
+        {
+            Map<Long, Double> criterionPlayerWeights = new HashMap<>();
+
+            for (Long userId : opinionProviders)
+            {
+                Double weight = playerWeightsJpa.findPlayerWeightByGameAndCriterion(gameId, criterionId, userId);
+                criterionPlayerWeights.put(userId, weight);
+            }
+
+            playerWeights.put(criterionId, criterionPlayerWeights);
+        }
+
+        d.setPlayerWeights(playerWeights);
 
         Map<Long, Map<Long, List<Long>>> rankings = new HashMap<>();
 
         // add rankings
-        for (Long userId : participantsList)
+        for (Long userId : opinionProviders)
         {
             String json = rankingsJpa.findRankingByGameAndUser(gameInfo.getId(), userId);
 
@@ -394,19 +427,7 @@ public class GAPersistentDB
         return new Gson().fromJson(json, type);
     }
 
-    public List<Long> getParticipants(HGAGameSummary game)
-    {
-        GAGameDetails gi = getGameInfo(game.getId());
-
-        if (gi == null)
-        {
-            return new ArrayList<>();
-        }
-
-        return gi.getParticipants();
-    }
-
-    public List<Long> getParticipants(Long gameId)
+    public List<Long> getOpinionProviders(Long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
@@ -415,15 +436,22 @@ public class GAPersistentDB
             return new ArrayList<>();
         }
 
-        return gi.getParticipants();
+        return gi.getOpinionProviders();
     }
 
-    public HashMap<Long, Double> getCriteriaWeights(HGAGameSummary game)
+    public Map<Long, Map<Long, Double>> getPlayerWeights(Long gameId)
     {
-        return getCriteriaWeights(game.getId());
+        GAGameDetails gi = getGameInfo(gameId);
+
+        if (gi == null)
+        {
+            return new HashMap<>();
+        }
+
+        return gi.getPlayerWeights();
     }
 
-    public HashMap<Long, Double> getCriteriaWeights(long gameId)
+    public Map<Long, Double> getCriteriaWeights(Long gameId)
     {
         GAGameDetails gi = getGameInfo(gameId);
 
