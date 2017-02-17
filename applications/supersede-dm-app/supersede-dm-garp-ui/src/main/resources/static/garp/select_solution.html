@@ -96,9 +96,9 @@
         </div>
     </div>
 
-    <div ng-show="gameOpen && emptyRanking()">
+    <div ng-show="gameOpen && !allVoted()">
         <div align="center">
-            <p><strong>You can not select a solution because no ranking has been submitted yet!</strong></p>
+            <p><strong>You can not select a solution because not all opinion providers have voted yet!</strong></p>
             <jqx-button ng-click="home()">GA Home</jqx-button>
         </div>
     </div>

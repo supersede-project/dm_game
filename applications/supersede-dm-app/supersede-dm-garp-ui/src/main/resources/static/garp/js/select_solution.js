@@ -18,6 +18,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     var gameId = $location.search().gameId;
     var gameRequirements = {};
     var gameStatus;
+    var opinionProviders = [];
     var open = 'Open';
 
     $scope.currentPage = "page1";
@@ -32,18 +33,25 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         .success(function (data) {
             $scope.ranking = data;
 
-            if (!$scope.emptyRanking()) {
-                $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-                .success(function (data) {
+            $http.get("supersede-dm-app/garp/game/opinionproviders?gameId=" + gameId)
+            .success(function (data) {
+                opinionProviders = data;
 
-                    for (var i = 0; i < data.length; i++) {
-                        var requirementId = data[i].requirementId;
-                        gameRequirements[requirementId] = data[i];
-                    }
-                }).error(function (err) {
-                    alert(err.message);
-                });
-            }
+                if ($scope.allVoted()) {
+                    $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+                    .success(function (data) {
+
+                        for (var i = 0; i < data.length; i++) {
+                            var requirementId = data[i].requirementId;
+                            gameRequirements[requirementId] = data[i];
+                        }
+                    }).error(function (err) {
+                        alert(err.message);
+                    });
+                }
+            }).error(function (err) {
+                alert(err.message);
+            });
         }).error(function (err) {
             alert(err.message);
         });
@@ -102,8 +110,8 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         });
     };
 
-    $scope.emptyRanking = function() {
-        return Object.keys($scope.ranking).length === 0;
+    $scope.allVoted = function() {
+        return Object.keys($scope.ranking).length == opinionProviders.length;
     };
 
     $scope.gameOpen = function () {
@@ -111,7 +119,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.canSelectSolution = function () {
-        return $scope.gameOpen() && !$scope.emptyRanking();
+        return $scope.gameOpen() && $scope.allVoted();
     };
 
     $scope.home = function() {

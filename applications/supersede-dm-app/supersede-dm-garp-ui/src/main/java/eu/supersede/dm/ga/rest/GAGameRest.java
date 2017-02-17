@@ -252,6 +252,12 @@ public class GAGameRest
         return requirements;
     }
 
+    @RequestMapping(value = "/opinionproviders", method = RequestMethod.GET)
+    public List<Long> getOpinionProviders(Long gameId)
+    {
+        return persistentDB.getOpinionProviders(gameId);
+    }
+
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
     public List<Map<String, Double>> calcRanking(Authentication authentication, Long gameId)
     {
