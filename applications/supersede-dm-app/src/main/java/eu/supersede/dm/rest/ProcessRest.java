@@ -20,14 +20,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.ActivityEntry;
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.DMLibrary;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.ProcessRole;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HProcess;
+import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
@@ -94,6 +98,33 @@ public class ProcessRest
 	public List<ActivityEntry> getNextActivities( Long procId ) {
 		return DMGame.get().getProcessStatus( procId ).findNextActivities( 
 				DMLibrary.get().methods() );
+	}
+	
+	@RequestMapping(value = "/users/import", method = RequestMethod.POST)
+	public void importUsers( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		if( idlist == null ) {
+			return;
+		}
+		for( Long userid : idlist ) {
+			proc.addProcessMember( userid, ProcessRole.User.name() );
+		}
+	}
+	
+//	@RequestMapping(value = "/users/import", method = RequestMethod.POST)
+//	public void importUsers( @RequestParam Long procId, @RequestParam Long userid ) {
+//		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+//		proc.addProcessMember( userid, ProcessRole.User.name() );
+//	}
+	
+	@RequestMapping(value = "/users/list", method = RequestMethod.GET)
+	public List<Long> getUserList( @RequestParam Long procId ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		List<Long> list = new ArrayList<>();
+		for( HProcessMember member : proc.getProcessMembers() ) {
+			list.add( member.getId() );
+		}
+		return list;
 	}
 	
 }

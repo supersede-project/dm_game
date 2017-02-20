@@ -50,8 +50,8 @@ public class RequirementsImportMethod implements DMMethod {
 		return list;
 	}
 
-	public String getPage( String step ) {
-		return "";
+	public String getPage( ProcessManager mgr ) {
+		return "import_requirements";
 	}
 
 	@Override

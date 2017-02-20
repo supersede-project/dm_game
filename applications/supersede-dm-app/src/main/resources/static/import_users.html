@@ -1,0 +1,34 @@
+<script src="supersede-dm-app/js/imports.js"></script>
+
+<style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    input, form {
+        margin: 0 auto;
+        width: 500px;
+    }
+</style>
+
+<div ng-controller="import_users">
+
+    <h1>Add users to current process</h1>
+
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="requirements"></div>
+        </div>
+
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="users"></div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="done()">Import</jqx-button>
+            <jqx-button ng-click="home()">Cancel</jqx-button>
+        </div>
+<!--     </div> -->
+
+
+</div>

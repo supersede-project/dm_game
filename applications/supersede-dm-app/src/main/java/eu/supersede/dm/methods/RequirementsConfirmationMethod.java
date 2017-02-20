@@ -74,14 +74,28 @@ public class RequirementsConfirmationMethod implements DMMethod {
 		list.add( new DMCondition() {
 			@Override
 			public boolean isTrue( ProcessManager mgr ) {
+				if( mgr.getProcessMembers() == null ) {
+					return false;
+				}
+				if( mgr.getProcessMembers().size() < 1 ) {
+					return false;
+				}
+				if( mgr.getRequirementsCount() < 2 ) {
+					return false;
+				}
 				for( Requirement r : mgr.requirements() ) {
-					if( r.getStatus() != RequirementStatus.Unconfirmed.getValue() ) {
+					if( r.getStatus() == RequirementStatus.Unconfirmed.getValue() ) {
 						return true;
 					}
 				}
 				return false;
 			}} );
 		return list;
+	}
+	
+	@Override
+	public String getPage( ProcessManager mgr ) {
+		return "";
 	}
 
 }

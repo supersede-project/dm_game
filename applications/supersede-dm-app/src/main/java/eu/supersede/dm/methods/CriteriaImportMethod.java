@@ -74,9 +74,6 @@ public class CriteriaImportMethod implements DMMethod {
 		list.add( new DMCondition() {
 			@Override
 			public boolean isTrue( ProcessManager mgr ) {
-//				if( mgr.getRequirementsCount() < 1 ) {
-//					return false;
-//				}
 				for( Requirement r : mgr.requirements() ) {
 					if( r.getStatus() != RequirementStatus.Unconfirmed.getValue() ) {
 						return false;
@@ -85,6 +82,11 @@ public class CriteriaImportMethod implements DMMethod {
 				return true;
 			}} );
 		return list;
+	}
+	
+	@Override
+	public String getPage( ProcessManager mgr ) {
+		return "import_criteria";
 	}
 
 }

@@ -27,5 +27,4 @@ public interface ProcessManager {
 	public HActivity createActivity( DMMethod method );
 	public List<HActivity> getOngoingActivities();
 	
-	
 }

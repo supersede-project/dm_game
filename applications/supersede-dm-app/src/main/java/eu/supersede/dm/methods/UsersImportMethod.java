@@ -12,9 +12,9 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
-public class AlertsValidationMethod implements DMMethod {
+public class UsersImportMethod implements DMMethod {
 	
-	public static final String NAME = "Validate Alerts";
+	public static final String NAME = "Add Users";
 	
 	
 	String name;
@@ -25,7 +25,7 @@ public class AlertsValidationMethod implements DMMethod {
 	List<DMOption> options = new ArrayList<>();
 	
 	
-	public AlertsValidationMethod() {
+	public UsersImportMethod() {
 		
 		this.name = NAME;
 		
@@ -49,11 +49,7 @@ public class AlertsValidationMethod implements DMMethod {
 	public List<DMRoleSpec> getRoleList() {
 		return list;
 	}
-
-	public String getPage( String step ) {
-		return "";
-	}
-
+	
 	@Override
 	public List<DMOption> getOptions() {
 		return this.options;
@@ -74,17 +70,19 @@ public class AlertsValidationMethod implements DMMethod {
 		list.add( new DMCondition() {
 			@Override
 			public boolean isTrue( ProcessManager mgr ) {
-				if( mgr.getAlerts() == null ) {
-					return false;
+				for( Requirement r : mgr.requirements() ) {
+					if( r.getStatus() != RequirementStatus.Unconfirmed.getValue() ) {
+						return false;
+					}
 				}
-				return( mgr.getAlerts().size() > 0 );
+				return true;
 			}} );
 		return list;
 	}
 	
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "";
+		return "import_users";
 	}
 
 }

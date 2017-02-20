@@ -16,25 +16,53 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('process', function($scope, $http, $location) {
 
+	$scope.procId = $location.search().procId;
+	
 	$scope.now = function() {
 		return new Date().toJSON().slice(0,19).replace("T", " ");
 	}
 
-	$scope.reqNum = undefined;
-
-	$http.get('supersede-dm-app/processes/available_activities?procId=4247').success(function(data) {
-		console.log(data);
-		var source = [];
-		for( var i = 0; i < data.length; i++ ) {
-			var item = {
-					label: data[i].methodName,
-					value: data[i].methodName
-			};
-			source.push( item );
-		}
-		$("#procList").jqxListBox({ source: source, width: 200, height: 250 });
-	});
+	$scope.userCount = undefined;
 	
+	$http({
+        method: 'GET',
+        url: "supersede-dm-app/processes/users/list",
+        params: { procId: $scope.procId }
+    }).success(function(data){
+		$scope.userCount = data.length;
+	});
+    
+	$http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
+		console.log(data);
+//		var source = [];
+//		for( var i = 0; i < data.length; i++ ) {
+//			var item = {
+//					label: data[i].methodName,
+//					value: data[i].methodName
+//			};
+//			source.push( item );
+//		}
+		$("#procList").jqxListBox({ source: data, width: 400, height: 250,
+			renderer: function (index, label, value) {
+				var datarecord = data[index];
+				var imgurl = 'supersede-dm-app/img/process.png';
+				var img = '<img height="50" width="50" src="' + imgurl + '"/>';
+				var table = 
+					'<table style="min-width: 130px;">' +
+					'<tr><td style="width: 40px;" rowspan="2">' + 
+					img + '</td><td>' + 
+					datarecord.methodName + 
+					'</td></tr><tr><td>' + 
+					'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
+	            	'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + $scope.procId + '">Open</a>' + 
+	            	'</jqx-link-button>' + 
+	            	'</td></tr>' + 
+					'</table>';
+				return table;
+			}
+		});
+	});
+
 });
 
 $(document).ready(function () {

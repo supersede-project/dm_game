@@ -83,5 +83,10 @@ public class AlertsImportMethod implements DMMethod {
 			}} );
 		return list;
 	}
+	
+	@Override
+	public String getPage( ProcessManager mgr ) {
+		return "";
+	}
 
 }

@@ -58,4 +58,9 @@ public class GAMethod implements DMMethod {
 		return list;
 	}
 	
+	@Override
+	public String getPage( ProcessManager mgr ) {
+		return "";
+	}
+
 }
