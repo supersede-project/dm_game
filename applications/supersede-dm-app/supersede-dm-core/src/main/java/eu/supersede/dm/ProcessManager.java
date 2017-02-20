@@ -6,6 +6,7 @@ import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 public interface ProcessManager {
 	
@@ -14,6 +15,10 @@ public interface ProcessManager {
 	public int getRequirementsCount();
 	public void setRequirementsStatus( List<Requirement> reqs, Integer status );
 	
+	
+	public void addCriterion( ValutationCriteria criterion );
+	public List<ValutationCriteria> getCrtiteria();
+	public int getCriteriaCount();
 	
 	public void addAlert( HAlert alert );
 	public List<HAlert> getAlerts();

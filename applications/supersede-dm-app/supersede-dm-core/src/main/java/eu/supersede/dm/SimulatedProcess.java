@@ -10,6 +10,7 @@ import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 public class SimulatedProcess extends AbstractProcessManager {
 	
@@ -121,6 +122,22 @@ public class SimulatedProcess extends AbstractProcessManager {
 	public List<HActivity> getOngoingActivities() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addCriterion(ValutationCriteria criterion) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<ValutationCriteria> getCrtiteria() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public int getCriteriaCount() {
+		return 0;
 	}
 
 }

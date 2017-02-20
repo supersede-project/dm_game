@@ -208,7 +208,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/home');
+        $location.url('supersede-dm-app/process?procId=' + $scope.procId );
     };
 
 //    getAvailableRequirements();
@@ -218,6 +218,8 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
 app.controllerProvider.register('import_criteria', function($scope, $http, $location) {
 
+	$scope.procId = $location.search().procId;
+	
     $scope.gameCriteriaId = [];
 
     var availableCriteria = {};
@@ -261,15 +263,27 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         });
     }
 
+    function defineGameData() {
+
+        gameName = $("#game_name").val();
+
+        var i;
+        
+        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
+        for (i = 0; i < selectedCriteria.length; i++) {
+            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
+            $scope.gameCriteria.localdata.push(selectedCriterion);
+            $scope.gameCriteriaId.push(selectedCriterion.criteriaId);
+        }
+
+    }
+    
     $scope.done = function () {
-        console.log("sending weights:");
-        console.log(weightsId);
+    	defineGameData();
         $http({
             method: 'POST',
-            url: "supersede-dm-app/import_criteria/import",
-            data: weightsId,
-            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId}
+            url: "supersede-dm-app/processes/criteria/import",
+            params: { procId: $scope.procId, idlist: $scope.gameCriteriaId }
         })
         .success(function(data) {
 //            $("#game_created").html("<strong>Game successfully created!</strong>");

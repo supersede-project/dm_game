@@ -32,6 +32,14 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 		$scope.userCount = data.length;
 	});
     
+	$http({
+        method: 'GET',
+        url: "supersede-dm-app/processes/criteria/list",
+        params: { procId: $scope.procId }
+    }).success(function(data){
+		$scope.criteriaCount = data.length;
+	});
+    
 	$http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
 		console.log(data);
 //		var source = [];

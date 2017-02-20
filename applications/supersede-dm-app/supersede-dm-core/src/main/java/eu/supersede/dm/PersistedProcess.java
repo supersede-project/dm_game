@@ -1,11 +1,14 @@
 package eu.supersede.dm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 public class PersistedProcess extends AbstractProcessManager {
 	
@@ -79,14 +82,42 @@ public class PersistedProcess extends AbstractProcessManager {
 
 	@Override
 	public List<HAlert> getAlerts() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<HActivity> getOngoingActivities() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void addCriterion( ValutationCriteria vc ) {
+		HProcessCriterion c = new HProcessCriterion();
+		c.setSourceId( vc.getCriteriaId() );
+		c.setDescription( vc.getDescription() );
+		c.setProcessId( this.processId );
+		c.setName( vc.getName() );
+		DMGame.get().jpa.processCriteria.save( c );
+	}
+
+	@Override
+	public List<ValutationCriteria> getCrtiteria() {
+		List<ValutationCriteria> list = new ArrayList<>();
+		List<HProcessCriterion> procList = DMGame.get().jpa.processCriteria.findProcessCriteria( this.processId );
+		for( HProcessCriterion pc : procList ) {
+			ValutationCriteria v = new ValutationCriteria();
+			v.setCriteriaId( pc.getSourceId() );
+			v.setDescription( pc.getDescription() );
+			v.setName( pc.getName() );
+			v.setUserCriteriaPoints( new ArrayList<>() );
+			list.add( v );
+		}
+		return list;
+	}
+
+	@Override
+	public int getCriteriaCount() {
+		return DMGame.get().jpa.processCriteria.findProcessCriteria( this.processId ).size();
 	}
 
 }

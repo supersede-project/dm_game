@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.AppsJpa;
+import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
@@ -44,6 +45,7 @@ public class ModuleLoader
 	@Autowired ProcessesJpa				jpaProcesses;
 	@Autowired ProcessMembersJpa		jpaMembers;
 	@Autowired ActivitiesJpa			jpaActivities;
+	@Autowired ProcessCriteriaJpa		jpaProcessCriteria;
 	
 	@Autowired
 	private AppsJpa jpaApps;
@@ -69,6 +71,7 @@ public class ModuleLoader
 		jpa.processes = jpaProcesses;
 		jpa.requirements = jpaRequirements;
 		jpa.users = jpaUsers;
+		jpa.processCriteria = jpaProcessCriteria;
 		
 		DMGame.init( jpa );
 		

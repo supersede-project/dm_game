@@ -1,16 +1,19 @@
 package eu.supersede.dm;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import eu.supersede.gr.jpa.ActivitiesJpa;
+import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HProcess;
+import eu.supersede.gr.model.ValutationCriteria;
 
 @Component
 public class DMGame {
@@ -35,6 +38,7 @@ public class DMGame {
 		public ProcessesJpa				processes;
 		public ProcessMembersJpa		members;
 		public ActivitiesJpa			activities;
+		public ProcessCriteriaJpa		processCriteria;
 	}
 	
 	JpaProvider jpa;
@@ -57,6 +61,14 @@ public class DMGame {
 	
 	public PersistedProcess getProcessStatus( Long processId ) {
 		return new PersistedProcess( processId );
+	}
+	
+	public List<ValutationCriteria> getCriteria() {
+		return this.jpa.criteria.findAll();
+	}
+	
+	public ValutationCriteria getCriterion( Long id ) {
+		return this.jpa.criteria.findOne( id );
 	}
 	
 }

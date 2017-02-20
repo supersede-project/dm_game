@@ -14,7 +14,7 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class CriteriaImportMethod implements DMMethod {
 	
-	public static final String NAME = "Import Criteria";
+	public static final String NAME = "Select Criteria";
 	
 	
 	String name;

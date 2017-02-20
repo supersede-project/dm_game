@@ -34,6 +34,7 @@ import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
+import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
 @RequestMapping("processes")
@@ -111,11 +112,17 @@ public class ProcessRest
 		}
 	}
 	
-//	@RequestMapping(value = "/users/import", method = RequestMethod.POST)
-//	public void importUsers( @RequestParam Long procId, @RequestParam Long userid ) {
-//		ProcessManager proc = DMGame.get().getProcessStatus( procId );
-//		proc.addProcessMember( userid, ProcessRole.User.name() );
-//	}
+	@RequestMapping(value = "/criteria/import", method = RequestMethod.POST)
+	public void importCriteria( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		if( idlist == null ) {
+			return;
+		}
+		for( Long cid : idlist ) {
+			ValutationCriteria c = DMGame.get().getCriterion( cid );
+			proc.addCriterion( c );
+		}
+	}
 	
 	@RequestMapping(value = "/users/list", method = RequestMethod.GET)
 	public List<Long> getUserList( @RequestParam Long procId ) {
@@ -123,6 +130,16 @@ public class ProcessRest
 		List<Long> list = new ArrayList<>();
 		for( HProcessMember member : proc.getProcessMembers() ) {
 			list.add( member.getId() );
+		}
+		return list;
+	}
+	
+	@RequestMapping(value = "/criteria/list", method = RequestMethod.GET)
+	public List<Long> getCriteriaList( @RequestParam Long procId ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		List<Long> list = new ArrayList<>();
+		for( ValutationCriteria c : proc.getCrtiteria() ) {
+			list.add( c.getCriteriaId() );
 		}
 		return list;
 	}
