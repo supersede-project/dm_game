@@ -12,9 +12,9 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
-public class RequirementsEditingMethod implements DMMethod {
+public class CriteriaImportMethod implements DMMethod {
 	
-	public static final String NAME = "Edit Requirements";
+	public static final String NAME = "Import Criteria";
 	
 	
 	String name;
@@ -25,7 +25,7 @@ public class RequirementsEditingMethod implements DMMethod {
 	List<DMOption> options = new ArrayList<>();
 	
 	
-	public RequirementsEditingMethod() {
+	public CriteriaImportMethod() {
 		
 		this.name = NAME;
 		

@@ -24,6 +24,15 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
 	$http.get('supersede-dm-app/processes/available_activities?procId=4247').success(function(data) {
 		console.log(data);
+		var source = [];
+		for( var i = 0; i < data.length; i++ ) {
+			var item = {
+					label: data[i].methodName,
+					value: data[i].methodName
+			};
+			source.push( item );
+		}
+		$("#procList").jqxListBox({ source: source, width: 200, height: 250 });
 	});
 	
 });

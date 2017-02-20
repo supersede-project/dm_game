@@ -12,9 +12,9 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
-public class RequirementsEditingMethod implements DMMethod {
+public class RequirementsConfirmationMethod implements DMMethod {
 	
-	public static final String NAME = "Edit Requirements";
+	public static final String NAME = "Confirm Requirements";
 	
 	
 	String name;
@@ -25,7 +25,7 @@ public class RequirementsEditingMethod implements DMMethod {
 	List<DMOption> options = new ArrayList<>();
 	
 	
-	public RequirementsEditingMethod() {
+	public RequirementsConfirmationMethod() {
 		
 		this.name = NAME;
 		
@@ -74,15 +74,12 @@ public class RequirementsEditingMethod implements DMMethod {
 		list.add( new DMCondition() {
 			@Override
 			public boolean isTrue( ProcessManager mgr ) {
-//				if( mgr.getRequirementsCount() < 1 ) {
-//					return false;
-//				}
 				for( Requirement r : mgr.requirements() ) {
 					if( r.getStatus() != RequirementStatus.Unconfirmed.getValue() ) {
-						return false;
+						return true;
 					}
 				}
-				return true;
+				return false;
 			}} );
 		return list;
 	}
