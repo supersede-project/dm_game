@@ -158,7 +158,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function getAvailablePlayers() {
-        $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
+        $http.get('supersede-dm-app/user/users')
         .success(function(data) {
             availablePlayers = {
                 datatype: "json",

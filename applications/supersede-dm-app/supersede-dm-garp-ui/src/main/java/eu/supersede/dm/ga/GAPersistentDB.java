@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.NumberUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -136,7 +137,7 @@ public class GAPersistentDB
 
             for (String userId : playerCriteriaWeights.keySet())
             {
-                Double weight = playerCriteriaWeights.get(userId);
+                Double weight = NumberUtils.convertNumberToTargetClass(playerCriteriaWeights.get(userId), Double.class);
                 HGAPlayerWeight playerWeight = new HGAPlayerWeight(gameId, new Long(criterionId), new Long(userId),
                         weight);
                 playerWeightsJpa.save(playerWeight);
@@ -146,7 +147,7 @@ public class GAPersistentDB
         for (String criterionId : criteriaWeights.keySet())
         {
             HGAGameCriterion criterion = new HGAGameCriterion(gameId, new Long(criterionId),
-                    criteriaWeights.get(criterionId));
+                    NumberUtils.convertNumberToTargetClass(criteriaWeights.get(criterionId), Double.class));
             criteriaJpa.save(criterion);
         }
 
