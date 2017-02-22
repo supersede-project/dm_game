@@ -6,10 +6,15 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import eu.supersede.gr.jpa.ActivitiesJpa;
+import eu.supersede.gr.jpa.AlertsJpa;
+import eu.supersede.gr.jpa.AppsJpa;
 import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
+import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
+import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HProcess;
@@ -32,13 +37,18 @@ public class DMGame {
 	}
 	
 	public static class JpaProvider {
-		public UsersJpa					users;
-		public RequirementsJpa			requirements;
-		public ValutationCriteriaJpa	criteria;
-		public ProcessesJpa				processes;
-		public ProcessMembersJpa		members;
-		public ActivitiesJpa			activities;
-		public ProcessCriteriaJpa		processCriteria;
+		public UsersJpa						users;
+		public RequirementsJpa				requirements;
+		public ValutationCriteriaJpa		criteria;
+		public ProcessesJpa					processes;
+		public ProcessMembersJpa			members;
+		public ActivitiesJpa				activities;
+		public ProcessCriteriaJpa			processCriteria;
+		public AlertsJpa					alerts;
+		public AppsJpa						apps;
+		public ReceivedUserRequestsJpa		receivedUserRequests;
+		public RequirementsPropertiesJpa	requirementProperties;
+		public RequirementsDependenciesJpa	requirementDependencies;
 	}
 	
 	JpaProvider jpa;
@@ -69,6 +79,10 @@ public class DMGame {
 	
 	public ValutationCriteria getCriterion( Long id ) {
 		return this.jpa.criteria.findOne( id );
+	}
+	
+	public JpaProvider getJpa() {
+		return this.jpa;
 	}
 	
 }

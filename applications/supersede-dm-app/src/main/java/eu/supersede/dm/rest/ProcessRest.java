@@ -15,7 +15,9 @@
 package eu.supersede.dm.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -124,6 +126,21 @@ public class ProcessRest
 		}
 	}
 	
+	@RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
+	public void importRequirements( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		if( idlist == null ) {
+			return;
+		}
+		for( Long cid : idlist ) {
+			Requirement r = DMGame.get().getJpa().requirements.findOne( cid );
+			if( r == null ) {
+				continue;
+			}
+			proc.addRequirement( r );
+		}
+	}
+	
 	@RequestMapping(value = "/users/list", method = RequestMethod.GET)
 	public List<Long> getUserList( @RequestParam Long procId ) {
 		ProcessManager proc = DMGame.get().getProcessStatus( procId );
@@ -142,6 +159,46 @@ public class ProcessRest
 			list.add( c.getCriteriaId() );
 		}
 		return list;
+	}
+	
+	@RequestMapping(value = "/requirements/list", method = RequestMethod.GET)
+	public List<Requirement> getRequirementsList( @RequestParam Long procId ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		return proc.requirements();
+	}
+	
+	@RequestMapping(value = "/requirements/count", method = RequestMethod.GET)
+	public int getRequirementsCount( @RequestParam Long procId ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		return proc.getRequirementsCount();
+	}
+	
+	@RequestMapping(value = "/requirements/status", method = RequestMethod.GET, produces = "text/plain")
+	public String getRequirementsStatus( @RequestParam Long procId ) {
+		ProcessManager proc = DMGame.get().getProcessStatus( procId );
+		Map<Integer,Integer> count = new HashMap<>();
+		count.put( RequirementStatus.Unconfirmed.getValue(), 0 );
+		count.put( RequirementStatus.Confirmed.getValue(), 0 );
+		count.put( RequirementStatus.Enacted.getValue(), 0 );
+		count.put( RequirementStatus.Discarded.getValue(), 0 );
+		List<Requirement> requirements = proc.requirements();
+		if( requirements.size() < 1 ) {
+			return RequirementStatus.Unconfirmed.name();
+		}
+		for( Requirement r : requirements ) {
+			Integer n = count.get( r.getStatus() );
+			count.put( r.getStatus(), n +1 );
+		}
+		if( count.get( RequirementStatus.Unconfirmed.getValue() ) > 0 ) {
+			return RequirementStatus.Unconfirmed.name();
+		}
+		if( count.get( RequirementStatus.Enacted.getValue() ) > 0 ) {
+			return RequirementStatus.Enacted.name();
+		}
+		if( count.get( RequirementStatus.Discarded.getValue() ) > 0 ) {
+			return RequirementStatus.Discarded.name();
+		}
+		return RequirementStatus.Confirmed.name();
 	}
 	
 }

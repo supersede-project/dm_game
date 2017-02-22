@@ -13,12 +13,12 @@ public class HRequirementProperty
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    
+    private Long reqId;
+    
     private String name;
     private String value;
     
-//    private Double priority;
-
     public String getValue() {
 		return value;
 	}
@@ -46,5 +46,13 @@ public class HRequirementProperty
     {
         this.name = name;
     }
+
+	public Long getReqId() {
+		return reqId;
+	}
+
+	public void setReqId(Long reqId) {
+		this.reqId = reqId;
+	}
 
 }

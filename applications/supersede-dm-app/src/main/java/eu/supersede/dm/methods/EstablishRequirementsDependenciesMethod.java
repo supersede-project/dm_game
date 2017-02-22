@@ -89,7 +89,7 @@ public class EstablishRequirementsDependenciesMethod implements DMMethod {
 	
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "edit_requirements";
+		return "";
 	}
 
 }

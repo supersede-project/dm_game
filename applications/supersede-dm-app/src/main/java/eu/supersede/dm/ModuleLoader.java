@@ -22,7 +22,9 @@ import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
+import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
+import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HAlert;
@@ -39,39 +41,37 @@ import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 public class ModuleLoader
 {
 
-	@Autowired UsersJpa					jpaUsers;
-	@Autowired RequirementsJpa			jpaRequirements;
-	@Autowired ValutationCriteriaJpa	jpaCriteria;
-	@Autowired ProcessesJpa				jpaProcesses;
-	@Autowired ProcessMembersJpa		jpaMembers;
-	@Autowired ActivitiesJpa			jpaActivities;
-	@Autowired ProcessCriteriaJpa		jpaProcessCriteria;
-	
-	@Autowired
-	private AppsJpa jpaApps;
+	@Autowired UsersJpa						jpaUsers;
+	@Autowired RequirementsJpa				jpaRequirements;
+	@Autowired ValutationCriteriaJpa		jpaCriteria;
+	@Autowired ProcessesJpa					jpaProcesses;
+	@Autowired ProcessMembersJpa			jpaMembers;
+	@Autowired ActivitiesJpa				jpaActivities;
+	@Autowired ProcessCriteriaJpa			jpaProcessCriteria;
+	@Autowired AppsJpa						jpaApps;
+	@Autowired AlertsJpa					jpaAlerts;
+	@Autowired ReceivedUserRequestsJpa		jpaReceivedUserRequests;
+	@Autowired RequirementsPropertiesJpa	jpaRequirementProperties;
+	@Autowired RequirementsDependenciesJpa	jpaRequirementDependencies;
 
-	@Autowired
-	private AlertsJpa jpaAlerts;
-
-	@Autowired
-	private ReceivedUserRequestsJpa jpaReceivedUserRequests;
-
-	public ModuleLoader()
-	{
-
-	}
+	public ModuleLoader() {}
 
 	@PostConstruct
 	public void init()
 	{
 		DMGame.JpaProvider jpa = new DMGame.JpaProvider();
-		jpa.activities = jpaActivities;
-		jpa.criteria = jpaCriteria;
-		jpa.members = jpaMembers;
-		jpa.processes = jpaProcesses;
-		jpa.requirements = jpaRequirements;
-		jpa.users = jpaUsers;
-		jpa.processCriteria = jpaProcessCriteria;
+		jpa.activities				= jpaActivities;
+		jpa.criteria				= jpaCriteria;
+		jpa.members					= jpaMembers;
+		jpa.processes				= jpaProcesses;
+		jpa.requirements			= jpaRequirements;
+		jpa.users					= jpaUsers;
+		jpa.processCriteria			= jpaProcessCriteria;
+		jpa.alerts					= jpaAlerts;
+		jpa.apps					= jpaApps;
+		jpa.receivedUserRequests	= jpaReceivedUserRequests;
+		jpa.requirementProperties	= jpaRequirementProperties;
+		jpa.requirementDependencies	= jpaRequirementDependencies;
 		
 		DMGame.init( jpa );
 		

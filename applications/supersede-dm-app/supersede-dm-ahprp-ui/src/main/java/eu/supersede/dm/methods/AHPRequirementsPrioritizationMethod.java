@@ -200,7 +200,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod {
 
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "#/supersede-dm-app/ahprp/home";
+		return "ahprp/home";
 	}
 
 }

@@ -13,135 +13,28 @@
 */
 
 var app = angular.module('w5app');
-
+console.log("ok");
 app.controllerProvider.register('requirements_criterias_editing', function($scope, $http) {
 
-    $scope.criterias = [];
-
+    $scope.getRequirementDetails = function() {
+        $http.get('supersede-dm-app/requirement/details/list')
+        .success(function(data) {
+        	var source = [];
+        	for(var i = 0; i < data.length; i++) {
+        		source.push( { 
+        			icon: "supersede-dm-app/depcheck/img/requirement-small.png", 
+        			label: data[i].requirement.name, 
+        			expanded: true } );
+        	}
+            $('#jqxTree').jqxTree({ source: source, width: '100%', height: '100%'});
+            $('#jqxTree').jqxTree('selectItem', null);
+        });
+    };
+    
     var drawTabs = function() {
         console.log("Drawing");
         $('#jqxTabs').jqxTabs({ width: '100%' });
         $('#unorderedList').css('visibility', 'visible');
-    };
-
-    var getCriterias = function() {
-    $http.get('supersede-dm-app/criteria')
-        .success(function(data) {
-            $scope.criterias.length = 0;
-
-            for (var i = 0; i < data.length; i++)
-            {
-                $scope.criterias.push(data[i]);
-            }
-
-            setupCriterias();
-        });
-    };
-
-    var criteriaToolbar = function (toolbar) {
-        var container = $("<div style='margin: 5px;'></div>");
-        toolbar.append(container);
-        container.append('<input id="addrowbutton" type="button" value="Add New Criteria" />');
-        container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="Delete Selected Criteria" />');
-        container.append('<input style="margin-left: 5px;" id="updaterowbutton" type="button" value="Update Selected Criteria" />');
-        $("#addrowbutton").jqxButton();
-        $("#deleterowbutton").jqxButton();
-        $("#updaterowbutton").jqxButton();
-        // update row.
-        $("#updaterowbutton").on('click', function () {
-            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
-            editCriteria(selectedrowindex);
-        });
-        // create new row.
-        $("#addrowbutton").on('click', function () {
-            createCriteria();
-        });
-        // delete row.
-        $("#deleterowbutton").on('click', function () {
-            var selectedrowindex = $("#criteriaGrid").jqxGrid('getselectedrowindex');
-            deleteCriteria(selectedrowindex);
-        });
-    };
-
-    var setupCriterias = function() {
-        //prepare criteria data
-        var sourceCriteria =
-        {
-            datatype: "json",
-            datafields: [
-                { name: 'name'},
-                { name: 'description'},
-                { name: 'criteriaId'}
-            ],
-            id: 'criteriaId',
-            localdata: $scope.criterias
-        };
-        var dataAdapterCriteria = new $.jqx.dataAdapter(sourceCriteria);
-        $scope.criteriaSettings =
-        {
-            width: '100%',
-            autoheight: true,
-            pageable: true,
-            editable: true,
-            autorowheight: true,
-            editmode: 'selectedrow',
-            source: dataAdapterCriteria,
-            columns: [
-                { text: 'Name', width: '30%', datafield: 'name' },
-                { text: 'Description', width: '70%', datafield: 'description' }
-            ],
-            showtoolbar: true,
-            rendertoolbar: criteriaToolbar
-        };
-        $scope.createWidgetCriteria = true;
-        console.log("criteria");
-
-        if ($scope.createWidgetRequirement)
-        {
-            console.log("criteria drawing");
-            drawTabs();
-        }
-    };
-
-    getCriterias();
-
-    var createCriteria = function() {
-        var criteria = {name: "", description: ""};
-        $http({
-            url: "supersede-dm-app/criteria/",
-            data: criteria,
-            method: 'POST'
-        }).success(function(data, status, headers, config){
-            var l = headers('Location');
-            criteria.criteriaId = parseInt(l.substring(l.lastIndexOf("/") + 1));
-            $('#criteriaGrid').jqxGrid('addrow', criteria.criteriaId, criteria);
-        }).error(function(err){
-        });
-    };
-
-    var editCriteria = function(row) {
-        $('#criteriaGrid').jqxGrid('endrowedit', row, false);
-        var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
-        $http({
-            url: "supersede-dm-app/criteria/",
-            data: rowData,
-            method: 'PUT'
-        }).success(function(data){
-        }).error(function(err){
-        });
-    };
-
-    var deleteCriteria = function(row) {
-        var rowData = $('#criteriaGrid').jqxGrid('getrowdata', row);
-        $http.delete('supersede-dm-app/criteria/' + rowData.criteriaId).success(function(data) {
-            if (data === true){
-                $('#criteriaGrid').jqxGrid('deleterow', $('#criteriaGrid').jqxGrid('getrowid', row));
-            }
-            else
-            {
-                alert("Can not delete criteria");
-            }
-        });
     };
 
     $scope.requirements = [];
@@ -268,4 +161,26 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
             }
         });
     };
+    
+    $scope.getRequirementDetails();
+});
+
+$(document).ready(function () {
+	$('#mainSplitter').jqxSplitter( {
+		width: 850, height: 600, panels: [{ size: 400, min: 100 }, {min: 200, size: 400}] });
+	$('#jqxExpander').jqxExpander({ showArrow: false, toggleMode: 'none', width: '300px', height: '400px'});
+	$("#jqxRightWidget").jqxPanel({ width: 300, height: 400});
+	$("#jqxradiobutton1").jqxRadioButton({ width: 220, height: 25 });
+    $("#jqxradiobutton2").jqxRadioButton({ width: 220, height: 25 });
+    // bind to change event.
+    $("#jqxradiobutton1").bind('change', function (event) {
+        var checked = event.args.checked;
+//        alert('jqxradiobutton1 checked: ' + checked);
+    });
+    $("#jqxradiobutton2").bind('change', function (event) {
+        var checked = event.args.checked;
+//        alert('jqxradiobutton2 checked: ' + checked);
+    });
+    $("#key1").jqxInput({placeHolder: "Property name", height: 25, width: 200, minLength: 1 });
+    $("#value1").jqxInput({placeHolder: "Value", height: 25, width: 200, minLength: 1 });
 });

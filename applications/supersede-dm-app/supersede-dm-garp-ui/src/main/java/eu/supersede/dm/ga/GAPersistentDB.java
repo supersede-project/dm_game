@@ -29,8 +29,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import eu.supersede.dm.methods.GAMethod;
-import eu.supersede.gr.data.GAGameDetails;
-import eu.supersede.gr.data.GARole;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;

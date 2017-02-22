@@ -16,6 +16,8 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('import_requirements', function($scope, $http, $location) {
 
+	$scope.procId = $location.search().procId;
+	
     $scope.gameRequirementsId = [];
 
     var availableRequirements = {};
@@ -72,38 +74,16 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             $scope.gameRequirementsId.push(selectedRequirement.requirementId);
         }
 
-        var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedCriteria.length; i++) {
-            var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
-            $scope.gameCriteria.localdata.push(selectedCriterion);
-            $scope.gameCriteriaId.push(selectedCriterion.criteriaId);
-        }
-
-        var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedOpinionProviders.length; i++) {
-            var selectedOpinionProvider = $("#opinion_providers").jqxGrid('getrowdata', selectedOpinionProviders[i]);
-            $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
-            $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
-        }
-
-        console.log("selected opinion providers:");
-        console.log($scope.gameOpinionProviders.localdata);
-
-        var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedNegotiators.length; i++) {
-            var selectedNegotiator = $("#negotiators").jqxGrid('getrowdata', selectedNegotiators[i]);
-            gameNegotiators.localdata.push(selectedNegotiator);
-            $scope.gameNegotiatorsId.push(selectedNegotiator.userId);
-        }
     }
 
     $scope.done = function () {
+    	defineGameData();
+    	console.log($scope.gameRequirementsId);
         $http({
             method: 'POST',
-            url: "supersede-dm-app/import_requirements/import",
-            data: weightsId,
-            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId}
+            url: "supersede-dm-app/processes/requirements/import",
+//            data: weightsId,
+            params: { procId: $scope.procId, idlist: $scope.gameRequirementsId }
         })
         .success(function(data) {
 //            $("#game_created").html("<strong>Game successfully created!</strong>");

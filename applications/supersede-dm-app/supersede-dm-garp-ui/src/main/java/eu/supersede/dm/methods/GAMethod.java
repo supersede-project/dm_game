@@ -60,7 +60,7 @@ public class GAMethod implements DMMethod {
 	
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "";
+		return "garp/home";
 	}
 
 }

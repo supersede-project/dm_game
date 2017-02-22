@@ -12,7 +12,7 @@
    limitations under the License.
 */
 
-package eu.supersede.gr.data;
+package eu.supersede.dm.ga;
 
 import java.util.ArrayList;
 import java.util.HashMap;

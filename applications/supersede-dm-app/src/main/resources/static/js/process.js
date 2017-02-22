@@ -40,6 +40,25 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 		$scope.criteriaCount = data.length;
 	});
     
+	$http({
+        method: 'GET',
+        url: "supersede-dm-app/processes/requirements/count",
+        params: { procId: $scope.procId }
+    }).success(function(data){
+		$scope.requirementsCount = data;
+	});
+    
+	$http({
+        method: 'GET',
+        url: "supersede-dm-app/processes/requirements/status",
+        params: { procId: $scope.procId },
+        headers: {
+            'Content-Type': undefined
+          }
+    }).success(function(data){
+		$scope.processStatus = data;
+	});
+    
 	$http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
 		console.log(data);
 //		var source = [];

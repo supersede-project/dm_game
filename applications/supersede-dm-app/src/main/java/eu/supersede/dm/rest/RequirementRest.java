@@ -14,6 +14,7 @@
 
 package eu.supersede.dm.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +28,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import eu.supersede.dm.DMGame;
+import eu.supersede.dm.RequirementDetails;
 import eu.supersede.fe.exception.NotFoundException;
-import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.HRequirementDependency;
+import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.Requirement;
 
 @RestController
 @RequestMapping("requirement")
 public class RequirementRest
 {
-    @Autowired
-    private RequirementsJpa requirements;
-
-    @Autowired
-    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
+    @Autowired private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
     /**
      * Return the requirement with the given id.
@@ -50,7 +50,7 @@ public class RequirementRest
     @RequestMapping("/{requirementId}")
     public Requirement getRequirement(@PathVariable Long requirementId)
     {
-        Requirement c = requirements.findOne(requirementId);
+        Requirement c = DMGame.get().getJpa().requirements.findOne(requirementId);
 
         if (c == null)
         {
@@ -66,7 +66,27 @@ public class RequirementRest
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Requirement> getRequirements()
     {
-        return requirements.findAll();
+        return DMGame.get().getJpa().requirements.findAll();
+    }
+
+    @RequestMapping(value = "details/list", method = RequestMethod.GET)
+    public List<RequirementDetails> getDetailedRequirements()
+    {
+    	List<RequirementDetails> list = new ArrayList<>();
+    	List<Requirement> reqlist = DMGame.get().getJpa().requirements.findAll();
+    	for( Requirement r : reqlist ) {
+    		RequirementDetails details = new RequirementDetails( r );
+    		List<HRequirementDependency> deps = DMGame.get().getJpa().requirementDependencies.findDependenciesByDependerId( r.getRequirementId() );
+    		for( HRequirementDependency d : deps ) {
+    			details.addDependency( d );
+    		}
+    		List<HRequirementProperty> props = DMGame.get().getJpa().requirementProperties.findPropertiesByRequirementId( r.getRequirementId() );
+    		for( HRequirementProperty p : props ) {
+    			details.setProperty( p );
+    		}
+    		list.add( details );
+    	}
+        return list;
     }
 
     /**
@@ -75,7 +95,7 @@ public class RequirementRest
     @RequestMapping("/count")
     public Long count()
     {
-        return requirements.count();
+        return DMGame.get().getJpa().requirements.count();
     }
 
     /**
@@ -86,7 +106,7 @@ public class RequirementRest
     public ResponseEntity<?> createRequirement(@RequestBody Requirement r)
     {
         r.setRequirementId(null);
-        requirements.save(r);
+        DMGame.get().getJpa().requirements.save(r);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -101,14 +121,15 @@ public class RequirementRest
     @RequestMapping(value = "/{requirementId}", method = RequestMethod.DELETE)
     public boolean deleteRequirement(@PathVariable Long requirementId)
     {
-        Requirement requirement = requirements.findOne(requirementId);
-
+        Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
+        
+        // FIXME: this is obsolete code
         List<HAHPRequirementsMatrixData> listRow = requirementsMatricesData.findByRowRequirement(requirement);
         List<HAHPRequirementsMatrixData> listColumn = requirementsMatricesData.findByColumnRequirement(requirement);
 
         if (listRow.isEmpty() && listColumn.isEmpty())
         {
-            requirements.delete(requirementId);
+        	DMGame.get().getJpa().requirements.delete(requirementId);
             return true;
         }
 
@@ -122,9 +143,9 @@ public class RequirementRest
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public void editRequirement(@RequestBody Requirement r)
     {
-        Requirement requirement = requirements.findOne(r.getRequirementId());
+        Requirement requirement = DMGame.get().getJpa().requirements.findOne(r.getRequirementId());
         requirement.setName(r.getName());
         requirement.setDescription(r.getDescription());
-        requirements.save(requirement);
+        DMGame.get().getJpa().requirements.save(requirement);
     }
 }
