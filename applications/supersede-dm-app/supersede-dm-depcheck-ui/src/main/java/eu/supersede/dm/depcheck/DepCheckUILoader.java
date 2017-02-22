@@ -47,6 +47,6 @@ public class DepCheckUILoader
         roles.add("OPINION_PROVIDER");
         roles.add("DECISION_SCOPE_PROVIDER");
         roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "depcheck/home", labels, roles);
+//        au.addApplicationPage("supersede-dm-app", "depcheck/home", labels, roles);
     }
 }

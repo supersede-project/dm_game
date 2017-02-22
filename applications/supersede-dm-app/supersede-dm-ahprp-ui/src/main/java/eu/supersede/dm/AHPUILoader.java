@@ -57,7 +57,7 @@ public class AHPUILoader
         roles.add("OPINION_PROVIDER");
         roles.add("DECISION_SCOPE_PROVIDER");
         roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "ahprp/game_page", labels, roles);
+//        au.addApplicationPage("supersede-dm-app", "ahprp/game_page", labels, roles);
 
         labels = new HashMap<>();
         labels.put("", "Edit Requirements");
@@ -65,6 +65,6 @@ public class AHPUILoader
         roles = new ArrayList<>();
         roles.add("DM_ADMIN");
         roles.add("DECISION_SCOPE_PROVIDER");
-        au.addApplicationPage("supersede-dm-app", "ahprp/requirements_criterias_editing", labels, roles);
+//        au.addApplicationPage("supersede-dm-app", "ahprp/requirements_criterias_editing", labels, roles);
     }
 }
