@@ -92,7 +92,7 @@ public class SimulatedProcess extends AbstractProcessManager {
 	}
 
 	@Override
-	public HActivity createActivity(DMMethod method) {
+	public HActivity createActivity( String methodName ) {
 		List<HActivity> list = activities.get( processId );
 		if( list == null ) {
 			list = new ArrayList<>();
@@ -101,7 +101,7 @@ public class SimulatedProcess extends AbstractProcessManager {
 		HActivity a = new HActivity();
 		a.setId( (++counter) );
 		a.setProcessId( processId );
-		a.setMethodName( method.getName() );
+		a.setMethodName( methodName );
 		list.add( a );
 		return a;
 	}
@@ -114,14 +114,16 @@ public class SimulatedProcess extends AbstractProcessManager {
 
 	@Override
 	public List<HAlert> getAlerts() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<HActivity> getOngoingActivities() {
-		// TODO Auto-generated method stub
-		return null;
+		List<HActivity> list = activities.get( processId );
+		if( list == null ) {
+			list = new ArrayList<>();
+		}
+		return list;
 	}
 
 	@Override
@@ -138,6 +140,23 @@ public class SimulatedProcess extends AbstractProcessManager {
 	@Override
 	public int getCriteriaCount() {
 		return 0;
+	}
+
+	@Override
+	public List<HActivity> getOngoingActivities(String methodName) {
+		List<HActivity> all = getOngoingActivities();
+		List<HActivity> sel = new ArrayList<>();
+		for( HActivity a : all ) {
+			if( a.getMethodName().equals( methodName ) ) {
+				sel.add( a );
+			}
+		}
+		return sel;
+	}
+
+	@Override
+	public PropertyBag getProperties(HActivity a) {
+		return new PropertyBag();
 	}
 
 }

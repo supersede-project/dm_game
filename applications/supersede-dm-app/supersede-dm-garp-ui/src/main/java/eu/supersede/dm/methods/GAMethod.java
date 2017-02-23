@@ -48,10 +48,13 @@ public class GAMethod implements DMMethod {
 		List<DMCondition> list = new ArrayList<DMCondition>();
 		list.add( new DMCondition() {
 			@Override
-			public boolean isTrue( ProcessManager status ) {
-				if( status.getRequirementsCount() < 1 ) {
+			public boolean isTrue( ProcessManager mgr ) {
+				if( mgr.getRequirementsCount() < 1 ) {
 					return false;
 				}
+//				if( mgr.getOngoingActivities( getName() ).size() > 0 ) {
+//					return false;
+//				}
 				// TODO: check that requirements status if "confirmed"
 				return true;
 			}} );

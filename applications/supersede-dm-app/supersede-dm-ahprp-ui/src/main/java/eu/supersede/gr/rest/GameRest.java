@@ -42,8 +42,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.supersede.dm.DMGame;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.PropertyBag;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.dm.methods.AHPPlayerMethod;
 import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.integration.ProxyWrapper;
@@ -65,6 +69,7 @@ import eu.supersede.gr.model.GamePlayerPoint;
 import eu.supersede.gr.model.HAHPJudgeAct;
 import eu.supersede.gr.model.HAHPPlayerMove;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -119,8 +124,20 @@ public class GameRest
     @Autowired
     private NotificationUtil notificationUtil;
 
+    @RequestMapping(value = "id", method = RequestMethod.GET)
+    public Long activit2gameId( 
+    		Authentication authentication, 
+    		@RequestParam Long procId, 
+    		@RequestParam Long activityId ) {
+    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
+    	String ret = DMGame.get().getProcessManager( procId ).getProperties( a ).get( "gameId", "" );
+    	return Long.parseLong( ret );
+    }
+    
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<HAHPGame> getGames(Authentication authentication, @RequestParam(required = false) Boolean finished,
+    public List<HAHPGame> getGames(
+    		Authentication authentication, 
+    		@RequestParam(required = false) Boolean finished,
             @RequestParam(defaultValue = "false") Boolean byUser)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
@@ -341,7 +358,8 @@ public class GameRest
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createGame(Authentication auth, @RequestBody HAHPGame game,
-            @RequestParam(required = true) String criteriaValues)
+            @RequestParam(required = true) String criteriaValues,
+            @RequestParam Long procId )
             throws JsonParseException, JsonMappingException, IOException
     {
         TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>()
@@ -387,7 +405,14 @@ public class GameRest
 
         game.setFinished(false);
         game = games.save(game);
-
+        
+        ProcessManager mgr = DMGame.get().getProcessManager( procId );
+        HActivity a = mgr.createActivity( new AHPPlayerMethod() );
+        a.setUserId( ((DatabaseUser)auth.getPrincipal()).getUserId() );
+        a = DMGame.get().getJpa().activities.save( a );
+        PropertyBag bag = mgr.getProperties( a );
+        bag.set( "gameId", "" + game.getGameId() );
+        
         for (int i = 0; i < cs.size() - 1; i++)
         {
             for (int j = i + 1; j < cs.size(); j++)

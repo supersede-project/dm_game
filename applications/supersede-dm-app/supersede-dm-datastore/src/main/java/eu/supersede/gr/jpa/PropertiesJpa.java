@@ -19,18 +19,18 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import eu.supersede.gr.model.HActivity;
+import eu.supersede.gr.model.HProperty;
 
-public interface ActivitiesJpa extends JpaRepository<HActivity, Long>
+public interface PropertiesJpa extends JpaRepository<HProperty, Long>
 {
 	
-    @Query("SELECT a FROM HActivity a WHERE processId = ?1 AND methodName = ?2")
-	List<HActivity> find( Long procId, String methodName );
+    @Query("SELECT p FROM HProperty p WHERE propertyBagId = ?1 AND key = ?2")
+	List<HProperty> find( Long propertyBagId, String key );
 	
-    @Query("SELECT a FROM HActivity a WHERE processId = ?1")
-	List<HActivity> find( Long procId );
+    @Query("SELECT p FROM HProperty p WHERE activityId = ?1")
+	List<HProperty> findByActivity( Long activityId );
 	
-    @Query("SELECT a FROM HActivity a WHERE userId = ?1")
-	List<HActivity> findByUser( Long userId );
+    @Query("SELECT p FROM HProperty p WHERE propertyBagId = ?1")
+	List<HProperty> findByPropertyBag( Long propertyBagId );
 	
 }

@@ -26,19 +26,57 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		$scope.reqNum = data.length;
 	});
 
+	$http.get('supersede-dm-app/processes/activities/list').success(function(data) {
+		$scope.actNum = data.length;
+
+		var source = {
+	        localdata: data,
+	        datatype: "array"
+	    };
+		var dataAdapter = new $.jqx.dataAdapter(source);
+	    $('#activities-listbox').jqxListBox({ selectedIndex: 0,  
+	    	source: dataAdapter, 
+	    	displayMember: "name", 
+	    	valueMember: "id", 
+	    	itemHeight: 70, height: '100%', width: '100%',
+	        renderer: function (index, label, value) {
+	            var datarecord = data[index];
+	            var action;
+	            if( datarecord.state == "new" ) {
+	            	action = "Start";
+	            }
+	            else {
+	            	action = datarecord.state;
+	            }
+	            var table = 
+	            	'<table style="min-width: 100%;">' + 
+	            	'<tr><td style="width: 40px;" rowspan="2">' 
+	            	+ "img" + 
+	            	'</td><td>' + 
+	            	datarecord.methodName + 
+	            	'</td>' + 
+	            	'<td style="width: 40px;" rowspan="2">' +
+//	            	action + 
+	            	'</td>' +
+	            	'</tr><tr><td>' + 
+//	            	"Created: " + datarecord.date + 
+	            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
+	            	'href="#/supersede-dm-app/' + datarecord.url + '?procId=' + datarecord.processId + 
+	            	'&activityId=' + datarecord.activityId + 
+//	            	'&gameId=' + datarecord.properties.gameId + 
+	            	'">View</a>' + 
+	            	'</jqx-link-button>' + 
+	            	'</td></tr></table>';
+	            return table;
+	        }
+	    });
+	});
+
 	$http.get('supersede-dm-app/alerts/biglist').success(function(data) {
 		$scope.alertsNum = data.length;
 	});
 
 	$http.get('supersede-dm-app/processes/list').success(function(data) {
-//		var data = new Array();
-//		for (var i = 0; i < 10; i++) {
-//	        var row = {};
-//	        row["firstname"] = "firstName" + i;
-//	        row["lastname"] = "lastName" + i;
-//	        row["title"] = "title" + i;
-//	        data[i] = row;
-//	    }
 		var source = {
 	        localdata: data,
 	        datatype: "array"

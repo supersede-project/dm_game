@@ -7,6 +7,7 @@ import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.HPropertyBag;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -67,10 +68,10 @@ public class PersistedProcess extends AbstractProcessManager {
 	}
 
 	@Override
-	public HActivity createActivity( DMMethod method ) {
+	public HActivity createActivity( String methodName ) {
 		HActivity a = new HActivity();
 		a.setProcessId( processId );
-		a.setMethodName( method.getName() );
+		a.setMethodName( methodName );
 		return DMGame.get().jpa.activities.save( a );
 	}
 
@@ -118,6 +119,26 @@ public class PersistedProcess extends AbstractProcessManager {
 	@Override
 	public int getCriteriaCount() {
 		return DMGame.get().jpa.processCriteria.findProcessCriteria( this.processId ).size();
+	}
+
+	@Override
+	public List<HActivity> getOngoingActivities( String methodName ) {
+		return DMGame.get().jpa.activities.find( this.processId, methodName );
+	}
+
+	@Override
+	public PropertyBag getProperties(HActivity a) {
+		HPropertyBag bag = null;
+		if( a.getPropertyBag() != null ) {
+			bag = DMGame.get().jpa.propertyBags.findOne( a.getPropertyBag() );
+		}
+		if( bag == null ) {
+			bag = new HPropertyBag();
+			bag = DMGame.get().jpa.propertyBags.save( bag );
+			a.setPropertyBag( bag.getId() );
+			a = DMGame.get().jpa.activities.save( a );
+		}
+		return new PropertyBag( a );
 	}
 
 }

@@ -30,6 +30,10 @@ public interface ProcessManager {
 	
 	
 	public HActivity createActivity( DMMethod method );
+	public HActivity createActivity( String methodName );
 	public List<HActivity> getOngoingActivities();
+	public List<HActivity> getOngoingActivities( String methodName );
+	
+	public PropertyBag getProperties( HActivity a );
 	
 }

@@ -11,13 +11,17 @@ import eu.supersede.gr.jpa.AppsJpa;
 import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
+import eu.supersede.gr.jpa.PropertiesJpa;
+import eu.supersede.gr.jpa.PropertyBagsJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
+import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @Component
@@ -49,6 +53,8 @@ public class DMGame {
 		public ReceivedUserRequestsJpa		receivedUserRequests;
 		public RequirementsPropertiesJpa	requirementProperties;
 		public RequirementsDependenciesJpa	requirementDependencies;
+		public PropertiesJpa				properties;
+		public PropertyBagsJpa				propertyBags;
 	}
 	
 	JpaProvider jpa;
@@ -69,7 +75,7 @@ public class DMGame {
 		return jpa.processes.findOne( processId );
 	}
 	
-	public PersistedProcess getProcessStatus( Long processId ) {
+	public PersistedProcess getProcessManager( Long processId ) {
 		return new PersistedProcess( processId );
 	}
 	
@@ -83,6 +89,14 @@ public class DMGame {
 	
 	public JpaProvider getJpa() {
 		return this.jpa;
+	}
+	
+	public List<User> getCandidateProcessUsers() {
+		return jpa.users.findAll();
+	}
+	
+	public List<HActivity> getPendingActivities( Long userId ) {
+		return jpa.activities.findByUser( userId );
 	}
 	
 }

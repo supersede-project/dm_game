@@ -8,34 +8,22 @@ import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
+import eu.supersede.dm.DMTask;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
-public class EstablishRequirementsDependenciesMethod implements DMMethod {
+public class AHPPlayerMethod implements DMMethod {
 	
-	public static final String NAME = "Establish Requirements Dependencies";
-	
+	public static final String NAME = "Play AHP game session";
 	
 	String name;
-	
 	
 	List<DMRoleSpec> list = new ArrayList<>();
 	
 	List<DMOption> options = new ArrayList<>();
 	
 	
-	public EstablishRequirementsDependenciesMethod() {
-		
+	public AHPPlayerMethod() {
 		this.name = NAME;
-		
-//		list.add( new DMRoleSpec( new DMRole( "Game Master" ), 1, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Negotiator" ), 0, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Opinion Provider" ), 1, -1 ) );
-//		
-//		options.add( new DMOption( "gamification", new String[] { "on", "off" } ) );
-//		options.add( new DMOption( "negotiator", new String[] { "active", "not active" } ) );
-		
 	}
 	
 	public String getName() {
@@ -68,28 +56,38 @@ public class EstablishRequirementsDependenciesMethod implements DMMethod {
 //		status.setProperty( "pid", pid );
 	}
 
+	public boolean isComplete( ProcessManager status ) {
+		return getActiveTasks( status ).size() < 1;
+	}
+
+	public List<DMTask> getActiveTasks( ProcessManager status ) {
+		return new ArrayList<>();
+	}
+
+	public void createGame( ProcessManager status ) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void completeTask(ProcessManager status, DMTask task) {
+//		executor.completeTask( status.getProperty( "pid", "" ), task );
+	}
+
 	@Override
 	public List<DMCondition> preconditions() {
 		List<DMCondition> list = new ArrayList<DMCondition>();
 		list.add( new DMCondition() {
 			@Override
 			public boolean isTrue( ProcessManager mgr ) {
-				if( mgr.getRequirementsCount() < 1 ) {
-					return false;
-				}
-				for( Requirement r : mgr.requirements() ) {
-					if( r.getStatus() == RequirementStatus.Confirmed.getValue() ) {
-						return false;
-					}
-				}
-				return true;
+				return false;
+//				return ( mgr.getOngoingActivities( getName() ).size() > 0 );
 			}} );
 		return list;
 	}
-	
+
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "";
+		return "ahprp/player_moves";
 	}
 
 }

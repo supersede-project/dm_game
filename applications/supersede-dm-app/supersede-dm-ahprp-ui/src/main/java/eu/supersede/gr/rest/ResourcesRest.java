@@ -51,15 +51,15 @@ public class ResourcesRest {
 		AntPathMatcher apm = new AntPathMatcher();
 		String finalPath = apm.extractPathWithinPattern(bestMatchPattern, path);
 
-		System.out.println( "Serving page " + finalPath );
+//		System.out.println( "Serving page " + finalPath );
 
 		Resource resource = resourceLoader.getResource("classpath:static/ahprp/" + finalPath );
 
-		try {
-			System.out.println( resource.getFile().getAbsolutePath() );
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			System.out.println( resource.getFile().getAbsolutePath() );
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		//		Resource resource = resourceLoader.getResource("classpath:static/game.html");
 
 		try {

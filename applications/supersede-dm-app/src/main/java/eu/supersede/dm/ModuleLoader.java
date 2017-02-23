@@ -21,6 +21,8 @@ import eu.supersede.gr.jpa.AppsJpa;
 import eu.supersede.gr.jpa.ProcessCriteriaJpa;
 import eu.supersede.gr.jpa.ProcessMembersJpa;
 import eu.supersede.gr.jpa.ProcessesJpa;
+import eu.supersede.gr.jpa.PropertiesJpa;
+import eu.supersede.gr.jpa.PropertyBagsJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
@@ -53,6 +55,8 @@ public class ModuleLoader
 	@Autowired ReceivedUserRequestsJpa		jpaReceivedUserRequests;
 	@Autowired RequirementsPropertiesJpa	jpaRequirementProperties;
 	@Autowired RequirementsDependenciesJpa	jpaRequirementDependencies;
+	@Autowired PropertiesJpa				jpaProperties;
+	@Autowired PropertyBagsJpa				jpaPropertyBags;
 
 	public ModuleLoader() {}
 
@@ -72,6 +76,8 @@ public class ModuleLoader
 		jpa.receivedUserRequests	= jpaReceivedUserRequests;
 		jpa.requirementProperties	= jpaRequirementProperties;
 		jpa.requirementDependencies	= jpaRequirementDependencies;
+		jpa.properties				= jpaProperties;
+		jpa.propertyBags			= jpaPropertyBags;
 		
 		DMGame.init( jpa );
 		
