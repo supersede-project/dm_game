@@ -29,10 +29,10 @@ public class HGAGameSummary
     private Long id;
 
     private Long activityId;
-    private String name = "";
+    private String name;
     private Long owner;
-    private String date = "";
-    private String status = "open";
+    private String date;
+    private String status;
 
     public HGAGameSummary()
     {

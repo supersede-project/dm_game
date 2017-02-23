@@ -37,23 +37,13 @@ public class Requirement
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long			requirementId;
-    private String			name;
-    private String			description;
-    
-    private Integer			status = RequirementStatus.Unconfirmed.getValue();
-    
-    private Long			processId = -1L;
-    
-    public Long getProcessId() {
-		return processId;
-	}
+    private Long requirementId;
+    private String name;
+    private String description;
+    private Integer status = RequirementStatus.Unconfirmed.getValue();
+    private Long processId = -1L;
 
-	public void setProcessId(Long processId) {
-		this.processId = processId;
-	}
-
-	public Requirement()
+    public Requirement()
     {
     }
 
@@ -92,29 +82,45 @@ public class Requirement
     {
         this.description = description;
     }
-    
-    public void setStatus( Integer status ) {
-    	try {
-    		this.status = status;
-    	}
-    	catch( Exception ex ) {
-    		ex.printStackTrace();
-    		this.status = RequirementStatus.Unconfirmed.getValue();
-    	}
+
+    public void setStatus(Integer status)
+    {
+        try
+        {
+            this.status = status;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            this.status = RequirementStatus.Unconfirmed.getValue();
+        }
     }
-    
-    public Integer getStatus() {
-    	try {
-    		return this.status;
-    	}
-    	catch( Exception ex ) {
-    		ex.printStackTrace();
-    		return RequirementStatus.Unconfirmed.getValue();
-    	}
+
+    public Integer getStatus()
+    {
+        try
+        {
+            return this.status;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return RequirementStatus.Unconfirmed.getValue();
+        }
     }
-    
-    public String getTopic() {
-    	return "";
+
+    public Long getProcessId()
+    {
+        return processId;
     }
-    
+
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
+
+    public String getTopic()
+    {
+        return "";
+    }
 }

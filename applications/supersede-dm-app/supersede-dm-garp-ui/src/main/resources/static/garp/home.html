@@ -1,20 +1,32 @@
 <script src="supersede-dm-app/garp/js/home.js"></script>
 
-<div ng-controller="display_games">
+<style>
+    h1 {
+        text-align: center;
+    }
+</style>
+
+<div ng-controller="home">
 
 	<div align="center">
 		<jqx-button ng-click="createNew()">Create New Game</jqx-button>
 	</div>
 
-	<h1>Active Games</h1>
+	<h1>Games as Supervisor</h1>
 
 	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
-		<div id="activeGames"></div>
+		<div id="supervisorGames"></div>
 	</div>
 
-	<h1>Owned Games</h1>
+	<h1>Games as Negotiator</h1>
 
 	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
-		<div id="ownedGames"></div>
+		<div id="negotiatorGames"></div>
+	</div>
+
+    <h1>Games as Opinion Provider</h1>
+
+	<div id='jqxWidget' style="font-size: 13px; font-family: Verdana">
+		<div id="opinionProviderGames"></div>
 	</div>
 </div>

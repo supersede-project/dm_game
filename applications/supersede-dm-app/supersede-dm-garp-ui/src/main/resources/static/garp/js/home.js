@@ -14,7 +14,7 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('display_games', function($scope, $http, $location) {
+app.controllerProvider.register('home', function($scope, $http, $location) {
 
     function compareGamesByDate(a, b) {
         if (a.date < b.date) {
@@ -27,14 +27,14 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
         return 0;
     }
 
-    $scope.getActiveGames = function() {
-        $http.get('supersede-dm-app/garp/game/activegames')
+    function getGamesAsSupervisor() {
+        $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor')
         .success(function(data) {
             console.log(data);
             var source = {
                 datatype: "json",
                 datafields: [
-                    { name: 'owner' },
+                    { name: 'name'},
                     { name: 'date' },
                     { name: 'status' },
                     { name: 'id' }
@@ -43,36 +43,36 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/gameplay?id=');
-                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
+                r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+                r = r.concat('ng-click="gameDetails(' + value + ')">Details</jqx-button></div>');
                 return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#activeGames").jqxGrid( {
-                width: 600,
+            $("#supervisorGames").jqxGrid({
+                width: '100%',
                 autoheight: true,
                 pageable: true,
                 altrows: true,
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                    { text: 'Name', datafield: 'name', width: '50%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '25%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '15%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
-    };
+    }
 
-    $scope.getOwnedGames = function() {
-        $http.get('supersede-dm-app/garp/game/ownedgames')
+    function getGamesAsNegotiator() {
+        $http.get('supersede-dm-app/garp/game/games?roleName=Negotiator')
         .success(function(data) {
             console.log(data);
             var source = {
                 datatype: "json",
                 datafields: [
-                    { name: 'owner' },
+                    { name: 'name'},
                     { name: 'date' },
                     { name: 'status' },
                     { name: 'id' }
@@ -81,32 +81,85 @@ app.controllerProvider.register('display_games', function($scope, $http, $locati
             };
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
-                r = r.concat('<jqx-link-button jqx-width="110" jqx-height="25"><a href="#/supersede-dm-app/garp/results');
-                r = r.concat(value + '">Open Game</a></jqx-link-button></div>');
+                r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+                r = r.concat('ng-click="selectSolution(' + value + ')">Select Solution</jqx-button></div>');
+                r = r.concat();
                 return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#ownedGames").jqxGrid({
-                width: 600,
+            $("#negotiatorGames").jqxGrid( {
+                width: '100%',
                 autoheight: true,
                 pageable: true,
                 altrows: true,
                 source: dataAdapter,
                 rowsheight: 32,
                 columns: [
-                  { text: 'Owner', datafield: 'owner', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: 'Date', datafield: 'date', width: 200, align: 'center', cellsalign: 'center' },
-                  { text: 'Status', datafield: 'status', width: 100, align: 'center', cellsalign: 'center' },
-                  { text: '', datafield: 'id', width: 200, align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                    { text: 'Name', datafield: 'name', width: '50%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '25%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '15%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
         });
-    };
+    }
+
+    function getGamesAsOpinionProvider() {
+        $http.get('supersede-dm-app/garp/game/games?roleName=OpinionProvider')
+        .success(function(data) {
+            console.log(data);
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'name'},
+                    { name: 'date' },
+                    { name: 'status' },
+                    { name: 'id' }
+                ],
+                localdata: data.sort(compareGamesByDate)
+            };
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+                r = r.concat('ng-click="vote(' + value + ')">Vote</jqx-button></div>');
+                r = r.concat();
+                return r;
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#opinionProviderGames").jqxGrid( {
+                width: '100%',
+                autoheight: true,
+                pageable: true,
+                altrows: true,
+                source: dataAdapter,
+                rowsheight: 32,
+                columns: [
+                    { text: 'Name', datafield: 'name', width: '50%', align: 'center', cellsalign: 'center' },
+                    { text: 'Date', datafield: 'date', width: '25%', align: 'center', cellsalign: 'center' },
+                    { text: 'Status', datafield: 'status', width: '10%', align: 'center', cellsalign: 'center' },
+                    { text: '', datafield: 'id', width: '15%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
+                ]
+            });
+        });
+    }
 
     $scope.createNew = function() {
         $location.url('supersede-dm-app/garp/create_game');
     };
 
-    $scope.getActiveGames();
-    $scope.getOwnedGames();
+    $scope.gameDetails = function(gameId) {
+        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId);
+    };
+
+    $scope.selectSolution = function(gameId) {
+        $location.url('supersede-dm-app/garp/select_solution').search('gameId', gameId);
+    };
+
+    $scope.vote = function(gameId) {
+        $location.url('supersede-dm-app/garp/vote').search('id', gameId);
+    };
+
+    getGamesAsSupervisor();
+    getGamesAsNegotiator();
+    getGamesAsOpinionProvider();
 });

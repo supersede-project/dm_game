@@ -135,6 +135,12 @@ public class UserRest
         return us;
     }
 
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User> getFrontendUsers()
+    {
+        return users.findAll();
+    }
+
     /**
      * Check whether the given user has the given profile.
      * @param proxyUser

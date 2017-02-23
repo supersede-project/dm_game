@@ -14,25 +14,39 @@
 
 package eu.supersede.gr.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(RankingId.class)
-@Table(name = "h_ga_rankings")
-public class HGARankingInfo
+@IdClass(PlayerWeightId.class)
+@Table(name = "h_ga_players_weights")
+public class HGAPlayerWeight
 {
     @Id
     private Long gameId;
 
     @Id
+    private Long criterionId;
+
+    @Id
     private Long userId;
 
-    @Column(columnDefinition = "varchar(5000)")
-    private String jsonizedRanking;
+    private Double weight;
+
+    public HGAPlayerWeight()
+    {
+
+    }
+
+    public HGAPlayerWeight(Long gameId, Long criterionId, Long userId, Double weight)
+    {
+        this.gameId = gameId;
+        this.criterionId = criterionId;
+        this.userId = userId;
+        this.weight = weight;
+    }
 
     public Long getGameId()
     {
@@ -42,6 +56,16 @@ public class HGARankingInfo
     public void setGameId(Long gameId)
     {
         this.gameId = gameId;
+    }
+
+    public Long getCriterionId()
+    {
+        return criterionId;
+    }
+
+    public void setCriterionId(Long criterionId)
+    {
+        this.criterionId = criterionId;
     }
 
     public Long getUserId()
@@ -54,13 +78,13 @@ public class HGARankingInfo
         this.userId = userId;
     }
 
-    public String getJsonizedRanking()
+    public Double getWeight()
     {
-        return jsonizedRanking;
+        return weight;
     }
 
-    public void setJsonizedRanking(String jsonizedRanking)
+    public void setWeight(Double weight)
     {
-        this.jsonizedRanking = jsonizedRanking;
+        this.weight = weight;
     }
 }

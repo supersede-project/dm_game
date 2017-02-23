@@ -1,0 +1,82 @@
+<script src="supersede-dm-app/garp/js/vote.js"></script>
+<style>
+    h1, h2 {
+        text-align: center;
+    }
+    #sortable, #global_ranking {
+        margin: 0 auto;
+        padding: 5px;
+        width: 520px;
+    }
+    #sortable > div > div, #global_ranking > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    #sortable div, #global_ranking div {
+        padding: 5px;
+    }
+    #sortable > div > div:hover, #global_ranking > div > div:hover {
+        border: 1px solid #356AA0;
+    }
+    p {
+        margin: 1em;
+    }
+</style>
+<div ng-controller="vote">
+    <div ng-show="canVote()">
+        <h1>Requirements Ordering for Criterion {{currentCriterion.criteriaId}}</h1>
+
+        <div ng-show="gameOpen() && solutionSelected()">
+            <h2>Current Global Ranking</h2>
+
+            <div id="global_ranking">
+                <div ng-repeat="requirementId in solution">
+                    <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                        <div>
+                            <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                        </div>
+                        <div style="background-color: #ffd11a">
+                            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Define Your Ranking</h2>
+        <div id="sortable">
+            <div ng-repeat="x in requirements" id="{{x.requirementId}}">
+                <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                    <div>
+                        <strong>{{x.requirementId + ': ' + x.name}}</strong>
+                    </div>
+                    <div style="background-color: #ffd11a">
+                        <strong>Description</strong>: {{x.description}}<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div align="center">
+            <jqx-button ng-show="!lastCriterion" style="margin-right: 10px" ng-click="saveCurrentOrdering()">Go to the next criterion</jqx-button>
+            <jqx-button ng-show="lastCriterion" style="margin-right: 10px" ng-click="submitPriorities()">Submit priorities</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <p id="voted"></p>
+        </div>
+    </div>
+
+    <div ng-show="gameClosed()">
+        <div align="center">
+            <p><strong>You can not vote because the game has been closed!</strong></p>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
+    </div>
+
+    <div ng-show="!gameClosed() && alreadyVoted() && !solutionSelected()">
+        <div align="center">
+            <p><strong>You have already voted for this game!</strong></p>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+        </div>
+    </div>
+</div>

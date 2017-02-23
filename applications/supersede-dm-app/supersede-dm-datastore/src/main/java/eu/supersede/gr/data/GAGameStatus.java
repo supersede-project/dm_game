@@ -12,15 +12,9 @@
    limitations under the License.
 */
 
-package eu.supersede.dm.ga;
+package eu.supersede.gr.data;
 
-import eu.supersede.dm.IDMGui;
-
-public class GAGuiManager implements IDMGui
+public enum GAGameStatus
 {
-    @Override
-    public String getEntryUrl()
-    {
-        return "garp/home";
-    }
+    Open, Closed;
 }

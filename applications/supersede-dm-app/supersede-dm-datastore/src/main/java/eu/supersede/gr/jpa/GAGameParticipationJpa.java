@@ -30,5 +30,4 @@ public interface GAGameParticipationJpa extends JpaRepository<HGAGameParticipati
 
     @Query("SELECT gameId FROM HGAGameParticipation participation WHERE userId = ?1 AND role = ?2")
     List<Long> findGames(Long userId, String roleName);
-
 }

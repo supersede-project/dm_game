@@ -15,6 +15,7 @@
 package eu.supersede.dm.iga;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,6 +63,7 @@ public class IGAAlgorithm
 
         for (String criterion : criteria)
         {
+            System.out.println("Adding criterion: " + criterion);
             String[] criterionDetail = { criterion, "min" };
             this.criteria.put(criterion, criterionDetail);
             criteriaWeights.put(criterion, 1.0);
@@ -70,12 +72,13 @@ public class IGAAlgorithm
 
     public void setCriterionWeight(String criterion, Double w)
     {
-        System.out.println("Setting weight " + w + " for criterion " + criterion);
+        System.out.println("Setting weight for criterion " + criterion + ": " + w);
         criteriaWeights.put(criterion, w);
     }
 
     public void addRequirement(String req, List<String> deps)
     {
+        System.out.println("Adding requirement: " + req);
         requirements.put(req, req);
         Set<String> list = dependencies.get(req);
 
@@ -159,6 +162,12 @@ public class IGAAlgorithm
      */
     public void addRanking(String player, Map<String, List<String>> playerRanking)
     {
+        for (String criterion : playerRanking.keySet())
+        {
+            System.out.println("Setting ranking for player " + player + " and criterion " + criterion + ": "
+                    + Arrays.toString(playerRanking.get(criterion).toArray()));
+        }
+
         this.rankings.put(player, playerRanking);
     }
 
@@ -169,6 +178,12 @@ public class IGAAlgorithm
     public void setPlayerWeights(String criterion, Map<String, Double> weights)
     {
         playerWeights.put(criterion, weights);
+
+        for (String userId : weights.keySet())
+        {
+            System.out.println(
+                    "Setting weight for player " + userId + " for criterion " + criterion + ": " + weights.get(userId));
+        }
     }
 
     public void setDefaultPlayerWeights(List<String> criteria, List<String> players)

@@ -1,0 +1,51 @@
+<script src="supersede-dm-app/garp/js/game_details.js"></script>
+
+<style>
+    h1, h2 {
+        text-align: center;
+    }
+    #solution > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    #solution div {
+        padding: 5px;
+    }
+    #solution > div > div:hover {
+        border: 1px solid #356AA0;
+    }
+    p {
+        margin: 1em;
+    }
+</style>
+
+<div ng-controller="game_details">
+
+    <h1>Game Details</h1>
+
+    <div id="solution" ng-show="solutionSelected()">
+        <h2>Selected Solution</h2>
+        <div ng-repeat="requirementId in solution">
+            <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                <div>
+                    <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                </div>
+                <div style="background-color: #ffd11a">
+                    <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div align="center" ng-show="!solutionSelected()">
+        <p></p><strong>No solution has been selected yet!</strong></p>
+    </div>
+
+    <div align="center">
+        <jqx-button ng-show="gameOpen()" style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
+        <jqx-button ng-show="gameClosed()" style="margin-right: 10px" ng-click="openGame()">Open Game</jqx-button>
+        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <p id="game_status"></p>
+    </div>
+</div>

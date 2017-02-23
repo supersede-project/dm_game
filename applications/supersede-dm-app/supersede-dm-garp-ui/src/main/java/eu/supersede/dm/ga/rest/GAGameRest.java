@@ -1,12 +1,23 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.dm.ga.rest;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -19,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.dm.ga.GAGameDetails;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.Requirement;
@@ -36,85 +47,77 @@ public class GAGameRest
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RequirementsJpa availableRequirements;
+    private RequirementsJpa requirementsJpa;
 
     @Autowired
-    private ValutationCriteriaJpa availableCriteria;
-
-    @Autowired
-    private UsersJpa users;
+    private ValutationCriteriaJpa criteriaJpa;
 
     @Autowired
     private GAPersistentDB persistentDB;
 
-    @RequestMapping(value = "/ownedgames", method = RequestMethod.GET)
-    public List<HGAGameSummary> getOwnedGames(Authentication authentication)
+    @RequestMapping(value = "/games", method = RequestMethod.GET)
+    public List<HGAGameSummary> getGames(Authentication authentication, String roleName)
     {
-        return persistentDB.getOwnedGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+        return persistentDB.getGamesByRole(userId, roleName);
     }
 
-    @RequestMapping(value = "/activegames", method = RequestMethod.GET)
-    public List<HGAGameSummary> getActiveGames(Authentication authentication)
-    {
-        return persistentDB.getActiveGames(((DatabaseUser) authentication.getPrincipal()).getUserId());
-    }
-
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(Authentication authentication, @RequestParam Long[] gameRequirements,
-            @RequestBody Map<Long, Double> gameCriteriaWeights, @RequestParam Long[] gameOpinionProviders,
-            @RequestParam Long[] gameNegotiators)
+    public void createNewGame(Authentication authentication, @RequestParam String name,
+            @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
+            @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators)
     {
-        List<Long> requirements = new ArrayList<>();
-        HashMap<Long, Double> criteriaWeights = new HashMap<>();
-        List<Long> opinionProviders = new ArrayList<>();
-        List<Long> negotiators = new ArrayList<>();
+        String criteriaKey = "criteria";
+        String playersKey = "players";
+        Map<String, Double> criteriaWeights;
+        Map<String, Map<String, Double>> playersWeights = null;
 
-        for (Long id : gameRequirements)
+        if (!weights.containsKey(criteriaKey))
         {
-            requirements.add(id);
+            log.error("Missing weights for criteria to create a new game");
+            return;
         }
 
-        System.out.println("criteria weights: " + gameCriteriaWeights);
-        System.out.println("criteria weights size: " + gameCriteriaWeights.size());
-
-        for (Long id : gameCriteriaWeights.keySet())
+        if (weights.get(criteriaKey) instanceof Map<?, ?>)
         {
-            System.out.println("id: " + id);
-            System.out.println("weight: " + gameCriteriaWeights.get(id));
-            criteriaWeights.put(id, gameCriteriaWeights.get(id));
+            criteriaWeights = (Map<String, Double>) weights.get(criteriaKey);
+        }
+        else
+        {
+            log.error("Wrong type for criteria weights: expected Map<String, Double>, found "
+                    + weights.get(criteriaKey).getClass().getName());
+            return;
         }
 
-        for (Long id : gameOpinionProviders)
+        if (!weights.containsKey(playersKey))
         {
-            opinionProviders.add(id);
+            log.error("Missing weights for players to create a new game");
+            return;
         }
 
-        for (Long id : gameNegotiators)
+        if (weights.get(playersKey) instanceof Map<?, ?>)
         {
-            negotiators.add(id);
+            playersWeights = (Map<String, Map<String, Double>>) weights.get(playersKey);
+        }
+        else
+        {
+            log.error("Wrong type for players weights: expected Map<String, Map<Long, Double>>, found "
+                    + weights.get(playersKey).getClass().getName());
+            return;
         }
 
-        HGAGameSummary game = new HGAGameSummary();
-        long currentTime = System.currentTimeMillis();
-        game.setId(currentTime);
-        game.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
-
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date now = new Date();
-        game.setDate(sdfDate.format(now));
-
-        game.setStatus("open");
-
-        persistentDB.create(game, criteriaWeights, requirements, opinionProviders, negotiators);
+        persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
+                gameOpinionProviders, gameNegotiators);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public void submitAllPriorities(Authentication authentication, @RequestParam Long gameId,
-            @RequestBody Map<String, List<Long>> reqs)
+            @RequestBody Map<Long, List<Long>> reqs)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
 
-        for (String key : reqs.keySet())
+        for (Long key : reqs.keySet())
         {
             log.info("Sending priorities: game " + gameId + " user " + userId + " criterion " + key + " reqs "
                     + reqs.get(key));
@@ -123,18 +126,58 @@ public class GAGameRest
         persistentDB.setRanking(gameId, userId, reqs);
     }
 
+    @RequestMapping(value = "/ranking", method = RequestMethod.POST)
+    public List<Long> getRanking(@RequestParam Long gameId, @RequestParam Long userId, @RequestParam Long criterionId)
+    {
+        return persistentDB.getRankingsCriterion(gameId, userId, criterionId);
+    }
+
+    @RequestMapping(value = "/ranking", method = RequestMethod.GET)
+    public Map<Long, Map<Long, List<Long>>> getRanking(@RequestParam Long gameId)
+    {
+        return persistentDB.getGameInfo(gameId).getRankings();
+    }
+
+    @RequestMapping(value = "/userranking", method = RequestMethod.GET)
+    public Map<Long, List<Long>> getUserRanking(Authentication authentication, @RequestParam Long gameId)
+    {
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+        GAGameDetails gameDetails = persistentDB.getGameInfo(gameId);
+
+        if (!gameDetails.getOpinionProviders().contains(userId))
+        {
+            return new HashMap<>();
+        }
+        else
+        {
+            return persistentDB.getRanking(gameId, userId);
+        }
+    }
+
+    @RequestMapping(value = "/solution", method = RequestMethod.POST)
+    public void selectSolution(@RequestParam Long gameId, @RequestBody List<Long> solution)
+    {
+        persistentDB.selectSolution(gameId, solution);
+    }
+
+    @RequestMapping(value = "/solution", method = RequestMethod.GET)
+    public List<Long> getSolution(@RequestParam Long gameId)
+    {
+        return persistentDB.getSolution(gameId);
+    }
+
     @RequestMapping(value = "/requirements", method = RequestMethod.GET)
-    public List<Requirement> getRequirements(Authentication authentication, Long gameId, String criterion)
+    public List<Requirement> getRequirements(Authentication authentication, Long gameId, Long criterion)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
         List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
 
-        if (reqs != null)
+        if (reqs.size() > 0)
         {
             for (Long requirementId : reqs)
             {
-                requirements.add(availableRequirements.findOne(requirementId));
+                requirements.add(requirementsJpa.findOne(requirementId));
             }
         }
         else
@@ -143,7 +186,7 @@ public class GAGameRest
 
             for (Long requirementId : tmp)
             {
-                requirements.add(availableRequirements.findOne(requirementId));
+                requirements.add(requirementsJpa.findOne(requirementId));
             }
         }
 
@@ -156,6 +199,18 @@ public class GAGameRest
         return persistentDB.getGameInfo(gameId).getGame();
     }
 
+    @RequestMapping(value = "/closegame", method = RequestMethod.POST)
+    public void closeGame(Authentication authentication, Long gameId)
+    {
+        persistentDB.closeGame(gameId);
+    }
+
+    @RequestMapping(value = "/opengame", method = RequestMethod.POST)
+    public void openGame(Authentication authentication, Long gameId)
+    {
+        persistentDB.openGame(gameId);
+    }
+
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
     public List<ValutationCriteria> getGameCriteria(Authentication authentication, Long gameId)
     {
@@ -164,7 +219,7 @@ public class GAGameRest
 
         for (Long criterionId : criteriaIds)
         {
-            criteria.add(availableCriteria.findOne(criterionId));
+            criteria.add(criteriaJpa.findOne(criterionId));
         }
 
         return criteria;
@@ -173,26 +228,35 @@ public class GAGameRest
     @RequestMapping(value = "/gamecriterion", method = RequestMethod.GET)
     public ValutationCriteria getGameCriterion(Authentication authentication, Long criterionId)
     {
-        return availableCriteria.findOne(criterionId);
+        return criteriaJpa.findOne(criterionId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
     public Requirement getRequirement(Authentication authentication, Long requirementId)
     {
-        return availableRequirements.findOne(requirementId);
+        return requirementsJpa.findOne(requirementId);
     }
 
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
-    public Map<String, List<Long>> getGameRequirements(Authentication authentication, Long gameId)
+    public List<Requirement> getGameRequirements(Authentication authentication, Long gameId)
     {
-        return persistentDB.getRequirements(gameId, ((DatabaseUser) authentication.getPrincipal()).getUserId());
+        List<Requirement> requirements = new ArrayList<>();
+        List<Long> requirementsId = persistentDB.getRequirements(gameId);
+
+        for (Long requirementId : requirementsId)
+        {
+            requirements.add(requirementsJpa.findOne(requirementId));
+        }
+
+        return requirements;
     }
 
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
-    public List<Map<String, Double>> calcRanking(Authentication authentication, HGAGameSummary game)
+    public List<List<String>> calcRanking(Authentication authentication, Long gameId)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
-        HashMap<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(game);
+        Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
+        Map<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
         List<String> gameCriteria = new ArrayList<>();
 
         for (Long criterionId : criteriaWeights.keySet())
@@ -203,41 +267,105 @@ public class GAGameRest
 
         algo.setCriteria(gameCriteria);
 
-        for (Long rid : persistentDB.getRequirements(game.getId()))
+        for (Long requirementId : persistentDB.getRequirements(gameId))
         {
-            algo.addRequirement("" + rid, new ArrayList<>());
+            algo.addRequirement("" + requirementId, new ArrayList<>());
         }
 
         // get all the players in this game
-        List<Long> participantIds = persistentDB.getParticipants(game);
+        List<Long> participantIds = persistentDB.getOpinionProviders(gameId);
 
         // get the rankings of each player for each criterion
+        List<String> players = new ArrayList<>();
+
+        // Get opinion providers that have submitted their rankings
+        List<Long> votedPlayers = new ArrayList<>();
+
         for (Long userId : participantIds)
         {
-            String player = users.getOne(userId).getName();
-            Map<String, List<Long>> userRanking = persistentDB.getRanking(game.getId(), userId);
-            Map<String, List<String>> userRankingStr = new HashMap<>();
+            System.out.println("Getting ranking of user " + userId);
+            String player = "" + userId;
+            players.add(player);
+            Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
 
-            for (Entry<String, List<Long>> entry : userRanking.entrySet())
+            if (userRanking.keySet().size() > 0)
             {
-                userRankingStr.put(entry.getKey(), idToString(entry.getValue()));
+                votedPlayers.add(userId);
+                Map<String, List<String>> userRankingStr = new HashMap<>();
+
+                for (Long criterionId : userRanking.keySet())
+                {
+                    System.out.println("Criterion " + criterionId);
+                    List<String> requirements = new ArrayList<>();
+
+                    for (Long requirement : userRanking.get(criterionId))
+                    {
+                        System.out.println("Adding requirement: " + requirement);
+                        requirements.add("" + requirement);
+                    }
+
+                    userRankingStr.put("" + criterionId, requirements);
+                }
+
+                algo.addRanking(player, userRankingStr);
+            }
+        }
+
+        for (Long criterionId : playerWeights.keySet())
+        {
+            Map<Long, Double> criterionPlayerWeights = playerWeights.get(criterionId);
+            Map<String, Double> algorithmPlayerWeights = new HashMap<>();
+
+            for (Long userId : criterionPlayerWeights.keySet())
+            {
+                // Add the player weight only if he submitted the rankings
+                if (votedPlayers.contains(userId))
+                {
+                    algorithmPlayerWeights.put("" + userId, criterionPlayerWeights.get(userId));
+                }
             }
 
-            algo.addRanking(player, userRankingStr);
+            algo.setPlayerWeights("" + criterionId, algorithmPlayerWeights);
         }
 
-        return algo.calc();
-    }
+        List<Map<String, Double>> solutions = null;
 
-    private List<String> idToString(List<Long> ids)
-    {
-        List<String> strings = new ArrayList<>();
-
-        for (Long id : ids)
+        try
         {
-            strings.add(availableRequirements.getOne(id).getName());
+            solutions = algo.calc();
+        }
+        catch (Exception e)
+        {
+            log.error("Unable to compute prioritizations!");
+            e.printStackTrace();
+            solutions = new ArrayList<>();
         }
 
-        return strings;
+        List<Map<String, Double>> solutionSubset = null;
+
+        if (solutions.size() > 3)
+        {
+            solutionSubset = solutions.subList(0, 3);
+        }
+        else
+        {
+            solutionSubset = solutions;
+        }
+
+        List<List<String>> prioritizations = new ArrayList<>();
+
+        for (Map<String, Double> solution : solutionSubset)
+        {
+            List<String> prioritization = new ArrayList<>();
+
+            for (String requirement : solution.keySet())
+            {
+                prioritization.add(requirement);
+            }
+
+            prioritizations.add(prioritization);
+        }
+
+        return prioritizations;
     }
 }

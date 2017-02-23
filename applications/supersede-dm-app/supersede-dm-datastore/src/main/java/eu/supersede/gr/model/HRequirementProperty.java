@@ -13,28 +13,30 @@ public class HRequirementProperty
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     private Long reqId;
-    
     private String name;
     private String value;
-    
-    public String getValue() {
-		return value;
-	}
+    // private Double priority;
 
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Long getGameId()
+    public Long getGameId()
     {
         return id;
     }
 
-    public void setGameId( Long id )
+    public void setGameId(Long id)
     {
         this.id = id;
+    }
+
+    public Long getReqId()
+    {
+        return reqId;
+    }
+
+    public void setReqId(Long reqId)
+    {
+        this.reqId = reqId;
     }
 
     public String getName()
@@ -47,12 +49,13 @@ public class HRequirementProperty
         this.name = name;
     }
 
-	public Long getReqId() {
-		return reqId;
-	}
+    public String getValue()
+    {
+        return value;
+    }
 
-	public void setReqId(Long reqId) {
-		this.reqId = reqId;
-	}
-
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
 }

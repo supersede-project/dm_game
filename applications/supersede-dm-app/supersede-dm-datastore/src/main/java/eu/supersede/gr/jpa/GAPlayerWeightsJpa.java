@@ -12,6 +12,15 @@
    limitations under the License.
 */
 
-$(document).ready(function () {
-    $('#jqxTabs').jqxTabs({ width: 700 });
-});
+package eu.supersede.gr.jpa;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import eu.supersede.gr.model.HGAPlayerWeight;
+
+public interface GAPlayerWeightsJpa extends JpaRepository<HGAPlayerWeight, Long>
+{
+    @Query("SELECT weight FROM HGAPlayerWeight playerWeight WHERE gameId = ?1 AND criterionId = ?2 AND userId = ?3")
+    Double findPlayerWeightByGameAndCriterion(Long gameId, Long criterionId, Long userId);
+}

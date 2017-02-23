@@ -24,10 +24,20 @@ import eu.supersede.gr.model.HGAGameSummary;
 public class GAGameDetails
 {
     private HGAGameSummary game;
-    private HashMap<Long, Double> criteriaWeights = new HashMap<>();
-    private List<Long> requirements = new ArrayList<>();
-    private List<Long> participants = new ArrayList<>();
-    private Map<Long, Map<String, List<Long>>> rankings = new HashMap<>();
+    private List<Long> requirements;
+    private Map<Long, Double> criteriaWeights;
+    private List<Long> opinionProviders;
+    private Map<Long, Map<Long, Double>> playerWeights;
+    private Map<Long, Map<Long, List<Long>>> rankings;
+
+    public GAGameDetails()
+    {
+        requirements = new ArrayList<>();
+        criteriaWeights = new HashMap<>();
+        opinionProviders = new ArrayList<>();
+        playerWeights = new HashMap<>();
+        rankings = new HashMap<>();
+    }
 
     public HGAGameSummary getGame()
     {
@@ -37,16 +47,6 @@ public class GAGameDetails
     public void setGame(HGAGameSummary game)
     {
         this.game = game;
-    }
-
-    public HashMap<Long, Double> getCriteriaWeights()
-    {
-        return criteriaWeights;
-    }
-
-    public void setCriteriaWeights(HashMap<Long, Double> criteriaWeights)
-    {
-        this.criteriaWeights = criteriaWeights;
     }
 
     public List<Long> getRequirements()
@@ -59,22 +59,42 @@ public class GAGameDetails
         this.requirements = requirements;
     }
 
-    public List<Long> getParticipants()
+    public Map<Long, Double> getCriteriaWeights()
     {
-        return participants;
+        return criteriaWeights;
     }
 
-    public void setParticipants(List<Long> participants)
+    public void setCriteriaWeights(Map<Long, Double> criteriaWeights)
     {
-        this.participants = participants;
+        this.criteriaWeights = criteriaWeights;
     }
 
-    public Map<Long, Map<String, List<Long>>> getRankings()
+    public List<Long> getOpinionProviders()
+    {
+        return opinionProviders;
+    }
+
+    public void setOpinionProviders(List<Long> opinionProviders)
+    {
+        this.opinionProviders = opinionProviders;
+    }
+
+    public Map<Long, Map<Long, Double>> getPlayerWeights()
+    {
+        return playerWeights;
+    }
+
+    public void setPlayerWeights(Map<Long, Map<Long, Double>> playerWeights)
+    {
+        this.playerWeights = playerWeights;
+    }
+
+    public Map<Long, Map<Long, List<Long>>> getRankings()
     {
         return rankings;
     }
 
-    public void setRankings(Map<Long, Map<String, List<Long>>> rankings)
+    public void setRankings(Map<Long, Map<Long, List<Long>>> rankings)
     {
         this.rankings = rankings;
     }
