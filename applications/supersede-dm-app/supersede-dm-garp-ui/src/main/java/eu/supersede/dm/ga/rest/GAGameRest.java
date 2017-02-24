@@ -64,9 +64,14 @@ public class GAGameRest
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(Authentication authentication, @RequestParam String name,
-            @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
-            @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators)
+    public void createNewGame(
+    		Authentication authentication, 
+    		@RequestParam String name,
+            @RequestParam Long[] gameRequirements, 
+            @RequestBody Map<String, ?> weights,
+            @RequestParam Long[] gameOpinionProviders, 
+            @RequestParam Long[] gameNegotiators,
+            @RequestParam(defaultValue="-1") Long procId )
     {
         String criteriaKey = "criteria";
         String playersKey = "players";
@@ -108,7 +113,7 @@ public class GAGameRest
         }
 
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
-                gameOpinionProviders, gameNegotiators);
+                gameOpinionProviders, gameNegotiators, procId );
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)

@@ -64,8 +64,7 @@ public class EstablishRequirementsDependenciesMethod implements DMMethod {
 	}
 
 	public void init( ProcessManager status ) {
-//		String pid = executor.startBPMN( "supersedeAHPDM" );
-//		status.setProperty( "pid", pid );
+		
 	}
 
 	@Override
@@ -78,7 +77,7 @@ public class EstablishRequirementsDependenciesMethod implements DMMethod {
 					return false;
 				}
 				for( Requirement r : mgr.requirements() ) {
-					if( r.getStatus() == RequirementStatus.Confirmed.getValue() ) {
+					if( r.getStatus() != RequirementStatus.Unconfirmed.getValue() ) {
 						return false;
 					}
 				}

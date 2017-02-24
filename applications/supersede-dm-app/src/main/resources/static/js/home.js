@@ -61,7 +61,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	            	'</tr><tr><td>' + 
 //	            	"Created: " + datarecord.date + 
 	            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
-	            	'href="#/supersede-dm-app/' + datarecord.url + '?procId=' + datarecord.processId + 
+	            	'href="#/supersede-dm-app/' + datarecord.url + 
+	            	'?procId=' + datarecord.processId + 
 	            	'&activityId=' + datarecord.activityId + 
 //	            	'&gameId=' + datarecord.properties.gameId + 
 	            	'">View</a>' + 

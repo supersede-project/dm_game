@@ -15,7 +15,9 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $location) {
-
+	
+	$scope.procId = $location.search().procId;
+	
     function compareGamesByDate(a, b) {
         if (a.date < b.date) {
             return 1;
@@ -144,7 +146,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     }
 
     $scope.createNew = function() {
-        $location.url('supersede-dm-app/garp/create_game');
+        $location.url('supersede-dm-app/garp/create_game').search('procId',$scope.procId);
     };
 
     $scope.gameDetails = function(gameId) {

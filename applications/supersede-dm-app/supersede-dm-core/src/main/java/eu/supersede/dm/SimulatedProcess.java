@@ -92,7 +92,7 @@ public class SimulatedProcess extends AbstractProcessManager {
 	}
 
 	@Override
-	public HActivity createActivity( String methodName ) {
+	public HActivity createActivity( String methodName, Long userId ) {
 		List<HActivity> list = activities.get( processId );
 		if( list == null ) {
 			list = new ArrayList<>();
@@ -101,6 +101,7 @@ public class SimulatedProcess extends AbstractProcessManager {
 		HActivity a = new HActivity();
 		a.setId( (++counter) );
 		a.setProcessId( processId );
+		a.setUserId( userId );
 		a.setMethodName( methodName );
 		list.add( a );
 		return a;

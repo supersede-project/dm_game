@@ -235,4 +235,27 @@ public class ProcessRest
 		return list;
 	}
 
+	@RequestMapping(value = "/activities/groups", method = RequestMethod.GET)
+	public Map<String,List<Long>> getActivityGroups( @RequestParam Long procId ) {
+		
+		ProcessManager mgr = DMGame.get().getProcessManager( procId );
+		
+		List<HActivity> activities = mgr.getOngoingActivities();
+		
+		Map<String,List<Long>> map = new HashMap<>();
+		
+		for( HActivity a : activities ) {
+			
+			List<Long> list = map.get( a.getMethodName() );
+			if( list == null ) {
+				list = new ArrayList<>();
+				map.put( a.getMethodName(), list );
+			}
+			list.add( a.getUserId() );
+			
+		}
+		
+		return map;
+	}
+
 }

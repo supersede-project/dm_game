@@ -68,9 +68,10 @@ public class PersistedProcess extends AbstractProcessManager {
 	}
 
 	@Override
-	public HActivity createActivity( String methodName ) {
+	public HActivity createActivity( String methodName, Long userId ) {
 		HActivity a = new HActivity();
 		a.setProcessId( processId );
+		a.setUserId( userId );
 		a.setMethodName( methodName );
 		return DMGame.get().jpa.activities.save( a );
 	}

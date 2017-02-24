@@ -29,8 +29,9 @@ public interface ProcessManager {
 	public List<HProcessMember> getProcessMembers( String role );
 	
 	
-	public HActivity createActivity( DMMethod method );
-	public HActivity createActivity( String methodName );
+//	public HActivity createActivity( DMMethod method );
+//	public HActivity createActivity( String methodName );
+	public HActivity createActivity( String methodName, Long userId );
 	public List<HActivity> getOngoingActivities();
 	public List<HActivity> getOngoingActivities( String methodName );
 	

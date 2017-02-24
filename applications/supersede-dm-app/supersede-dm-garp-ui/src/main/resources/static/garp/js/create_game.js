@@ -15,7 +15,9 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
-
+	
+	$scope.procId = $location.search().procId;
+	
     $scope.currentPage = "page1";
     $scope.gameRequirementsId = [];
     $scope.gameCriteriaId = [];
@@ -362,8 +364,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
             data: weightsId,
-            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId}
+            params: {
+            	name: gameName, 
+            	gameRequirements: $scope.gameRequirementsId, 
+            	gameOpinionProviders: $scope.gameOpinionProvidersId,
+                gameNegotiators: $scope.gameNegotiatorsId,
+                procId: $scope.procId }
         })
         .success(function(data) {
             $("#game_created").html("<strong>Game successfully created!</strong>");

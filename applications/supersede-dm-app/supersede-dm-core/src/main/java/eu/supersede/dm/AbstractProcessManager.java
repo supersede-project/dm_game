@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.RequirementStatus;
 
 public abstract class AbstractProcessManager implements ProcessManager {
@@ -45,7 +44,7 @@ public abstract class AbstractProcessManager implements ProcessManager {
 		return list;
 	}
 	
-	public HActivity createActivity( DMMethod method ) {
-		return createActivity( method.getName() );
-	}
+//	public HActivity createActivity( DMMethod method ) {
+//		return createActivity( method.getName() );
+//	}
 }

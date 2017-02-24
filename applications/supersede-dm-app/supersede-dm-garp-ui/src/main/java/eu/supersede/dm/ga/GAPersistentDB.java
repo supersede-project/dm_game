@@ -32,7 +32,11 @@ import org.springframework.util.NumberUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import eu.supersede.dm.DMGame;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.PropertyBag;
 import eu.supersede.dm.methods.GAMethod;
+import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameStatus;
 import eu.supersede.gr.jpa.ActivitiesJpa;
@@ -86,9 +90,15 @@ public class GAPersistentDB
     @Autowired
     private GAGameSolutionsJpa solutionsJpa;
 
-    public void create(Authentication authentication, String name, Long[] gameRequirements,
-            Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
-            Long[] gameOpinionProviders, Long[] gameNegotiators)
+    public void create(
+    		Authentication authentication, 
+    		String name, 
+    		Long[] gameRequirements,
+            Map<String, Map<String, Double>> playersWeights, 
+            Map<String, Double> criteriaWeights,
+            Long[] gameOpinionProviders, 
+            Long[] gameNegotiators,
+            Long processId )
     {
         List<Long> requirements = new ArrayList<>();
         List<Long> opinionProviders = new ArrayList<>();
@@ -188,7 +198,16 @@ public class GAPersistentDB
         gameParticipation.setUserId(gameSummary.getOwner());
         gameParticipation.setRole(GARole.Supervisor.name());
         participationJpa.save(gameParticipation);
-
+        
+        if( processId != -1 ) {
+        	ProcessManager mgr = DMGame.get().getProcessManager( processId );
+        	for( Long userId : opinionProviders ) {
+        		HActivity a = mgr.createActivity( GAPlayerVotingMethod.NAME, userId );
+        		PropertyBag bag = mgr.getProperties( a );
+        		bag.set( "gameId", "" + gameId );
+        	}
+        }
+        
         log.info(
                 "Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
                         + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),

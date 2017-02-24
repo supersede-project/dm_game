@@ -407,9 +407,7 @@ public class GameRest
         game = games.save(game);
         
         ProcessManager mgr = DMGame.get().getProcessManager( procId );
-        HActivity a = mgr.createActivity( new AHPPlayerMethod() );
-        a.setUserId( ((DatabaseUser)auth.getPrincipal()).getUserId() );
-        a = DMGame.get().getJpa().activities.save( a );
+        HActivity a = mgr.createActivity( AHPPlayerMethod.NAME, ((DatabaseUser)auth.getPrincipal()).getUserId() );
         PropertyBag bag = mgr.getProperties( a );
         bag.set( "gameId", "" + game.getGameId() );
         

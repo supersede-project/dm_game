@@ -23,9 +23,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import eu.supersede.dm.ga.GAGuiManager;
-import eu.supersede.dm.methods.GAMethod;
-
 @Component
 public class GAUILoader
 {
@@ -34,7 +31,7 @@ public class GAUILoader
     {
         System.out.println("Registering GA app");
         
-        DMGuiManager.get().registerGui( GAMethod.NAME, new GAGuiManager() );
+//        DMGuiManager.get().registerGui( GAMethod.NAME, new GAGuiManager() );
         
         Map<String, String> labels = new HashMap<>();
         List<String> roles;
