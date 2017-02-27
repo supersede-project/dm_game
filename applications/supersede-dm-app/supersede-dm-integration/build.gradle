@@ -24,8 +24,8 @@ buildscript {
 
 repositories {
     mavenCentral()
-    maven {url "http://supersede.es.atos.net:10080/artifactory/libs-snapshot-local/"}
-    maven {url "http://supersede.es.atos.net:10080/artifactory/ext-release-local/"}
+    maven {url "http://supersede.es.atos.net:10080/artifactory/libs-snapshot/"}
+    maven {url "http://supersede.es.atos.net:10080/artifactory/libs-release/"}
 }
 
 configurations {
