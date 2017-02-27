@@ -7,3 +7,4 @@
 dist/
 **/gradle.properties
 **/*.class
+logs/
