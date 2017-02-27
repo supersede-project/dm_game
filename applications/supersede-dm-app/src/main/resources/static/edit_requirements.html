@@ -1,49 +1,17 @@
 <script src="supersede-dm-app/js/requirements_criterias_editing.js"></script>
 
-<div ng-controller="requirements_criterias_editing"
-	style="height: 500px;">
+<div ng-controller="requirements_criterias_editing">
+    <h1>Define Dependencies</h1>
 
-	<div id="mainSplitter">
-		<div id='jqxWidget'>
-			<div id='jqxExpander'>
-				<div>Requirements</div>
-				<div style="overflow: hidden;">
-					<div style="border: none;" id='jqxTree'></div>
-				</div>
-			</div>
-		</div>
+    <h2>Dependencies for {{requirements[currentRequirementIndex].name}}: {{requirements[currentRequirementIndex].description}}</h2>
+    <div style="font-size: 13px; font-family: Verdana">
+        <div id="requirements"></div>
+    </div>
 
-		<div id='jqxRightWidget'>
-			<div>
-				<jqx-grid id="requirementToolbar" jqx-create="editWidgetRequirement"
-					jqx-settings="requirementSettings"></jqx-grid>
-			</div>
-			<div>
-				<input type="text" id="key1" />
-				<!-- To be put on the same line -->
-				<input type="text" id="value1" />
-			</div>
-			<div>
-				<jqx-button>Add new</jqx-button>
-			</div>
-			<div>
-				Type:
-				<div>
-					<div id='jqxradiobutton1'>Soft dependency</div>
-					<div id='jqxradiobutton2'>Hard dependency</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <br>
 
-	<div id='jqxTabs'>
-		<ul style="margin-left: 30px; visibility: hidden;" id="unorderedList">
-			<li>Requirements</li>
-		</ul>
-		<div>
-			<jqx-grid id="requirementGrid" jqx-create="createWidgetRequirement"
-				jqx-settings="requirementSettings"></jqx-grid>
-		</div>
-	</div>
+    <div align="center">
+        <jqx-button ng-click="submitDependencies()">Submit Dependencies</jqx-button>
+    </div>
 
 </div>
