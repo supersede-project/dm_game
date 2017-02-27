@@ -68,8 +68,13 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
         var currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
         dependencies[currentRequirementId] = selectedRequirements;
 
-        $scope.currentRequirementIndex++;
-        fillGrid();
+        if ($scope.currentRequirementIndex == $scope.requirements.length - 1) {
+            console.log("Submit dependencies");
+        }
+        else {
+            $scope.currentRequirementIndex++;
+            fillGrid();
+        }
     };
 
     $http.get('supersede-dm-app/requirement')
