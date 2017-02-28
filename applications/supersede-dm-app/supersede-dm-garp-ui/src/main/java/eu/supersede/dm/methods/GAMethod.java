@@ -10,6 +10,8 @@ import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRole;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
+import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 
 public class GAMethod implements DMMethod {
 	
@@ -51,6 +53,11 @@ public class GAMethod implements DMMethod {
 			public boolean isTrue( ProcessManager mgr ) {
 				if( mgr.getRequirementsCount() < 1 ) {
 					return false;
+				}
+				for( Requirement r : mgr.requirements() ) {
+					if( r.getStatus() != RequirementStatus.Confirmed.getValue() ) {
+						return false;
+					}
 				}
 //				if( mgr.getOngoingActivities( getName() ).size() > 0 ) {
 //					return false;

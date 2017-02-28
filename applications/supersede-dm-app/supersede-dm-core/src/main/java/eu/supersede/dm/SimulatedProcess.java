@@ -8,6 +8,7 @@ import java.util.Map;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
+import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -158,6 +159,11 @@ public class SimulatedProcess extends AbstractProcessManager {
 	@Override
 	public PropertyBag getProperties(HActivity a) {
 		return new PropertyBag();
+	}
+
+	@Override
+	public List<HProcessCriterion> getProcessCrtiteria() {
+		return new ArrayList<>();
 	}
 
 }

@@ -39,7 +39,6 @@ import eu.supersede.dm.methods.GAMethod;
 import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameStatus;
-import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.GAGameRankingsJpa;
@@ -47,7 +46,6 @@ import eu.supersede.gr.jpa.GAGameRequirementJpa;
 import eu.supersede.gr.jpa.GAGameSolutionsJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
 import eu.supersede.gr.jpa.GAPlayerWeightsJpa;
-import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HGAGameCriterion;
 import eu.supersede.gr.model.HGAGameParticipation;
@@ -64,32 +62,38 @@ public class GAPersistentDB
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RequirementsJpa requirementsJpa;
+    private GAGameSummaryJpa		gamesJpa;
 
     @Autowired
-    private GAGameSummaryJpa gamesJpa;
+    private GAGameCriteriaJpa		criteriaJpa;
 
     @Autowired
-    private GAGameCriteriaJpa criteriaJpa;
+    private GAGameParticipationJpa	participationJpa;
 
     @Autowired
-    private GAGameParticipationJpa participationJpa;
+    private GAGameRequirementJpa	gameRequirementsJpa;
 
     @Autowired
-    private ActivitiesJpa activitiesJpa;
+    private GAGameRankingsJpa		rankingsJpa;
 
     @Autowired
-    private GAGameRequirementJpa gameRequirementsJpa;
+    private GAPlayerWeightsJpa		playerWeightsJpa;
 
     @Autowired
-    private GAGameRankingsJpa rankingsJpa;
-
-    @Autowired
-    private GAPlayerWeightsJpa playerWeightsJpa;
-
-    @Autowired
-    private GAGameSolutionsJpa solutionsJpa;
-
+    private GAGameSolutionsJpa		solutionsJpa;
+    
+    
+    public Long getProcessId( Long activityId ) {
+    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
+    	return a.getProcessId();
+    }
+    
+    public Long getGameId( Long activityId ) {
+    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
+    	String ret = DMGame.get().getProcessManager( a.getProcessId() ).getProperties( a ).get( "gameId", "" );
+    	return Long.parseLong( ret );
+    }
+    
     public void create(
     		Authentication authentication, 
     		String name, 
@@ -133,7 +137,7 @@ public class GAPersistentDB
 
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
-        HActivity persistentActivity = activitiesJpa.save(activity);
+        HActivity persistentActivity = DMGame.get().getJpa().activities.save(activity);
 
         gameSummary.setActivityId(persistentActivity.getId());
         HGAGameSummary persistedGameSummary = gamesJpa.save(gameSummary);
@@ -161,7 +165,7 @@ public class GAPersistentDB
 
         for (Long requirementId : requirements)
         {
-            Requirement requirement = requirementsJpa.findOne(requirementId);
+            Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
             if (requirement == null)
             {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -18,6 +19,7 @@ public interface ProcessManager {
 	
 	public void addCriterion( ValutationCriteria criterion );
 	public List<ValutationCriteria> getCrtiteria();
+	public List<HProcessCriterion> getProcessCrtiteria();
 	public int getCriteriaCount();
 	
 	public void addAlert( HAlert alert );

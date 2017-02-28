@@ -85,28 +85,15 @@ public class Requirement
 
     public void setStatus(Integer status)
     {
-        try
-        {
-            this.status = status;
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            this.status = RequirementStatus.Unconfirmed.getValue();
-        }
+    	this.status = status;
     }
 
     public Integer getStatus()
     {
-        try
-        {
-            return this.status;
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            return RequirementStatus.Unconfirmed.getValue();
-        }
+    	if( this.status == null ) {
+    		return RequirementStatus.Unconfirmed.getValue();
+    	}
+    	return this.status;
     }
 
     public Long getProcessId()

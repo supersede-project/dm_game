@@ -22,6 +22,56 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 
 	$scope.reqNum = undefined;
 
+    $http.get('supersede-dm-app/alerts/biglist').success(function(data) {
+    	
+    	console.log( data );
+    	
+        var source =
+        {
+            datatype: "json",
+            localdata: data,
+            datafields: [
+                { name: 'applicationID', map: 'applicationID' },
+                { name: 'alertID' },
+                { name: 'id' },
+                { name: 'timestamp' },
+                { name: 'description' },
+                { name: 'classification' },
+                { name: 'accuracy' },
+                { name: 'pos' },
+                { name: 'neg' },
+                { name: 'overall' },
+            ],
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#gridAlerts").jqxGrid(
+        {
+            width: 900,
+            source: dataAdapter,
+//            pageable: true,
+//            columnsResize: true,
+//            altRows: true,
+            groupable: true,
+//            ready: function () {
+//                $("#treeGrid").jqxTreeGrid('expandRow', "0");
+//            },
+            columns: [
+              { text: 'App', dataField: 'applicationID', width: 50 },
+              { text: 'Alert', dataField: 'alertID', width: 50 },
+              { text: 'ID', dataField: 'id', width: 50 },
+              { text: 'Timestamp', dataField: 'timestamp', width: 100 },
+              { text: 'Description', dataField: 'description', minWidth: 100, width: 200 },
+              { text: 'Classification', dataField: 'classification', minWidth: 100, width: 150 },
+              { text: 'Accuracy', dataField: 'accuracy', width: 50 },
+              { text: 'Pos.', dataField: 'pos', width: 58 },
+              { text: 'Neg.', dataField: 'neg', width: 58 },
+              { text: 'Overall.', dataField: 'overall', width: 50 }
+//              { text: 'Features.', dataField: 'features', width: 120 }
+            ]
+        ,groups: ['applicationID', 'alertID']
+        });
+    });
+    
 	$http.get('supersede-dm-app/requirement').success(function(data) {
 		$scope.reqNum = data.length;
 	});
@@ -38,7 +88,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	    	source: dataAdapter, 
 	    	displayMember: "name", 
 	    	valueMember: "id", 
-	    	itemHeight: 70, height: '100%', width: '100%',
+	    	itemHeight: 70, width: '100%',
 	        renderer: function (index, label, value) {
 	            var datarecord = data[index];
 	            var action;
@@ -78,6 +128,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	});
 
 	$http.get('supersede-dm-app/processes/list').success(function(data) {
+		$scope.procNum = data.length;
 		var source = {
 	        localdata: data,
 	        datatype: "array"
@@ -87,7 +138,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	    	source: dataAdapter, 
 	    	displayMember: "name", 
 	    	valueMember: "id", 
-	    	itemHeight: 70, height: '100%', width: '100%',
+	    	itemHeight: 70, width: '100%',
 	        renderer: function (index, label, value) {
 	            var datarecord = data[index];
 //	            var imgurl = '../../images/' + label.toLowerCase() + '.png';
@@ -132,6 +183,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 });
 
 $(document).ready(function () {
-//	$("#jqxListBox").jqxListBox({ width: 700 });
-
+	$("#jqxExpander").jqxExpander({ width: '100%', expanded: false });
+	$("#expRequirements").jqxExpander({ width: '100%', expanded: false });
+	$("#expProcesses").jqxExpander({ width: '100%', expanded: false });
+	$("#expActivities").jqxExpander({ width: '100%', expanded: false });
 });

@@ -171,6 +171,11 @@ public class ModuleLoader
 		ReceivedUserRequestsJpa jpaReceivedUserRequests = multiJpaProvider.getRepository( ReceivedUserRequestsJpa.class, alert.getTenant() );
 		RequirementsJpa jpaRequirements = multiJpaProvider.getRepository( RequirementsJpa.class, alert.getTenant() );
 		
+		if( (jpaApps == null) ) {
+			System.out.println( "Unknown tenant: '" + alert.getTenant() + "'" );
+			return;
+		}
+		
 		HApp app = jpaApps.findOne(alert.getApplicationID());
 
 		if (app == null)

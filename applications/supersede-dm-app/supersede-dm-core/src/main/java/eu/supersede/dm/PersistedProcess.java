@@ -118,6 +118,11 @@ public class PersistedProcess extends AbstractProcessManager {
 	}
 
 	@Override
+	public List<HProcessCriterion> getProcessCrtiteria() {
+		return DMGame.get().jpa.processCriteria.findProcessCriteria( this.processId );
+	}
+
+	@Override
 	public int getCriteriaCount() {
 		return DMGame.get().jpa.processCriteria.findProcessCriteria( this.processId ).size();
 	}

@@ -26,16 +26,7 @@ public class RequirementsConfirmationMethod implements DMMethod {
 	
 	
 	public RequirementsConfirmationMethod() {
-		
 		this.name = NAME;
-		
-//		list.add( new DMRoleSpec( new DMRole( "Game Master" ), 1, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Negotiator" ), 0, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Opinion Provider" ), 1, -1 ) );
-//		
-//		options.add( new DMOption( "gamification", new String[] { "on", "off" } ) );
-//		options.add( new DMOption( "negotiator", new String[] { "active", "not active" } ) );
-		
 	}
 	
 	public String getName() {
@@ -95,7 +86,7 @@ public class RequirementsConfirmationMethod implements DMMethod {
 	
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "";
+		return "confirm_requirements";
 	}
 
 }
