@@ -16,7 +16,6 @@ package eu.supersede.dm.rest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +32,6 @@ import eu.supersede.dm.DMGame;
 import eu.supersede.dm.RequirementDetails;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
-import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.HRequirementProperty;
@@ -45,9 +43,6 @@ public class RequirementRest
 {
     @Autowired
     private AHPRequirementsMatricesDataJpa requirementsMatricesData;
-
-    @Autowired
-    private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
     /**
      * Return the requirement with the given id.
@@ -158,18 +153,5 @@ public class RequirementRest
         requirement.setName(r.getName());
         requirement.setDescription(r.getDescription());
         DMGame.get().getJpa().requirements.save(requirement);
-    }
-
-    @RequestMapping(value = "/dependencies", method = RequestMethod.PUT)
-    public void setDependencies(@RequestBody Map<Long, List<Long>> dependencies)
-    {
-        for (Long requirementId : dependencies.keySet())
-        {
-            for (Long dependencyId : dependencies.get(requirementId))
-            {
-                HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
-                requirementsDependenciesJpa.save(requirementDependency);
-            }
-        }
     }
 }

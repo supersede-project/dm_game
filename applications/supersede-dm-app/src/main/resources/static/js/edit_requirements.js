@@ -13,8 +13,9 @@
 */
 
 var app = angular.module('w5app');
-app.controllerProvider.register('edit_requirements', function($scope, $http) {
+app.controllerProvider.register('edit_requirements', function($scope, $http, $location) {
 
+    var procId = $location.search().procId;
     var dependencies = {};
 
     $scope.requirements = [];
@@ -81,8 +82,9 @@ app.controllerProvider.register('edit_requirements', function($scope, $http) {
         console.log("Submit dependencies");
         console.log(dependencies);
         $http({
-            url: "supersede-dm-app/requirement/dependencies",
+            url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
+            params: {procId: procId},
             method: 'POST'
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
@@ -93,7 +95,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http) {
     };
 
     $scope.emptyRequirements = function () {
-        return $scope.requirements.lenght === 0;
+        return $scope.requirements.length === 0;
     };
 
     $scope.lastRequirement = function () {
@@ -108,7 +110,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http) {
         }
     };
 
-    $http.get('supersede-dm-app/requirement')
+    $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
     .success(function (data) {
         $scope.requirements = data;
 

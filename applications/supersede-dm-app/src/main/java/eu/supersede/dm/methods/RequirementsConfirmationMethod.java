@@ -12,90 +12,103 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
-public class RequirementsConfirmationMethod implements DMMethod {
-	
-	public static final String NAME = "Confirm Requirements";
-	
-	
-	String name;
-	
-	
-	List<DMRoleSpec> list = new ArrayList<>();
-	
-	List<DMOption> options = new ArrayList<>();
-	
-	
-	public RequirementsConfirmationMethod() {
-		
-		this.name = NAME;
-		
-//		list.add( new DMRoleSpec( new DMRole( "Game Master" ), 1, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Negotiator" ), 0, 1 ) );
-//		list.add( new DMRoleSpec( new DMRole( "Opinion Provider" ), 1, -1 ) );
-//		
-//		options.add( new DMOption( "gamification", new String[] { "on", "off" } ) );
-//		options.add( new DMOption( "negotiator", new String[] { "active", "not active" } ) );
-		
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public DMObjective getObjective() {
-		return DMObjective.PrioritizeRequirements;
-	}
-	
-	public List<DMRoleSpec> getRoleList() {
-		return list;
-	}
+public class RequirementsConfirmationMethod implements DMMethod
+{
+    public static final String NAME = "Confirm Requirements";
 
-	public String getPage( String step ) {
-		return "";
-	}
+    private String name;
+    private List<DMRoleSpec> list;
+    private List<DMOption> options;
 
-	@Override
-	public List<DMOption> getOptions() {
-		return this.options;
-	}
+    public RequirementsConfirmationMethod()
+    {
+        this.name = NAME;
+        list = new ArrayList<>();
+        options = new ArrayList<>();
+    }
 
-	public void setOption( String optName, String optValue ) {
-		// TODO
-	}
+    @Override
+    public String getName()
+    {
+        return this.name;
+    }
 
-	public void init( ProcessManager status ) {
-//		String pid = executor.startBPMN( "supersedeAHPDM" );
-//		status.setProperty( "pid", pid );
-	}
+    @Override
+    public DMObjective getObjective()
+    {
+        return DMObjective.PrioritizeRequirements;
+    }
 
-	@Override
-	public List<DMCondition> preconditions() {
-		List<DMCondition> list = new ArrayList<DMCondition>();
-		list.add( new DMCondition() {
-			@Override
-			public boolean isTrue( ProcessManager mgr ) {
-				if( mgr.getProcessMembers() == null ) {
-					return false;
-				}
-				if( mgr.getProcessMembers().size() < 1 ) {
-					return false;
-				}
-				if( mgr.getRequirementsCount() < 2 ) {
-					return false;
-				}
-				for( Requirement r : mgr.requirements() ) {
-					if( r.getStatus() == RequirementStatus.Unconfirmed.getValue() ) {
-						return true;
-					}
-				}
-				return false;
-			}} );
-		return list;
-	}
-	
-	@Override
-	public String getPage( ProcessManager mgr ) {
-		return "";
-	}
+    @Override
+    public List<DMRoleSpec> getRoleList()
+    {
+        return list;
+    }
+
+    public String getPage(String step)
+    {
+        return "";
+    }
+
+    @Override
+    public List<DMOption> getOptions()
+    {
+        return this.options;
+    }
+
+    public void setOption(String optName, String optValue)
+    {
+        // TODO
+    }
+
+    public void init(ProcessManager status)
+    {
+        // String pid = executor.startBPMN( "supersedeAHPDM" );
+        // status.setProperty( "pid", pid );
+    }
+
+    @Override
+    public List<DMCondition> preconditions()
+    {
+        List<DMCondition> list = new ArrayList<DMCondition>();
+        list.add(new DMCondition()
+        {
+            @Override
+            public boolean isTrue(ProcessManager mgr)
+            {
+                if (mgr.getProcessMembers() == null)
+                {
+                    return false;
+                }
+
+                if (mgr.getProcessMembers().size() < 1)
+                {
+                    return false;
+                }
+
+                if (mgr.getRequirementsCount() < 2)
+                {
+                    return false;
+                }
+
+                for (Requirement r : mgr.requirements())
+                {
+                    if (r.getStatus() == RequirementStatus.Editable.getValue())
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
+        return list;
+    }
+
+    @Override
+    public String getPage(ProcessManager mgr)
+    {
+        return "";
+    }
 
 }

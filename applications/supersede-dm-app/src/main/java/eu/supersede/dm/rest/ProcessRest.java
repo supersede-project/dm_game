@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,11 +37,13 @@ import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.ProcessesJpa;
+import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HProperty;
+import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -49,213 +52,308 @@ import eu.supersede.gr.model.ValutationCriteria;
 @RequestMapping("processes")
 public class ProcessRest
 {
-	@Autowired ProcessesJpa jpaProcesses;
+    @Autowired
+    private ProcessesJpa jpaProcesses;
 
-	@Autowired RequirementsJpa jpaRequirements;
+    @Autowired
+    private RequirementsJpa jpaRequirements;
 
-	@RequestMapping(value = "new", method = RequestMethod.POST)
-	public Long newProcess()
-	{
-		return DMGame.get().createEmptyProcess().getId();
-	}
+    @Autowired
+    private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
-	static class JqxProcess {
-		public String id;
-		public String name;
-		public String state;
-		public String date;
-		public String objective;
-	}
+    @RequestMapping(value = "new", method = RequestMethod.POST)
+    public Long newProcess()
+    {
+        return DMGame.get().createEmptyProcess().getId();
+    }
 
-	@RequestMapping(value = "list", method = RequestMethod.GET)
-	public List<JqxProcess> getProcessList() {
-		List<JqxProcess> list = new ArrayList<JqxProcess>();
-		for( HProcess p : jpaProcesses.findAll() ) {
-			JqxProcess qp = new JqxProcess();
-			qp.id = "" + p.getId();
-			qp.name = p.getName();
-			qp.state = p.getStatus().name();
-			qp.objective = p.getObjective();
-			qp.date = p.getStartTime().toString();
-			list.add( qp );
-		}
-		return list;
-	}
+    static class JqxProcess
+    {
+        public String id;
+        public String name;
+        public String state;
+        public String date;
+        public String objective;
+    }
 
-	public void addRequirements( Long procId, List<Long> reqList ) {
-		for( Long reqId : reqList ) {
-			Requirement r = jpaRequirements.findOne( reqId );
-			if( r == null ) continue;
-			if( r.getProcessId() != -1 ) continue;
-			r.setProcessId( procId );
-			jpaRequirements.save( r );
-		}
-	}
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    public List<JqxProcess> getProcessList()
+    {
+        List<JqxProcess> list = new ArrayList<JqxProcess>();
 
-	public void setRequirementsStatus( Long procId, List<Long> reqList, RequirementStatus status ) {
-		for( Long reqId : reqList ) {
-			Requirement r = jpaRequirements.findOne( reqId );
-			if( r == null ) continue;
-			RequirementStatus oldStatus = RequirementStatus.valueOf( r.getStatus() );
-			if( RequirementStatus.next( oldStatus ).contains( status ) ) {
-				r.setStatus( status.getValue() );
-				jpaRequirements.save( r );
-			}
-		}
-	}
+        for (HProcess p : jpaProcesses.findAll())
+        {
+            JqxProcess qp = new JqxProcess();
+            qp.id = "" + p.getId();
+            qp.name = p.getName();
+            qp.state = p.getStatus().name();
+            qp.objective = p.getObjective();
+            qp.date = p.getStartTime().toString();
+            list.add(qp);
+        }
 
-	@RequestMapping(value = "/available_activities", method = RequestMethod.GET)
-	public List<ActivityEntry> getNextActivities( Long procId ) {
-		return DMGame.get().getProcessManager( procId ).findNextActivities( 
-				DMLibrary.get().methods() );
-	}
+        return list;
+    }
 
-	@RequestMapping(value = "/users/import", method = RequestMethod.POST)
-	public void importUsers( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		if( idlist == null ) {
-			return;
-		}
-		for( Long userid : idlist ) {
-			proc.addProcessMember( userid, ProcessRole.User.name() );
-		}
-	}
+    public void addRequirements(Long procId, List<Long> reqList)
+    {
+        for (Long reqId : reqList)
+        {
+            Requirement r = jpaRequirements.findOne(reqId);
 
-	@RequestMapping(value = "/criteria/import", method = RequestMethod.POST)
-	public void importCriteria( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		if( idlist == null ) {
-			return;
-		}
-		for( Long cid : idlist ) {
-			ValutationCriteria c = DMGame.get().getCriterion( cid );
-			proc.addCriterion( c );
-		}
-	}
+            if (r == null)
+            {
+                continue;
+            }
 
-	@RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
-	public void importRequirements( @RequestParam Long procId, @RequestParam List<Long> idlist ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		if( idlist == null ) {
-			return;
-		}
-		for( Long cid : idlist ) {
-			Requirement r = DMGame.get().getJpa().requirements.findOne( cid );
-			if( r == null ) {
-				continue;
-			}
-			proc.addRequirement( r );
-		}
-	}
+            if (r.getProcessId() != -1)
+            {
+                continue;
+            }
 
-	@RequestMapping(value = "/users/list", method = RequestMethod.GET)
-	public List<Long> getUserList( @RequestParam Long procId ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		List<Long> list = new ArrayList<>();
-		for( HProcessMember member : proc.getProcessMembers() ) {
-			list.add( member.getId() );
-		}
-		return list;
-	}
+            r.setProcessId(procId);
+            jpaRequirements.save(r);
+        }
+    }
 
-	@RequestMapping(value = "/criteria/list", method = RequestMethod.GET)
-	public List<Long> getCriteriaList( @RequestParam Long procId ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		List<Long> list = new ArrayList<>();
-		for( ValutationCriteria c : proc.getCrtiteria() ) {
-			list.add( c.getCriteriaId() );
-		}
-		return list;
-	}
+    public void setRequirementsStatus(Long procId, List<Long> reqList, RequirementStatus status)
+    {
+        for (Long reqId : reqList)
+        {
+            Requirement r = jpaRequirements.findOne(reqId);
 
-	@RequestMapping(value = "/requirements/list", method = RequestMethod.GET)
-	public List<Requirement> getRequirementsList( @RequestParam Long procId ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		return proc.requirements();
-	}
+            if (r == null)
+            {
+                continue;
+            }
 
-	@RequestMapping(value = "/requirements/count", method = RequestMethod.GET)
-	public int getRequirementsCount( @RequestParam Long procId ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		return proc.getRequirementsCount();
-	}
+            RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
 
-	@RequestMapping(value = "/requirements/status", method = RequestMethod.GET, produces = "text/plain")
-	public String getRequirementsStatus( @RequestParam Long procId ) {
-		ProcessManager proc = DMGame.get().getProcessManager( procId );
-		Map<Integer,Integer> count = new HashMap<>();
-		count.put( RequirementStatus.Unconfirmed.getValue(), 0 );
-		count.put( RequirementStatus.Confirmed.getValue(), 0 );
-		count.put( RequirementStatus.Enacted.getValue(), 0 );
-		count.put( RequirementStatus.Discarded.getValue(), 0 );
-		List<Requirement> requirements = proc.requirements();
-		if( requirements.size() < 1 ) {
-			return RequirementStatus.Unconfirmed.name();
-		}
-		for( Requirement r : requirements ) {
-			Integer n = count.get( r.getStatus() );
-			if( n == null ) {
-				continue;
-			}
-			count.put( r.getStatus(), n +1 );
-		}
-		if( count.get( RequirementStatus.Unconfirmed.getValue() ) > 0 ) {
-			return RequirementStatus.Unconfirmed.name();
-		}
-		if( count.get( RequirementStatus.Enacted.getValue() ) > 0 ) {
-			return RequirementStatus.Enacted.name();
-		}
-		if( count.get( RequirementStatus.Discarded.getValue() ) > 0 ) {
-			return RequirementStatus.Discarded.name();
-		}
-		return RequirementStatus.Confirmed.name();
-	}
+            if (RequirementStatus.next(oldStatus).contains(status))
+            {
+                r.setStatus(status.getValue());
+                jpaRequirements.save(r);
+            }
+        }
+    }
 
-	@RequestMapping(value = "/activities/list", method = RequestMethod.GET)
-	public List<ActivityDetails> getActivityList( Authentication auth ) {
-		List<ActivityDetails> list = new ArrayList<>();
-		List<HActivity> activities = DMGame.get().getPendingActivities( ((DatabaseUser)auth.getPrincipal()).getUserId() );
-		for( HActivity a : activities ) {
-			ActivityDetails d = new ActivityDetails();
-			d.setActivityId( a.getId() );
-			d.setMethodName( a.getMethodName() );
-			d.setProcessId( a.getProcessId() );
-			d.setUserId( a.getUserId() );
-			ProcessManager mgr = DMGame.get().getProcessManager( a.getProcessId() );
-			DMMethod m = DMLibrary.get().getMethod( a.getMethodName() );
-			if( m != null ) {
-				d.setUrl( m.getPage( mgr ) );
-				list.add( d );
-			}
-			PropertyBag bag = mgr.getProperties( a );
-			for( HProperty p : bag.properties() ) {
-				d.setProperty( p.getKey(), p.getValue() );
-			}
-		}
-		return list;
-	}
+    @RequestMapping(value = "/available_activities", method = RequestMethod.GET)
+    public List<ActivityEntry> getNextActivities(Long procId)
+    {
+        return DMGame.get().getProcessManager(procId).findNextActivities(DMLibrary.get().methods());
+    }
 
-	@RequestMapping(value = "/activities/groups", method = RequestMethod.GET)
-	public Map<String,List<Long>> getActivityGroups( @RequestParam Long procId ) {
-		
-		ProcessManager mgr = DMGame.get().getProcessManager( procId );
-		
-		List<HActivity> activities = mgr.getOngoingActivities();
-		
-		Map<String,List<Long>> map = new HashMap<>();
-		
-		for( HActivity a : activities ) {
-			
-			List<Long> list = map.get( a.getMethodName() );
-			if( list == null ) {
-				list = new ArrayList<>();
-				map.put( a.getMethodName(), list );
-			}
-			list.add( a.getUserId() );
-			
-		}
-		
-		return map;
-	}
+    @RequestMapping(value = "/users/import", method = RequestMethod.POST)
+    public void importUsers(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
 
+        if (idlist == null)
+        {
+            return;
+        }
+
+        for (Long userid : idlist)
+        {
+            proc.addProcessMember(userid, ProcessRole.User.name());
+        }
+    }
+
+    @RequestMapping(value = "/criteria/import", method = RequestMethod.POST)
+    public void importCriteria(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+
+        if (idlist == null)
+        {
+            return;
+        }
+
+        for (Long cid : idlist)
+        {
+            ValutationCriteria c = DMGame.get().getCriterion(cid);
+            proc.addCriterion(c);
+        }
+    }
+
+    @RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
+    public void importRequirements(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+
+        if (idlist == null)
+        {
+            return;
+        }
+
+        for (Long cid : idlist)
+        {
+            Requirement r = DMGame.get().getJpa().requirements.findOne(cid);
+
+            if (r == null)
+            {
+                continue;
+            }
+
+            proc.addRequirement(r);
+        }
+    }
+
+    @RequestMapping(value = "/users/list", method = RequestMethod.GET)
+    public List<Long> getUserList(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        List<Long> list = new ArrayList<>();
+
+        for (HProcessMember member : proc.getProcessMembers())
+        {
+            list.add(member.getId());
+        }
+
+        return list;
+    }
+
+    @RequestMapping(value = "/criteria/list", method = RequestMethod.GET)
+    public List<Long> getCriteriaList(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        List<Long> list = new ArrayList<>();
+
+        for (ValutationCriteria c : proc.getCrtiteria())
+        {
+            list.add(c.getCriteriaId());
+        }
+
+        return list;
+    }
+
+    @RequestMapping(value = "/requirements/list", method = RequestMethod.GET)
+    public List<Requirement> getRequirementsList(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        return proc.requirements();
+    }
+
+    @RequestMapping(value = "/requirements/count", method = RequestMethod.GET)
+    public int getRequirementsCount(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        return proc.getRequirementsCount();
+    }
+
+    @RequestMapping(value = "/requirements/status", method = RequestMethod.GET, produces = "text/plain")
+    public String getRequirementsStatus(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        Map<Integer, Integer> count = new HashMap<>();
+        count.put(RequirementStatus.Unconfirmed.getValue(), 0);
+        count.put(RequirementStatus.Confirmed.getValue(), 0);
+        count.put(RequirementStatus.Enacted.getValue(), 0);
+        count.put(RequirementStatus.Discarded.getValue(), 0);
+        List<Requirement> requirements = proc.requirements();
+
+        if (requirements.size() < 1)
+        {
+            return RequirementStatus.Unconfirmed.name();
+        }
+
+        for (Requirement r : requirements)
+        {
+            Integer n = count.get(r.getStatus());
+
+            if (n == null)
+            {
+                continue;
+            }
+
+            count.put(r.getStatus(), n + 1);
+        }
+
+        if (count.get(RequirementStatus.Unconfirmed.getValue()) > 0)
+        {
+            return RequirementStatus.Unconfirmed.name();
+        }
+
+        if (count.get(RequirementStatus.Enacted.getValue()) > 0)
+        {
+            return RequirementStatus.Enacted.name();
+        }
+
+        if (count.get(RequirementStatus.Discarded.getValue()) > 0)
+        {
+            return RequirementStatus.Discarded.name();
+        }
+
+        return RequirementStatus.Confirmed.name();
+    }
+
+    @RequestMapping(value = "/activities/list", method = RequestMethod.GET)
+    public List<ActivityDetails> getActivityList(Authentication auth)
+    {
+        List<ActivityDetails> list = new ArrayList<>();
+        List<HActivity> activities = DMGame.get()
+                .getPendingActivities(((DatabaseUser) auth.getPrincipal()).getUserId());
+
+        for (HActivity a : activities)
+        {
+            ActivityDetails d = new ActivityDetails();
+            d.setActivityId(a.getId());
+            d.setMethodName(a.getMethodName());
+            d.setProcessId(a.getProcessId());
+            d.setUserId(a.getUserId());
+            ProcessManager mgr = DMGame.get().getProcessManager(a.getProcessId());
+            DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
+
+            if (m != null)
+            {
+                d.setUrl(m.getPage(mgr));
+                list.add(d);
+            }
+
+            PropertyBag bag = mgr.getProperties(a);
+
+            for (HProperty p : bag.properties())
+            {
+                d.setProperty(p.getKey(), p.getValue());
+            }
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "/activities/groups", method = RequestMethod.GET)
+    public Map<String, List<Long>> getActivityGroups(@RequestParam Long procId)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        List<HActivity> activities = mgr.getOngoingActivities();
+        Map<String, List<Long>> map = new HashMap<>();
+
+        for (HActivity a : activities)
+        {
+            List<Long> list = map.get(a.getMethodName());
+
+            if (list == null)
+            {
+                list = new ArrayList<>();
+                map.put(a.getMethodName(), list);
+            }
+
+            list.add(a.getUserId());
+        }
+
+        return map;
+    }
+
+    @RequestMapping(value = "/requirements/dependencies/submit", method = RequestMethod.PUT)
+    public void setDependencies(@RequestParam Long procId, @RequestBody Map<Long, List<Long>> dependencies)
+    {
+        for (Long requirementId : dependencies.keySet())
+        {
+            for (Long dependencyId : dependencies.get(requirementId))
+            {
+                HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
+
+                requirementsDependenciesJpa.save(requirementDependency);
+            }
+        }
+    }
 }
