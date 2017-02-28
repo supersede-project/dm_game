@@ -86,7 +86,7 @@ public class AlertsImportMethod implements DMMethod {
 	
 	@Override
 	public String getPage( ProcessManager mgr ) {
-		return "";
+		return "import_alerts";
 	}
 
 }
