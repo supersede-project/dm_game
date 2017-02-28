@@ -13,7 +13,7 @@
 */
 
 var app = angular.module('w5app');
-app.controllerProvider.register('requirements_criterias_editing', function($scope, $http) {
+app.controllerProvider.register('edit_requirements', function($scope, $http) {
 
     var dependencies = {};
 
@@ -63,23 +63,55 @@ app.controllerProvider.register('requirements_criterias_editing', function($scop
         });
     }
 
-    $scope.submitDependencies = function () {
+    $scope.goToNextRequirement = function () {
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
         var currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
-        dependencies[currentRequirementId] = selectedRequirements;
+        dependencies[currentRequirementId] = [];
 
+        for (var i = 0; i < selectedRequirements.length; i++) {
+            var dependencyId = $("#requirements").jqxGrid("getrowdata", selectedRequirements[i]).requirementId;
+            dependencies[parseInt(currentRequirementId)].push(parseInt(dependencyId));
+        }
+
+        $scope.currentRequirementIndex++;
+        fillGrid();
+    };
+
+    $scope.submitDependencies = function () {
+        console.log("Submit dependencies");
+        console.log(dependencies);
+        $http({
+            url: "supersede-dm-app/requirement/dependencies",
+            data: dependencies,
+            method: 'POST'
+        }).success(function () {
+            $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
+        }).error(function (err) {
+            $("#submitted").html("<strong>Unable to save the dependencies!</strong>");
+            console.log(err.message);
+        });
+    };
+
+    $scope.emptyRequirements = function () {
+        return $scope.requirements.lenght === 0;
+    };
+
+    $scope.lastRequirement = function () {
         if ($scope.currentRequirementIndex == $scope.requirements.length - 1) {
-            console.log("Submit dependencies");
+            return true;
+        }
+        else if ($scope.requirements.length == 1 && $scope.currentRequirementIndex === 0) {
+            return true;
         }
         else {
-            $scope.currentRequirementIndex++;
-            fillGrid();
+            return false;
         }
     };
 
     $http.get('supersede-dm-app/requirement')
     .success(function (data) {
         $scope.requirements = data;
+
         fillGrid();
     });
 });

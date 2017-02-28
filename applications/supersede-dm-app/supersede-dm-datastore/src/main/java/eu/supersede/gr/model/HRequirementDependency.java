@@ -11,28 +11,35 @@ import javax.persistence.Table;
 public class HRequirementDependency
 {
     @Id
-    private Long dependerId;
+    private Long requirementId;
 
     @Id
-    private Long dependeeId;
+    private Long dependencyId;
 
-    public Long getDependerId()
+    public HRequirementDependency(Long requirementId, Long dependencyId)
     {
-        return dependerId;
+        this.requirementId = requirementId;
+        this.dependencyId = dependencyId;
+
     }
 
-    public void setDependerId(Long dependerId)
+    public Long getRequirementId()
     {
-        this.dependerId = dependerId;
+        return requirementId;
     }
 
-    public Long getDependeeId()
+    public void setRequirementId(Long requirementId)
     {
-        return dependeeId;
+        this.requirementId = requirementId;
     }
 
-    public void setDependeeId(Long dependeeId)
+    public Long getDependencyId()
     {
-        this.dependeeId = dependeeId;
+        return dependencyId;
+    }
+
+    public void setDependencyId(Long dependencyId)
+    {
+        this.dependencyId = dependencyId;
     }
 }

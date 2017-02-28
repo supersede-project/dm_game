@@ -6,28 +6,28 @@ public class RequirementDependencyId implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Long dependerId;
-    private Long dependeeId;
+    private Long requirementId;
+    private Long dependencyId;
 
     public RequirementDependencyId()
     {
 
     }
 
-    public RequirementDependencyId(Long dependerId, Long dependeeId)
+    public RequirementDependencyId(Long requirementId, Long dependencyId)
     {
-        this.dependerId = dependerId;
-        this.dependeeId = dependeeId;
+        this.requirementId = requirementId;
+        this.dependencyId = dependencyId;
     }
 
-    public Long getDependerId()
+    public Long getRequirementId()
     {
-        return dependerId;
+        return requirementId;
     }
 
-    public Long getDependeeId()
+    public Long getDependencyId()
     {
-        return dependeeId;
+        return dependencyId;
     }
 
     @Override
@@ -45,12 +45,12 @@ public class RequirementDependencyId implements Serializable
 
         RequirementDependencyId requirementDependencyId = (RequirementDependencyId) o;
 
-        if (dependerId != requirementDependencyId.getDependerId())
+        if (requirementId != requirementDependencyId.getRequirementId())
         {
             return false;
         }
 
-        if (dependeeId != requirementDependencyId.getDependeeId())
+        if (dependencyId != requirementDependencyId.getDependencyId())
         {
             return false;
         }
@@ -61,8 +61,8 @@ public class RequirementDependencyId implements Serializable
     @Override
     public int hashCode()
     {
-        int result = (int) (dependerId ^ (dependerId >>> 32));
-        result = 31 * result + (int) (dependeeId ^ (dependeeId >>> 32));
+        int result = (int) (requirementId ^ (requirementId >>> 32));
+        result = 31 * result + (int) (dependencyId ^ (dependencyId >>> 32));
         return result;
     }
 }
