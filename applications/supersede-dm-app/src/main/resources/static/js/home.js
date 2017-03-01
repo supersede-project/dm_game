@@ -14,8 +14,13 @@
 
 var app = angular.module('w5app');
 
+var http = undefined;
+var loadProcesses = undefined;
+
 app.controllerProvider.register('home', function($scope, $http, $location) {
 
+	http = $http;
+	
 	$scope.now = function() {
 		return new Date().toJSON().slice(0,19).replace("T", " ");
 	}
@@ -72,7 +77,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
         });
     });
     
-	$http.get('supersede-dm-app/requirement').success(function(data) {
+	$http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1').success(function(data) {
 		$scope.reqNum = data.length;
 	});
 
@@ -164,7 +169,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		            	'<td style="width: 40px;" rowspan="2">' +
 		            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
 		            	'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' + 
-		            	'<jqx-button style="margin-left: 10px" ng-click="closeProcess(\'' + datarecord.id + '\')">Close</jqx-button>' +
+//		            	'<jqx-button style="margin-left: 10px" ng-click="closeProcess(\'' + datarecord.id + '\')">Close</jqx-button>' +
+		            	'<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');">Close</a></jqx-button>' +
 		            	'</td>' +
 		            	'</tr><tr><td>' + 
 		            	"Created: " + datarecord.date + 
@@ -190,8 +196,17 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		});
 	});
 	
-});
+	loadProcesses = $scope.loadProcesses;
 	
+});
+
+var closeProcess = function(procId) {
+	console.log( "deleting process " + procId );
+	http.post('supersede-dm-app/processes/close?procId=' + procId).success(function(data) {
+		loadProcesses();
+	});
+};
+
 $(document).ready(function () {
 	$("#jqxExpander").jqxExpander({ width: '100%', expanded: false });
 	$("#expRequirements").jqxExpander({ width: '100%', expanded: false });
