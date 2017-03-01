@@ -22,9 +22,9 @@ public class RequirementsConfirmationMethod implements DMMethod
 
     public RequirementsConfirmationMethod()
     {
-        this.name = NAME;
         list = new ArrayList<>();
         options = new ArrayList<>();
+        this.name = NAME;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class RequirementsConfirmationMethod implements DMMethod
 
                 for (Requirement r : mgr.requirements())
                 {
-                    if (r.getStatus() == RequirementStatus.Editable.getValue())
+                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
                     {
                         return true;
                     }
@@ -102,13 +102,13 @@ public class RequirementsConfirmationMethod implements DMMethod
                 return false;
             }
         });
+
         return list;
     }
 
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "";
+        return "confirm_requirements";
     }
-
 }

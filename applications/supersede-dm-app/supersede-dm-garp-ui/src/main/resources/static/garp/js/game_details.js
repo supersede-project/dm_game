@@ -23,6 +23,12 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
 
     $scope.gameRequirements = {};
     $scope.solution = [];
+    $scope.gameId = gameId;
+
+    $scope.enact = function(gameId,useIf){
+        $http.put('supersede-dm-app/garp/game/enact?gameId=' + $scope.gameId ).success(function(data) {
+        });
+    };
 
     $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
     .success(function(data) {

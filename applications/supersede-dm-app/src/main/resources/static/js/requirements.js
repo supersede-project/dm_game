@@ -74,7 +74,7 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
             ],
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
-        $("#jqxgrid").jqxGrid(
+        $("#gridAlerts").jqxGrid(
         {
             width: 900,
             source: dataAdapter,

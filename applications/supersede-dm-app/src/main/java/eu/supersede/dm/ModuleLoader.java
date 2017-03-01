@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.supersede.fe.multitenant.MultiJpaProvider;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.AppsJpa;
@@ -57,6 +58,8 @@ public class ModuleLoader
 	@Autowired RequirementsDependenciesJpa	jpaRequirementDependencies;
 	@Autowired PropertiesJpa				jpaProperties;
 	@Autowired PropertyBagsJpa				jpaPropertyBags;
+	
+	@Autowired MultiJpaProvider				multiJpaProvider;
 
 	public ModuleLoader() {}
 
@@ -161,6 +164,18 @@ public class ModuleLoader
 	{
 		System.out.println("Handling alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
 				+ alert.getTenant() + ", " + alert.getTimestamp());
+		
+		// Override class JPA instances with multitenancy provided
+		AppsJpa jpaApps = multiJpaProvider.getRepository( AppsJpa.class, alert.getTenant() );
+		AlertsJpa jpaAlerts = multiJpaProvider.getRepository( AlertsJpa.class, alert.getTenant() );
+		ReceivedUserRequestsJpa jpaReceivedUserRequests = multiJpaProvider.getRepository( ReceivedUserRequestsJpa.class, alert.getTenant() );
+		RequirementsJpa jpaRequirements = multiJpaProvider.getRepository( RequirementsJpa.class, alert.getTenant() );
+		
+		if( (jpaApps == null) ) {
+			System.out.println( "Unknown tenant: '" + alert.getTenant() + "'" );
+			return;
+		}
+		
 		HApp app = jpaApps.findOne(alert.getApplicationID());
 
 		if (app == null)

@@ -181,7 +181,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         console.log( "Getting remote mapping" );
     	$http({
             method: 'GET',
-            url: "supersede-dm-app/ahprp/game/id",
+            url: "supersede-dm-app/garp/game/id",
             params: { procId: $scope.procId, activityId: $scope.activityId },
             headers: {
                 'Content-Type': undefined
