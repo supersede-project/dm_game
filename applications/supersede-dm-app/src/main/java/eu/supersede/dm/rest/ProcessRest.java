@@ -37,12 +37,14 @@ import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HProperty;
 import eu.supersede.gr.model.HRequirementDependency;
+import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
@@ -54,6 +56,9 @@ public class ProcessRest
 {
     @Autowired
     private RequirementsDependenciesJpa requirementsDependenciesJpa;
+
+    @Autowired
+    private RequirementsPropertiesJpa requirementsPropertiesJpa;
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
@@ -365,5 +370,14 @@ public class ProcessRest
     @RequestMapping(value = "/requirements/close", method = RequestMethod.POST)
     public void closeProcess( @RequestParam Long procId ) {
     	DMGame.get().deleteProcess( procId );
+    }
+
+
+    @RequestMapping(value = "/requirements/property/submit", method = RequestMethod.POST)
+    public void setProperties(@RequestParam Long procId, @RequestParam Long requirementId,
+            @RequestParam String propertyName, @RequestParam String propertyValue)
+    {
+        HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
+        requirementsPropertiesJpa.save(requirementProperty);
     }
 }

@@ -1,3 +1,17 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.dm.methods;
 
 import java.util.ArrayList;
@@ -14,27 +28,17 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class UsersImportMethod implements DMMethod
 {
-
     public static final String NAME = "Add Users";
 
-    String name;
-
-    List<DMRoleSpec> list = new ArrayList<>();
-
-    List<DMOption> options = new ArrayList<>();
+    private String name;
+    private List<DMRoleSpec> list;
+    private List<DMOption> options;
 
     public UsersImportMethod()
     {
-
+        list = new ArrayList<>();
+        options = new ArrayList<>();
         this.name = NAME;
-
-        // list.add( new DMRoleSpec( new DMRole( "Game Master" ), 1, 1 ) );
-        // list.add( new DMRoleSpec( new DMRole( "Negotiator" ), 0, 1 ) );
-        // list.add( new DMRoleSpec( new DMRole( "Opinion Provider" ), 1, -1 ) );
-        //
-        // options.add( new DMOption( "gamification", new String[] { "on", "off" } ) );
-        // options.add( new DMOption( "negotiator", new String[] { "active", "not active" } ) );
-
     }
 
     @Override
@@ -76,6 +80,7 @@ public class UsersImportMethod implements DMMethod
     public List<DMCondition> preconditions()
     {
         List<DMCondition> list = new ArrayList<DMCondition>();
+
         list.add(new DMCondition()
         {
             @Override
@@ -89,9 +94,11 @@ public class UsersImportMethod implements DMMethod
                         return false;
                     }
                 }
+
                 return true;
             }
         });
+
         return list;
     }
 
@@ -100,5 +107,4 @@ public class UsersImportMethod implements DMMethod
     {
         return "import_users";
     }
-
 }
