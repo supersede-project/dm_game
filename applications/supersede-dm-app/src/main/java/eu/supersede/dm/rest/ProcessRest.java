@@ -390,20 +390,4 @@ public class ProcessRest
     {
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
     }
-
-    @RequestMapping(value = "/requirement/update", method = RequestMethod.GET)
-    public Requirement updateRequirement(@RequestParam Long requirementId, @RequestParam String name,
-            @RequestParam String description)
-    {
-        Requirement requirement = requirementsJpa.findOne(requirementId);
-
-        if (requirement == null)
-        {
-            return null;
-        }
-
-        requirement.setName(name);
-        requirement.setDescription(description);
-        return requirementsJpa.save(requirement);
-    }
 }

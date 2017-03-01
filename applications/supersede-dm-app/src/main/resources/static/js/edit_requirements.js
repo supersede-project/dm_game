@@ -187,20 +187,17 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     };
 
     $scope.updateRequirement = function () {
-        var name = $("#current_requirement_name").val();
-        var description = $("#current_requirement_description").val();
+        var requirement = {};
+        requirement.requirementId = currentRequirementId;
+        requirement.name = $("#current_requirement_name").val();
+        requirement.description = $("#current_requirement_description").val();
 
         $http({
-            url: "supersede-dm-app/processes/requirement/update",
-            params: {requirementId: currentRequirementId, name: name, description: description },
-            method: 'GET'
-        }).success(function (data) {
-            if (data === undefined) {
-                $("#requirement_status").html("<strong>There is no requirement with the given id, unable to update it!</strong>");
-            }
-            else {
-                $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
-            }
+            url: "supersede-dm-app/requirement",
+            data: requirement,
+            method: 'PUT'
+        }).success(function () {
+            $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
         }).error(function (err) {
             $("#requirement_status").html("<strong>Unable to update the given requirement!</strong>");
             console.log(err.message);
