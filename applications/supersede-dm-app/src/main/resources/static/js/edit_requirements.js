@@ -17,16 +17,18 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     var procId = $location.search().procId;
     var dependencies = {};
+    var properties = [];
+
+    var currentRequirementIndex = 0;
+    var currentRequirementId;
 
     $scope.requirements = [];
-    $scope.currentRequirementIndex = 0;
-    var currentRequirementId;
 
     function getAvailableDependencies() {
         var availableDependencies = [];
 
         for (var i = 0; i < $scope.requirements.length; i++) {
-            if (i != $scope.currentRequirementIndex) {
+            if (i != currentRequirementIndex) {
                 availableDependencies.push($scope.requirements[i]);
             }
         }
@@ -34,7 +36,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         return availableDependencies;
     }
 
-    function fillGrid() {
+    function fillDependenciesGrid() {
         var availableRequirements = {
             datatype: "json",
             datafields: [
@@ -42,7 +44,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
                 { name: 'name' },
                 { name: 'description' }
             ],
-            localdata: getAvailableDependencies($scope.currentRequirementIndex)
+            localdata: getAvailableDependencies(currentRequirementIndex)
         };
 
         var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
@@ -65,6 +67,31 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     }
 
+    function fillPropertiesGrid() {
+        var requirementProperties = {
+            datatype: "json",
+            datafields: [
+                { name: 'propertyName' },
+                { name: 'propertyValue' }
+            ],
+            localdata: properties
+        };
+
+        var dataAdapter = new $.jqx.dataAdapter(requirementProperties);
+
+        $("#properties").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'propertyName', width: '50%' },
+                { text: 'Value', datafield: 'propertyValue', width: '50%' }
+            ]
+        });
+    }
+
     function saveDependencies() {
         var selectedRequirements = $("#dependencies").jqxGrid("selectedrowindexes");
         dependencies[currentRequirementId] = [];
@@ -75,11 +102,29 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     }
 
+    function getRequirementProperties() {
+        $http.get('supersede-dm-app/processes/requirements/properties?procId=' + procId + '&requirementId=' + currentRequirementId)
+        .success(function (data) {
+            properties = data;
+            console.log("properties:");
+            console.log(properties);
+            fillPropertiesGrid();
+        });
+    }
+
+    function loadCurrentRequirement() {
+        $scope.currentRequirement = $scope.requirements[currentRequirementIndex];
+        currentRequirementId = $scope.currentRequirement.requirementId;
+        fillDependenciesGrid();
+        getRequirementProperties();
+        $("#requirement_status").html("");
+        $("#property_status").html("");
+    }
+
     $scope.goToNextRequirement = function () {
         saveDependencies();
-        $scope.currentRequirementIndex++;
-        currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
-        fillGrid();
+        currentRequirementIndex++;
+        loadCurrentRequirement();
     };
 
     $scope.submitDependencies = function () {
@@ -104,10 +149,10 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     };
 
     $scope.lastRequirement = function () {
-        if ($scope.currentRequirementIndex == $scope.requirements.length - 1) {
+        if (currentRequirementIndex == $scope.requirements.length - 1) {
             return true;
         }
-        else if ($scope.requirements.length == 1 && $scope.currentRequirementIndex === 0) {
+        else if ($scope.requirements.length == 1 && currentRequirementIndex === 0) {
             return true;
         }
         else {
@@ -119,7 +164,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         var propertyName = $("#property_name").val();
         var propertyValue = $("#property_value").val();
 
-        if (propertyName === null || propertyValue == null || propertyName === "" || propertyValue === "") {
+        if (propertyName === undefined || propertyValue === undefined || propertyName === "" || propertyValue === "") {
             $("#property_status").html("<strong>Unable to save the given property: both the key and the value must not be empty!</strong>");
         }
         else {
@@ -129,6 +174,11 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
                 method: 'POST'
             }).success(function () {
                 $("#property_status").html("<strong>Property successfully saved!</strong>");
+                // Update the grid containing properties
+                getRequirementProperties();
+                // Clear the content of the two input fields
+                $("#property_name").val("");
+                $("#property_value").val("");
             }).error(function (err) {
                 $("#property_status").html("<strong>Unable to save the given property!</strong>");
                 console.log(err.message);
@@ -136,10 +186,27 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     };
 
+    $scope.updateRequirement = function () {
+        var requirement = {};
+        requirement.requirementId = currentRequirementId;
+        requirement.name = $("#current_requirement_name").val();
+        requirement.description = $("#current_requirement_description").val();
+
+        $http({
+            url: "supersede-dm-app/requirement",
+            data: requirement,
+            method: 'PUT'
+        }).success(function () {
+            $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
+        }).error(function (err) {
+            $("#requirement_status").html("<strong>Unable to update the given requirement!</strong>");
+            console.log(err.message);
+        });
+    };
+
     $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
     .success(function (data) {
         $scope.requirements = data;
-        currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
-        fillGrid();
+        loadCurrentRequirement();
     });
 });

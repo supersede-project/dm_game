@@ -37,6 +37,7 @@ import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
@@ -59,6 +60,9 @@ public class ProcessRest
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    @Autowired
+    private RequirementsJpa requirementsJpa;
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
@@ -372,12 +376,17 @@ public class ProcessRest
     	DMGame.get().deleteProcess( procId );
     }
 
-
     @RequestMapping(value = "/requirements/property/submit", method = RequestMethod.POST)
     public void setProperties(@RequestParam Long procId, @RequestParam Long requirementId,
             @RequestParam String propertyName, @RequestParam String propertyValue)
     {
         HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
         requirementsPropertiesJpa.save(requirementProperty);
+    }
+
+    @RequestMapping(value = "/requirements/properties", method = RequestMethod.GET)
+    public List<HRequirementProperty> getProperties(@RequestParam Long procId, @RequestParam Long requirementId)
+    {
+        return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
     }
 }
