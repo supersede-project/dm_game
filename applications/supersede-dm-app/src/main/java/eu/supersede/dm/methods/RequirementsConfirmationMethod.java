@@ -93,9 +93,9 @@ public class RequirementsConfirmationMethod implements DMMethod
 
                 for (Requirement r : mgr.requirements())
                 {
-                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
+                    if (r.getStatus() != RequirementStatus.Editable.getValue())
                     {
-                        return true;
+                        return false;
                     }
                 }
 

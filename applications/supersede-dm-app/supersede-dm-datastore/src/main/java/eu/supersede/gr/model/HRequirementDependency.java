@@ -16,6 +16,11 @@ public class HRequirementDependency
     @Id
     private Long dependencyId;
 
+    public HRequirementDependency()
+    {
+
+    }
+
     public HRequirementDependency(Long requirementId, Long dependencyId)
     {
         this.requirementId = requirementId;

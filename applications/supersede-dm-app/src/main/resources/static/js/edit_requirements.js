@@ -64,7 +64,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     }
 
-    $scope.goToNextRequirement = function () {
+    function saveDependencies() {
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
         var currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
         dependencies[currentRequirementId] = [];
@@ -73,12 +73,16 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             var dependencyId = $("#requirements").jqxGrid("getrowdata", selectedRequirements[i]).requirementId;
             dependencies[parseInt(currentRequirementId)].push(parseInt(dependencyId));
         }
+    }
 
+    $scope.goToNextRequirement = function () {
+        saveDependencies();
         $scope.currentRequirementIndex++;
         fillGrid();
     };
 
     $scope.submitDependencies = function () {
+        saveDependencies();
         console.log("Submit dependencies");
         console.log(dependencies);
         $http({

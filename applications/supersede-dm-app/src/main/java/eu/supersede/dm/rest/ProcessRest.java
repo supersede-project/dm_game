@@ -343,7 +343,7 @@ public class ProcessRest
         }
     }
 
-    @RequestMapping(value = "/requirements/dependencies/submit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/requirements/dependencies/submit", method = RequestMethod.POST)
     public void setDependencies(@RequestParam Long procId, @RequestBody Map<Long, List<Long>> dependencies)
     {
         for (Long requirementId : dependencies.keySet())
