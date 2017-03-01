@@ -55,6 +55,6 @@ public class RequirementDetails
 
     public void setProperty(HRequirementProperty property)
     {
-        this.properties.put(property.getName(), property);
+        this.properties.put(property.getPropertyName(), property);
     }
 }

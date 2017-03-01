@@ -16,22 +16,22 @@ package eu.supersede.gr.model;
 
 import java.io.Serializable;
 
-public class RequirementDependencyId implements Serializable
+public class RequirementPropertyId implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
     private Long requirementId;
-    private Long dependencyId;
+    private String propertyName;
 
-    public RequirementDependencyId()
+    public RequirementPropertyId()
     {
 
     }
 
-    public RequirementDependencyId(Long requirementId, Long dependencyId)
+    public RequirementPropertyId(Long requirementId, String propertyName)
     {
         this.requirementId = requirementId;
-        this.dependencyId = dependencyId;
+        this.propertyName = propertyName;
     }
 
     public Long getRequirementId()
@@ -39,9 +39,9 @@ public class RequirementDependencyId implements Serializable
         return requirementId;
     }
 
-    public Long getDependencyId()
+    public String getPropertyName()
     {
-        return dependencyId;
+        return propertyName;
     }
 
     @Override
@@ -57,14 +57,14 @@ public class RequirementDependencyId implements Serializable
             return false;
         }
 
-        RequirementDependencyId requirementDependencyId = (RequirementDependencyId) o;
+        RequirementPropertyId requirementPropertyId = (RequirementPropertyId) o;
 
-        if (requirementId != requirementDependencyId.getRequirementId())
+        if (requirementId != requirementPropertyId.getRequirementId())
         {
             return false;
         }
 
-        if (dependencyId != requirementDependencyId.getDependencyId())
+        if (propertyName != requirementPropertyId.getPropertyName())
         {
             return false;
         }
@@ -76,7 +76,7 @@ public class RequirementDependencyId implements Serializable
     public int hashCode()
     {
         int result = (int) (requirementId ^ (requirementId >>> 32));
-        result = 31 * result + (int) (dependencyId ^ (dependencyId >>> 32));
+        result = 31 * result + propertyName.hashCode();
         return result;
     }
 }
