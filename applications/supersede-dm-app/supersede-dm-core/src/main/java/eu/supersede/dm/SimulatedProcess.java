@@ -199,4 +199,31 @@ public class SimulatedProcess extends AbstractProcessManager
     {
         return new ArrayList<>();
     }
+
+	@Override
+	public void removeRequirement(Long reqId) {
+		int pos = -1;
+		for( int i = 0; i < requirements.size(); i++ ) {
+			if( requirements.get( i ).getRequirementId() == reqId ) {
+				pos = i;
+				break;
+			}
+		}
+		if( pos != -1 ) {
+			requirements.remove( pos );
+		}
+	}
+
+	@Override
+	public void removeCriterion(Long cId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeProcessMember(Long mId) {
+		if( members.get( mId ) != null ) {
+			members.remove( mId );
+		}
+	}
 }

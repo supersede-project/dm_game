@@ -126,62 +126,72 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 	$http.get('supersede-dm-app/alerts/biglist').success(function(data) {
 		$scope.alertsNum = data.length;
 	});
+	
+	$scope.loadProcesses = function() {
+		$http.get('supersede-dm-app/processes/list').success(function(data) {
+//			$('#listbox').jqxListBox('clear');
+			$scope.procNum = data.length;
+			var source = {
+		        localdata: data,
+		        datatype: "array"
+		    };
+			var dataAdapter = new $.jqx.dataAdapter(source);
+		    $('#listbox').jqxListBox({ selectedIndex: 0,  
+		    	source: dataAdapter, 
+		    	displayMember: "name", 
+		    	valueMember: "id", 
+		    	itemHeight: 70, width: '100%',
+		        renderer: function (index, label, value) {
+		            var datarecord = data[index];
+//		            var imgurl = '../../images/' + label.toLowerCase() + '.png';
+//		            var img = '<img height="50" width="40" src="' + imgurl + '"/>';
+		            var action;
+		            if( datarecord.state == "new" ) {
+		            	action = "Start";
+		            }
+		            else {
+		            	action = datarecord.state;
+		            }
+		            var table = 
+		            	'<table style="min-width: 100%;">' + 
+		            	'<tr><td style="width: 40px;" rowspan="2">' 
+		            	+ action + 
+		            	'</td><td>' + 
+		            	datarecord.name + 
+		            	" (" + 
+		            	datarecord.objective + ")" + 
+		            	'</td>' + 
+		            	'<td style="width: 40px;" rowspan="2">' +
+		            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
+		            	'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' + 
+		            	'<jqx-button style="margin-left: 10px" ng-click="closeProcess(\'' + datarecord.id + '\')">Close</jqx-button>' +
+		            	'</td>' +
+		            	'</tr><tr><td>' + 
+		            	"Created: " + datarecord.date + 
+		            	'</td></tr></table>';
+		            return table;
+		        }
+		    });
+		});
+	}
+	
+	$scope.closeProcess = function(procId) {
+		console.log( "deleting process " + procId );
+		$http.post('supersede-dm-app/processes/close?procId=' + procId).success(function(data) {
+			$scope.loadProcesses();
+		});
+	};
+	
+	$scope.loadProcesses();
 
-	$http.get('supersede-dm-app/processes/list').success(function(data) {
-		$scope.procNum = data.length;
-		var source = {
-	        localdata: data,
-	        datatype: "array"
-	    };
-		var dataAdapter = new $.jqx.dataAdapter(source);
-	    $('#listbox').jqxListBox({ selectedIndex: 0,  
-	    	source: dataAdapter, 
-	    	displayMember: "name", 
-	    	valueMember: "id", 
-	    	itemHeight: 70, width: '100%',
-	        renderer: function (index, label, value) {
-	            var datarecord = data[index];
-//	            var imgurl = '../../images/' + label.toLowerCase() + '.png';
-//	            var img = '<img height="50" width="40" src="' + imgurl + '"/>';
-	            var action;
-	            if( datarecord.state == "new" ) {
-	            	action = "Start";
-	            }
-	            else {
-	            	action = datarecord.state;
-	            }
-	            var table = 
-	            	'<table style="min-width: 100%;">' + 
-	            	'<tr><td style="width: 40px;" rowspan="2">' 
-	            	+ "img" + 
-	            	'</td><td>' + 
-	            	datarecord.name + 
-	            	" (" + 
-	            	datarecord.objective + ")" + 
-	            	'</td>' + 
-	            	'<td style="width: 40px;" rowspan="2">' +
-	            	action + 
-	            	'</td>' +
-	            	'</tr><tr><td>' + 
-	            	"Created: " + datarecord.date + 
-	            	'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
-	            	'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a>' + 
-	            	'</jqx-link-button>' + 
-	            	'</td></tr></table>';
-	            return table;
-	        }
-	    });
-	});
-
-	$("#btnNewProcess").on('click', function ()
-			{
+	$("#btnNewProcess").on('click', function () {
 		$http.post('supersede-dm-app/processes/new').success(function(data) {
-			$scope.alertsNum = data.length;
+			$scope.loadProcesses();
 		});
 	});
 	
 });
-
+	
 $(document).ready(function () {
 	$("#jqxExpander").jqxExpander({ width: '100%', expanded: false });
 	$("#expRequirements").jqxExpander({ width: '100%', expanded: false });

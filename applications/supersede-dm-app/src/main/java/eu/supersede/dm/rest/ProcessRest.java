@@ -361,4 +361,9 @@ public class ProcessRest
             }
         }
     }
+    
+    @RequestMapping(value = "/requirements/close", method = RequestMethod.POST)
+    public void closeProcess( @RequestParam Long procId ) {
+    	DMGame.get().deleteProcess( procId );
+    }
 }

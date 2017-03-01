@@ -172,4 +172,25 @@ public class PersistedProcess extends AbstractProcessManager
 
         return new PropertyBag(a);
     }
+
+    public Requirement getRequirement(Long reqId) {
+    	return DMGame.get().getJpa().requirements.findOne( reqId );
+    }
+    
+	@Override
+	public void removeRequirement(Long reqId) {
+        Requirement r = getRequirement( reqId );
+		r.setProcessId( -1L );
+        DMGame.get().jpa.requirements.save(r);
+    }
+
+	@Override
+	public void removeCriterion(Long cId) {
+		DMGame.get().getJpa().processCriteria.delete( cId );
+	}
+
+	@Override
+	public void removeProcessMember(Long mId) {
+		DMGame.get().getJpa().members.delete( mId );
+	}
 }

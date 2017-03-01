@@ -21,6 +21,9 @@ import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
+import eu.supersede.gr.model.HProcessCriterion;
+import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -69,6 +72,31 @@ public class DMGame {
     	proc.setName( "Process " + proc.getId() );
     	proc = jpa.processes.save( proc );
     	return proc;
+    }
+	
+	public void deleteProcess( Long procId ) {
+    	ProcessManager mgr = getProcessManager( procId );
+    	if( mgr == null ) {
+    		return;
+    	}
+    	List<HActivity> activities = mgr.getOngoingActivities();
+    	if( activities == null ) {
+    		return;
+    	}
+    	if( activities.size() > 0 ) {
+    		throw new RuntimeException( "This process contains ongoing activities. To close it, you must close the activities first." );
+    	}
+    	for( Requirement r : mgr.requirements() ) {
+    		mgr.removeRequirement( r.getRequirementId() );
+    	}
+    	for( HProcessMember m : mgr.getProcessMembers() ) {
+    		mgr.removeProcessMember( m.getId() );
+    	}
+    	for( HProcessCriterion c : mgr.getProcessCriteria() ) {
+    		mgr.removeCriterion( c.getCriteriaId() );
+    	}
+    	jpa.processes.delete( procId );
+    	// TODO: let all methods cleanup their stuff (e.g. games) in the db, if necessary
     }
 	
 	public HProcess getProcess( Long processId ) {
