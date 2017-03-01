@@ -6,11 +6,28 @@
     </div>
 
     <div ng-show="!emptyRequirements()">
-        <h1>Define Dependencies</h1>
+        <h1>Edit Requirements</h1>
 
-        <h2>Dependencies for {{requirements[currentRequirementIndex].name}}: {{requirements[currentRequirementIndex].description}}</h2>
+        <h2>Current Requirement:</h2>
+        <p><strong>Name: </strong>{{requirements[currentRequirementIndex].name}}</p>
+        <p><strong>Description: </strong>{{requirements[currentRequirementIndex].description}}</p>
+
+        <h2>Dependencies</h2>
         <div style="font-size: 13px; font-family: Verdana">
-            <div id="requirements"></div>
+            <div id="dependencies"></div>
+        </div>
+
+        <h2>Properties</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="properties">
+                <h3>Add a new property</h3>
+                <form>
+                    Property Name: <input id="property_name" type="text"><br><br>
+                    Property Value: <input id="property_value" type="text"><br><br><br>
+                </form>
+                <jqx-button ng-click="addProperty()">Add property</jqx-button>
+                <p id="property_status"></id>
+            </div>
         </div>
 
         <br>

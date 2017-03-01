@@ -64,7 +64,7 @@ public class RequirementPropertyId implements Serializable
             return false;
         }
 
-        if (propertyName != requirementPropertyId.getPropertyName())
+        if (!propertyName.equals(requirementPropertyId.getPropertyName()))
         {
             return false;
         }

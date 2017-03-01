@@ -15,10 +15,9 @@
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.Id;
 
 @Entity
 @IdClass(RequirementPropertyId.class)

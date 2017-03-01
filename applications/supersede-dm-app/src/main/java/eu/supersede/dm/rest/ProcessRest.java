@@ -367,19 +367,11 @@ public class ProcessRest
         }
     }
 
-    @RequestMapping(value = "/requirements/properties/submit", method = RequestMethod.POST)
-    public void setProperties(@RequestParam Long procId, @RequestBody Map<Long, Map<String, String>> properties)
+    @RequestMapping(value = "/requirements/property/submit", method = RequestMethod.POST)
+    public void setProperties(@RequestParam Long procId, @RequestParam Long requirementId,
+            @RequestParam String propertyName, @RequestParam String propertyValue)
     {
-        for (Long requirementId : properties.keySet())
-        {
-            Map<String, String> requirementProperties = properties.get(requirementId);
-
-            for (String propertyName : requirementProperties.keySet())
-            {
-                HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName,
-                        requirementProperties.get(propertyName));
-                requirementsPropertiesJpa.save(requirementProperty);
-            }
-        }
+        HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
+        requirementsPropertiesJpa.save(requirementProperty);
     }
 }

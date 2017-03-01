@@ -20,6 +20,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     $scope.requirements = [];
     $scope.currentRequirementIndex = 0;
+    var currentRequirementId;
 
     function getAvailableDependencies() {
         var availableDependencies = [];
@@ -46,10 +47,10 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
         var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
 
-        $("#requirements").jqxGrid('clearselection');
-        $("#requirements").jqxGrid('refresh');
+        $("#dependencies").jqxGrid('clearselection');
+        $("#dependencies").jqxGrid('refresh');
 
-        $("#requirements").jqxGrid({
+        $("#dependencies").jqxGrid({
             width: '100%',
             selectionmode: 'checkbox',
             altrows: true,
@@ -65,12 +66,11 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     }
 
     function saveDependencies() {
-        var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
-        var currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
+        var selectedRequirements = $("#dependencies").jqxGrid("selectedrowindexes");
         dependencies[currentRequirementId] = [];
 
         for (var i = 0; i < selectedRequirements.length; i++) {
-            var dependencyId = $("#requirements").jqxGrid("getrowdata", selectedRequirements[i]).requirementId;
+            var dependencyId = $("#dependencies").jqxGrid("getrowdata", selectedRequirements[i]).requirementId;
             dependencies[parseInt(currentRequirementId)].push(parseInt(dependencyId));
         }
     }
@@ -78,6 +78,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     $scope.goToNextRequirement = function () {
         saveDependencies();
         $scope.currentRequirementIndex++;
+        currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
         fillGrid();
     };
 
@@ -114,10 +115,31 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     };
 
+    $scope.addProperty = function () {
+        var propertyName = $("#property_name").val();
+        var propertyValue = $("#property_value").val();
+
+        if (propertyName === null || propertyValue == null || propertyName === "" || propertyValue === "") {
+            $("#property_status").html("<strong>Unable to save the given property: both the key and the value must not be empty!</strong>");
+        }
+        else {
+            $http({
+                url: "supersede-dm-app/processes/requirements/property/submit",
+                params: { procId: procId, requirementId: currentRequirementId, propertyName: propertyName, propertyValue: propertyValue },
+                method: 'POST'
+            }).success(function () {
+                $("#property_status").html("<strong>Property successfully saved!</strong>");
+            }).error(function (err) {
+                $("#property_status").html("<strong>Unable to save the given property!</strong>");
+                console.log(err.message);
+            });
+        }
+    };
+
     $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
     .success(function (data) {
         $scope.requirements = data;
-
+        currentRequirementId = $scope.requirements[$scope.currentRequirementIndex].requirementId;
         fillGrid();
     });
 });
