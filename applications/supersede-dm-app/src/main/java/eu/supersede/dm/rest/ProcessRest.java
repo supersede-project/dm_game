@@ -374,4 +374,10 @@ public class ProcessRest
         HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
         requirementsPropertiesJpa.save(requirementProperty);
     }
+
+    @RequestMapping(value = "/requirements/properties", method = RequestMethod.GET)
+    public List<HRequirementProperty> getProperties(@RequestParam Long procId, @RequestParam Long requirementId)
+    {
+        return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
+    }
 }
