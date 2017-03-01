@@ -37,6 +37,7 @@ import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
@@ -59,6 +60,9 @@ public class ProcessRest
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    @Autowired
+    private RequirementsJpa requirementsJpa;
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
@@ -385,5 +389,21 @@ public class ProcessRest
     public List<HRequirementProperty> getProperties(@RequestParam Long procId, @RequestParam Long requirementId)
     {
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
+    }
+
+    @RequestMapping(value = "/requirement/update", method = RequestMethod.GET)
+    public Requirement updateRequirement(@RequestParam Long requirementId, @RequestParam String name,
+            @RequestParam String description)
+    {
+        Requirement requirement = requirementsJpa.findOne(requirementId);
+
+        if (requirement == null)
+        {
+            return null;
+        }
+
+        requirement.setName(name);
+        requirement.setDescription(description);
+        return requirementsJpa.save(requirement);
     }
 }

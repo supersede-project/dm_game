@@ -10,7 +10,14 @@
 
         <h2>Current Requirement</h2>
         <div style="font-size: 13px; font-family: Verdana">
-            <div id="current_requirement"></div>
+            <div>
+                <form>
+                    Name: <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
+                    Description: <input id="current_requirement_description" type="text" value="{{currentRequirement.description}}"><br><br><br>
+                </form>
+                <jqx-button ng-click="updateRequirement()">Update requirement</jqx-button>
+                <p id="requirement_status"></p>
+            </div>
         </div>
 
         <h2>Dependencies</h2>
@@ -28,7 +35,7 @@
                 Property Value: <input id="property_value" type="text"><br><br><br>
             </form>
             <jqx-button ng-click="addProperty()">Add property</jqx-button>
-            <p id="property_status"></id>
+            <p id="property_status"></p>
         </div>
 
         <br>
