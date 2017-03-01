@@ -153,20 +153,25 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
-    public void importRequirements(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    public void importRequirements(@RequestParam Long procId, @RequestParam List<Long> requirementsId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        if (idlist == null)
+
+        if (requirementsId == null)
         {
             return;
         }
-        for (Long cid : idlist)
+
+        for (Long requirementId : requirementsId)
         {
-            Requirement r = DMGame.get().getJpa().requirements.findOne(cid);
+            Requirement r = DMGame.get().getJpa().requirements.findOne(requirementId);
+
             if (r == null)
             {
                 continue;
             }
+
+            r.setStatus(RequirementStatus.Editable.getValue());
             proc.addRequirement(r);
         }
     }

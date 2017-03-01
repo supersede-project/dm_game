@@ -83,7 +83,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             method: 'POST',
             url: "supersede-dm-app/processes/requirements/import",
 //            data: weightsId,
-            params: { procId: $scope.procId, idlist: $scope.gameRequirementsId }
+            params: { procId: $scope.procId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
 //            $("#game_created").html("<strong>Game successfully created!</strong>");

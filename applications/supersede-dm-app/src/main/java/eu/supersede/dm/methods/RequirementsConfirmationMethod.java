@@ -99,7 +99,7 @@ public class RequirementsConfirmationMethod implements DMMethod
                     }
                 }
 
-                return false;
+                return true;
             }
         });
 
