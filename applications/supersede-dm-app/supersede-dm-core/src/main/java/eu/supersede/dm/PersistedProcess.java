@@ -19,9 +19,11 @@ import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HPropertyBag;
+import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -206,5 +208,22 @@ public class PersistedProcess extends AbstractProcessManager
 	@Override
 	public void removeProcessMember(Long mId) {
 		DMGame.get().getJpa().members.delete( mId );
+	}
+
+	@Override
+	public ProcessStatus getProcessStatus() {
+		HProcess process = getProcess();
+		return process.getStatus();
+	}
+	
+	private HProcess getProcess() {
+		return DMGame.get().getJpa().processes.findOne( this.processId );
+	}
+
+	@Override
+	public void setProcessStatus(ProcessStatus status) {
+		HProcess process = getProcess();
+		process.setStatus( status );
+		DMGame.get().getJpa().processes.save( process );
 	}
 }

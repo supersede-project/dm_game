@@ -171,6 +171,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 		            	'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' + 
 //		            	'<jqx-button style="margin-left: 10px" ng-click="closeProcess(\'' + datarecord.id + '\')">Close</jqx-button>' +
 		            	'<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');">Close</a></jqx-button>' +
+		            	'<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');">Delete</a></jqx-button>' +
 		            	'</td>' +
 		            	'</tr><tr><td>' + 
 		            	"Created: " + datarecord.date + 
@@ -201,8 +202,15 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
 });
 
 var closeProcess = function(procId) {
-	console.log( "deleting process " + procId );
+	console.log( "closing process " + procId );
 	http.post('supersede-dm-app/processes/close?procId=' + procId).success(function(data) {
+		loadProcesses();
+	});
+};
+
+var deleteProcess = function(procId) {
+	console.log( "deleting process " + procId );
+	http.post('supersede-dm-app/processes/delete?procId=' + procId).success(function(data) {
 		loadProcesses();
 	});
 };
@@ -213,3 +221,4 @@ $(document).ready(function () {
 	$("#expProcesses").jqxExpander({ width: '100%', expanded: false });
 	$("#expActivities").jqxExpander({ width: '100%', expanded: false });
 });
+

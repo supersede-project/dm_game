@@ -86,6 +86,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             params: { procId: $scope.procId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
+        	$location.url('supersede-dm-app/process?procId='+$scope.procId);
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");

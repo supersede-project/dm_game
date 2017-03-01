@@ -48,6 +48,7 @@ public enum RequirementStatus
                 break;
             case Editable:
                 set.add(RequirementStatus.Confirmed);
+                set.add(RequirementStatus.Discarded);
                 break;
             case Confirmed:
                 set.add(RequirementStatus.Enacted);

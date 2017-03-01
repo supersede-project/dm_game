@@ -50,7 +50,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     
 	$http({
         method: 'GET',
-        url: "supersede-dm-app/processes/requirements/status",
+        url: "supersede-dm-app/processes/requirements/stablestatus",
         params: { procId: $scope.procId },
         headers: {
             'Content-Type': undefined
@@ -59,40 +59,75 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 		$scope.processStatus = data;
 	});
     
-	$http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
-		console.log(data);
-//		var source = [];
-//		for( var i = 0; i < data.length; i++ ) {
-//			var item = {
-//					label: data[i].methodName,
-//					value: data[i].methodName
-//			};
-//			source.push( item );
-//		}
-		$("#procList").jqxListBox({ source: data, width: 400, height: 250,
-			renderer: function (index, label, value) {
-				var datarecord = data[index];
-				var imgurl = 'supersede-dm-app/img/process.png';
-				var img = '<img height="50" width="50" src="' + imgurl + '"/>';
-				var table = 
-					'<table style="min-width: 130px;">' +
-					'<tr><td style="width: 40px;" rowspan="2">' + 
-					img + '</td><td>' + 
-					datarecord.methodName + 
-					'</td></tr><tr><td>' + 
-					'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
-	            	'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + $scope.procId + '">Open</a>' + 
-	            	'</jqx-link-button>' + 
-	            	'</td></tr>' + 
-					'</table>';
-				return table;
-			}
+	$scope.loadActivities = function() {
+		$http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
+			console.log(data);
+			$("#procList").jqxListBox({ source: data, width: 700, height: 250,
+				renderer: function (index, label, value) {
+					var datarecord = data[index];
+					var imgurl = 'supersede-dm-app/img/process.png';
+					var img = '<img height="50" width="50" src="' + imgurl + '"/>';
+					var table = 
+						'<table style="min-width: 130px;">' +
+						'<tr><td style="width: 40px;" rowspan="2">' + 
+						img + '</td><td>' + 
+						datarecord.methodName + 
+						'</td></tr><tr><td>' + 
+						'<jqx-link-button jqx-width="200" jqx-height="30"> <a ' + 
+		            	'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + $scope.procId + '">Open</a>' + 
+		            	'</jqx-link-button>' + 
+		            	'</td></tr>' + 
+						'</table>';
+					return table;
+				}
+			});
 		});
-	});
+	}
+	
+	$scope.loadActivities();
+	
+//	$http.get('supersede-dm-app/processes/requirements/statusmap?procId=' + $scope.procId ).success(function(data) {
+//		console.log(data);
+//		$('#barGauge').jqxBarGauge({colorScheme: "scheme02", width: 400, height: 400,
+//            values: [102, 115, 130, 137], max: 150, 
+//            labels: {
+//                formatFunction: function (value) {
+//                    var realVal = parseInt(value);
+//                    if( realVal == 0 ) return "Unconfirmed";
+//                    if( realVal == 1 ) return "Editable";
+//                    if( realVal == 2 ) return "Confirmed";
+//                    if( realVal == 3 ) return "Enacted";
+//                    if( realVal == 4 ) return "Discarded";
+//                    return "Other";
+//                },
+//                font: { size: 12 },
+//                indent: 10
+//            }
+//        });
+//	});
+	
+//	$scope.next = function() {
+//		$http({
+//	        method: 'GET',
+//	        url: "supersede-dm-app/processes/requirements/next",
+//	        params: { procId: $scope.procId }
+//	    }).success(function(data){
+//			$scope.loadActivities();
+//		});
+//	};
 
+	$("#btnPrevPhase").jqxButton({ width: 60, height: 250 });
+	$("#btnNextPhase").jqxButton({ width: 60, height: 250  });
+	$("#btnNextPhase").on('click', function() {
+		$http({
+	        method: 'POST',
+	        url: "supersede-dm-app/processes/requirements/next",
+	        params: { procId: $scope.procId }
+	    }).success(function(data){
+			$scope.loadActivities();
+		});
+	} );
 });
 
 $(document).ready(function () {
-//	$("#jqxListBox").jqxListBox({ width: 700 });
-
 });

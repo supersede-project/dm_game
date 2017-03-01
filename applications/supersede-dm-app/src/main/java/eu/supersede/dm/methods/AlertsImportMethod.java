@@ -93,14 +93,15 @@ public class AlertsImportMethod implements DMMethod
             {
                 for (Requirement r : mgr.requirements())
                 {
-                    if (r.getStatus() != RequirementStatus.Unconfirmed.getValue()
-                            || r.getStatus() != RequirementStatus.Editable.getValue())
-                    {
-                        return false;
+                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue() ) {
+                    	return true;
                     }
                 }
+            	if( mgr.requirements().size() < 1 ) {
+            		return true;
+            	}
 
-                return true;
+                return false;
             }
         });
 
