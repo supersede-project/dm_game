@@ -251,7 +251,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
             var addedCriteria = data;
             console.log("added criteria:");
             console.log(addedCriteria);
-            var criteriaRows = $("#criteria").jqxGrid("rows");
+            var criteriaRows = $("#criteria").jqxGrid("getrows").length;
             console.log("rows:");
             console.log(criteriaRows);
 
