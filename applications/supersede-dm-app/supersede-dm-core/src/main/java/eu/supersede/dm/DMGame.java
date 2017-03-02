@@ -106,7 +106,7 @@ public class DMGame
 
         for (HProcessMember m : mgr.getProcessMembers())
         {
-            mgr.removeProcessMember(m.getId());
+            mgr.removeProcessMember(m.getId(), m.getUserId(), m.getProcessId());
         }
 
         for (HProcessCriterion c : mgr.getProcessCriteria())

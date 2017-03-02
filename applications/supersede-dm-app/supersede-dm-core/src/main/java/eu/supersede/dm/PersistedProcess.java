@@ -213,9 +213,9 @@ public class PersistedProcess extends AbstractProcessManager
     }
 
     @Override
-    public void removeProcessMember(Long mId)
+    public void removeProcessMember(Long id, Long userId, Long processId)
     {
-        DMGame.get().getJpa().members.delete(mId);
+        DMGame.get().getJpa().members.deleteById(id, userId, processId);
     }
 
     @Override

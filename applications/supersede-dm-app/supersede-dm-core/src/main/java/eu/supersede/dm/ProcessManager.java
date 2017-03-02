@@ -64,7 +64,7 @@ public interface ProcessManager
 
     public List<HProcessMember> getProcessMembers(String role);
 
-    public void removeProcessMember(Long mId);
+    public void removeProcessMember(Long id, Long userId, Long processId);
 
     // Activities
 

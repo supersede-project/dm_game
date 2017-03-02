@@ -240,11 +240,11 @@ public class SimulatedProcess extends AbstractProcessManager
     }
 
     @Override
-    public void removeProcessMember(Long mId)
+    public void removeProcessMember(Long id, Long userId, Long processId)
     {
-        if (members.get(mId) != null)
+        if (members.get(id) != null)
         {
-            members.remove(mId);
+            members.remove(id);
         }
     }
 

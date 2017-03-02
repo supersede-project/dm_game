@@ -61,9 +61,6 @@ public class ProcessRest
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
 
-    // @Autowired
-    // private RequirementsJpa requirementsJpa;
-
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
     {
@@ -83,6 +80,7 @@ public class ProcessRest
     public List<JqxProcess> getProcessList()
     {
         List<JqxProcess> list = new ArrayList<JqxProcess>();
+
         for (HProcess p : DMGame.get().getJpa().processes.findAll())
         {
             JqxProcess qp = new JqxProcess();
@@ -93,6 +91,7 @@ public class ProcessRest
             qp.date = p.getStartTime().toString();
             list.add(qp);
         }
+
         return list;
     }
 
@@ -101,30 +100,21 @@ public class ProcessRest
         for (Long reqId : reqList)
         {
             Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
+
             if (r == null)
+            {
                 continue;
+            }
+
             if (r.getProcessId() != -1)
+            {
                 continue;
+            }
+
             r.setProcessId(procId);
             DMGame.get().getJpa().requirements.save(r);
         }
     }
-
-    // public void setRequirementsStatus(Long procId, List<Long> reqList, RequirementStatus status)
-    // {
-    // for (Long reqId : reqList)
-    // {
-    // Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
-    // if (r == null)
-    // continue;
-    // RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
-    // if (RequirementStatus.next(oldStatus).contains(status))
-    // {
-    // r.setStatus(status.getValue());
-    // DMGame.get().getJpa().requirements.save(r);
-    // }
-    // }
-    // }
 
     @RequestMapping(value = "/available_activities", method = RequestMethod.GET)
     public List<ActivityEntry> getNextActivities(Long procId)
@@ -136,10 +126,13 @@ public class ProcessRest
     public void importUsers(@RequestParam Long procId, @RequestParam List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        if (idlist == null)
+        List<HProcessMember> processMembers = proc.getProcessMembers();
+
+        for (HProcessMember processMember : processMembers)
         {
-            return;
+            proc.removeProcessMember(processMember.getId(), processMember.getUserId(), processMember.getProcessId());
         }
+
         for (Long userid : idlist)
         {
             proc.addProcessMember(userid, ProcessRole.User.name());
@@ -150,12 +143,18 @@ public class ProcessRest
     public void importCriteria(@RequestParam Long procId, @RequestParam List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        if (idlist == null)
+        List<HProcessCriterion> processCriteria = proc.getProcessCriteria();
+
+        for (HProcessCriterion processCriterion : processCriteria)
         {
-            return;
+            System.out.println("Removing criterion " + processCriterion.getCriterionId() + " from process " + procId);
+            proc.removeCriterion(processCriterion.getCriterionId(), processCriterion.getSourceId(),
+                    processCriterion.getProcessId());
         }
+
         for (Long cid : idlist)
         {
+            System.out.println("Adding criterion " + cid + " to process " + procId);
             ValutationCriteria c = DMGame.get().getCriterion(cid);
             proc.addCriterion(c);
         }
@@ -166,9 +165,11 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
 
-        if (requirementsId == null)
+        List<Requirement> requirements = proc.requirements();
+
+        for (Requirement requirement : requirements)
         {
-            return;
+            proc.removeRequirement(requirement.getRequirementId());
         }
 
         for (Long requirementId : requirementsId)
@@ -190,10 +191,12 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<Long> list = new ArrayList<>();
+
         for (HProcessMember member : proc.getProcessMembers())
         {
-            list.add(member.getId());
+            list.add(member.getUserId());
         }
+
         return list;
     }
 
@@ -202,14 +205,17 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<User> list = new ArrayList<>();
+
         for (HProcessMember member : proc.getProcessMembers())
         {
             User u = DMGame.get().getJpa().users.findOne(member.getUserId());
+
             if (u != null)
             {
                 list.add(u);
             }
         }
+
         return list;
     }
 
@@ -218,10 +224,12 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<Long> list = new ArrayList<>();
+
         for (ValutationCriteria c : proc.getCriteria())
         {
             list.add(c.getCriteriaId());
         }
+
         return list;
     }
 
@@ -250,10 +258,12 @@ public class ProcessRest
     public String getProcessStatus(@RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+
         if (mgr == null)
         {
             return "";
         }
+
         return mgr.getProcessStatus().name();
     }
 
@@ -261,10 +271,12 @@ public class ProcessRest
     public void getProcessStatus(@RequestParam Long procId, @RequestParam String status)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+
         if (mgr == null)
         {
             return;
         }
+
         try
         {
             mgr.setProcessStatus(ProcessStatus.valueOf(status));
@@ -282,20 +294,25 @@ public class ProcessRest
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         Map<String, Integer> count = new HashMap<>();
         List<Requirement> requirements = proc.requirements();
+
         for (Requirement r : requirements)
         {
             RequirementStatus s = RequirementStatus.valueOf(r.getStatus());
             Integer n = count.get(r.getStatus());
+
             if (n == null)
             {
                 n = 0;
             }
+
             count.put(s.name(), n + 1);
         }
+
         if (count.size() != 1)
         {
             return "";
         }
+
         return count.keySet().toArray()[0].toString();
     }
 
@@ -305,13 +322,16 @@ public class ProcessRest
             @RequestParam(name = "status") String statusString)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+
         if (mgr == null)
         {
             return;
         }
+
         try
         {
             RequirementStatus status = RequirementStatus.valueOf(statusString);
+
             for (Requirement r : mgr.requirements())
             {
                 r.setStatus(status.getValue());
@@ -335,31 +355,39 @@ public class ProcessRest
         count.put(RequirementStatus.Enacted.getValue(), 0);
         count.put(RequirementStatus.Discarded.getValue(), 0);
         List<Requirement> requirements = proc.requirements();
+
         if (requirements.size() < 1)
         {
             return RequirementStatus.Unconfirmed.name();
         }
+
         for (Requirement r : requirements)
         {
             Integer n = count.get(r.getStatus());
+
             if (n == null)
             {
                 continue;
             }
+
             count.put(r.getStatus(), n + 1);
         }
+
         if (count.get(RequirementStatus.Unconfirmed.getValue()) > 0)
         {
             return RequirementStatus.Unconfirmed.name();
         }
+
         if (count.get(RequirementStatus.Enacted.getValue()) > 0)
         {
             return RequirementStatus.Enacted.name();
         }
+
         if (count.get(RequirementStatus.Discarded.getValue()) > 0)
         {
             return RequirementStatus.Discarded.name();
         }
+
         return RequirementStatus.Confirmed.name();
     }
 
@@ -368,16 +396,20 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         Map<String, Integer> count = new HashMap<>();
+
         for (Requirement r : proc.requirements())
         {
             String str = RequirementStatus.valueOf(r.getStatus()).name();
             Integer n = count.get(str);
+
             if (n == null)
             {
                 n = 0;
             }
+
             count.put(str, n + 1);
         }
+
         return count;
     }
 
@@ -387,6 +419,7 @@ public class ProcessRest
         List<ActivityDetails> list = new ArrayList<>();
         List<HActivity> activities = DMGame.get()
                 .getPendingActivities(((DatabaseUser) auth.getPrincipal()).getUserId());
+
         for (HActivity a : activities)
         {
             ActivityDetails d = new ActivityDetails();
@@ -396,41 +429,42 @@ public class ProcessRest
             d.setUserId(a.getUserId());
             ProcessManager mgr = DMGame.get().getProcessManager(a.getProcessId());
             DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
+
             if (m != null)
             {
                 d.setUrl(m.getPage(mgr));
                 list.add(d);
             }
+
             PropertyBag bag = mgr.getProperties(a);
+
             for (HProperty p : bag.properties())
             {
                 d.setProperty(p.getKey(), p.getValue());
             }
         }
+
         return list;
     }
 
     @RequestMapping(value = "/activities/groups", method = RequestMethod.GET)
     public Map<String, List<Long>> getActivityGroups(@RequestParam Long procId)
     {
-
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
         List<HActivity> activities = mgr.getOngoingActivities();
-
         Map<String, List<Long>> map = new HashMap<>();
 
         for (HActivity a : activities)
         {
-
             List<Long> list = map.get(a.getMethodName());
+
             if (list == null)
             {
                 list = new ArrayList<>();
                 map.put(a.getMethodName(), list);
             }
-            list.add(a.getUserId());
 
+            list.add(a.getUserId());
         }
 
         return map;
@@ -444,8 +478,12 @@ public class ProcessRest
         for (Requirement r : mgr.requirements())
         {
             if (r == null)
+            {
                 continue;
+            }
+
             RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
             if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Confirmed))
             {
                 r.setStatus(RequirementStatus.Confirmed.getValue());
@@ -462,7 +500,6 @@ public class ProcessRest
             for (Long dependencyId : dependencies.get(requirementId))
             {
                 HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
-
                 requirementsDependenciesJpa.save(requirementDependency);
             }
         }
@@ -472,10 +509,12 @@ public class ProcessRest
     public void closeProcess(@RequestParam Long procId)
     {
         HProcess p = DMGame.get().getProcess(procId);
+
         if (p == null)
         {
             return;
         }
+
         p.setStatus(ProcessStatus.Closed);
         DMGame.get().getJpa().processes.save(p);
     }
@@ -484,14 +523,17 @@ public class ProcessRest
     public void deleteProcess(@RequestParam Long procId)
     {
         HProcess p = DMGame.get().getProcess(procId);
+
         if (p == null)
         {
             return;
         }
+
         if (p.getStatus() == ProcessStatus.InProgress)
         {
             throw new RuntimeException("You must close the process first");
         }
+
         DMGame.get().deleteProcess(procId);
     }
 
@@ -513,9 +555,11 @@ public class ProcessRest
     public String setNextPhase(@RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+
         try
         {
             RequirementStatus status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
+
             switch (status)
             {
                 case Confirmed:
@@ -532,11 +576,13 @@ public class ProcessRest
                     status = RequirementStatus.Editable;
                     break;
             }
+
             for (Requirement r : mgr.requirements())
             {
                 r.setStatus(status.getValue());
                 DMGame.get().getJpa().requirements.save(r);
             }
+
             return status.name();
         }
         catch (Exception ex)

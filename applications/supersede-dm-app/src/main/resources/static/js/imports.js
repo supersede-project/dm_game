@@ -148,6 +148,41 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
                     { text: 'Email', datafield: 'email' }
                 ]
             });
+
+            getAddedUsers();
+        });
+    }
+
+    function getAddedUsers() {
+        $http.get('supersede-dm-app/processes/users/list?procId=' + $scope.procId)
+        .success(function (data) {
+            var addedUsers = data;
+            console.log("added users:");
+            console.log(addedUsers);
+            var usersRows = $("#users").jqxGrid("getrows").length;
+            console.log("rows:");
+            console.log(usersRows);
+
+            for (var i = 0; i < usersRows; i++) {
+                var added = false;
+                var currentUser = $("#users").jqxGrid("getrowdatabyid", i);
+
+                for (var j = 0; j < addedUsers.length; j++) {
+                    if (addedUsers[j] === currentUser.userId) {
+                        $("#users").jqxGrid("selectrow", i);
+                        console.log("selecting user:");
+                        console.log(currentUser);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    $("#users").jqxGrid("unselectrow", i);
+                    console.log("deselecting user:");
+                    console.log(currentUser);
+                }
+            }
         });
     }
 
