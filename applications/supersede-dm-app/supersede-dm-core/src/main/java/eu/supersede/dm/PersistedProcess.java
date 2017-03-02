@@ -133,7 +133,7 @@ public class PersistedProcess extends AbstractProcessManager
     public List<ValutationCriteria> getCriteria()
     {
         List<ValutationCriteria> list = new ArrayList<>();
-        List<HProcessCriterion> procList = DMGame.get().jpa.processCriteria.findProcessCriteria(this.processId);
+        List<HProcessCriterion> procList = DMGame.get().jpa.processCriteria.findByProcessId(this.processId);
 
         for (HProcessCriterion pc : procList)
         {
@@ -151,13 +151,13 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public List<HProcessCriterion> getProcessCriteria()
     {
-        return DMGame.get().jpa.processCriteria.findProcessCriteria(this.processId);
+        return DMGame.get().jpa.processCriteria.findByProcessId(this.processId);
     }
 
     @Override
     public int getCriteriaCount()
     {
-        return DMGame.get().jpa.processCriteria.findProcessCriteria(this.processId).size();
+        return DMGame.get().jpa.processCriteria.findByProcessId(this.processId).size();
     }
 
     @Override
@@ -187,24 +187,32 @@ public class PersistedProcess extends AbstractProcessManager
         return new PropertyBag(a);
     }
 
-    public Requirement getRequirement(Long reqId) {
-    	return DMGame.get().getJpa().requirements.findOne( reqId );
-    }
-    
-	@Override
-	public void removeRequirement(Long reqId) {
-        Requirement r = getRequirement( reqId );
-		r.setProcessId( -1L );
-        DMGame.get().jpa.requirements.save(r);
+    public Requirement getRequirement(Long reqId)
+    {
+        return DMGame.get().getJpa().requirements.findOne(reqId);
     }
 
-	@Override
-	public void removeCriterion(Long cId) {
-		DMGame.get().getJpa().processCriteria.delete( cId );
-	}
+    @Override
+    public void removeRequirement(Long reqId)
+    {
+        Requirement r = getRequirement(reqId);
 
-	@Override
-	public void removeProcessMember(Long mId) {
-		DMGame.get().getJpa().members.delete( mId );
-	}
+        if (r != null)
+        {
+            r.setProcessId(-1L);
+            DMGame.get().jpa.requirements.save(r);
+        }
+    }
+
+    @Override
+    public void removeCriterion(Long criterionId, Long sourceId, Long processId)
+    {
+        DMGame.get().getJpa().processCriteria.deleteById(criterionId, sourceId, processId);
+    }
+
+    @Override
+    public void removeProcessMember(Long mId)
+    {
+        DMGame.get().getJpa().members.delete(mId);
+    }
 }

@@ -8,3 +8,4 @@ dist/
 **/gradle.properties
 **/*.class
 logs/
+*.log

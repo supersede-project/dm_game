@@ -1,4 +1,4 @@
-package eu.supersede.gr.model;
+package eu.supersede.gr.model.id;
 
 import java.io.Serializable;
 

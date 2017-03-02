@@ -37,7 +37,6 @@ import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
-import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
@@ -60,9 +59,6 @@ public class ProcessRest
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
-
-    @Autowired
-    private RequirementsJpa requirementsJpa;
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
@@ -150,12 +146,19 @@ public class ProcessRest
     public void importCriteria(@RequestParam Long procId, @RequestParam List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        if (idlist == null)
+
+        List<HProcessCriterion> processCriteria = proc.getProcessCriteria();
+
+        for (HProcessCriterion processCriterion : processCriteria)
         {
-            return;
+            System.out.println("Removing criterion " + processCriterion.getCriterionId() + " from process " + procId);
+            proc.removeCriterion(processCriterion.getCriterionId(), processCriterion.getSourceId(),
+                    processCriterion.getProcessId());
         }
+
         for (Long cid : idlist)
         {
+            System.out.println("Adding criterion " + cid + " to process " + procId);
             ValutationCriteria c = DMGame.get().getCriterion(cid);
             proc.addCriterion(c);
         }
@@ -166,9 +169,11 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
 
-        if (requirementsId == null)
+        List<Requirement> requirements = proc.requirements();
+
+        for (Requirement requirement : requirements)
         {
-            return;
+            proc.removeRequirement(requirement.getRequirementId());
         }
 
         for (Long requirementId : requirementsId)
@@ -218,10 +223,12 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<Long> list = new ArrayList<>();
+
         for (ValutationCriteria c : proc.getCriteria())
         {
             list.add(c.getCriteriaId());
         }
+
         return list;
     }
 

@@ -63,8 +63,6 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
     function defineGameData() {
 
-        gameName = $("#game_name").val();
-
         var i;
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
 
@@ -151,25 +149,25 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
             });
         });
     }
-    
+
     function defineGameData() {
 
         var i;
-        
+
         var selectedOpinionProviders = $("#users").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedOpinionProviders.length; i++) {
             var selectedOpinionProvider = $("#users").jqxGrid('getrowdata', selectedOpinionProviders[i]);
             $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
-        
+
         console.log("selected opinion providers:");
         console.log($scope.gameOpinionProvidersId);
 //        console.log($scope.gameOpinionProviders.localdata);
-        
+
 
     }
-    
+
     $scope.done = function () {
         console.log( $scope.procId );
     	defineGameData();
@@ -226,6 +224,8 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                 ],
                 localdata: data
             };
+            console.log("available criteria:");
+            console.log(availableCriteria);
             var dataAdapter = new $.jqx.dataAdapter(availableCriteria);
             $("#criteria").jqxGrid({
                 width: '100%',
@@ -240,15 +240,48 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                     { text: 'Description', datafield: 'description' }
                 ]
             });
+
+            getAddedCriteria();
+        });
+    }
+
+    function getAddedCriteria() {
+        $http.get('supersede-dm-app/processes/criteria/list?procId=' + $scope.procId)
+        .success(function (data) {
+            var addedCriteria = data;
+            console.log("added criteria:");
+            console.log(addedCriteria);
+            var criteriaRows = $("#criteria").jqxGrid("rows");
+            console.log("rows:");
+            console.log(criteriaRows);
+
+            for (var i = 0; i < criteriaRows; i++) {
+                var added = false;
+                var currentCriterion = $("#criteria").jqxGrid("getrowdatabyid", i);
+
+                for (var j = 0; j < addedCriteria.length; j++) {
+                    if (addedCriteria[j] === currentCriterion.criteriaId) {
+                        $("#criteria").jqxGrid("selectrow", i);
+                        console.log("selecting criterion:");
+                        console.log(currentCriterion);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    $("#criteria").jqxGrid("unselectrow", i);
+                    console.log("deselecting criterion:");
+                    console.log(currentCriterion);
+                }
+            }
         });
     }
 
     function defineGameData() {
 
-        gameName = $("#game_name").val();
-
         var i;
-        
+
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
@@ -257,7 +290,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         }
 
     }
-    
+
     $scope.done = function () {
     	defineGameData();
         $http({

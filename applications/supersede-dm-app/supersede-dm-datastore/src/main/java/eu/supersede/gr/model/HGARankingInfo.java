@@ -20,6 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.RankingId;
+
 @Entity
 @IdClass(RankingId.class)
 @Table(name = "h_ga_rankings")

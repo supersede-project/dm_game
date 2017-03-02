@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.RequirementPropertyId;
+
 @Entity
 @IdClass(RequirementPropertyId.class)
 @Table(name = "h_requirements_properties")

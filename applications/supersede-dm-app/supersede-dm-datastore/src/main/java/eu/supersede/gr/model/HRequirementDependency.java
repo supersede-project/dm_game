@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.RequirementDependencyId;
+
 @Entity
 @IdClass(RequirementDependencyId.class)
 @Table(name = "h_requirements_dependencies")

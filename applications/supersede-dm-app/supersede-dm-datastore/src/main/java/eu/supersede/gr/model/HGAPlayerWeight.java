@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.PlayerWeightId;
+
 @Entity
 @IdClass(PlayerWeightId.class)
 @Table(name = "h_ga_players_weights")

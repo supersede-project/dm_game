@@ -22,24 +22,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-/*
-	Model class for ValutationCriteria.
-*/
+import eu.supersede.gr.model.id.ProcessCriterionId;
 
 @Entity
-@Table(name = "h_process_criteria")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@IdClass(ProcessCriterionId.class)
+@Table(name = "h_process_criterion")
 public class HProcessCriterion
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long criteriaId;
+    private Long criterionId;
+
+    @Id
     private Long sourceId;
+
+    @Id
     private Long processId;
+
     private String name;
     private String description;
 
@@ -52,14 +54,14 @@ public class HProcessCriterion
         this.name = name;
     }
 
-    public Long getCriteriaId()
+    public Long getCriterionId()
     {
-        return criteriaId;
+        return criterionId;
     }
 
-    public void setCriteriaId(Long criteriaId)
+    public void setCriterionId(Long criterionId)
     {
-        this.criteriaId = criteriaId;
+        this.criterionId = criterionId;
     }
 
     public String getName()
@@ -82,19 +84,23 @@ public class HProcessCriterion
         this.description = description;
     }
 
-	public Long getSourceId() {
-		return sourceId;
-	}
+    public Long getSourceId()
+    {
+        return sourceId;
+    }
 
-	public void setSourceId(Long sourceId) {
-		this.sourceId = sourceId;
-	}
+    public void setSourceId(Long sourceId)
+    {
+        this.sourceId = sourceId;
+    }
 
-	public Long getProcessId() {
-		return processId;
-	}
+    public Long getProcessId()
+    {
+        return processId;
+    }
 
-	public void setProcessId(Long processId) {
-		this.processId = processId;
-	}
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
 }
