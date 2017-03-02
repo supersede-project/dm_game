@@ -16,8 +16,8 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('import_requirements', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
-	
+    $scope.procId = $location.search().procId;
+
     $scope.gameRequirementsId = [];
 
     var availableRequirements = {};
@@ -75,8 +75,8 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     }
 
     $scope.done = function () {
-    	defineGameData();
-    	console.log($scope.gameRequirementsId);
+        defineGameData();
+        console.log($scope.gameRequirementsId);
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/requirements/import",
@@ -84,6 +84,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             params: { procId: $scope.procId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
+            $location.url('supersede-dm-app/process?procId='+$scope.procId);
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");
@@ -103,10 +104,10 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
 app.controllerProvider.register('import_users', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
-	
-	console.log( $scope.procId );
-	
+    $scope.procId = $location.search().procId;
+
+    console.log( $scope.procId );
+
     $scope.gameOpinionProvidersId = [];
 
     var availablePlayers = {};
@@ -170,7 +171,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
     $scope.done = function () {
         console.log( $scope.procId );
-    	defineGameData();
+        defineGameData();
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/users/import",
@@ -196,8 +197,8 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
 app.controllerProvider.register('import_criteria', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
-	
+    $scope.procId = $location.search().procId;
+
     $scope.gameCriteriaId = [];
 
     var availableCriteria = {};
@@ -292,7 +293,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     }
 
     $scope.done = function () {
-    	defineGameData();
+        defineGameData();
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/criteria/import",

@@ -45,6 +45,7 @@ import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HProperty;
 import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.HRequirementProperty;
+import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
@@ -59,6 +60,9 @@ public class ProcessRest
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    // @Autowired
+    // private RequirementsJpa requirementsJpa;
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public Long newProcess()
@@ -106,21 +110,21 @@ public class ProcessRest
         }
     }
 
-    public void setRequirementsStatus(Long procId, List<Long> reqList, RequirementStatus status)
-    {
-        for (Long reqId : reqList)
-        {
-            Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
-            if (r == null)
-                continue;
-            RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
-            if (RequirementStatus.next(oldStatus).contains(status))
-            {
-                r.setStatus(status.getValue());
-                DMGame.get().getJpa().requirements.save(r);
-            }
-        }
-    }
+    // public void setRequirementsStatus(Long procId, List<Long> reqList, RequirementStatus status)
+    // {
+    // for (Long reqId : reqList)
+    // {
+    // Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
+    // if (r == null)
+    // continue;
+    // RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+    // if (RequirementStatus.next(oldStatus).contains(status))
+    // {
+    // r.setStatus(status.getValue());
+    // DMGame.get().getJpa().requirements.save(r);
+    // }
+    // }
+    // }
 
     @RequestMapping(value = "/available_activities", method = RequestMethod.GET)
     public List<ActivityEntry> getNextActivities(Long procId)
@@ -146,19 +150,12 @@ public class ProcessRest
     public void importCriteria(@RequestParam Long procId, @RequestParam List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-
-        List<HProcessCriterion> processCriteria = proc.getProcessCriteria();
-
-        for (HProcessCriterion processCriterion : processCriteria)
+        if (idlist == null)
         {
-            System.out.println("Removing criterion " + processCriterion.getCriterionId() + " from process " + procId);
-            proc.removeCriterion(processCriterion.getCriterionId(), processCriterion.getSourceId(),
-                    processCriterion.getProcessId());
+            return;
         }
-
         for (Long cid : idlist)
         {
-            System.out.println("Adding criterion " + cid + " to process " + procId);
             ValutationCriteria c = DMGame.get().getCriterion(cid);
             proc.addCriterion(c);
         }
@@ -169,11 +166,9 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
 
-        List<Requirement> requirements = proc.requirements();
-
-        for (Requirement requirement : requirements)
+        if (requirementsId == null)
         {
-            proc.removeRequirement(requirement.getRequirementId());
+            return;
         }
 
         for (Long requirementId : requirementsId)
@@ -185,7 +180,7 @@ public class ProcessRest
                 continue;
             }
 
-            r.setStatus(RequirementStatus.Editable.getValue());
+            // r.setStatus(RequirementStatus.Editable.getValue());
             proc.addRequirement(r);
         }
     }
@@ -223,12 +218,10 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<Long> list = new ArrayList<>();
-
         for (ValutationCriteria c : proc.getCriteria())
         {
             list.add(c.getCriteriaId());
         }
-
         return list;
     }
 
@@ -253,12 +246,91 @@ public class ProcessRest
         return proc.getRequirementsCount();
     }
 
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    public String getProcessStatus(@RequestParam Long procId)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return "";
+        }
+        return mgr.getProcessStatus().name();
+    }
+
+    @RequestMapping(value = "/status", method = RequestMethod.POST)
+    public void getProcessStatus(@RequestParam Long procId, @RequestParam String status)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return;
+        }
+        try
+        {
+            mgr.setProcessStatus(ProcessStatus.valueOf(status));
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    // Checks if a certain status pertains ALL the requirements
+    @RequestMapping(value = "/requirements/stablestatus", method = RequestMethod.GET, produces = "text/plain")
+    public String getRequirementsStableStatus(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        Map<String, Integer> count = new HashMap<>();
+        List<Requirement> requirements = proc.requirements();
+        for (Requirement r : requirements)
+        {
+            RequirementStatus s = RequirementStatus.valueOf(r.getStatus());
+            Integer n = count.get(r.getStatus());
+            if (n == null)
+            {
+                n = 0;
+            }
+            count.put(s.name(), n + 1);
+        }
+        if (count.size() != 1)
+        {
+            return "";
+        }
+        return count.keySet().toArray()[0].toString();
+    }
+
+    // Sets a same status to ALL the requirements
+    @RequestMapping(value = "/requirements/stablestatus", method = RequestMethod.POST, produces = "text/plain")
+    public void setRequirementsStableStatus(@RequestParam Long procId,
+            @RequestParam(name = "status") String statusString)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return;
+        }
+        try
+        {
+            RequirementStatus status = RequirementStatus.valueOf(statusString);
+            for (Requirement r : mgr.requirements())
+            {
+                r.setStatus(status.getValue());
+                DMGame.get().getJpa().requirements.save(r);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
     @RequestMapping(value = "/requirements/status", method = RequestMethod.GET, produces = "text/plain")
     public String getRequirementsStatus(@RequestParam Long procId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         Map<Integer, Integer> count = new HashMap<>();
         count.put(RequirementStatus.Unconfirmed.getValue(), 0);
+        count.put(RequirementStatus.Editable.getValue(), 0);
         count.put(RequirementStatus.Confirmed.getValue(), 0);
         count.put(RequirementStatus.Enacted.getValue(), 0);
         count.put(RequirementStatus.Discarded.getValue(), 0);
@@ -289,6 +361,24 @@ public class ProcessRest
             return RequirementStatus.Discarded.name();
         }
         return RequirementStatus.Confirmed.name();
+    }
+
+    @RequestMapping(value = "/requirements/statusmap", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Integer> getRequirementsStatusMap(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        Map<String, Integer> count = new HashMap<>();
+        for (Requirement r : proc.requirements())
+        {
+            String str = RequirementStatus.valueOf(r.getStatus()).name();
+            Integer n = count.get(str);
+            if (n == null)
+            {
+                n = 0;
+            }
+            count.put(str, n + 1);
+        }
+        return count;
     }
 
     @RequestMapping(value = "/activities/list", method = RequestMethod.GET)
@@ -378,9 +468,30 @@ public class ProcessRest
         }
     }
 
-    @RequestMapping(value = "/requirements/close", method = RequestMethod.POST)
+    @RequestMapping(value = "/close", method = RequestMethod.POST)
     public void closeProcess(@RequestParam Long procId)
     {
+        HProcess p = DMGame.get().getProcess(procId);
+        if (p == null)
+        {
+            return;
+        }
+        p.setStatus(ProcessStatus.Closed);
+        DMGame.get().getJpa().processes.save(p);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public void deleteProcess(@RequestParam Long procId)
+    {
+        HProcess p = DMGame.get().getProcess(procId);
+        if (p == null)
+        {
+            return;
+        }
+        if (p.getStatus() == ProcessStatus.InProgress)
+        {
+            throw new RuntimeException("You must close the process first");
+        }
         DMGame.get().deleteProcess(procId);
     }
 
@@ -396,5 +507,42 @@ public class ProcessRest
     public List<HRequirementProperty> getProperties(@RequestParam Long procId, @RequestParam Long requirementId)
     {
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
+    }
+
+    @RequestMapping(value = "/requirements/next", method = RequestMethod.POST)
+    public String setNextPhase(@RequestParam Long procId)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        try
+        {
+            RequirementStatus status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
+            switch (status)
+            {
+                case Confirmed:
+                    status = RequirementStatus.Enacted;
+                    break;
+                case Discarded:
+                    break;
+                case Editable:
+                    status = RequirementStatus.Confirmed;
+                    break;
+                case Enacted:
+                    break;
+                case Unconfirmed:
+                    status = RequirementStatus.Editable;
+                    break;
+            }
+            for (Requirement r : mgr.requirements())
+            {
+                r.setStatus(status.getValue());
+                DMGame.get().getJpa().requirements.save(r);
+            }
+            return status.name();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }

@@ -17,6 +17,8 @@ package eu.supersede.dm.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -61,13 +64,42 @@ public class RequirementRest
         return c;
     }
 
+    // @PersistenceContext(unitName="dq")
+    @Autowired
+    EntityManager em;
+
     /**
      * Return all the requirements.
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Requirement> getRequirements()
+    public List<Requirement> getRequirements(@RequestParam(defaultValue = "Eq") String procFx,
+            @RequestParam(defaultValue = "-1") Long procId, @RequestParam(defaultValue = "") String statusFx,
+            @RequestParam(defaultValue = "-1") Integer status)
     {
-        return DMGame.get().getJpa().requirements.findAll();
+
+        String root = "SELECT r FROM Requirement r";
+        String filter = "";
+
+        if ("Eq".equals(procFx))
+        {
+            filter += " processId = " + procId;
+        }
+        if ("Neq".equals(procFx))
+        {
+            filter += " processId != " + procId;
+        }
+        if ("Eq".equals(statusFx))
+        {
+            filter += " status = " + status;
+        }
+        if ("Neq".equals(statusFx))
+        {
+            filter += " status != " + status;
+        }
+
+        String query = root + " WHERE" + filter;
+
+        return em.createQuery(query, Requirement.class).getResultList();
     }
 
     @RequestMapping(value = "details/list", method = RequestMethod.GET)

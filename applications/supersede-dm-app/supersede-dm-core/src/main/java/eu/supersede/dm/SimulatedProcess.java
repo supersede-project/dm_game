@@ -23,6 +23,7 @@ import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -245,5 +246,18 @@ public class SimulatedProcess extends AbstractProcessManager
         {
             members.remove(mId);
         }
+    }
+
+    @Override
+    public ProcessStatus getProcessStatus()
+    {
+        return ProcessStatus.InProgress;
+    }
+
+    @Override
+    public void setProcessStatus(ProcessStatus status)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

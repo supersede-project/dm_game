@@ -86,16 +86,23 @@ public class UsersImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
+                if (mgr.requirements().size() < 1)
+                {
+                    return true;
+                }
                 for (Requirement r : mgr.requirements())
                 {
-                    if (r.getStatus() != RequirementStatus.Unconfirmed.getValue()
-                            || r.getStatus() != RequirementStatus.Editable.getValue())
+                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
                     {
-                        return false;
+                        return true;
+                    }
+                    if (r.getStatus() == RequirementStatus.Editable.getValue())
+                    {
+                        return true;
                     }
                 }
 
-                return true;
+                return false;
             }
         });
 

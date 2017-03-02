@@ -20,6 +20,7 @@ import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -76,4 +77,10 @@ public interface ProcessManager
     // Properties
 
     public PropertyBag getProperties(HActivity a);
+
+    // Process status
+
+    public ProcessStatus getProcessStatus();
+
+    public void setProcessStatus(ProcessStatus status);
 }
