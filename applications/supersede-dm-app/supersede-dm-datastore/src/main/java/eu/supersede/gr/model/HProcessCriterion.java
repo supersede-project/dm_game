@@ -29,7 +29,7 @@ import eu.supersede.gr.model.id.ProcessCriterionId;
 
 @Entity
 @IdClass(ProcessCriterionId.class)
-@Table(name = "h_process_criterion")
+@Table(name = "h_process_criteria")
 public class HProcessCriterion
 {
     @Id
