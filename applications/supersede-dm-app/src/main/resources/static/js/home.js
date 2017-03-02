@@ -14,8 +14,8 @@
 
 var app = angular.module('w5app');
 
-var http = undefined;
-var loadProcesses = undefined;
+var http;
+var loadProcesses;
 
 app.controllerProvider.register('home', function ($scope, $http, $location) {
 
@@ -135,8 +135,8 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
     });
 
 
-    $scope.loadProcesses = function() {
-        $http.get('supersede-dm-app/processes/list').success(function(data) {
+    $scope.loadProcesses = function () {
+        $http.get('supersede-dm-app/processes/list').success(function (data) {
             //            $('#listbox').jqxListBox('clear');
             console.log("procNum:");
             console.log(data.length);
@@ -146,17 +146,23 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
                 datatype: "array"
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $('#listbox').jqxListBox({ selectedIndex: 0,
+            $('#listbox').jqxListBox({
+                selectedIndex: 0,
                 source: dataAdapter,
                 displayMember: "name",
                 valueMember: "id",
                 itemHeight: 70, width: '100%',
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
-//                    var imgurl = '../../images/' + label.toLowerCase() + '.png';
-//                    var img = '<img height="50" width="40" src="' + imgurl + '"/>';
+                    //                    var imgurl = '../../images/' + label.toLowerCase() + '.png';
+                    //                    var img = '<img height="50" width="40" src="' + imgurl + '"/>';
+
+                    if (datarecord === undefined) {
+                        return "";
+                    }
+
                     var action;
-                    if( datarecord.state == "new" ) {
+                    if (datarecord.state == "new") {
                         action = "Start";
                     }
                     else {
@@ -181,7 +187,7 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
 
             $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
         });
-    }
+    };
 
     loadProcesses = $scope.loadProcesses;
 
