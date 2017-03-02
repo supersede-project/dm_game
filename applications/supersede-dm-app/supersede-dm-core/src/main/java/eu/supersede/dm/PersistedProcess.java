@@ -25,6 +25,7 @@ import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HPropertyBag;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.ValutationCriteria;
 
 public class PersistedProcess extends AbstractProcessManager
@@ -202,6 +203,7 @@ public class PersistedProcess extends AbstractProcessManager
         if (r != null)
         {
             r.setProcessId(-1L);
+            r.setStatus(RequirementStatus.Unconfirmed.getValue());
             DMGame.get().jpa.requirements.save(r);
         }
     }

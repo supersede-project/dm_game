@@ -23,6 +23,8 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
+import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 
 public class RequirementsImportMethod implements DMMethod
 {
@@ -90,7 +92,15 @@ public class RequirementsImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                return mgr.getRequirementsCount() == 0;
+                for (Requirement r : mgr.requirements())
+                {
+                    if (r.getStatus() != RequirementStatus.Unconfirmed.getValue())
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         });
 
