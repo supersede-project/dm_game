@@ -14,8 +14,12 @@
 
 var app = angular.module('w5app');
 
+var http = undefined;
+var loadProcesses = undefined;
+
 app.controllerProvider.register('home', function ($scope, $http, $location) {
 
+    http = $http;
     $scope.procNum = undefined;
 
     // Get alerts
@@ -131,7 +135,7 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
     });
 
 
-    function loadProcesses() {
+    $scope.loadProcesses = function() {
         $http.get('supersede-dm-app/processes/list').success(function(data) {
             //            $('#listbox').jqxListBox('clear');
             console.log("procNum:");
@@ -165,8 +169,8 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
                         '<td style="width: 40px;" rowspan="2">' +
                         '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
                         'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' +
-                        '<jqx-button style="margin-left: 10px" ng-click="closeProcess(' + datarecord.id + ')">Close</jqx-button>' +
-                        '<jqx-button style="margin-left: 10px" ng-click="deleteProcess(' + datarecord.id + ')">Delete</jqx-button>' +
+                        '<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');">Close</a></jqx-button>' +
+                        '<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');">Delete</a></jqx-button>' +
                         '</td>' +
                         '</tr><tr><td>' +
                         "Created: " + datarecord.date +
@@ -179,25 +183,27 @@ app.controllerProvider.register('home', function ($scope, $http, $location) {
         });
     }
 
+    loadProcesses = $scope.loadProcesses;
+
     $scope.createNewProcess = function() {
         $http.post('supersede-dm-app/processes/new').success(function(data) {
             loadProcesses();
         });
     };
 
-    $scope.closeProcess = function (procId) {
-        console.log("closing process " + procId);
-        $http.post('supersede-dm-app/processes/close?procId=' + procId).success(function (data) {
-            loadProcesses();
-        });
-    };
-
-    $scope.deleteProcess = function (procId) {
-        console.log("deleting process " + procId);
-        $http.post('supersede-dm-app/processes/delete?procId=' + procId).success(function (data) {
-            loadProcesses();
-        });
-    };
-
     loadProcesses();
 });
+
+function closeProcess(procId) {
+    console.log("closing process " + procId);
+    http.post('supersede-dm-app/processes/close?procId=' + procId).success(function (data) {
+        loadProcesses();
+    });
+}
+
+function deleteProcess(procId) {
+    console.log("deleting process " + procId);
+    http.post('supersede-dm-app/processes/delete?procId=' + procId).success(function (data) {
+        loadProcesses();
+    });
+}
