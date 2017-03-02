@@ -516,6 +516,7 @@ public class ProcessRest
         }
 
         p.setStatus(ProcessStatus.Closed);
+        System.out.println("Closed process " + procId);
         DMGame.get().getJpa().processes.save(p);
     }
 
@@ -531,9 +532,10 @@ public class ProcessRest
 
         if (p.getStatus() == ProcessStatus.InProgress)
         {
-            throw new RuntimeException("You must close the process first");
+            System.err.println("Can't delete process with id " + procId + ": you must close it first");
         }
 
+        System.out.println("Deleted process " + procId);
         DMGame.get().deleteProcess(procId);
     }
 

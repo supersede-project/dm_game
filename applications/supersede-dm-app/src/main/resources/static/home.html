@@ -65,7 +65,7 @@
 
 		<div class="col-md-6">
 		
-		<div id='jqxExpander'>
+		<div id='expAlerts'>
 			<div><h2>Queued alerts: {{alertsNum}}</h2></div>
 			<div>
 				<div id="gridAlerts"></div>
@@ -77,10 +77,8 @@
 		</div>
 		<div id='expProcesses' style='margin-top:32px'>
 			<div>
-				<h2>Ongoing processes: {{procNum}}
-<!-- 				<a href="#/supersede-dm-app/requirements">{{procNum}}</a> -->
-				</h2>
-				<input type="button" value="Create new" id='btnNewProcess' />
+				<h2>Ongoing processes: {{procNum}}</h2>
+				<jqx-button ng-click="createNewProcess() ">Create new</jqx-button>
 			</div>
 			<div>
 				<div style="border: none;" id="listbox"></div>
@@ -93,10 +91,8 @@
 			</div>
 		</div>
 
-
 		</div>
 
 	</div>
-
 
 </div>
