@@ -17,10 +17,26 @@ var app = angular.module('w5app');
 var http;
 var loadProcesses;
 
-app.controllerProvider.register('home', function ($scope, $http, $location) {
+app.controllerProvider.register('home', function ($scope, $rootScope, $http, $location) {
 
     http = $http;
     $scope.procNum = undefined;
+
+    $http.get('/supersede-dm-app/user/current')
+    .success(function (data) {
+        $scope.user = data;
+    });
+
+    $scope.hasRole = function (role) {
+        if ($rootScope.user && $rootScope.user.authorities) {
+            for (var i = 0; i < $rootScope.user.authorities.length; i++) {
+                if ($rootScope.user.authorities[i].authority == "ROLE_" + role) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
 
     // Get alerts
     $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
