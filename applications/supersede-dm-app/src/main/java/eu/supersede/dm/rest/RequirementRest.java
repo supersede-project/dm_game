@@ -72,9 +72,9 @@ public class RequirementRest
      * Return all the requirements.
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Requirement> getRequirements(@RequestParam(defaultValue = "Eq") String procFx,
-            @RequestParam(defaultValue = "-1") Long procId, @RequestParam(defaultValue = "") String statusFx,
-            @RequestParam(defaultValue = "-1") Integer status)
+    public List<Requirement> getRequirements(@RequestParam(required = false) String procFx,
+            @RequestParam(required = false) Long procId, @RequestParam(required = false) String statusFx,
+            @RequestParam(required = false) Integer status)
     {
 
         String root = "SELECT r FROM Requirement r";
@@ -97,7 +97,13 @@ public class RequirementRest
             filter += " status != " + status;
         }
 
-        String query = root + " WHERE" + filter;
+        String query = root;
+
+        if (!filter.equals(""))
+        {
+
+            query = query + " WHERE" + filter;
+        }
 
         return em.createQuery(query, Requirement.class).getResultList();
     }
