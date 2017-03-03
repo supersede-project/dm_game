@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div id='expActivities' ng-show="hasRole('OPINION_NEGOTIATOR')" style='margin-top:32px'>
+        <div id='expActivities' ng-show="hasRole('OPINION_NEGOTIATOR') || hasRole('OPINION_PROVIDER')" style='margin-top:32px'>
             <div><h2>Pending activities: {{actNum}}</h2></div>
             <div>
                 <div style="border: none;" id="activities-listbox"></div>
