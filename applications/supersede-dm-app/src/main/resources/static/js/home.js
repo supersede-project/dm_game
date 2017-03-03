@@ -66,7 +66,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#gridAlerts").jqxGrid(
             {
-                width: 900,
+                width: "100%",
                 source: dataAdapter,
                 //            pageable: true,
                 //            columnsResize: true,
@@ -76,16 +76,16 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 //                $("#treeGrid").jqxTreeGrid('expandRow', "0");
                 //            },
                 columns: [
-                  { text: 'App', dataField: 'applicationID', width: 50 },
-                  { text: 'Alert', dataField: 'alertID', width: 50 },
-                  { text: 'ID', dataField: 'id', width: 50 },
-                  { text: 'Timestamp', dataField: 'timestamp', width: 100 },
-                  { text: 'Description', dataField: 'description', minWidth: 100, width: 200 },
-                  { text: 'Classification', dataField: 'classification', minWidth: 100, width: 150 },
-                  { text: 'Accuracy', dataField: 'accuracy', width: 50 },
-                  { text: 'Pos.', dataField: 'pos', width: 58 },
-                  { text: 'Neg.', dataField: 'neg', width: 58 },
-                  { text: 'Overall.', dataField: 'overall', width: 50 }
+                  { text: 'App', dataField: 'applicationID', width: "15%" },
+                  { text: 'Alert', dataField: 'alertID', width: "10%" },
+                  { text: 'ID', dataField: 'id', width: "10%" },
+                  { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
+                  { text: 'Description', dataField: 'description', width: "20%" },
+                  { text: 'Classification', dataField: 'classification', width: "15%" },
+                  { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
+                  { text: 'Pos.', dataField: 'pos', width: "5%" },
+                  { text: 'Neg.', dataField: 'neg', width: "5%" },
+                  { text: 'Overall.', dataField: 'overall', width: "5%" }
     //              { text: 'Features.', dataField: 'features', width: 120 }
                 ],
             groups: ['applicationID', 'alertID']
