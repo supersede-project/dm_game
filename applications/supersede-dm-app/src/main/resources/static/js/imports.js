@@ -58,6 +58,41 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
                     { text: 'Description', datafield: 'description' }
                 ]
             });
+
+            getAddedRequirements();
+        });
+    }
+
+    function getAddedRequirements() {
+        $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
+        .success(function (data) {
+            var addedRequirements = data;
+            console.log("added requirements:");
+            console.log(addedRequirements);
+            var requirementsRows = $("#requirements").jqxGrid("getrows").length;
+            console.log("rows:");
+            console.log(requirementsRows);
+
+            for (var i = 0; i < requirementsRows; i++) {
+                var added = false;
+                var currentRequirement = $("#requirements").jqxGrid("getrowdatabyid", i);
+
+                for (var j = 0; j < addedRequirements.length; j++) {
+                    if (addedRequirements[j].requirementId === currentRequirement.requirementId) {
+                        $("#requirements").jqxGrid("selectrow", i);
+                        console.log("selecting requirement:");
+                        console.log(currentRequirement);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    $("#requirements").jqxGrid("unselectrow", i);
+                    console.log("deselecting requirement:");
+                    console.log(currentRequirement);
+                }
+            }
         });
     }
 
