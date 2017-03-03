@@ -553,14 +553,15 @@ public class ProcessRest
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
     }
 
-    @RequestMapping(value = "/requirements/next", method = RequestMethod.POST)
+    @RequestMapping(value = "/requirements/next", method = RequestMethod.GET, produces = "text/plain")
     public String setNextPhase(@RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        RequirementStatus status = null;
 
         try
         {
-            RequirementStatus status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
+            status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
 
             switch (status)
             {

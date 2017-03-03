@@ -16,18 +16,13 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('process', function($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
-
-    $scope.now = function() {
-        return new Date().toJSON().slice(0,19).replace("T", " ");
-    }
-
+    var procId = $location.search().procId;
     $scope.userCount = undefined;
 
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/users/list",
-        params: { procId: $scope.procId }
+        params: { procId: procId }
     }).success(function(data){
         $scope.userCount = data.length;
     });
@@ -35,7 +30,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/criteria/list",
-        params: { procId: $scope.procId }
+        params: { procId: procId }
     }).success(function(data){
         $scope.criteriaCount = data.length;
     });
@@ -43,7 +38,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/requirements/count",
-        params: { procId: $scope.procId }
+        params: { procId: procId }
     }).success(function(data){
         $scope.requirementsCount = data;
     });
@@ -51,7 +46,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/requirements/stablestatus",
-        params: { procId: $scope.procId },
+        params: { procId: procId },
         headers: {
             'Content-Type': undefined
           }
@@ -59,10 +54,13 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         $scope.processStatus = data;
     });
 
-    $scope.loadActivities = function() {
-        $http.get('supersede-dm-app/processes/available_activities?procId=' + $scope.procId ).success(function(data) {
+    function loadActivities() {
+        console.log("Loading activities");
+        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId).success(function (data) {
+            console.log("Activities:");
             console.log(data);
-            $("#procList").jqxListBox({ source: data, width: 700, height: 250,
+            $("#procList").jqxListBox({
+                source: data, width: 700, height: 250,
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
                     var imgurl = 'supersede-dm-app/img/process.png';
@@ -74,7 +72,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                         datarecord.methodName +
                         '</td></tr><tr><td>' +
                         '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
-                        'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + $scope.procId + '">Open</a>' +
+                        'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">Open</a>' +
                         '</jqx-link-button>' +
                         '</td></tr>' +
                         '</table>';
@@ -84,7 +82,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         });
     }
 
-    $scope.loadActivities();
+    loadActivities();
 
 //    $http.get('supersede-dm-app/processes/requirements/statusmap?procId=' + $scope.procId ).success(function(data) {
 //        console.log(data);
@@ -120,11 +118,13 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
     $("#btnNextPhase").on('click', function() {
         $http({
-            method: 'POST',
+            method: 'GET',
             url: "supersede-dm-app/processes/requirements/next",
-            params: { procId: $scope.procId }
-        }).success(function(data){
-            $scope.loadActivities();
+            params: { procId: procId }
+        }).success(function (data) {
+            loadActivities();
+        }).error(function (error) {
+            console.log(error);
         });
     } );
 });
