@@ -1,15 +1,24 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package eu.supersede.dm;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,225 +45,221 @@ import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
 import eu.supersede.integration.api.dm.types.UserRequest;
-import eu.supersede.integration.api.json.JsonUtils;
+import eu.supersede.integration.api.pubsub.evolution.EvolutionAlertMessageListener;
 import eu.supersede.integration.api.pubsub.evolution.EvolutionSubscriber;
 import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 
 @Component
 public class ModuleLoader
 {
+    @Autowired
+    UsersJpa jpaUsers;
 
-	@Autowired UsersJpa						jpaUsers;
-	@Autowired RequirementsJpa				jpaRequirements;
-	@Autowired ValutationCriteriaJpa		jpaCriteria;
-	@Autowired ProcessesJpa					jpaProcesses;
-	@Autowired ProcessMembersJpa			jpaMembers;
-	@Autowired ActivitiesJpa				jpaActivities;
-	@Autowired ProcessCriteriaJpa			jpaProcessCriteria;
-	@Autowired AppsJpa						jpaApps;
-	@Autowired AlertsJpa					jpaAlerts;
-	@Autowired ReceivedUserRequestsJpa		jpaReceivedUserRequests;
-	@Autowired RequirementsPropertiesJpa	jpaRequirementProperties;
-	@Autowired RequirementsDependenciesJpa	jpaRequirementDependencies;
-	@Autowired PropertiesJpa				jpaProperties;
-	@Autowired PropertyBagsJpa				jpaPropertyBags;
-	
-	@Autowired MultiJpaProvider				multiJpaProvider;
+    @Autowired
+    RequirementsJpa jpaRequirements;
 
-	public ModuleLoader() {}
+    @Autowired
+    ValutationCriteriaJpa jpaCriteria;
 
-	@PostConstruct
-	public void init()
-	{
-		DMGame.JpaProvider jpa = new DMGame.JpaProvider();
-		jpa.activities				= jpaActivities;
-		jpa.criteria				= jpaCriteria;
-		jpa.members					= jpaMembers;
-		jpa.processes				= jpaProcesses;
-		jpa.requirements			= jpaRequirements;
-		jpa.users					= jpaUsers;
-		jpa.processCriteria			= jpaProcessCriteria;
-		jpa.alerts					= jpaAlerts;
-		jpa.apps					= jpaApps;
-		jpa.receivedUserRequests	= jpaReceivedUserRequests;
-		jpa.requirementProperties	= jpaRequirementProperties;
-		jpa.requirementDependencies	= jpaRequirementDependencies;
-		jpa.properties				= jpaProperties;
-		jpa.propertyBags			= jpaPropertyBags;
-		
-		DMGame.init( jpa );
-		
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				iEvolutionSubscriber subscriber = null;
+    @Autowired
+    ProcessesJpa jpaProcesses;
 
-				try
-				{
-					subscriber = new EvolutionSubscriber();
-					subscriber.openTopicConnection();
-					EvolutionAlertMessageListener messageListener = new EvolutionAlertMessageListener();
-					subscriber.createEvolutionAlertSubscriptionAndKeepListening(messageListener);
+    @Autowired
+    ProcessMembersJpa jpaMembers;
 
-					try
-					{
-						while (true)
-						{
-							if (messageListener.messagesReceived())
-							{
-								handleAlert(messageListener.getNextAlert());
-							}
-							else
-							{
-								Thread.sleep(1000); // FIXME Configure sleeping time
-							}
-						}
-					}
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
+    @Autowired
+    ActivitiesJpa jpaActivities;
 
-					subscriber.closeSubscription();
-					subscriber.closeTopicConnection();
-				}
-				catch (JMSException e)
-				{
-					e.printStackTrace();
-				}
-				catch (NamingException e1)
-				{
-					e1.printStackTrace();
-				}
-				finally
-				{
-					if (subscriber != null)
-					{
-						try
-						{
-							subscriber.closeTopicConnection();
-						}
-						catch (JMSException e)
-						{
-							throw new RuntimeException("Error in closing topic connection", e);
-						}
-					}
-				}
-			}
-		}).start();
-	}
+    @Autowired
+    ProcessCriteriaJpa jpaProcessCriteria;
 
-	private List<Requirement> getRequirements(Alert alert)
-	{
-		// Either extract from the alert, or make a backward request to WP2
+    @Autowired
+    AppsJpa jpaApps;
 
-		List<Requirement> reqs = new ArrayList<>();
+    @Autowired
+    AlertsJpa jpaAlerts;
 
-		for (UserRequest request : alert.getRequests())
-		{
-			reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
-		}
+    @Autowired
+    ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
-		return reqs;
-	}
+    @Autowired
+    RequirementsPropertiesJpa jpaRequirementProperties;
 
-	public void handleAlert(Alert alert)
-	{
-		System.out.println("Handling alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
-				+ alert.getTenant() + ", " + alert.getTimestamp());
-		
-		// Override class JPA instances with multitenancy provided
-		AppsJpa jpaApps = multiJpaProvider.getRepository( AppsJpa.class, alert.getTenant() );
-		AlertsJpa jpaAlerts = multiJpaProvider.getRepository( AlertsJpa.class, alert.getTenant() );
-		ReceivedUserRequestsJpa jpaReceivedUserRequests = multiJpaProvider.getRepository( ReceivedUserRequestsJpa.class, alert.getTenant() );
-		RequirementsJpa jpaRequirements = multiJpaProvider.getRepository( RequirementsJpa.class, alert.getTenant() );
-		
-		if( (jpaApps == null) ) {
-			System.out.println( "Unknown tenant: '" + alert.getTenant() + "'" );
-			return;
-		}
-		
-		HApp app = jpaApps.findOne(alert.getApplicationID());
+    @Autowired
+    RequirementsDependenciesJpa jpaRequirementDependencies;
 
-		if (app == null)
-		{
-			app = new HApp();
-			app.setId(alert.getApplicationID());
-			app = jpaApps.save(app);
+    @Autowired
+    PropertiesJpa jpaProperties;
 
-			HAlert halert = jpaAlerts.findOne(alert.getID());
+    @Autowired
+    PropertyBagsJpa jpaPropertyBags;
 
-			if (halert == null)
-			{
-				halert = new HAlert(alert.getID(), alert.getTimestamp());
-				halert = jpaAlerts.save(halert);
-			}
+    @Autowired
+    MultiJpaProvider multiJpaProvider;
 
-			for (UserRequest request : alert.getRequests())
-			{
-				HReceivedUserRequest hrur = new HReceivedUserRequest();
-				hrur.setId(request.getId());
-				hrur.setAccuracy(request.getAccuracy());
-				hrur.setClassification(request.getClassification().name());
-				hrur.setDescription(request.getDescription());
-				hrur.setNegativeSentiment(request.getNegativeSentiment());
-				hrur.setPositiveSentiment(request.getPositiveSentiment());
-				hrur.setOverallSentiment(request.getOverallSentiment());
-				jpaReceivedUserRequests.save(hrur);
-			}
-		}
+    public ModuleLoader()
+    {
+    }
 
-		List<Requirement> requirements = getRequirements(alert);
+    @PostConstruct
+    public void init()
+    {
+        DMGame.JpaProvider jpa = new DMGame.JpaProvider();
+        jpa.activities = jpaActivities;
+        jpa.criteria = jpaCriteria;
+        jpa.members = jpaMembers;
+        jpa.processes = jpaProcesses;
+        jpa.requirements = jpaRequirements;
+        jpa.users = jpaUsers;
+        jpa.processCriteria = jpaProcessCriteria;
+        jpa.alerts = jpaAlerts;
+        jpa.apps = jpaApps;
+        jpa.receivedUserRequests = jpaReceivedUserRequests;
+        jpa.requirementProperties = jpaRequirementProperties;
+        jpa.requirementDependencies = jpaRequirementDependencies;
+        jpa.properties = jpaProperties;
+        jpa.propertyBags = jpaPropertyBags;
 
-		for (Requirement r : requirements)
-		{
-			r.setRequirementId(null);
+        DMGame.init(jpa);
 
-			if (jpaRequirements != null)
-			{
-				jpaRequirements.save(r);
-			}
-			else
-			{
-				System.out.println("requirementsTable is NULL");
-			}
-		}
-	}
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                iEvolutionSubscriber subscriber = null;
 
-	private class EvolutionAlertMessageListener implements MessageListener
-	{
-		private Queue<Alert> alerts;
+                try
+                {
+                    subscriber = new EvolutionSubscriber();
+                    subscriber.openTopicConnection();
+                    EvolutionAlertMessageListener messageListener = subscriber
+                            .createEvolutionAlertSubscriptionAndKeepListening();
 
-		public EvolutionAlertMessageListener()
-		{
-			alerts = new LinkedList<>();
-		}
+                    try
+                    {
+                        while (true)
+                        {
+                            if (messageListener.areMessageReceived())
+                            {
+                                handleAlert(messageListener.getNextAlert());
+                            }
+                            else
+                            {
+                                Thread.sleep(1000); // FIXME Configure sleeping time
+                            }
+                        }
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
 
-		@Override
-		public void onMessage(Message message)
-		{
-			try
-			{
-				String json = ((TextMessage) message).getText();
-				System.out.println("Received JSON Message : " + json);
-				alerts.offer(JsonUtils.deserializeJsonStringAsObject(json, Alert.class));
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
+                    subscriber.closeSubscription();
+                    subscriber.closeTopicConnection();
+                }
+                catch (JMSException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (NamingException e1)
+                {
+                    e1.printStackTrace();
+                }
+                finally
+                {
+                    if (subscriber != null)
+                    {
+                        try
+                        {
+                            subscriber.closeTopicConnection();
+                        }
+                        catch (JMSException e)
+                        {
+                            throw new RuntimeException("Error in closing topic connection", e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
 
-		public Alert getNextAlert()
-		{
-			return alerts.poll();
-		}
+    private List<Requirement> getRequirements(Alert alert)
+    {
+        // Either extract from the alert, or make a backward request to WP2
 
-		public boolean messagesReceived()
-		{
-			return alerts.size() > 0;
-		}
-	}
+        List<Requirement> reqs = new ArrayList<>();
+
+        for (UserRequest request : alert.getRequests())
+        {
+            reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
+        }
+
+        return reqs;
+    }
+
+    public void handleAlert(Alert alert)
+    {
+        System.out.println("Handling alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
+                + alert.getTenant() + ", " + alert.getTimestamp());
+
+        // Override class JPA instances with multitenancy provided
+        AppsJpa jpaApps = multiJpaProvider.getRepository(AppsJpa.class, alert.getTenant());
+        AlertsJpa jpaAlerts = multiJpaProvider.getRepository(AlertsJpa.class, alert.getTenant());
+        ReceivedUserRequestsJpa jpaReceivedUserRequests = multiJpaProvider.getRepository(ReceivedUserRequestsJpa.class,
+                alert.getTenant());
+        RequirementsJpa jpaRequirements = multiJpaProvider.getRepository(RequirementsJpa.class, alert.getTenant());
+
+        if ((jpaApps == null))
+        {
+            System.out.println("Unknown tenant: '" + alert.getTenant() + "'");
+            return;
+        }
+
+        HApp app = jpaApps.findOne(alert.getApplicationID());
+
+        if (app == null)
+        {
+            app = new HApp();
+            app.setId(alert.getApplicationID());
+            app = jpaApps.save(app);
+
+            HAlert halert = jpaAlerts.findOne(alert.getID());
+
+            if (halert == null)
+            {
+                halert = new HAlert(alert.getID(), alert.getTimestamp());
+                halert = jpaAlerts.save(halert);
+            }
+
+            for (UserRequest request : alert.getRequests())
+            {
+                HReceivedUserRequest hrur = new HReceivedUserRequest();
+                hrur.setId(request.getId());
+                hrur.setAccuracy(request.getAccuracy());
+                hrur.setClassification(request.getClassification().name());
+                hrur.setDescription(request.getDescription());
+                hrur.setNegativeSentiment(request.getNegativeSentiment());
+                hrur.setPositiveSentiment(request.getPositiveSentiment());
+                hrur.setOverallSentiment(request.getOverallSentiment());
+                jpaReceivedUserRequests.save(hrur);
+            }
+        }
+
+        List<Requirement> requirements = getRequirements(alert);
+
+        for (Requirement r : requirements)
+        {
+            r.setRequirementId(null);
+
+            if (jpaRequirements != null)
+            {
+                jpaRequirements.save(r);
+            }
+            else
+            {
+                System.out.println("requirementsTable is NULL");
+            }
+        }
+    }
 }
