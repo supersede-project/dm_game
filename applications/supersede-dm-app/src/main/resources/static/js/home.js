@@ -99,6 +99,26 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     // Get requirements
     $http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1').success(function(data) {
         $scope.reqNum = data.length;
+
+        var source = {
+            localdata: data,
+            datatype: "array"
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $('#requirementslist').jqxListBox({
+            source: dataAdapter,
+            width: '100%',
+            renderer: function (index, label, value) {
+                var datarecord = data[index];
+
+                if (datarecord === undefined) {
+                    return "";
+                }
+
+                return datarecord.name + " - " + datarecord.description;
+            }
+        });
+
         $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
     });
 
