@@ -385,6 +385,126 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     getAvailableCriteria();
 });
 
+app.controllerProvider.register('import_alerts', function ($scope, $http, $location) {
+
+    $scope.procId = $location.search().procId;
+
+    $scope.alertsId = [];
+
+    var availableAlerts = {};
+
+    $scope.alerts = {
+        datatype: "json",
+        datafields: [
+            { name: 'id' },
+            { name: 'applicationId' },
+            { name: 'timestamp' }
+        ],
+        localdata: []
+    };
+
+    function getAvailableAlerts() {
+        $http.get('supersede-dm-app/alerts')
+        .success(function (data) {
+            availableAlerts = {
+                datatype: "json",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'applicationId' },
+                    { name: 'timestamp' }
+                ],
+                localdata: data
+            };
+            console.log("available alerts:");
+            console.log(availableAlerts);
+            var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
+            $("#alerts").jqxGrid({
+                width: '100%',
+                selectionmode: 'checkbox',
+                altrows: true,
+                autoheight: true,
+                pageable: true,
+                source: dataAdapter,
+                columns: [
+                    { text: 'Id', datafield: 'id', width: '30%' },
+                    { text: 'Application Id', datafield: 'applicationId', width: '30%' },
+                    { text: 'Timestamp', datafield: 'timestamp' }
+                ]
+            });
+
+            getAddedAlerts();
+        });
+    }
+
+    function getAddedAlerts() {
+        $http.get('supersede-dm-app/processes/alerts/list?procId=' + $scope.procId)
+        .success(function (data) {
+            var addedAlerts = data;
+            console.log("added alerts:");
+            console.log(addedAlerts);
+            var alertsRows = $("#alerts").jqxGrid("getrows").length;
+            console.log("rows:");
+            console.log(alertsRows);
+
+            for (var i = 0; i < alertsRows; i++) {
+                var added = false;
+                var currentAlert = $("#alerts").jqxGrid("getrowdatabyid", i);
+
+                for (var j = 0; j < addedAlerts.length; j++) {
+                    if (addedAlerts[j] === currentAlert.id) {
+                        $("#alerts").jqxGrid("selectrow", i);
+                        console.log("selecting alert:");
+                        console.log(currentAlert);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    $("#alerts").jqxGrid("unselectrow", i);
+                    console.log("deselecting alert:");
+                    console.log(currentAlert);
+                }
+            }
+        });
+    }
+
+    function defineGameData() {
+
+        var i;
+
+        var selectedAlerts = $("#alerts").jqxGrid("selectedrowindexes");
+        for (i = 0; i < selectedAlerts.length; i++) {
+            var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
+            $scope.alerts.localdata.push(selectedAlert);
+            $scope.alertsId.push(selectedAlert.id);
+        }
+
+    }
+
+    $scope.import = function () {
+        defineGameData();
+        $http({
+            method: 'POST',
+            url: "supersede-dm-app/processes/alerts/import",
+            params: { procId: $scope.procId, alertsId: $scope.alertsId }
+        })
+        .success(function (data) {
+            //            $("#game_created").html("<strong>Game successfully created!</strong>");
+        }).error(function (err, data) {
+            //            $("#game_created").html("<strong>Unable to create the game!</strong>");
+            console.log(err);
+            console.log(data);
+        });
+    };
+
+    $scope.home = function () {
+        $location.url('supersede-dm-app/home');
+    };
+
+    getAvailableAlerts();
+});
+
 app.controllerProvider.register('imports', function($scope, $http, $location) {
 
     $scope.currentPage = "page1";

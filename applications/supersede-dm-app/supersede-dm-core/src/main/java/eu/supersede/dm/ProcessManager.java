@@ -56,6 +56,8 @@ public interface ProcessManager
 
     public List<HAlert> getAlerts();
 
+    public void removeAlert(String id);
+
     // Members
 
     public Long addProcessMember(Long userId, String role);

@@ -17,12 +17,19 @@ package eu.supersede.gr.jpa;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.supersede.gr.model.HAlert;
 
 public interface AlertsJpa extends JpaRepository<HAlert, String>
 {
-    @Query("SELECT alert FROM HAlert alert WHERE alert.getApplicationId() = ?1")
+    @Query("SELECT alert FROM HAlert alert WHERE applicationId = ?1")
     List<HAlert> findAlertsForApp(String applicationID);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM HAlert a WHERE id = ?1")
+    void deleteById(String id);
 }

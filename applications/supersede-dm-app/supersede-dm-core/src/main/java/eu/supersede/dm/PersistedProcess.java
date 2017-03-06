@@ -116,6 +116,12 @@ public class PersistedProcess extends AbstractProcessManager
     }
 
     @Override
+    public void removeAlert(String id)
+    {
+        DMGame.get().jpa.alerts.deleteById(id);
+    }
+
+    @Override
     public List<HActivity> getOngoingActivities()
     {
         return new ArrayList<>();

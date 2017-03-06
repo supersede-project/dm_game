@@ -39,6 +39,7 @@ import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
+import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
@@ -165,27 +166,6 @@ public class ProcessRest
     }
 
     // Requirements
-
-    public void addRequirements(Long procId, List<Long> reqList)
-    {
-        for (Long reqId : reqList)
-        {
-            Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
-
-            if (r == null)
-            {
-                continue;
-            }
-
-            if (r.getProcessId() != -1)
-            {
-                continue;
-            }
-
-            r.setProcessId(procId);
-            DMGame.get().getJpa().requirements.save(r);
-        }
-    }
 
     @RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
     public void importRequirements(@RequestParam Long procId, @RequestParam List<Long> requirementsId)
@@ -603,5 +583,39 @@ public class ProcessRest
         }
 
         return map;
+    }
+
+    // Alerts
+
+    @RequestMapping(value = "/alerts/import", method = RequestMethod.POST)
+    public void importAlerts(@RequestParam Long procId, @RequestParam List<String> alertsId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+
+        List<HAlert> alerts = proc.getAlerts();
+
+        for (HAlert alert : alerts)
+        {
+            proc.removeAlert(alert.getId());
+        }
+
+        for (String alertId : alertsId)
+        {
+            HAlert alert = DMGame.get().getJpa().alerts.findOne(alertId);
+
+            if (alert == null)
+            {
+                continue;
+            }
+
+            proc.addAlert(alert);
+        }
+    }
+
+    @RequestMapping(value = "/alerts/list", method = RequestMethod.GET)
+    public List<HAlert> getAlertsList(@RequestParam Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        return proc.getAlerts();
     }
 }

@@ -156,6 +156,12 @@ public class SimulatedProcess extends AbstractProcessManager
     }
 
     @Override
+    public void removeAlert(String id)
+    {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public List<HActivity> getOngoingActivities()
     {
         List<HActivity> list = activities.get(processId);
