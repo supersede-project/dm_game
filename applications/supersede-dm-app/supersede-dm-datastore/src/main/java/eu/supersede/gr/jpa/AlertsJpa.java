@@ -28,6 +28,9 @@ public interface AlertsJpa extends JpaRepository<HAlert, String>
     @Query("SELECT alert FROM HAlert alert WHERE applicationId = ?1")
     List<HAlert> findAlertsForApp(String applicationID);
 
+    @Query("SELECT alert FROM HAlert alert WHERE processId = ?1")
+    List<HAlert> findAlertsByProcess(Long processId);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM HAlert a WHERE id = ?1")

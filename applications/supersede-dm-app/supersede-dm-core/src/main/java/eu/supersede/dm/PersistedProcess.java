@@ -106,13 +106,14 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public void addAlert(HAlert alert)
     {
-        // TODO Auto-generated method stub
+        alert.setProcessId(processId);
+        DMGame.get().jpa.alerts.save(alert);
     }
 
     @Override
     public List<HAlert> getAlerts()
     {
-        return new ArrayList<>();
+        return DMGame.get().jpa.alerts.findAlertsByProcess(processId);
     }
 
     @Override

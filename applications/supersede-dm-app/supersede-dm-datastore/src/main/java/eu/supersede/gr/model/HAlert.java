@@ -14,6 +14,7 @@ public class HAlert
     @Id
     private String id;
     private String applicationId;
+    private Long processId;
     private Long timestamp;
 
     public HAlert()
@@ -44,6 +45,16 @@ public class HAlert
     public void setApplicationId(String applicationId)
     {
         this.applicationId = applicationId;
+    }
+
+    public Long getProcessId()
+    {
+        return processId;
+    }
+
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
     }
 
     public Long getTimestamp()
