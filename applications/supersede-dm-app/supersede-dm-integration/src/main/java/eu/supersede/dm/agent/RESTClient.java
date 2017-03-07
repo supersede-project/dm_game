@@ -231,8 +231,8 @@ public class RESTClient
             {
                 Alert alert = (Alert) object;
                 System.out.println("Encoding alert:");
-                System.out.println(alert.getID());
-                System.out.println(alert.getApplicationID());
+                System.out.println(alert.getId());
+                System.out.println(alert.getApplicationId());
                 System.out.println(alert.getTenant());
                 System.out.println(alert.getTimestamp() + "");
             }

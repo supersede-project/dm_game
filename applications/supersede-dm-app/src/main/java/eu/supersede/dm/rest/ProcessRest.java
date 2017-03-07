@@ -602,6 +602,7 @@ public class ProcessRest
 
         for (String alertId : alertsId)
         {
+            System.out.println("Trying to add alert " + alertId);
             HAlert alert = DMGame.get().getJpa().alerts.findOne(alertId);
 
             if (alert == null)

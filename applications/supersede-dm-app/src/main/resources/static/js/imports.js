@@ -67,11 +67,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
         .success(function (data) {
             var addedRequirements = data;
-            console.log("added requirements:");
-            console.log(addedRequirements);
             var requirementsRows = $("#requirements").jqxGrid("getrows").length;
-            console.log("rows:");
-            console.log(requirementsRows);
 
             for (var i = 0; i < requirementsRows; i++) {
                 var added = false;
@@ -80,8 +76,6 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
                 for (var j = 0; j < addedRequirements.length; j++) {
                     if (addedRequirements[j].requirementId === currentRequirement.requirementId) {
                         $("#requirements").jqxGrid("selectrow", i);
-                        console.log("selecting requirement:");
-                        console.log(currentRequirement);
                         added = true;
                         break;
                     }
@@ -89,8 +83,6 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
                 if (!added) {
                     $("#requirements").jqxGrid("unselectrow", i);
-                    console.log("deselecting requirement:");
-                    console.log(currentRequirement);
                 }
             }
         });
@@ -111,7 +103,6 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
     $scope.done = function () {
         defineGameData();
-        console.log($scope.gameRequirementsId);
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/requirements/import",
@@ -140,9 +131,6 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 app.controllerProvider.register('import_users', function($scope, $http, $location) {
 
     $scope.procId = $location.search().procId;
-
-    console.log( $scope.procId );
-
     $scope.gameOpinionProvidersId = [];
 
     var availablePlayers = {};
@@ -192,11 +180,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
         $http.get('supersede-dm-app/processes/users/list?procId=' + $scope.procId)
         .success(function (data) {
             var addedUsers = data;
-            console.log("added users:");
-            console.log(addedUsers);
             var usersRows = $("#users").jqxGrid("getrows").length;
-            console.log("rows:");
-            console.log(usersRows);
 
             for (var i = 0; i < usersRows; i++) {
                 var added = false;
@@ -205,8 +189,6 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
                 for (var j = 0; j < addedUsers.length; j++) {
                     if (addedUsers[j] === currentUser.userId) {
                         $("#users").jqxGrid("selectrow", i);
-                        console.log("selecting user:");
-                        console.log(currentUser);
                         added = true;
                         break;
                     }
@@ -214,8 +196,6 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
                 if (!added) {
                     $("#users").jqxGrid("unselectrow", i);
-                    console.log("deselecting user:");
-                    console.log(currentUser);
                 }
             }
         });
@@ -231,16 +211,9 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
             $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
-
-        console.log("selected opinion providers:");
-        console.log($scope.gameOpinionProvidersId);
-//        console.log($scope.gameOpinionProviders.localdata);
-
-
     }
 
     $scope.done = function () {
-        console.log( $scope.procId );
         defineGameData();
         $http({
             method: 'POST',
@@ -251,8 +224,6 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");
-            console.log(err);
-            console.log(data);
         });
     };
 
@@ -295,8 +266,6 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                 ],
                 localdata: data
             };
-            console.log("available criteria:");
-            console.log(availableCriteria);
             var dataAdapter = new $.jqx.dataAdapter(availableCriteria);
             $("#criteria").jqxGrid({
                 width: '100%',
@@ -320,11 +289,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         $http.get('supersede-dm-app/processes/criteria/list?procId=' + $scope.procId)
         .success(function (data) {
             var addedCriteria = data;
-            console.log("added criteria:");
-            console.log(addedCriteria);
             var criteriaRows = $("#criteria").jqxGrid("getrows").length;
-            console.log("rows:");
-            console.log(criteriaRows);
 
             for (var i = 0; i < criteriaRows; i++) {
                 var added = false;
@@ -333,8 +298,6 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                 for (var j = 0; j < addedCriteria.length; j++) {
                     if (addedCriteria[j] === currentCriterion.criteriaId) {
                         $("#criteria").jqxGrid("selectrow", i);
-                        console.log("selecting criterion:");
-                        console.log(currentCriterion);
                         added = true;
                         break;
                     }
@@ -342,8 +305,6 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
 
                 if (!added) {
                     $("#criteria").jqxGrid("unselectrow", i);
-                    console.log("deselecting criterion:");
-                    console.log(currentCriterion);
                 }
             }
         });
@@ -373,8 +334,6 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");
-            console.log(err);
-            console.log(data);
         });
     };
 
@@ -404,32 +363,45 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     };
 
     function getAvailableAlerts() {
-        $http.get('supersede-dm-app/alerts')
-        .success(function (data) {
-            availableAlerts = {
+        $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
+
+            availableAlerts =
+            {
                 datatype: "json",
+                localdata: data,
                 datafields: [
+                    { name: 'applicationID', map: 'applicationID' },
+                    { name: 'alertID' },
                     { name: 'id' },
-                    { name: 'applicationId' },
-                    { name: 'timestamp' }
+                    { name: 'timestamp' },
+                    { name: 'description' },
+                    { name: 'classification' },
+                    { name: 'accuracy' },
+                    { name: 'pos' },
+                    { name: 'neg' },
+                    { name: 'overall' },
                 ],
-                localdata: data
             };
-            console.log("available alerts:");
-            console.log(availableAlerts);
             var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
-            $("#alerts").jqxGrid({
-                width: '100%',
-                selectionmode: 'checkbox',
-                altrows: true,
-                autoheight: true,
-                pageable: true,
+            $("#alerts").jqxGrid(
+            {
+                width: "100%",
                 source: dataAdapter,
+                selectionmode: 'checkbox',
+                groupable: true,
                 columns: [
-                    { text: 'Id', datafield: 'id', width: '30%' },
-                    { text: 'Application Id', datafield: 'applicationId', width: '30%' },
-                    { text: 'Timestamp', datafield: 'timestamp' }
-                ]
+                    { text: 'App', dataField: 'applicationID', width: "15%" },
+                    { text: 'Alert', dataField: 'alertID', width: "10%" },
+                    { text: 'ID', dataField: 'id', width: "10%" },
+                    { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
+                    { text: 'Description', dataField: 'description', width: "20%" },
+                    { text: 'Classification', dataField: 'classification', width: "15%" },
+                    { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
+                    { text: 'Pos.', dataField: 'pos', width: "5%" },
+                    { text: 'Neg.', dataField: 'neg', width: "5%" },
+                    { text: 'Overall.', dataField: 'overall', width: "5%" }
+                ],
+                groups: ['applicationID', 'alertID']
             });
 
             getAddedAlerts();
@@ -440,21 +412,15 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         $http.get('supersede-dm-app/processes/alerts/list?procId=' + $scope.procId)
         .success(function (data) {
             var addedAlerts = data;
-            console.log("added alerts:");
-            console.log(addedAlerts);
             var alertsRows = $("#alerts").jqxGrid("getrows").length;
-            console.log("rows:");
-            console.log(alertsRows);
 
             for (var i = 0; i < alertsRows; i++) {
                 var added = false;
                 var currentAlert = $("#alerts").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedAlerts.length; j++) {
-                    if (addedAlerts[j].id === currentAlert.id) {
+                    if (addedAlerts[j].id === currentAlert.alertID) {
                         $("#alerts").jqxGrid("selectrow", i);
-                        console.log("selecting alert:");
-                        console.log(currentAlert);
                         added = true;
                         break;
                     }
@@ -462,8 +428,6 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
 
                 if (!added) {
                     $("#alerts").jqxGrid("unselectrow", i);
-                    console.log("deselecting alert:");
-                    console.log(currentAlert);
                 }
             }
         });
@@ -477,7 +441,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         for (i = 0; i < selectedAlerts.length; i++) {
             var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
             $scope.alerts.localdata.push(selectedAlert);
-            $scope.alertsId.push(selectedAlert.id);
+            $scope.alertsId.push(selectedAlert.alertID);
         }
 
     }
@@ -717,9 +681,6 @@ app.controllerProvider.register('imports', function($scope, $http, $location) {
             $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
-
-        console.log("selected opinion providers:");
-        console.log($scope.gameOpinionProviders.localdata);
 
         var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedNegotiators.length; i++) {

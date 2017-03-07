@@ -43,30 +43,30 @@ public class IntegrationRest
     public void notifyPublicAlert(@RequestBody Alert alert)
     {
         System.out.println("Posting alert: ");
-        System.out.println(alert.getID());
-        System.out.println(alert.getApplicationID());
+        System.out.println(alert.getId());
+        System.out.println(alert.getApplicationId());
         System.out.println(alert.getTenant());
         System.out.println(alert.getTimestamp() + "");
 
-        HApp app = DMGame.get().getJpa().apps.findOne(alert.getApplicationID());
+        HApp app = DMGame.get().getJpa().apps.findOne(alert.getApplicationId());
 
         if (app == null)
         {
-            app = new HApp(alert.getApplicationID());
+            app = new HApp(alert.getApplicationId());
             app = DMGame.get().getJpa().apps.save(app);
         }
 
-        if (alert.getID() == null)
+        if (alert.getId() == null)
         {
-            System.err.println("alert.getID() IS NULL!");
+            System.err.println("alert.getId() IS NULL!");
             alert.setID("id-" + System.currentTimeMillis());
         }
 
-        HAlert halert = DMGame.get().getJpa().alerts.findOne(alert.getID());
+        HAlert halert = DMGame.get().getJpa().alerts.findOne(alert.getId());
 
         if (halert == null)
         {
-            halert = new HAlert(alert.getID(), alert.getTimestamp());
+            halert = new HAlert(alert.getId(), alert.getTimestamp());
             halert.setApplicationId(app.getId());
             halert = DMGame.get().getJpa().alerts.save(halert);
         }
@@ -81,7 +81,7 @@ public class IntegrationRest
                 hrur.setId("UR" + System.currentTimeMillis());
             }
 
-            hrur.setAlertId(alert.getID());
+            hrur.setAlertId(alert.getId());
             hrur.setAccuracy(request.getAccuracy());
             hrur.setClassification(request.getClassification().name());
             hrur.setDescription(request.getDescription());
@@ -100,39 +100,39 @@ public class IntegrationRest
             DMGame.get().getJpa().requirements.save(r);
         }
     }
-    
+
     // Protected version of the alert received. To be evaluated its actual usage
-//    @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
-//    public void notifyAlert(@RequestBody Alert alert)
-//    {
-//        System.out.println("Alert received: " + alert);
-//        log.debug("Alert received: " + alert);
-//
-//        String msg = "Alert {";
-//        msg += "ID:" + alert.getID();
-//        msg += "appID;" + alert.getApplicationID();
-//        msg += "tenant;" + alert.getTenant();
-//        msg += "timestamp;" + alert.getTimestamp();
-//        msg += "} = ";
-//
-//        for (Condition c : alert.getConditions())
-//        {
-//            msg += "(";
-//            msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
-//            msg += ")";
-//        }
-//
-//        notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
-//
-//        List<Requirement> requirements = getRequirements(alert);
-//
-//        for (Requirement r : requirements)
-//        {
-//            datastore.storeAsNew(r);
-//        }
-//
-//        return;
-//    }
+    // @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
+    // public void notifyAlert(@RequestBody Alert alert)
+    // {
+    // System.out.println("Alert received: " + alert);
+    // log.debug("Alert received: " + alert);
+    //
+    // String msg = "Alert {";
+    // msg += "ID:" + alert.getID();
+    // msg += "appID;" + alert.getApplicationID();
+    // msg += "tenant;" + alert.getTenant();
+    // msg += "timestamp;" + alert.getTimestamp();
+    // msg += "} = ";
+    //
+    // for (Condition c : alert.getConditions())
+    // {
+    // msg += "(";
+    // msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
+    // msg += ")";
+    // }
+    //
+    // notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
+    //
+    // List<Requirement> requirements = getRequirements(alert);
+    //
+    // for (Requirement r : requirements)
+    // {
+    // datastore.storeAsNew(r);
+    // }
+    //
+    // return;
+    // }
 
     private List<Requirement> getRequirements(Alert alert)
     {

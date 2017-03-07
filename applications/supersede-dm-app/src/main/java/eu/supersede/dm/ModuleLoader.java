@@ -200,7 +200,7 @@ public class ModuleLoader
 
     public void handleAlert(Alert alert)
     {
-        System.out.println("Handling alert: " + alert.getID() + ", " + alert.getApplicationID() + ", "
+        System.out.println("Handling alert: " + alert.getId() + ", " + alert.getApplicationId() + ", "
                 + alert.getTenant() + ", " + alert.getTimestamp());
 
         // Override class JPA instances with multitenancy provided
@@ -216,19 +216,19 @@ public class ModuleLoader
             return;
         }
 
-        HApp app = jpaApps.findOne(alert.getApplicationID());
+        HApp app = jpaApps.findOne(alert.getApplicationId());
 
         if (app == null)
         {
             app = new HApp();
-            app.setId(alert.getApplicationID());
+            app.setId(alert.getApplicationId());
             app = jpaApps.save(app);
 
-            HAlert halert = jpaAlerts.findOne(alert.getID());
+            HAlert halert = jpaAlerts.findOne(alert.getId());
 
             if (halert == null)
             {
-                halert = new HAlert(alert.getID(), alert.getTimestamp());
+                halert = new HAlert(alert.getId(), alert.getTimestamp());
                 halert = jpaAlerts.save(halert);
             }
 
