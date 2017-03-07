@@ -435,19 +435,22 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
 
     function defineGameData() {
 
-        var i;
-
+        // TODO: check how to avoid having the same alert added multiple times if alerts are grouped by columns
         var selectedAlerts = $("#alerts").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedAlerts.length; i++) {
+        $scope.alerts.localdata = [];
+        $scope.alertsId = [];
+
+        for (var i = 0; i < selectedAlerts.length; i++) {
             var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
             $scope.alerts.localdata.push(selectedAlert);
             $scope.alertsId.push(selectedAlert.alertID);
         }
-
     }
 
     $scope.import = function () {
         defineGameData();
+        console.log("importing alerts:");
+        console.log($scope.alertsId);
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/alerts/import",

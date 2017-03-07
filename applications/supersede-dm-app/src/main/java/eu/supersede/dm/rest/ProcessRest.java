@@ -588,7 +588,7 @@ public class ProcessRest
     // Alerts
 
     @RequestMapping(value = "/alerts/import", method = RequestMethod.POST)
-    public void importAlerts(@RequestParam Long procId, @RequestParam List<String> alertsId)
+    public void importAlerts(@RequestParam Long procId, @RequestParam(required = false) List<String> alertsId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
 
@@ -598,6 +598,11 @@ public class ProcessRest
         {
             System.out.println("Removing alert " + alert.getId() + " from process " + procId);
             proc.removeAlert(alert.getId());
+        }
+
+        if (alertsId == null)
+        {
+            return;
         }
 
         for (String alertId : alertsId)
