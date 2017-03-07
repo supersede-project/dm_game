@@ -30,14 +30,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.dm.DMGame;
+import eu.supersede.dm.datamodel.Feature;
+import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.dm.ga.GAGameDetails;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.IGAAlgorithm;
+import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.data.GAGameDetails;
-import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
@@ -45,16 +48,10 @@ import eu.supersede.gr.model.ValutationCriteria;
 public class GAGameRest
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private RequirementsJpa requirementsJpa;
-
-    @Autowired
-    private ValutationCriteriaJpa criteriaJpa;
-
+    
     @Autowired
     private GAPersistentDB persistentDB;
-
+    
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName)
     {
@@ -64,9 +61,14 @@ public class GAGameRest
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(Authentication authentication, @RequestParam String name,
-            @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
-            @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators)
+    public void createNewGame(
+    		Authentication authentication, 
+    		@RequestParam String name,
+            @RequestParam Long[] gameRequirements, 
+            @RequestBody Map<String, ?> weights,
+            @RequestParam Long[] gameOpinionProviders, 
+            @RequestParam Long[] gameNegotiators,
+            @RequestParam(defaultValue="-1") Long procId )
     {
         String criteriaKey = "criteria";
         String playersKey = "players";
@@ -108,7 +110,7 @@ public class GAGameRest
         }
 
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
-                gameOpinionProviders, gameNegotiators);
+                gameOpinionProviders, gameNegotiators, procId );
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -172,12 +174,12 @@ public class GAGameRest
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
         List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
-
+        
         if (reqs.size() > 0)
         {
             for (Long requirementId : reqs)
             {
-                requirements.add(requirementsJpa.findOne(requirementId));
+                requirements.add( DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
         else
@@ -186,7 +188,7 @@ public class GAGameRest
 
             for (Long requirementId : tmp)
             {
-                requirements.add(requirementsJpa.findOne(requirementId));
+                requirements.add( DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
 
@@ -219,7 +221,7 @@ public class GAGameRest
 
         for (Long criterionId : criteriaIds)
         {
-            criteria.add(criteriaJpa.findOne(criterionId));
+            criteria.add( DMGame.get().getJpa().criteria.findOne(criterionId));
         }
 
         return criteria;
@@ -228,13 +230,13 @@ public class GAGameRest
     @RequestMapping(value = "/gamecriterion", method = RequestMethod.GET)
     public ValutationCriteria getGameCriterion(Authentication authentication, Long criterionId)
     {
-        return criteriaJpa.findOne(criterionId);
+        return DMGame.get().getJpa().criteria.findOne(criterionId);
     }
 
     @RequestMapping(value = "/requirement", method = RequestMethod.GET)
     public Requirement getRequirement(Authentication authentication, Long requirementId)
     {
-        return requirementsJpa.findOne(requirementId);
+        return DMGame.get().getJpa().requirements.findOne(requirementId);
     }
 
     @RequestMapping(value = "/gamerequirements", method = RequestMethod.GET)
@@ -245,7 +247,7 @@ public class GAGameRest
 
         for (Long requirementId : requirementsId)
         {
-            requirements.add(requirementsJpa.findOne(requirementId));
+            requirements.add(DMGame.get().getJpa().requirements.findOne(requirementId));
         }
 
         return requirements;
@@ -368,4 +370,60 @@ public class GAGameRest
 
         return prioritizations;
     }
+    
+    @RequestMapping(value = "id", method = RequestMethod.GET)
+    public Long activit2gameId( 
+    		Authentication authentication, 
+    		@RequestParam Long procId, 
+    		@RequestParam Long activityId ) {
+    	return persistentDB.getGameId( activityId );
+    }
+    
+    @RequestMapping(value = "/enact", method = RequestMethod.PUT)
+    public void doEnactGame(@RequestParam Long gameId )
+    {
+        System.out.println("Sending requirements for enactment" );
+        
+        GAGameDetails game = persistentDB.getGameInfo(gameId);
+        
+        double max = game.getRequirements().size();
+        
+        FeatureList list = new FeatureList();
+        
+        int pos = 0;
+        for( Long reqId : game.getRequirements() )
+        {
+        	Requirement r = DMGame.get().getJpa().requirements.findOne( reqId );
+            Feature feature = new Feature();
+            feature.setName( r.getName() );
+            feature.setPriority((int) (1 + (pos / max) * 5));
+            feature.setId("" + r.getRequirementId());
+            System.out.println("Added feature with id: " + feature.getId());
+            list.list().add(feature);
+            pos++;
+        }
+        
+        try {
+        	
+//        	EnactmentService.get().send(list, true );
+        	
+        	for( Long reqId : game.getRequirements() )
+            {
+    			Requirement r = DMGame.get().getJpa().requirements.findOne( reqId );
+    			if( r == null ) continue;
+    			RequirementStatus oldStatus = RequirementStatus.valueOf( r.getStatus() );
+    			if( RequirementStatus.next( oldStatus ).contains( RequirementStatus.Enacted ) ) {
+    				r.setStatus( RequirementStatus.Enacted.getValue() );
+    				DMGame.get().getJpa().requirements.save( r );
+    			}
+    		
+            }
+        	
+        }
+        catch( Exception ex ) {
+        	ex.printStackTrace();
+        }
+        
+    }
+    
 }

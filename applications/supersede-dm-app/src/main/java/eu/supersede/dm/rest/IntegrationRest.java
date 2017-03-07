@@ -21,26 +21,17 @@ package eu.supersede.dm.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.fe.notification.NotificationUtil;
-import eu.supersede.gr.jpa.AlertsJpa;
-import eu.supersede.gr.jpa.AppsJpa;
-import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
-import eu.supersede.gr.jpa.RequirementsJpa;
-import eu.supersede.gr.logics.Datastore;
+import eu.supersede.dm.DMGame;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HApp;
 import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
-import eu.supersede.integration.api.dm.types.Condition;
 import eu.supersede.integration.api.dm.types.UserRequest;
 import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 
@@ -48,56 +39,36 @@ import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 @RequestMapping("/api")
 public class IntegrationRest
 {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private NotificationUtil notificationUtil;
-
-    @Autowired
-    private RequirementsJpa requirementsTable;
-
-    @Autowired
-    private AppsJpa jpaApps;
-
-    @Autowired
-    private AlertsJpa jpaAlerts;
-
-    @Autowired
-    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
-
-    @Autowired
-    private Datastore datastore;
-
     @RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
     public void notifyPublicAlert(@RequestBody Alert alert)
     {
         System.out.println("Posting alert: ");
-        System.out.println(alert.getID());
-        System.out.println(alert.getApplicationID());
+        System.out.println(alert.getId());
+        System.out.println(alert.getApplicationId());
         System.out.println(alert.getTenant());
         System.out.println(alert.getTimestamp() + "");
 
-        HApp app = jpaApps.findOne(alert.getApplicationID());
+        HApp app = DMGame.get().getJpa().apps.findOne(alert.getApplicationId());
 
         if (app == null)
         {
-            app = new HApp(alert.getApplicationID());
-            app = jpaApps.save(app);
+            app = new HApp(alert.getApplicationId());
+            app = DMGame.get().getJpa().apps.save(app);
         }
 
-        if (alert.getID() == null)
+        if (alert.getId() == null)
         {
-            System.err.println("alert.getID() IS NULL!");
+            System.err.println("alert.getId() IS NULL!");
             alert.setID("id-" + System.currentTimeMillis());
         }
 
-        HAlert halert = jpaAlerts.findOne(alert.getID());
+        HAlert halert = DMGame.get().getJpa().alerts.findOne(alert.getId());
 
         if (halert == null)
         {
-            halert = new HAlert(alert.getID(), alert.getTimestamp());
+            halert = new HAlert(alert.getId(), alert.getTimestamp());
             halert.setApplicationId(app.getId());
-            halert = jpaAlerts.save(halert);
+            halert = DMGame.get().getJpa().alerts.save(halert);
         }
 
         for (UserRequest request : alert.getRequests())
@@ -110,14 +81,14 @@ public class IntegrationRest
                 hrur.setId("UR" + System.currentTimeMillis());
             }
 
-            hrur.setAlertId(alert.getID());
+            hrur.setAlertId(alert.getId());
             hrur.setAccuracy(request.getAccuracy());
             hrur.setClassification(request.getClassification().name());
             hrur.setDescription(request.getDescription());
             hrur.setNegativeSentiment(request.getNegativeSentiment());
             hrur.setPositiveSentiment(request.getPositiveSentiment());
             hrur.setOverallSentiment(request.getOverallSentiment());
-            jpaReceivedUserRequests.save(hrur);
+            DMGame.get().getJpa().receivedUserRequests.save(hrur);
 
         }
 
@@ -126,43 +97,42 @@ public class IntegrationRest
         for (Requirement r : requirements)
         {
             r.setRequirementId(null);
-            requirementsTable.save(r);
-
-            // datastore.storeAsNew(r);
+            DMGame.get().getJpa().requirements.save(r);
         }
     }
 
-    @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
-    public void notifyAlert(@RequestBody Alert alert)
-    {
-        System.out.println("Alert received: " + alert);
-        log.debug("Alert received: " + alert);
-
-        String msg = "Alert {";
-        msg += "ID:" + alert.getID();
-        msg += "appID;" + alert.getApplicationID();
-        msg += "tenant;" + alert.getTenant();
-        msg += "timestamp;" + alert.getTimestamp();
-        msg += "} = ";
-
-        for (Condition c : alert.getConditions())
-        {
-            msg += "(";
-            msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
-            msg += ")";
-        }
-
-        notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
-
-        List<Requirement> requirements = getRequirements(alert);
-
-        for (Requirement r : requirements)
-        {
-            datastore.storeAsNew(r);
-        }
-
-        return;
-    }
+    // Protected version of the alert received. To be evaluated its actual usage
+    // @RequestMapping(value = "/monitoring/alert", method = RequestMethod.POST)
+    // public void notifyAlert(@RequestBody Alert alert)
+    // {
+    // System.out.println("Alert received: " + alert);
+    // log.debug("Alert received: " + alert);
+    //
+    // String msg = "Alert {";
+    // msg += "ID:" + alert.getID();
+    // msg += "appID;" + alert.getApplicationID();
+    // msg += "tenant;" + alert.getTenant();
+    // msg += "timestamp;" + alert.getTimestamp();
+    // msg += "} = ";
+    //
+    // for (Condition c : alert.getConditions())
+    // {
+    // msg += "(";
+    // msg += c.getIdMonitoredData() + c.getOperator().name() + c.getValue();
+    // msg += ")";
+    // }
+    //
+    // notificationUtil.createNotificationsForProfile("DECISION_SCOPE_PROVIDER", msg, "");
+    //
+    // List<Requirement> requirements = getRequirements(alert);
+    //
+    // for (Requirement r : requirements)
+    // {
+    // datastore.storeAsNew(r);
+    // }
+    //
+    // return;
+    // }
 
     private List<Requirement> getRequirements(Alert alert)
     {

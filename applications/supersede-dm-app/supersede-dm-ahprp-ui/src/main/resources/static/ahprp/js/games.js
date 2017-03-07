@@ -15,8 +15,10 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('games', function($scope, $http, $location) {
-
-    $scope.open_games = [];
+	
+	$scope.procId = $location.search().procId;
+	
+	$scope.open_games = [];
     $scope.closed_games = [];
 
     $http.get('supersede-dm-app/ahprp/game').
@@ -69,7 +71,8 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
                 { text: '', width: '10%', datafield: 'gameId', cellsRenderer: function (row, columnDataField, value) {
                     var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                     r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/game_page?gameId=" +
-                    value + "'>Detail</a></jqx-link-button>");
+                    value + "&procId=" + $scope.procId + 
+                    "'>Detail</a></jqx-link-button>");
                     return r.concat("</div>");
                     }
                 }
@@ -124,7 +127,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
         $('#jqxTabs').on('tabclick', function (event) {
             if (event.args.item == $('#unorderedList').find('li').length - 1) {
                 //go to create game page
-                $location.path('/supersede-dm-app/ahprp/create_game');
+                $location.path('/supersede-dm-app/ahprp/create_game').search( "procId", $scope.procId );
             }
         });
         $('#unorderedList').css('visibility', 'visible');

@@ -17,7 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import eu.supersede.gr.model.HProcess;
 
-public interface ProcessesJpa extends JpaRepository<HProcess, String>
+public interface ProcessesJpa extends JpaRepository<HProcess, Long>
 {
 
 }

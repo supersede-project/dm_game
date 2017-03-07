@@ -14,11 +14,23 @@
 
 package eu.supersede.gr.jpa;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HActivity;
 
 public interface ActivitiesJpa extends JpaRepository<HActivity, Long>
 {
-
+	
+    @Query("SELECT a FROM HActivity a WHERE processId = ?1 AND methodName = ?2")
+	List<HActivity> find( Long procId, String methodName );
+	
+    @Query("SELECT a FROM HActivity a WHERE processId = ?1")
+	List<HActivity> find( Long procId );
+	
+    @Query("SELECT a FROM HActivity a WHERE userId = ?1")
+	List<HActivity> findByUser( Long userId );
+	
 }

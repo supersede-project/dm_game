@@ -14,9 +14,6 @@
 
 package eu.supersede.dm.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,13 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
-import eu.supersede.dm.DMCondition;
-import eu.supersede.dm.DMGuiManager;
-import eu.supersede.dm.DMLibrary;
-import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMSolution;
-import eu.supersede.dm.DMStatus;
-import eu.supersede.dm.IDMGui;
 import eu.supersede.dm.OrchestratorUtil;
 
 @RestController
@@ -51,60 +42,4 @@ public class OrchestrationRest
 		return ret;
 	}
 
-	public static class ActivityEntry {
-		
-		String methodName;
-		String entryUrl;
-		
-		public String getMethodName() {
-			return methodName;
-		}
-
-		public void setMethodName(String methodName) {
-			this.methodName = methodName;
-		}
-
-		public void setEntryUrl(String entryUrl) {
-			this.entryUrl = entryUrl;
-		}
-		
-		public String getEntryUrl() {
-			return this.entryUrl;
-		}
-		
-	}
-	
-	@RequestMapping(value = "/available_activities", method = RequestMethod.GET)
-	public List<ActivityEntry> getNextActivities( Long procId ) {
-		
-		return findNextActivities( new DMStatus() );
-		
-	}
-	
-	public List<ActivityEntry> findNextActivities( DMStatus status ) {
-		List<ActivityEntry> list = new ArrayList<ActivityEntry>();
-		
-		for( DMMethod m : DMLibrary.get().methods() ) {
-			boolean match = true;
-			for( DMCondition cond : m.preconditions() ) {
-				if( !cond.isTrue( status ) ) {
-					match = false;
-				}
-			}
-			if( match == true ) {
-				// TODO: configure the activity entry
-				IDMGui gui = DMGuiManager.get().getGui( m.getName() );
-				if( gui == null ) {
-					continue;
-				}
-				ActivityEntry ae = new ActivityEntry();
-				ae.setMethodName( m.getName() );
-				ae.setEntryUrl( gui.getEntryUrl() );
-				list.add( ae );
-			}
-		}
-		
-		return list;
-	}
-	
 }

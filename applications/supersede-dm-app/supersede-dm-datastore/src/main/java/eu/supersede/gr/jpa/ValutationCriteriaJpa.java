@@ -24,5 +24,5 @@ import eu.supersede.gr.model.ValutationCriteria;
 
 public interface ValutationCriteriaJpa extends JpaRepository<ValutationCriteria, Long>
 {
-
+	
 }

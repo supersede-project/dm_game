@@ -2,10 +2,10 @@ package eu.supersede.dm;
 
 public abstract class DMCondition {
 	
-	public abstract boolean isTrue( DMStatus status );
+	public abstract boolean isTrue( ProcessManager status );
 	
 	public static class DMCondNoReqs extends DMCondition {
-		public boolean isTrue( DMStatus status ) {
+		public boolean isTrue( ProcessManager status ) {
 			return status.getRequirementsCount() < 1;
 		}
 	}

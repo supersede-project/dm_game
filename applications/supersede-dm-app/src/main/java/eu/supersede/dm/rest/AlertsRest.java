@@ -72,8 +72,8 @@ public class AlertsRest
 
                 Alert a = new Alert();
 
-                a.setApplicationID(app.getId());
-                a.setID(alert.getId());
+                a.setId(alert.getId());
+                a.setApplicationId(app.getId());
                 a.setTimestamp(alert.getTimestamp());
 
                 for (HReceivedUserRequest ur : requests)
@@ -113,8 +113,8 @@ public class AlertsRest
     @RequestMapping(value = "/biglist", method = RequestMethod.GET)
     public List<FlattenedAlert> getAlertsTree()
     {
-//    	return new ArrayList<>();
-//    	
+        // return new ArrayList<>();
+        //
         List<FlattenedAlert> list = new ArrayList<>();
         List<HApp> apps = jpaApps.findAll();
 
@@ -122,36 +122,38 @@ public class AlertsRest
         {
             List<HAlert> alerts = jpaAlerts.findAll();
 
-            for (HAlert alert : alerts) try
-            {
-                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
-
-                if (requests.size() < 1)
+            for (HAlert alert : alerts)
+                try
                 {
-                    continue;
-                }
+                    List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
 
-                for (HReceivedUserRequest ur : requests)
+                    if (requests.size() < 1)
+                    {
+                        continue;
+                    }
+
+                    for (HReceivedUserRequest ur : requests)
+                    {
+                        FlattenedAlert fa = new FlattenedAlert();
+
+                        fa.applicationID = app.getId();
+                        fa.alertID = alert.getId();
+                        fa.timestamp = alert.getTimestamp();
+                        fa.accuracy = ur.getAccuracy();
+                        fa.classification = RequestClassification.valueOf(ur.getClassification());
+                        fa.description = ur.getDescription();
+                        fa.id = ur.getId();
+                        fa.neg = ur.getNegativeSentiment();
+                        fa.pos = ur.getPositiveSentiment();
+                        fa.overall = ur.getOverallSentiment();
+
+                        list.add(fa);
+                    }
+                }
+                catch (Exception ex)
                 {
-                    FlattenedAlert fa = new FlattenedAlert();
-
-                    fa.applicationID = app.getId();
-                    fa.alertID = alert.getId();
-                    fa.timestamp = alert.getTimestamp();
-                    fa.accuracy = ur.getAccuracy();
-                    fa.classification = RequestClassification.valueOf(ur.getClassification());
-                    fa.description = ur.getDescription();
-                    fa.id = ur.getId();
-                    fa.neg = ur.getNegativeSentiment();
-                    fa.pos = ur.getPositiveSentiment();
-                    fa.overall = ur.getOverallSentiment();
-
-                    list.add(fa);
+                    ex.printStackTrace();
                 }
-            }
-            catch( Exception ex ) {
-            	ex.printStackTrace();
-            }
         }
 
         return list;

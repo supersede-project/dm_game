@@ -14,8 +14,14 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('home', function($scope, $http, $rootScope) {
-
+app.controllerProvider.register('home', function($scope, $http, $rootScope, $location) {
+	
+	$scope.procId = $location.search().procId;
+	
+	$scope.dmactions = function(gameId) {
+        $location.url('#/supersede-dm-app/ahprp/games').search('procId', procId);
+    };
+    
     $http.get('/supersede-dm-app/user/current')
     .success(function(data) {
         $scope.user = data;

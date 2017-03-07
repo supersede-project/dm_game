@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
@@ -26,10 +22,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for Requirement.
-*/
-
 @Entity
 @Table(name = "requirements")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -38,29 +30,23 @@ public class Requirement
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long requirementId;
+
     private String name;
     private String description;
-    private Integer status = RequirementStatus.Unconfirmed.getValue();
-    private Long processId = -1L;
-
-    public Long getProcessId()
-    {
-        return processId;
-    }
-
-    public void setProcessId(Long processId)
-    {
-        this.processId = processId;
-    }
+    private Integer status;
+    private Long processId;
 
     public Requirement()
     {
+        processId = -1L;
+        status = RequirementStatus.Unconfirmed.getValue();
     }
 
     public Requirement(String name, String description)
     {
+        this();
         this.name = name;
-        this.setDescription(description);
+        this.description = description;
     }
 
     public Long getRequirementId()
@@ -95,27 +81,40 @@ public class Requirement
 
     public void setStatus(Integer status)
     {
-        try
-        {
-            this.status = status;
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            this.status = RequirementStatus.Unconfirmed.getValue();
-        }
+        this.status = status;
     }
 
     public Integer getStatus()
     {
-        try
+        if (status == null)
         {
-            return this.status;
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
             return RequirementStatus.Unconfirmed.getValue();
         }
+        else
+        {
+            return status;
+        }
+    }
+
+    public Long getProcessId()
+    {
+        if (processId == null)
+        {
+            return -1L;
+        }
+        else
+        {
+            return processId;
+        }
+    }
+
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
+
+    public String getTopic()
+    {
+        return "";
     }
 }

@@ -15,7 +15,9 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
-
+	
+	$scope.procId = $location.search().procId;
+	
     $scope.currentPage = "page1";
     $scope.gameRequirementsId = [];
     $scope.gameCriteriaId = [];
@@ -99,8 +101,37 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         $scope.currentPage = 'page' + page;
     }
 
+//    function getAvailableRequirements() {
+//        $http.get('supersede-dm-app/requirement')
+//        .success(function(data) {
+//            availableRequirements = {
+//                datatype: "json",
+//                datafields: [
+//                    { name: 'requirementId' },
+//                    { name: 'name' },
+//                    { name: 'description' }
+//                ],
+//                localdata: data
+//            };
+//            var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
+//            $("#requirements").jqxGrid({
+//                width: '100%',
+//                selectionmode: 'checkbox',
+//                altrows: true,
+//                autoheight: true,
+//                pageable: true,
+//                source: dataAdapter,
+//                columns: [
+//                    { text: 'Id', datafield: 'requirementId', width: '15%' },
+//                    { text: 'Name', datafield: 'name', width: '25%' },
+//                    { text: 'Description', datafield: 'description' }
+//                ]
+//            });
+//        });
+//    }
+
     function getAvailableRequirements() {
-        $http.get('supersede-dm-app/requirement')
+        $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId )
         .success(function(data) {
             availableRequirements = {
                 datatype: "json",
@@ -128,8 +159,37 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     }
 
+//    function getAvailableCriteria() {
+//        $http.get('supersede-dm-app/criteria')
+//        .success(function(data) {
+//            availableCriteria = {
+//                datatype: "json",
+//                datafields: [
+//                    { name: 'criteriaId' },
+//                    { name: 'name' },
+//                    { name: 'description' }
+//                ],
+//                localdata: data
+//            };
+//            var dataAdapter = new $.jqx.dataAdapter(availableCriteria);
+//            $("#criteria").jqxGrid({
+//                width: '100%',
+//                selectionmode: 'checkbox',
+//                altrows: true,
+//                autoheight: true,
+//                pageable: true,
+//                source: dataAdapter,
+//                columns: [
+//                    { text: 'Id', datafield: 'criteriaId', width: '15%' },
+//                    { text: 'Name', datafield: 'name', width: '25%' },
+//                    { text: 'Description', datafield: 'description' }
+//                ]
+//            });
+//        });
+//    }
+
     function getAvailableCriteria() {
-        $http.get('supersede-dm-app/criteria')
+        $http.get('supersede-dm-app/processes/criteria/list/detailed?procId=' + $scope.procId)
         .success(function(data) {
             availableCriteria = {
                 datatype: "json",
@@ -157,9 +217,53 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     }
 
+//    function getAvailablePlayers() {
+//        $http.get('supersede-dm-app/user/users')
+//        .success(function(data) {
+//            availablePlayers = {
+//                datatype: "json",
+//                datafields: [
+//                    { name: 'userId' },
+//                    { name: 'name' },
+//                    { name: 'email' }
+//                ],
+//                localdata: data
+//            };
+//            var dataAdapter1 = new $.jqx.dataAdapter(availablePlayers);
+//            $("#opinion_providers").jqxGrid({
+//                width: '100%',
+//                selectionmode: 'checkbox',
+//                altrows: true,
+//                autoheight: true,
+//                pageable: true,
+//                source: dataAdapter1,
+//                columns: [
+//                    { text: 'Id', datafield: 'userId', width: '20%' },
+//                    { text: 'Name', datafield: 'name', width: '40%' },
+//                    { text: 'Email', datafield: 'email' }
+//                ]
+//            });
+//            var dataAdapter2 = new $.jqx.dataAdapter(availablePlayers);
+//            $("#negotiators").jqxGrid({
+//                width: '100%',
+//                selectionmode: 'checkbox',
+//                altrows: true,
+//                autoheight: true,
+//                pageable: true,
+//                source: dataAdapter2,
+//                columns: [
+//                    { text: 'Id', datafield: 'userId', width: '20%' },
+//                    { text: 'Name', datafield: 'name', width: '40%' },
+//                    { text: 'Email', datafield: 'email' }
+//                ]
+//            });
+//        });
+//    }
+
     function getAvailablePlayers() {
-        $http.get('supersede-dm-app/user/users')
+        $http.get('supersede-dm-app/processes/users/list/detailed?procId=' + $scope.procId)
         .success(function(data) {
+        	console.log( data );
             availablePlayers = {
                 datatype: "json",
                 datafields: [
@@ -362,8 +466,12 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
             data: weightsId,
-            params: {name: gameName, gameRequirements: $scope.gameRequirementsId, gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId}
+            params: {
+            	name: gameName, 
+            	gameRequirements: $scope.gameRequirementsId, 
+            	gameOpinionProviders: $scope.gameOpinionProvidersId,
+                gameNegotiators: $scope.gameNegotiatorsId,
+                procId: $scope.procId }
         })
         .success(function(data) {
             $("#game_created").html("<strong>Game successfully created!</strong>");

@@ -10,13 +10,20 @@ import javax.persistence.Table;
 @Table(name = "h_activity_instances")
 public class HActivity
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    
-    private Long processId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    public Long getProcessId() {
+	private Long processId;
+
+	private String methodName;
+
+	private Long userId;
+
+	private Long propertyBag;
+
+
+	public Long getProcessId() {
 		return processId;
 	}
 
@@ -24,25 +31,35 @@ public class HActivity
 		this.processId = processId;
 	}
 
-	private String methodName;
+	public Long getId() {
+		return id;
+	}
 
-    public Long getId()
-    {
-        return id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
+	public String getMethodName() {
+		return methodName;
+	}
 
-    public String getMethodName()
-    {
-        return methodName;
-    }
+	public void setMethodName(String methodName) {
+		this.methodName = methodName;
+	}
 
-    public void setMethodName(String methodName)
-    {
-        this.methodName = methodName;
-    }
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getPropertyBag() {
+		return propertyBag;
+	}
+
+	public void setPropertyBag(Long propertyBag) {
+		this.propertyBag = propertyBag;
+	}
 }

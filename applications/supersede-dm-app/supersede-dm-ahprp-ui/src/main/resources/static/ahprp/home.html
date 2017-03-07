@@ -8,9 +8,11 @@
             <p>Email: <b>{{user.email}}</b></p>
 
             <div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
-                <jqx-link-button jqx-width="200" jqx-height="30">
-                    <a href="#/supersede-dm-app/ahprp/games">Decision making processes</a>
-                </jqx-link-button>
+<!--                 <jqx-link-button jqx-width="200" jqx-height="30"> -->
+<!--                     <a href="#/supersede-dm-app/ahprp/games?procId={{procId}}">Decision making processes</a> -->
+                    <a ng-href="#/supersede-dm-app/ahprp/games?procId={{procId}}">Decision making processes</a>
+<!--                     <a href="#" onclick="vote()">Decision making processes</a> -->
+<!--                 </jqx-link-button> -->
             </div>
 
             <div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">

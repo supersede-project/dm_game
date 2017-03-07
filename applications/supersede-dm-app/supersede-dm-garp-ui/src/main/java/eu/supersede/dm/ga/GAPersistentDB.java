@@ -32,12 +32,13 @@ import org.springframework.util.NumberUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import eu.supersede.dm.DMGame;
+import eu.supersede.dm.ProcessManager;
+import eu.supersede.dm.PropertyBag;
 import eu.supersede.dm.methods.GAMethod;
+import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.data.GAGameDetails;
 import eu.supersede.gr.data.GAGameStatus;
-import eu.supersede.gr.data.GARole;
-import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.GAGameRankingsJpa;
@@ -45,7 +46,6 @@ import eu.supersede.gr.jpa.GAGameRequirementJpa;
 import eu.supersede.gr.jpa.GAGameSolutionsJpa;
 import eu.supersede.gr.jpa.GAGameSummaryJpa;
 import eu.supersede.gr.jpa.GAPlayerWeightsJpa;
-import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HGAGameCriterion;
 import eu.supersede.gr.model.HGAGameParticipation;
@@ -62,35 +62,47 @@ public class GAPersistentDB
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RequirementsJpa requirementsJpa;
+    private GAGameSummaryJpa		gamesJpa;
 
     @Autowired
-    private GAGameSummaryJpa gamesJpa;
+    private GAGameCriteriaJpa		criteriaJpa;
 
     @Autowired
-    private GAGameCriteriaJpa criteriaJpa;
+    private GAGameParticipationJpa	participationJpa;
 
     @Autowired
-    private GAGameParticipationJpa participationJpa;
+    private GAGameRequirementJpa	gameRequirementsJpa;
 
     @Autowired
-    private ActivitiesJpa activitiesJpa;
+    private GAGameRankingsJpa		rankingsJpa;
 
     @Autowired
-    private GAGameRequirementJpa gameRequirementsJpa;
+    private GAPlayerWeightsJpa		playerWeightsJpa;
 
     @Autowired
-    private GAGameRankingsJpa rankingsJpa;
-
-    @Autowired
-    private GAPlayerWeightsJpa playerWeightsJpa;
-
-    @Autowired
-    private GAGameSolutionsJpa solutionsJpa;
-
-    public void create(Authentication authentication, String name, Long[] gameRequirements,
-            Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
-            Long[] gameOpinionProviders, Long[] gameNegotiators)
+    private GAGameSolutionsJpa		solutionsJpa;
+    
+    
+    public Long getProcessId( Long activityId ) {
+    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
+    	return a.getProcessId();
+    }
+    
+    public Long getGameId( Long activityId ) {
+    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
+    	String ret = DMGame.get().getProcessManager( a.getProcessId() ).getProperties( a ).get( "gameId", "" );
+    	return Long.parseLong( ret );
+    }
+    
+    public void create(
+    		Authentication authentication, 
+    		String name, 
+    		Long[] gameRequirements,
+            Map<String, Map<String, Double>> playersWeights, 
+            Map<String, Double> criteriaWeights,
+            Long[] gameOpinionProviders, 
+            Long[] gameNegotiators,
+            Long processId )
     {
         List<Long> requirements = new ArrayList<>();
         List<Long> opinionProviders = new ArrayList<>();
@@ -125,7 +137,7 @@ public class GAPersistentDB
 
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
-        HActivity persistentActivity = activitiesJpa.save(activity);
+        HActivity persistentActivity = DMGame.get().getJpa().activities.save(activity);
 
         gameSummary.setActivityId(persistentActivity.getId());
         HGAGameSummary persistedGameSummary = gamesJpa.save(gameSummary);
@@ -153,7 +165,7 @@ public class GAPersistentDB
 
         for (Long requirementId : requirements)
         {
-            Requirement requirement = requirementsJpa.findOne(requirementId);
+            Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
             if (requirement == null)
             {
@@ -190,7 +202,16 @@ public class GAPersistentDB
         gameParticipation.setUserId(gameSummary.getOwner());
         gameParticipation.setRole(GARole.Supervisor.name());
         participationJpa.save(gameParticipation);
-
+        
+        if( processId != -1 ) {
+        	ProcessManager mgr = DMGame.get().getProcessManager( processId );
+        	for( Long userId : opinionProviders ) {
+        		HActivity a = mgr.createActivity( GAPlayerVotingMethod.NAME, userId );
+        		PropertyBag bag = mgr.getProperties( a );
+        		bag.set( "gameId", "" + gameId );
+        	}
+        }
+        
         log.info(
                 "Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
                         + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),

@@ -1,0 +1,24 @@
+<script src="supersede-dm-app/js/process.js"></script>
+<div class="container" ng-controller="process">
+
+    <table style="width:100%"><tr>
+    <td>
+    <h2>Users: {{userCount}}</h2>
+    <h2>Criteria: {{criteriaCount}}</h2>
+    <h2>Requirements: {{requirementsCount}}</h2>
+    <h2>Status: {{processStatus}}</h2>
+    </td>
+    <td>
+    <div id="barGauge"></div>
+    </td>
+    </tr></table>
+
+
+    <table><tr>
+    <td><input style='margin-top: 20px;' value="Prev" type="button" id='btnPrevPhase' /></td>
+    <td>Available actions
+    <div id='procList'></div></td>
+    <td><input style='margin-top: 20px;' value="Next" type="button" id='btnNextPhase' /></td>
+    </tr></table>
+
+</div>
