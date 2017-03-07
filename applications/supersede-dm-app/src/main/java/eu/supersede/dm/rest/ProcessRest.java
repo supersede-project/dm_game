@@ -596,6 +596,7 @@ public class ProcessRest
 
         for (HAlert alert : alerts)
         {
+            System.out.println("Removing alert " + alert.getId() + " from process " + procId);
             proc.removeAlert(alert.getId());
         }
 
@@ -608,6 +609,7 @@ public class ProcessRest
                 continue;
             }
 
+            System.out.println("Adding alert " + alert.getId() + " to process " + procId);
             proc.addAlert(alert);
         }
     }

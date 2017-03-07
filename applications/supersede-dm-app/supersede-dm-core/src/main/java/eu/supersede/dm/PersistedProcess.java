@@ -119,7 +119,9 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public void removeAlert(String id)
     {
-        DMGame.get().jpa.alerts.deleteById(id);
+        HAlert alert = DMGame.get().jpa.alerts.findOne(id);
+        alert.setProcessId(Long.MIN_VALUE);
+        DMGame.get().jpa.alerts.save(alert);
     }
 
     @Override

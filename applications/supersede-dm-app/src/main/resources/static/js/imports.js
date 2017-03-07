@@ -451,7 +451,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 var currentAlert = $("#alerts").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedAlerts.length; j++) {
-                    if (addedAlerts[j] === currentAlert.id) {
+                    if (addedAlerts[j].id === currentAlert.id) {
                         $("#alerts").jqxGrid("selectrow", i);
                         console.log("selecting alert:");
                         console.log(currentAlert);
