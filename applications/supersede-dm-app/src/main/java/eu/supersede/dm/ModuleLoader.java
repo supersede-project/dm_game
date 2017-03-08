@@ -53,52 +53,53 @@ import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 public class ModuleLoader
 {
     @Autowired
-    UsersJpa jpaUsers;
+    private UsersJpa jpaUsers;
 
     @Autowired
-    RequirementsJpa jpaRequirements;
+    private RequirementsJpa jpaRequirements;
 
     @Autowired
-    ValutationCriteriaJpa jpaCriteria;
+    private ValutationCriteriaJpa jpaCriteria;
 
     @Autowired
-    ProcessesJpa jpaProcesses;
+    private ProcessesJpa jpaProcesses;
 
     @Autowired
-    ProcessMembersJpa jpaMembers;
+    private ProcessMembersJpa jpaMembers;
 
     @Autowired
-    ActivitiesJpa jpaActivities;
+    private ActivitiesJpa jpaActivities;
 
     @Autowired
-    ProcessCriteriaJpa jpaProcessCriteria;
+    private ProcessCriteriaJpa jpaProcessCriteria;
 
     @Autowired
-    AppsJpa jpaApps;
+    private AppsJpa jpaApps;
 
     @Autowired
-    AlertsJpa jpaAlerts;
+    private AlertsJpa jpaAlerts;
 
     @Autowired
-    ReceivedUserRequestsJpa jpaReceivedUserRequests;
+    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
     @Autowired
-    RequirementsPropertiesJpa jpaRequirementProperties;
+    private RequirementsPropertiesJpa jpaRequirementProperties;
 
     @Autowired
-    RequirementsDependenciesJpa jpaRequirementDependencies;
+    private RequirementsDependenciesJpa jpaRequirementDependencies;
 
     @Autowired
-    PropertiesJpa jpaProperties;
+    private PropertiesJpa jpaProperties;
 
     @Autowired
-    PropertyBagsJpa jpaPropertyBags;
+    private PropertyBagsJpa jpaPropertyBags;
 
     @Autowired
-    MultiJpaProvider multiJpaProvider;
+    private MultiJpaProvider multiJpaProvider;
 
     public ModuleLoader()
     {
+
     }
 
     @PostConstruct
@@ -204,46 +205,68 @@ public class ModuleLoader
                 + alert.getTenant() + ", " + alert.getTimestamp());
 
         // Override class JPA instances with multitenancy provided
-        AppsJpa jpaApps = multiJpaProvider.getRepository(AppsJpa.class, alert.getTenant());
-        AlertsJpa jpaAlerts = multiJpaProvider.getRepository(AlertsJpa.class, alert.getTenant());
-        ReceivedUserRequestsJpa jpaReceivedUserRequests = multiJpaProvider.getRepository(ReceivedUserRequestsJpa.class,
-                alert.getTenant());
-        RequirementsJpa jpaRequirements = multiJpaProvider.getRepository(RequirementsJpa.class, alert.getTenant());
+        AppsJpa multijpaApps = multiJpaProvider.getRepository(AppsJpa.class, alert.getTenant());
+        AlertsJpa multijpaAlerts = multiJpaProvider.getRepository(AlertsJpa.class, alert.getTenant());
+        ReceivedUserRequestsJpa multijpaReceivedUserRequests = multiJpaProvider
+                .getRepository(ReceivedUserRequestsJpa.class, alert.getTenant());
+        RequirementsJpa multijpaRequirements = multiJpaProvider.getRepository(RequirementsJpa.class, alert.getTenant());
 
-        if ((jpaApps == null))
+        if (multijpaApps == null)
         {
             System.out.println("Unknown tenant: '" + alert.getTenant() + "'");
             return;
         }
 
-        HApp app = jpaApps.findOne(alert.getApplicationId());
+        List<HApp> apps = multijpaApps.findAll();
+        HApp app = null;
+
+        // Temporary workaround because neither findOne() nor findById() find the app
+        for (HApp tmpApp : apps)
+        {
+            System.out.println("Found app: '" + tmpApp.getId() + "'");
+
+            if (tmpApp.getId().equals(alert.getApplicationId()))
+            {
+                System.out.println("Found app with id: " + alert.getApplicationId());
+                app = tmpApp;
+                break;
+            }
+        }
+
+        // TODO: check whether
+        // HApp app = multijpaApps.findOne(alert.getApplicationId());
 
         if (app == null)
         {
             app = new HApp();
             app.setId(alert.getApplicationId());
-            app = jpaApps.save(app);
+            app = multijpaApps.save(app);
+        }
 
-            HAlert halert = jpaAlerts.findOne(alert.getId());
+        HAlert halert = multijpaAlerts.findOne(alert.getId());
 
-            if (halert == null)
-            {
-                halert = new HAlert(alert.getId(), alert.getTimestamp());
-                halert = jpaAlerts.save(halert);
-            }
+        if (halert == null)
+        {
+            halert = new HAlert(alert.getId(), alert.getApplicationId(), alert.getTimestamp());
+            halert = multijpaAlerts.save(halert);
+        }
+        else
+        {
+            System.out.println("Alert " + alert.getId() + " already present, not saving it");
+        }
 
-            for (UserRequest request : alert.getRequests())
-            {
-                HReceivedUserRequest hrur = new HReceivedUserRequest();
-                hrur.setId(request.getId());
-                hrur.setAccuracy(request.getAccuracy());
-                hrur.setClassification(request.getClassification().name());
-                hrur.setDescription(request.getDescription());
-                hrur.setNegativeSentiment(request.getNegativeSentiment());
-                hrur.setPositiveSentiment(request.getPositiveSentiment());
-                hrur.setOverallSentiment(request.getOverallSentiment());
-                jpaReceivedUserRequests.save(hrur);
-            }
+        for (UserRequest request : alert.getRequests())
+        {
+            HReceivedUserRequest hrur = new HReceivedUserRequest();
+            hrur.setId(request.getId());
+            hrur.setAlertId(alert.getId());
+            hrur.setAccuracy(request.getAccuracy());
+            hrur.setClassification(request.getClassification().name());
+            hrur.setDescription(request.getDescription());
+            hrur.setNegativeSentiment(request.getNegativeSentiment());
+            hrur.setPositiveSentiment(request.getPositiveSentiment());
+            hrur.setOverallSentiment(request.getOverallSentiment());
+            multijpaReceivedUserRequests.save(hrur);
         }
 
         List<Requirement> requirements = getRequirements(alert);
@@ -252,9 +275,9 @@ public class ModuleLoader
         {
             r.setRequirementId(null);
 
-            if (jpaRequirements != null)
+            if (multijpaRequirements != null)
             {
-                jpaRequirements.save(r);
+                multijpaRequirements.save(r);
             }
             else
             {

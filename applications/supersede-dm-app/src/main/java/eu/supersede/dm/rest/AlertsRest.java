@@ -113,8 +113,6 @@ public class AlertsRest
     @RequestMapping(value = "/biglist", method = RequestMethod.GET)
     public List<FlattenedAlert> getAlertsTree()
     {
-        // return new ArrayList<>();
-        //
         List<FlattenedAlert> list = new ArrayList<>();
         List<HApp> apps = jpaApps.findAll();
 
@@ -123,37 +121,36 @@ public class AlertsRest
             List<HAlert> alerts = jpaAlerts.findAll();
 
             for (HAlert alert : alerts)
-                try
+            {
+                System.out.println("Found alert " + alert.getId());
+
+                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
+
+                if (requests == null || requests.size() == 0)
                 {
-                    List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
-
-                    if (requests.size() < 1)
-                    {
-                        continue;
-                    }
-
-                    for (HReceivedUserRequest ur : requests)
-                    {
-                        FlattenedAlert fa = new FlattenedAlert();
-
-                        fa.applicationID = app.getId();
-                        fa.alertID = alert.getId();
-                        fa.timestamp = alert.getTimestamp();
-                        fa.accuracy = ur.getAccuracy();
-                        fa.classification = RequestClassification.valueOf(ur.getClassification());
-                        fa.description = ur.getDescription();
-                        fa.id = ur.getId();
-                        fa.neg = ur.getNegativeSentiment();
-                        fa.pos = ur.getPositiveSentiment();
-                        fa.overall = ur.getOverallSentiment();
-
-                        list.add(fa);
-                    }
+                    System.out.println("No user requests found for alert " + alert.getId());
+                    continue;
                 }
-                catch (Exception ex)
+
+                for (HReceivedUserRequest ur : requests)
                 {
-                    ex.printStackTrace();
+                    System.out.println("Found user request: " + ur.getId());
+                    FlattenedAlert fa = new FlattenedAlert();
+
+                    fa.applicationID = app.getId();
+                    fa.alertID = alert.getId();
+                    fa.timestamp = alert.getTimestamp();
+                    fa.accuracy = ur.getAccuracy();
+                    fa.classification = RequestClassification.valueOf(ur.getClassification());
+                    fa.description = ur.getDescription();
+                    fa.id = ur.getId();
+                    fa.neg = ur.getNegativeSentiment();
+                    fa.pos = ur.getPositiveSentiment();
+                    fa.overall = ur.getOverallSentiment();
+
+                    list.add(fa);
                 }
+            }
         }
 
         return list;

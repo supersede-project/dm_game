@@ -21,9 +21,10 @@ public class HAlert
     {
     }
 
-    public HAlert(String id, long timestamp)
+    public HAlert(String id, String applicationId, long timestamp)
     {
         this.id = id;
+        this.applicationId = applicationId;
         this.timestamp = timestamp;
     }
 
