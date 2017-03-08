@@ -36,17 +36,14 @@ import eu.supersede.gr.model.HReceivedUserRequest;
 @RequestMapping("alerts")
 public class AlertsRest
 {
-    // @Autowired
-    // private RequirementsJpa requirements;
+    @Autowired
+    private AppsJpa jpaApps;
 
     @Autowired
-    AppsJpa jpaApps;
+    private AlertsJpa jpaAlerts;
 
     @Autowired
-    AlertsJpa jpaAlerts;
-
-    @Autowired
-    ReceivedUserRequestsJpa jpaReceivedUserRequests;
+    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
 
     /**
      * Return all the requirements.
@@ -99,8 +96,8 @@ public class AlertsRest
     public static class FlattenedAlert
     {
         public String id;
-        public String alertID;
-        public String applicationID;
+        public String alertId;
+        public String applicationId;
         public long timestamp;
         public String description;
         public RequestClassification classification;
@@ -122,23 +119,19 @@ public class AlertsRest
 
             for (HAlert alert : alerts)
             {
-                System.out.println("Found alert " + alert.getId());
-
                 List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
 
                 if (requests == null || requests.size() == 0)
                 {
-                    System.out.println("No user requests found for alert " + alert.getId());
                     continue;
                 }
 
                 for (HReceivedUserRequest ur : requests)
                 {
-                    System.out.println("Found user request: " + ur.getId());
                     FlattenedAlert fa = new FlattenedAlert();
 
-                    fa.applicationID = app.getId();
-                    fa.alertID = alert.getId();
+                    fa.applicationId = app.getId();
+                    fa.alertId = alert.getId();
                     fa.timestamp = alert.getTimestamp();
                     fa.accuracy = ur.getAccuracy();
                     fa.classification = RequestClassification.valueOf(ur.getClassification());

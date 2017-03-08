@@ -1,0 +1,46 @@
+<script src="supersede-dm-app/js/convert_alerts_to_requirements.js"></script>
+
+<style>
+h1 {
+    text-align: center;
+}
+#alerts {
+    margin: 0 auto;
+    padding: 5px;
+    width: 520px;
+}
+#alerts > div > div {
+    min-width: 500px;
+    border-radius: 5px;
+    margin: 5px auto;
+}
+#alerts div {
+    padding: 5px;
+}
+</style>
+
+<div ng-controller="convert_alerts_to_requirements">
+
+	<h1>Convert Alerts To Requirements</h1>
+
+    <div id="alerts">
+        <div ng-repeat="alert in alerts">
+            <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                <div>
+                    <strong>Alert {{alert.alertId}}</strong>
+                </div>
+                <div style="background-color: #ffd11a">
+                    <strong>Application Id</strong>: {{alert.applicationId}}<br>
+                    <strong>Timestamp</strong>: {{alert.timestamp}}<br>
+                    <strong>Accuracy</strong>: {{alert.accuracy}}<br>
+                    <strong>Classification</strong>: {{alert.classification}}<br>
+                    <strong>Description</strong>: {{alert.description}}<br>
+                    <strong>Negative Sentiment</strong>: {{alert.neg}}<br>
+                    <strong>Positive Sentiment</strong>: {{alert.pos}}<br>
+                    <strong>Overall Sentiment</strong>: {{alert.overall}}<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

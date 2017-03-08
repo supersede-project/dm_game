@@ -51,8 +51,8 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 datatype: "json",
                 localdata: data,
                 datafields: [
-                    { name: 'applicationID', map: 'applicationID' },
-                    { name: 'alertID' },
+                    { name: 'applicationId', map: 'applicationId' },
+                    { name: 'alertId' },
                     { name: 'id' },
                     { name: 'timestamp' },
                     { name: 'description' },
@@ -76,9 +76,9 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 //                $("#treeGrid").jqxTreeGrid('expandRow', "0");
                 //            },
                 columns: [
-                  { text: 'App', dataField: 'applicationID', width: "15%" },
-                  { text: 'Alert', dataField: 'alertID', width: "10%" },
-                  { text: 'ID', dataField: 'id', width: "10%" },
+                  { text: 'App', dataField: 'applicationId', width: "15%" },
+                  { text: 'Alert', dataField: 'alertId', width: "10%" },
+                  { text: 'Id', dataField: 'id', width: "10%" },
                   { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
                   { text: 'Description', dataField: 'description', width: "20%" },
                   { text: 'Classification', dataField: 'classification', width: "15%" },
@@ -88,7 +88,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                   { text: 'Overall.', dataField: 'overall', width: "5%" }
     //              { text: 'Features.', dataField: 'features', width: 120 }
                 ],
-            groups: ['applicationID', 'alertID']
+            groups: ['applicationId', 'alertId']
             });
 
             $("#expAlerts").jqxExpander({ width: '100%', expanded: false });

@@ -14,18 +14,17 @@
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('confirm_requirements', function($scope, $http, $location) {
+app.controllerProvider.register('convert_alerts_to_requirements', function ($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
-	
-	$scope.proceed = function() {
-		$http.put('supersede-dm-app/processes/requirements/confirm?procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
-	};
-	
-	$scope.cancel = function() {
-		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-	};
+    $scope.procId = $location.search().procId;
 
+    function getAvailableAlerts() {
+        $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
+            $scope.alerts = data;
+            console.log("Alerts:");
+            console.log($scope.alerts);
+        });
+    }
+
+    getAvailableAlerts();
 });

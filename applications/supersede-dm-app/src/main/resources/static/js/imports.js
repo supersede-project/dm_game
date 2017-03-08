@@ -370,8 +370,8 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 datatype: "json",
                 localdata: data,
                 datafields: [
-                    { name: 'applicationID', map: 'applicationID' },
-                    { name: 'alertID' },
+                    { name: 'applicationId', map: 'applicationId' },
+                    { name: 'alertId' },
                     { name: 'id' },
                     { name: 'timestamp' },
                     { name: 'description' },
@@ -390,9 +390,9 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 selectionmode: 'checkbox',
                 groupable: true,
                 columns: [
-                    { text: 'App', dataField: 'applicationID', width: "15%" },
-                    { text: 'Alert', dataField: 'alertID', width: "10%" },
-                    { text: 'ID', dataField: 'id', width: "10%" },
+                    { text: 'App', dataField: 'applicationId', width: "15%" },
+                    { text: 'Alert', dataField: 'alertId', width: "10%" },
+                    { text: 'Id', dataField: 'id', width: "10%" },
                     { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
                     { text: 'Description', dataField: 'description', width: "20%" },
                     { text: 'Classification', dataField: 'classification', width: "15%" },
@@ -401,7 +401,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                     { text: 'Neg.', dataField: 'neg', width: "5%" },
                     { text: 'Overall.', dataField: 'overall', width: "5%" }
                 ],
-                groups: ['applicationID', 'alertID']
+                groups: ['applicationId', 'alertId']
             });
 
             getAddedAlerts();
@@ -419,7 +419,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 var currentAlert = $("#alerts").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedAlerts.length; j++) {
-                    if (addedAlerts[j].id === currentAlert.alertID) {
+                    if (addedAlerts[j].id === currentAlert.alertId) {
                         $("#alerts").jqxGrid("selectrow", i);
                         added = true;
                         break;
@@ -443,7 +443,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         for (var i = 0; i < selectedAlerts.length; i++) {
             var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
             $scope.alerts.localdata.push(selectedAlert);
-            $scope.alertsId.push(selectedAlert.alertID);
+            $scope.alertsId.push(selectedAlert.alertId);
         }
     }
 
