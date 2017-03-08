@@ -405,7 +405,7 @@ public class GAGameRest
         
         try {
         	
-//        	EnactmentService.get().send(list, true );
+        	EnactmentService.get().send( list, true );
         	
         	for( Long reqId : game.getRequirements() )
             {

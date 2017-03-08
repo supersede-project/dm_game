@@ -266,4 +266,14 @@ public class SimulatedProcess extends AbstractProcessManager
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public Requirement getRequirement(Long reqId) {
+		for( Requirement r : requirements ) {
+			if( r.getRequirementId() == reqId ) {
+				return r;
+			}
+		}
+		return null;
+	}
 }

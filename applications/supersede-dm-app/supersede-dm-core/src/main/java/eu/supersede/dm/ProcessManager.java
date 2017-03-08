@@ -37,6 +37,8 @@ public interface ProcessManager
     public void setRequirementsStatus(List<Requirement> reqs, Integer status);
 
     public void removeRequirement(Long reqId);
+    
+    public Requirement getRequirement( Long reqId );
 
     // Criteria
 

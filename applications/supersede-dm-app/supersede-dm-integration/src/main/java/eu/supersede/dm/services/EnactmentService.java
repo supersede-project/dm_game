@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
-import eu.supersede.dm.agent.ClientAgent;
 import eu.supersede.dm.agent.RESTClient;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +36,7 @@ import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
+import eu.supersede.dm.methods.AccessRequirementsEditingSession;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
@@ -198,6 +200,13 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         return proc.requirements();
+    }
+
+    @RequestMapping(value = "/requirements/get", method = RequestMethod.GET)
+    public Requirement getRequirement( @RequestParam Long procId, @RequestParam Long reqId )
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        return proc.getRequirement( reqId );
     }
 
     @RequestMapping(value = "/requirements/count", method = RequestMethod.GET)
@@ -626,4 +635,31 @@ public class ProcessRest
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         return proc.getAlerts();
     }
+    
+    @RequestMapping( value="/methods/{methodname}/{action}", method = RequestMethod.POST )
+    public void postToMethod( 
+    		@PathVariable String methodName, 
+    		@PathVariable String action,
+    		@RequestParam Map<String,String> args ) {
+    	DMMethod m = DMLibrary.get().getMethod( methodName );
+    	if( m != null ) {
+//    		m.post( action, args );
+    	}
+    }
+    
+    @RequestMapping( value="/requirements/edit/collaboratively", method = RequestMethod.POST )
+    public void createRequirementsEditingSession( 
+    		@RequestParam Long procId ) {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	if( mgr == null ) {
+    		return;
+    	}
+    	for( HProcessMember m : mgr.getProcessMembers() ) {
+//    		HActivity a = 
+    		mgr.createActivity( AccessRequirementsEditingSession.NAME, m.getUserId() );
+//    		PropertyBag bag = mgr.getProperties( a );
+//    		bag.set( "gameId", "" + gameId );
+    	}
+    }
+    
 }
