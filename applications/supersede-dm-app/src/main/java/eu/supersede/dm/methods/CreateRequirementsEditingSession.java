@@ -103,9 +103,9 @@ public class CreateRequirementsEditingSession implements DMMethod
             		}
             	}
             	
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.requirements() )
                 {
-                    if (r.getStatus() != RequirementStatus.Confirmed.getValue())
+                    if (r.getStatus() != RequirementStatus.Editable.getValue())
                     {
                         return false;
                     }
