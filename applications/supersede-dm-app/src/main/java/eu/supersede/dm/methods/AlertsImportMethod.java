@@ -28,9 +28,9 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class AlertsImportMethod implements DMMethod
 {
-    public static final String NAME = "Import Alerts";
+    private static final String NAME = "Import Alerts";
+    private static final String PAGE = "import_alerts";
 
-    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
@@ -38,13 +38,12 @@ public class AlertsImportMethod implements DMMethod
     {
         list = new ArrayList<>();
         options = new ArrayList<>();
-        this.name = NAME;
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -113,6 +112,6 @@ public class AlertsImportMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "import_alerts";
+        return PAGE;
     }
 }
