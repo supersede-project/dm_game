@@ -408,6 +408,20 @@ public class ProcessRest
         }
     }
 
+    @RequestMapping(value = "/requirements/new", method = RequestMethod.POST)
+    public Requirement createRequirement( @RequestParam Long procId, @RequestParam String name )
+    {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	if( mgr == null ) {
+    		return null;
+    	}
+    	Requirement r = new Requirement();
+    	r.setName( name );
+    	r = DMGame.get().getJpa().requirements.save( r );
+    	mgr.addRequirement( r );
+    	return r;
+    }
+
     @RequestMapping(value = "/requirements/property/submit", method = RequestMethod.POST)
     public void setProperties(@RequestParam Long procId, @RequestParam Long requirementId,
             @RequestParam String propertyName, @RequestParam String propertyValue)
@@ -449,43 +463,6 @@ public class ProcessRest
         }
         
         throw new Exception( "No next phase available" );
-        
-//        RequirementStatus status = null;
-//
-//        try
-//        {
-//            status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
-//
-//            switch (status)
-//            {
-//                case Confirmed:
-//                    status = RequirementStatus.Enacted;
-//                    break;
-//                case Discarded:
-//                    break;
-//                case Editable:
-//                    status = RequirementStatus.Confirmed;
-//                    break;
-//                case Enacted:
-//                    break;
-//                case Unconfirmed:
-//                    status = RequirementStatus.Editable;
-//                    break;
-//            }
-//
-//            for (Requirement r : mgr.requirements())
-//            {
-//                r.setStatus(status.getValue());
-//                DMGame.get().getJpa().requirements.save(r);
-//            }
-//
-//            return status.name();
-//        }
-//        catch (Exception ex)
-//        {
-//            ex.printStackTrace();
-//            throw ex;
-//        }
     }
 
     @RequestMapping(value = "/requirements/prev", method = RequestMethod.GET, produces = "text/plain")

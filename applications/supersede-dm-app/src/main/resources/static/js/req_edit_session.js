@@ -206,11 +206,35 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             console.log(err.message);
         });
     };
+    
+    $scope.newReq = function() {
+    	var reqName = prompt( "Requirement name", "");
+    	if( typeof reqName === 'undefined' || reqName === null ){
+    	    return;
+    	}
+        $http({
+            url: "supersede-dm-app/processes/requirements/new?procId=" + $scope.procId + "&name=" + reqName,
+            method: 'POST'
+        }).success(function (data) {
+        	$("#requirements-listbox").jqxListBox('addItem', { 
+                source: data,
+                displayMember: "name",
+                valueMember: "id",
+                height: '100%', width: '100%',
+                renderer: function (index, label, value) {
+                    var datarecord = data[index];
+                    var text = datarecord.name;
+                    return text;
+                }
+        	} );
+        }).error(function (err) {
+            console.log(err.message);
+        });
+    }
 
     $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
     .success(function (data) {
         $scope.requirements = data;
-//        loadCurrentRequirement();
 
         $scope.actNum = data.length;
 
