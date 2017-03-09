@@ -527,23 +527,6 @@ public class ProcessRest
     	return ret;
     }
 
-    @RequestMapping(value = "/requirements/edit/collaboratively", method = RequestMethod.POST)
-    public void createRequirementsEditingSession(@RequestParam Long procId)
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        if (mgr == null)
-        {
-            return;
-        }
-        for (HProcessMember m : mgr.getProcessMembers())
-        {
-            // HActivity a =
-            mgr.createActivity(AccessRequirementsEditingSession.NAME, m.getUserId());
-            // PropertyBag bag = mgr.getProperties( a );
-            // bag.set( "gameId", "" + gameId );
-        }
-    }
-
     // Criteria
 
     @RequestMapping(value = "/criteria/import", method = RequestMethod.POST)
