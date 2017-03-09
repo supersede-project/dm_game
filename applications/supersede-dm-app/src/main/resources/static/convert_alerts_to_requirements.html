@@ -1,0 +1,49 @@
+<script src="supersede-dm-app/js/convert_alerts_to_requirements.js"></script>
+
+<style>
+h1 {
+    text-align: center;
+}
+#alerts {
+    margin: 0 auto;
+    padding: 5px;
+    width: 520px;
+}
+#alerts > div > div {
+    min-width: 500px;
+    border-radius: 5px;
+    margin: 5px auto;
+}
+#alerts div {
+    padding: 5px;
+}
+</style>
+
+<div ng-controller="convert_alerts_to_requirements">
+
+	<h1>Convert Alerts To Requirements</h1>
+
+    <div id="alerts">
+        <div ng-repeat="userRequest in userRequests">
+            <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                <div>
+                    <strong>Alert {{userRequest.id}}</strong>
+                </div>
+                <div style="background-color: #ffd11a">
+                    <strong>Description</strong>: {{alert.description}}<br>
+                    <strong>Classification</strong>: {{userRequest.classification}}<br>
+                    <strong>Accuracy</strong>: {{userRequest.accuracy}}<br>
+                    <strong>Positive Sentiment</strong>: {{alert.positiveSentiment}}<br>
+                    <strong>Negative Sentiment</strong>: {{alert.negativeSentiment}}<br>
+                    <strong>Overall Sentiment</strong>: {{alert.overallSentiment}}<br>
+                </div>
+            </div>
+            <div>
+                <jqx-button ng-click="convertToRequirement(alert.alertId)">Convert to requirement</jqx-button>
+                <jqx-button ng-click="discard(alert.alertId)">Discard</jqx-button>
+                <p id="{{'converted' + alert.alertId}}"></p>
+            </div>
+        </div>
+    </div>
+
+</div>

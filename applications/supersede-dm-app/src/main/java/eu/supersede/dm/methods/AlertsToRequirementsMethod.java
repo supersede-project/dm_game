@@ -1,17 +1,3 @@
-/*
-   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-     http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
 package eu.supersede.dm.methods;
 
 import java.util.ArrayList;
@@ -23,18 +9,16 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
-public class CriteriaImportMethod implements DMMethod
+public class AlertsToRequirementsMethod implements DMMethod
 {
-    private static final String NAME = "Select Criteria";
-    private static final String PAGE = "import_criteria";
+    private static final String NAME = "Convert Alerts To Requirements";
+    private static final String PAGE = "convert_alerts_to_requirements";
 
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
-    public CriteriaImportMethod()
+    public AlertsToRequirementsMethod()
     {
         list = new ArrayList<>();
         options = new ArrayList<>();
@@ -90,23 +74,7 @@ public class CriteriaImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
-                    {
-                        return true;
-                    }
-                    if (r.getStatus() == RequirementStatus.Editable.getValue())
-                    {
-                        return true;
-                    }
-                }
-                if (mgr.requirements().size() < 1)
-                {
-                    return true;
-                }
-
-                return false;
+                return mgr.getAlerts().size() > 0;
             }
         });
 

@@ -28,9 +28,9 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class RequirementsConfirmationMethod implements DMMethod
 {
-    public static final String NAME = "Confirm Requirements";
+    private static final String NAME = "Confirm Requirements";
+    private static final String PAGE = "confirm_requirements";
 
-    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
@@ -38,13 +38,12 @@ public class RequirementsConfirmationMethod implements DMMethod
     {
         list = new ArrayList<>();
         options = new ArrayList<>();
-        this.name = NAME;
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -124,6 +123,6 @@ public class RequirementsConfirmationMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "confirm_requirements";
+        return PAGE;
     }
 }
