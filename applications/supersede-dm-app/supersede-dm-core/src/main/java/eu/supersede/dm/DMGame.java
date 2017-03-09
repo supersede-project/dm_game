@@ -24,6 +24,7 @@ import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -65,12 +66,122 @@ public class DMGame
     }
 
     JpaProvider jpa;
-
+    
+    DMLifecycle lifecycle = new DMLifecycle();
+    
+    private DMGame() {
+    	lifecycle.addInitialPhase( new DMPhase( "Initialization" ) {
+    		public void activate( ProcessManager mgr ) {
+                for (Requirement r : mgr.requirements())
+                {
+                    r.setStatus( RequirementStatus.Unconfirmed.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
+      		}
+    	} );
+    	lifecycle.addPhase( new DMPhase( "Editing" ) {
+    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
+    			
+                if (mgr.getRequirementsCount() == 0)
+                {
+                    throw new Exception( "At least one requirement must exist in the process" );
+                }
+                
+                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
+                for (Requirement r : mgr.requirements()) {
+                	map.put( r.getStatus(), r );
+                }
+                
+                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
+                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
+                }
+                
+                if( map.count( RequirementStatus.Enacted.getValue() ) > 0 ) {
+                	throw new Exception( "There are already enacted requirements" );
+                }
+                
+                if( (map.count( RequirementStatus.Unconfirmed.getValue() ) > 0) & (map.count( RequirementStatus.Confirmed.getValue() ) > 0) ) {
+                	throw new Exception( "Not a valid state: there are both unconfirmed and already confirmed requirements" );
+                }
+            }
+    		public void activate( ProcessManager mgr ) {
+              for (Requirement r : mgr.requirements())
+              {
+                  r.setStatus( RequirementStatus.Editable.getValue());
+                  DMGame.get().getJpa().requirements.save(r);
+              }
+    		}
+    	} );
+    	lifecycle.addPhase( new DMPhase( "Prioritization" ) {
+    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
+    			
+                if (mgr.getRequirementsCount() == 0)
+                {
+                    throw new Exception( "At least one requirement must exist in the process" );
+                }
+                
+                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
+                for (Requirement r : mgr.requirements()) {
+                	map.put( r.getStatus(), r );
+                }
+                
+                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
+                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
+                }
+                
+                if( map.count( RequirementStatus.Enacted.getValue() ) > 0 ) {
+                	throw new Exception( "There are already enacted requirements" );
+                }
+                
+                if( (map.count( RequirementStatus.Unconfirmed.getValue() ) > 0) ) {
+                	throw new Exception( "Not a valid state: there are still unconfirmed requirements" );
+                }
+            }
+    		public void activate( ProcessManager mgr ) {
+                for (Requirement r : mgr.requirements())
+                {
+                    r.setStatus( RequirementStatus.Confirmed.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
+      		}
+    	} );
+    	lifecycle.addPhase( new DMPhase( "Terminated" ) {
+    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
+    			
+                if (mgr.getRequirementsCount() == 0)
+                {
+                    throw new Exception( "At least one requirement must exist in the process" );
+                }
+                
+                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
+                for (Requirement r : mgr.requirements()) {
+                	map.put( r.getStatus(), r );
+                }
+                
+                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
+                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
+                }
+                
+                if( map.count( RequirementStatus.Confirmed.getValue() ) < map.size() ) {
+                	throw new Exception( "Not all the requirements are confirmed" );
+                }
+            }
+    	} );
+    	lifecycle.setNext( "Initialization", "Editing" );
+    	lifecycle.setNext( "Editing", "Prioritization" );
+    	lifecycle.setNext( "Prioritization", "Terminated" );
+    }
+    
+    public DMLifecycle getLifecycle() {
+    	return this.lifecycle;
+    }
+    
     public HProcess createEmptyProcess()
     {
         HProcess proc = new HProcess();
         proc.setObjective(DMObjective.PrioritizeRequirements.name());
         proc.setStartTime(new Date(System.currentTimeMillis()));
+        proc.setPhaseName( 	lifecycle.getInitPhase().getName() );
         proc = jpa.processes.save(proc);
         proc.setName("Process " + proc.getId());
         proc = jpa.processes.save(proc);

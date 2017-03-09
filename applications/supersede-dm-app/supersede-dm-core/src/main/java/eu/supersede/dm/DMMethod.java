@@ -1,7 +1,6 @@
 package eu.supersede.dm;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DMMethod {
 	
@@ -17,6 +16,4 @@ public interface DMMethod {
 	
 	public String				getPage( ProcessManager mgr );
 	
-//	public String				post( String action, Map<String,String> args );
-
 }

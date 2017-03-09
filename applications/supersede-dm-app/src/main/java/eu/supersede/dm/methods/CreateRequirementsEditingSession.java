@@ -23,7 +23,6 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
@@ -48,10 +47,6 @@ public class CreateRequirementsEditingSession implements DMMethod
         return this.name;
     }
     
-    public String getActivityName() {
-    	return "Edit Requirements Collaboratively";
-    }
-    
     @Override
     public DMObjective getObjective()
     {
@@ -64,26 +59,10 @@ public class CreateRequirementsEditingSession implements DMMethod
         return list;
     }
 
-    public String getPage(String step)
-    {
-        return "";
-    }
-
     @Override
     public List<DMOption> getOptions()
     {
         return this.options;
-    }
-
-    public void setOption(String optName, String optValue)
-    {
-        // TODO
-    }
-
-    public void init(ProcessManager status)
-    {
-        // String pid = executor.startBPMN( "supersedeAHPDM" );
-        // status.setProperty( "pid", pid );
     }
 
     @Override
@@ -96,13 +75,6 @@ public class CreateRequirementsEditingSession implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	List<HActivity> activities = mgr.getOngoingActivities( AccessRequirementsEditingSession.NAME );
-            	if( activities != null ) {
-            		if( activities.size() > 0 ) {
-            			return false;
-            		}
-            	}
-            	
                 for (Requirement r : mgr.requirements() )
                 {
                     if (r.getStatus() != RequirementStatus.Editable.getValue())

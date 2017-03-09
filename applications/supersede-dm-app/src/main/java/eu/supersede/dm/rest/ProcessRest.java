@@ -33,6 +33,7 @@ import eu.supersede.dm.ActivityEntry;
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.DMLibrary;
 import eu.supersede.dm.DMMethod;
+import eu.supersede.dm.DMPhase;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
@@ -136,15 +137,30 @@ public class ProcessRest
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public void closeProcess(@RequestParam Long procId)
     {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	
+    	if( mgr == null ) {
+    		return;
+    	}
+    	
+        for( HActivity a : mgr.getOngoingActivities() ) {
+        	DMMethod m = DMLibrary.get().getMethod( a.getMethodName() );
+        	if( m != null ) {
+//        		TODO: let the method remote its data?
+        	}
+        	mgr.deleteActivity( a );
+        }
+    	
         HProcess p = DMGame.get().getProcess(procId);
-
-        if (p == null)
+        
+        if( p == null )
         {
+        	
             return;
         }
-
+        
         p.setStatus(ProcessStatus.Closed);
-        System.out.println("Closed process " + procId);
+        
         DMGame.get().getJpa().processes.save(p);
     }
 
@@ -161,6 +177,7 @@ public class ProcessRest
         if (p.getStatus() == ProcessStatus.InProgress)
         {
             System.err.println("Can't delete process with id " + procId + ": you must close it first");
+            throw new RuntimeException( "Can't delete process with id " + procId + ": you must close it first" );
         }
 
         System.out.println("Deleted process " + procId);
@@ -392,45 +409,108 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/requirements/next", method = RequestMethod.GET, produces = "text/plain")
-    public String setNextPhase(@RequestParam Long procId)
+    public String setNextPhase(@RequestParam Long procId) throws Exception
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        RequirementStatus status = null;
-
-        try
-        {
-            status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
-
-            switch (status)
-            {
-                case Confirmed:
-                    status = RequirementStatus.Enacted;
-                    break;
-                case Discarded:
-                    break;
-                case Editable:
-                    status = RequirementStatus.Confirmed;
-                    break;
-                case Enacted:
-                    break;
-                case Unconfirmed:
-                    status = RequirementStatus.Editable;
-                    break;
-            }
-
-            for (Requirement r : mgr.requirements())
-            {
-                r.setStatus(status.getValue());
-                DMGame.get().getJpa().requirements.save(r);
-            }
-
-            return status.name();
+        
+        String phaseName = mgr.getCurrentPhase();
+        
+        DMPhase phase = DMGame.get().getLifecycle().getPhase( phaseName );
+        
+        if( phase.getNextPhases().isEmpty() ) {
+        	throw new RuntimeException( "No next phase available" );
         }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            throw ex;
+        
+        // Assume only one next phase is possible
+        
+        for( DMPhase n : phase.getNextPhases() ) {
+        	try {
+				n.checkPreconditions( mgr );
+				n.activate( mgr );
+				mgr.setNextPhase( n.getName() );
+				return n.getName();
+			} catch (Exception e) {
+				throw e;
+			}
         }
+        
+        throw new Exception( "No next phase available" );
+        
+//        RequirementStatus status = null;
+//
+//        try
+//        {
+//            status = RequirementStatus.valueOf(getRequirementsStableStatus(procId));
+//
+//            switch (status)
+//            {
+//                case Confirmed:
+//                    status = RequirementStatus.Enacted;
+//                    break;
+//                case Discarded:
+//                    break;
+//                case Editable:
+//                    status = RequirementStatus.Confirmed;
+//                    break;
+//                case Enacted:
+//                    break;
+//                case Unconfirmed:
+//                    status = RequirementStatus.Editable;
+//                    break;
+//            }
+//
+//            for (Requirement r : mgr.requirements())
+//            {
+//                r.setStatus(status.getValue());
+//                DMGame.get().getJpa().requirements.save(r);
+//            }
+//
+//            return status.name();
+//        }
+//        catch (Exception ex)
+//        {
+//            ex.printStackTrace();
+//            throw ex;
+//        }
+    }
+
+    @RequestMapping(value = "/requirements/prev", method = RequestMethod.GET, produces = "text/plain")
+    public String setPrevPhase(@RequestParam Long procId) throws Exception
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        
+        String phaseName = mgr.getCurrentPhase();
+        
+        DMPhase phase = DMGame.get().getLifecycle().getPhase( phaseName );
+        
+        if( phase.getPrevPhases().isEmpty() ) {
+        	throw new RuntimeException( "No next phase available" );
+        }
+        
+        // Assume only one next phase is possible
+        
+        for( DMPhase n : phase.getPrevPhases() ) {
+        	try {
+				n.checkPreconditions( mgr );
+				n.activate( mgr );
+				mgr.setNextPhase( n.getName() );
+				return n.getName();
+			} catch (Exception e) {
+				throw e;
+			}
+        }
+        
+        throw new Exception( "No next phase available" );
+    }
+
+    @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
+    public String getStatus(@RequestParam Long procId)
+    {
+    	String ret = DMGame.get().getProcessManager(procId).getCurrentPhase();
+    	if( ret == null ) {
+    		ret = DMGame.get().getLifecycle().getInitPhase().getName();
+    	}
+    	return ret;
     }
 
     // Criteria
@@ -649,17 +729,43 @@ public class ProcessRest
     
     @RequestMapping( value="/requirements/edit/collaboratively", method = RequestMethod.POST )
     public void createRequirementsEditingSession( 
+    		@RequestParam(required=false) String act,
     		@RequestParam Long procId ) {
+    	
     	ProcessManager mgr = DMGame.get().getProcessManager( procId );
     	if( mgr == null ) {
     		return;
     	}
-    	for( HProcessMember m : mgr.getProcessMembers() ) {
-//    		HActivity a = 
-    		mgr.createActivity( AccessRequirementsEditingSession.NAME, m.getUserId() );
-//    		PropertyBag bag = mgr.getProperties( a );
-//    		bag.set( "gameId", "" + gameId );
+    	
+    	if( "close".equals( act ) ) {
+    		
+    		List<HActivity> activities = mgr.getOngoingActivities( AccessRequirementsEditingSession.NAME );
+    		
+    		for( HActivity a : activities ) {
+    			mgr.deleteActivity( a );
+    		}
+    		
     	}
+    	else {
+    		
+    		for( HProcessMember m : mgr.getProcessMembers() ) {
+    			mgr.createActivity( AccessRequirementsEditingSession.NAME, m.getUserId() );
+    		}
+    		
+    	}
+    }
+    
+    @RequestMapping( value="/requirements/edit/collaboratively", method = RequestMethod.GET )
+    public List<HActivity> getRequirementsEditingSession( 
+    		@RequestParam Long procId ) {
+    	
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	if( mgr == null ) {
+    		return new ArrayList<>();
+    	}
+    	
+    	return mgr.getOngoingActivities( AccessRequirementsEditingSession.NAME );
+    	
     }
     
 }

@@ -45,7 +45,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/requirements/stablestatus",
+        url: "supersede-dm-app/processes/status",
         params: { procId: procId },
         headers: {
             'Content-Type': undefined
@@ -55,14 +55,12 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     });
 
     function loadActivities() {
-        console.log("Loading activities");
         $http.get('supersede-dm-app/processes/available_activities?procId=' + procId).success(function (data) {
-            console.log("Activities:");
-            console.log(data);
             $("#procList").jqxListBox({
                 source: data, width: 700, height: 250,
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
+                    console.log(datarecord);
                     var imgurl = 'supersede-dm-app/img/process.png';
                     var img = '<img height="50" width="50" src="' + imgurl + '"/>';
                     var table =
@@ -84,37 +82,19 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     loadActivities();
 
-//    $http.get('supersede-dm-app/processes/requirements/statusmap?procId=' + $scope.procId ).success(function(data) {
-//        console.log(data);
-//        $('#barGauge').jqxBarGauge({colorScheme: "scheme02", width: 400, height: 400,
-//            values: [102, 115, 130, 137], max: 150,
-//            labels: {
-//                formatFunction: function (value) {
-//                    var realVal = parseInt(value);
-//                    if( realVal == 0 ) return "Unconfirmed";
-//                    if( realVal == 1 ) return "Editable";
-//                    if( realVal == 2 ) return "Confirmed";
-//                    if( realVal == 3 ) return "Enacted";
-//                    if( realVal == 4 ) return "Discarded";
-//                    return "Other";
-//                },
-//                font: { size: 12 },
-//                indent: 10
-//            }
-//        });
-//    });
-
-//    $scope.next = function() {
-//        $http({
-//            method: 'GET',
-//            url: "supersede-dm-app/processes/requirements/next",
-//            params: { procId: $scope.procId }
-//        }).success(function(data){
-//            $scope.loadActivities();
-//        });
-//    };
-
     $("#btnPrevPhase").jqxButton({ width: 60, height: 250 });
+    $("#btnPrevPhase").on('click', function() {
+        $http({
+            method: 'GET',
+            url: "supersede-dm-app/processes/requirements/prev",
+            params: { procId: procId }
+        }).success(function (data) {
+        	$scope.processStatus = data;
+            loadActivities();
+        }).error(function (error) {
+            console.log(error);
+        });
+    } );
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
     $("#btnNextPhase").on('click', function() {
         $http({
@@ -122,6 +102,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             url: "supersede-dm-app/processes/requirements/next",
             params: { procId: procId }
         }).success(function (data) {
+        	$scope.processStatus = data;
             loadActivities();
         }).error(function (error) {
             console.log(error);
