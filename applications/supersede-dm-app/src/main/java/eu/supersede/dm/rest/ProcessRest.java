@@ -1,5 +1,5 @@
 /*
-   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+(C) Copyright 2015-2018 The SUPERSEDE Project Consortium
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -36,7 +36,10 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.AlertsJpa;
+import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
@@ -44,10 +47,12 @@ import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HProperty;
+import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.RequirementProperties;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -61,6 +66,15 @@ public class ProcessRest
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    @Autowired
+    private RequirementsJpa requirementsJpa;
+
+    @Autowired
+    private AlertsJpa alertsJpa;
+
+    @Autowired
+    private ReceivedUserRequestsJpa receivedUserRequestsJpa;
 
     // Processes
 
@@ -625,5 +639,43 @@ public class ProcessRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         return proc.getAlerts();
+    }
+
+    @RequestMapping(value = "/alerts/convert", method = RequestMethod.PUT)
+    public void convertAlertToRequirement(@RequestParam String alertId, Long procId)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        HAlert alert = alertsJpa.findOne(alertId);
+        System.out.println("Converting alert " + alertId + " to a requirement");
+        List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alertId);
+
+        if (requests == null || requests.size() == 0)
+        {
+            System.out.println("No user requests for alert " + alertId + ", no requirement added");
+            return;
+        }
+
+        for (HReceivedUserRequest request : requests)
+        {
+            Requirement requirement = new Requirement();
+            requirement.setName(request.getDescription());
+            requirement.setDescription("Features:");
+            Requirement savedRequirement = requirementsJpa.save(requirement);
+            proc.addRequirement(savedRequirement);
+
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.CLASSIFICATION, request.getClassification()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.ACCURACY, "" + request.getAccuracy()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.POSITIVE_SENTIMENT, "" + request.getPositiveSentiment()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.NEGATIVE_SENTIMENT, "" + request.getNegativeSentiment()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.OVERALL_SENTIMENT, "" + request.getOverallSentiment()));
+        }
+
+        System.out.println("Discarding alert " + alertId);
+        alertsJpa.delete(alert);
     }
 }

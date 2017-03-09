@@ -16,16 +16,28 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('convert_alerts_to_requirements', function ($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    var procId = $location.search().procId;
 
     $scope.convertToRequirement = function (alertId) {
-        console.log("Alert " + alertId + " successfully converted to a requirement");
-        $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully converted to a requirement</strong>");
+        $http.put('supersede-dm-app/processes/alerts/convert?alertId=' + alertId + '&procId=' + procId)
+        .success(function (data) {
+            $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully converted to a requirement</strong>");
+        }).error(function(err, data) {
+            $("#converted" + alertId).html("<strong>Unable to convert alert " + alertId + " to a requirement</strong>");
+            console.log(err);
+            console.log(data);
+        });
     };
 
     $scope.discard = function (alertId) {
-        console.log("Alert " + alertId + " successfully discarded");
-        $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully discarded</strong>");
+        $http.put('supersede-dm-app/alerts/discard?alertId=' + alertId)
+        .success(function (data) {
+            $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully discarded</strong>");
+        }).error(function (err, data) {
+            $("#converted" + alertId).html("<strong>Unable to discard alert " + alertId + "</strong>");
+            console.log(err);
+            console.log(data);
+        });
     };
 
     function getAvailableAlerts() {
