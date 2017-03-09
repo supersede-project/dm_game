@@ -62,47 +62,42 @@ public class GAPersistentDB
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private GAGameSummaryJpa		gamesJpa;
+    private GAGameSummaryJpa gamesJpa;
 
     @Autowired
-    private GAGameCriteriaJpa		criteriaJpa;
+    private GAGameCriteriaJpa criteriaJpa;
 
     @Autowired
-    private GAGameParticipationJpa	participationJpa;
+    private GAGameParticipationJpa participationJpa;
 
     @Autowired
-    private GAGameRequirementJpa	gameRequirementsJpa;
+    private GAGameRequirementJpa gameRequirementsJpa;
 
     @Autowired
-    private GAGameRankingsJpa		rankingsJpa;
+    private GAGameRankingsJpa rankingsJpa;
 
     @Autowired
-    private GAPlayerWeightsJpa		playerWeightsJpa;
+    private GAPlayerWeightsJpa playerWeightsJpa;
 
     @Autowired
-    private GAGameSolutionsJpa		solutionsJpa;
-    
-    
-    public Long getProcessId( Long activityId ) {
-    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
-    	return a.getProcessId();
+    private GAGameSolutionsJpa solutionsJpa;
+
+    public Long getProcessId(Long activityId)
+    {
+        HActivity a = DMGame.get().getJpa().activities.findOne(activityId);
+        return a.getProcessId();
     }
-    
-    public Long getGameId( Long activityId ) {
-    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
-    	String ret = DMGame.get().getProcessManager( a.getProcessId() ).getProperties( a ).get( "gameId", "" );
-    	return Long.parseLong( ret );
+
+    public Long getGameId(Long activityId)
+    {
+        HActivity a = DMGame.get().getJpa().activities.findOne(activityId);
+        String ret = DMGame.get().getProcessManager(a.getProcessId()).getProperties(a).get("gameId", "");
+        return Long.parseLong(ret);
     }
-    
-    public void create(
-    		Authentication authentication, 
-    		String name, 
-    		Long[] gameRequirements,
-            Map<String, Map<String, Double>> playersWeights, 
-            Map<String, Double> criteriaWeights,
-            Long[] gameOpinionProviders, 
-            Long[] gameNegotiators,
-            Long processId )
+
+    public void create(Authentication authentication, String name, Long[] gameRequirements,
+            Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
+            Long[] gameOpinionProviders, Long[] gameNegotiators, Long processId)
     {
         List<Long> requirements = new ArrayList<>();
         List<Long> opinionProviders = new ArrayList<>();
@@ -202,16 +197,18 @@ public class GAPersistentDB
         gameParticipation.setUserId(gameSummary.getOwner());
         gameParticipation.setRole(GARole.Supervisor.name());
         participationJpa.save(gameParticipation);
-        
-        if( processId != -1 ) {
-        	ProcessManager mgr = DMGame.get().getProcessManager( processId );
-        	for( Long userId : opinionProviders ) {
-        		HActivity a = mgr.createActivity( GAPlayerVotingMethod.NAME, userId );
-        		PropertyBag bag = mgr.getProperties( a );
-        		bag.set( "gameId", "" + gameId );
-        	}
+
+        if (processId != -1)
+        {
+            ProcessManager mgr = DMGame.get().getProcessManager(processId);
+            for (Long userId : opinionProviders)
+            {
+                HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
+                PropertyBag bag = mgr.getProperties(a);
+                bag.set("gameId", "" + gameId);
+            }
         }
-        
+
         log.info(
                 "Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
                         + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),
@@ -479,6 +476,7 @@ public class GAPersistentDB
 
         if (gi == null)
         {
+            System.out.println("gi is null");
             return new HashMap<>();
         }
 

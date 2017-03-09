@@ -47,7 +47,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     $scope.gameCriteria = {
         datatype: "json",
         datafields: [
-            { name: 'criterionId' },
+            { name: 'sourceId' },
             { name: 'name' },
             { name: 'description' }
         ],
@@ -80,7 +80,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             { name: 'userId' },
             { name: 'name' },
             { name: 'email' },
-            { name: 'criterionId'},
+            { name: 'sourceId'},
             { name: 'weight' }
         ],
         localdata: []
@@ -89,7 +89,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     weights.criteria = {
         datatype: "json",
         datafields: [
-            { name: 'criterionId' },
+            { name: 'sourceId' },
             { name: 'name' },
             { name: 'description' },
             { name: 'weight' }
@@ -136,7 +136,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             availableCriteria = {
                 datatype: "json",
                 datafields: [
-                    { name: 'criterionId' },
+                    { name: 'sourceId' },
                     { name: 'name' },
                     { name: 'description' }
                 ],
@@ -151,7 +151,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 pageable: true,
                 source: dataAdapter,
                 columns: [
-                    { text: 'Id', datafield: 'criterionId', width: '15%' },
+                    { text: 'Id', datafield: 'sourceId', width: '15%' },
                     { text: 'Name', datafield: 'name', width: '25%' },
                     { text: 'Description', datafield: 'description' }
                 ]
@@ -220,7 +220,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
             $scope.gameCriteria.localdata.push(selectedCriterion);
-            $scope.gameCriteriaId.push(selectedCriterion.criterionId);
+            $scope.gameCriteriaId.push(selectedCriterion.sourceId);
         }
 
         var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
@@ -245,15 +245,15 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         console.log("Set player weights");
         for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
             var currentCriterion = $scope.gameCriteria.localdata[i];
-            weightsId.players[currentCriterion.criterionId] = {};
+            weightsId.players[currentCriterion.sourceId] = {};
             console.log(weightsId);
             for (var j = 0; j < $scope.gameOpinionProviders.localdata.length; j++) {
                 var currentOpinionProvider = $scope.gameOpinionProviders.localdata[j];
-                var opinionProviderValue = $("#criterion" + currentCriterion.criterionId + "player" + currentOpinionProvider.userId + " > div").jqxSlider('value');
+                var opinionProviderValue = $("#criterion" + currentCriterion.sourceId + "player" + currentOpinionProvider.userId + " > div").jqxSlider('value');
                 weights.players.localdata.push(currentOpinionProvider);
-                weights.players.localdata[i].criterionId = currentCriterion.criterionId;
+                weights.players.localdata[i].sourceId = currentCriterion.sourceId;
                 weights.players.localdata[i].weight = opinionProviderValue;
-                weightsId.players[currentCriterion.criterionId][currentOpinionProvider.userId] = opinionProviderValue;
+                weightsId.players[currentCriterion.sourceId][currentOpinionProvider.userId] = opinionProviderValue;
                 console.log(weightsId);
             }
         }
@@ -263,13 +263,13 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         console.log("Set criteria weights");
         for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
             var currentCriterion = $scope.gameCriteria.localdata[i];
-            var criterionValue = $("#criterion" + currentCriterion.criterionId + " > div").jqxSlider('value');
-            console.log(currentCriterion.criterionId + " = " + criterionValue);
+            var criterionValue = $("#criterion" + currentCriterion.sourceId + " > div").jqxSlider('value');
+            console.log(currentCriterion.sourceId + " = " + criterionValue);
             console.log("criterion value:");
             console.log(criterionValue);
             weights.criteria.localdata.push(currentCriterion);
             weights.criteria.localdata[i].weight = criterionValue;
-            weightsId.criteria[currentCriterion.criterionId] = criterionValue;
+            weightsId.criteria[currentCriterion.sourceId] = criterionValue;
             console.log(weightsId);
         }
     }
@@ -299,7 +299,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             pageable: true,
             source: dataAdapter,
             columns: [
-                { text: 'Id', datafield: 'criterionId', width: '15%' },
+                { text: 'Id', datafield: 'sourceId', width: '15%' },
                 { text: 'Name', datafield: 'name', width: '20%' },
                 { text: 'Description', datafield: 'description', widht: '55%' },
                 { text: 'Weight', datafield: 'weight', width: '20%' }
