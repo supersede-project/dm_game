@@ -26,9 +26,9 @@ import eu.supersede.dm.ProcessManager;
 
 public class AlertsValidationMethod implements DMMethod
 {
-    public static final String NAME = "Validate Alerts";
+    private static final String NAME = "Validate Alerts";
+    private static final String PAGE = "validate_alerts";
 
-    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
@@ -36,13 +36,12 @@ public class AlertsValidationMethod implements DMMethod
     {
         list = new ArrayList<>();
         options = new ArrayList<>();
-        this.name = NAME;
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -104,6 +103,6 @@ public class AlertsValidationMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "";
+        return PAGE;
     }
 }

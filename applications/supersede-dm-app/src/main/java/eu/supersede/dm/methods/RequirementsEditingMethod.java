@@ -28,15 +28,14 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class RequirementsEditingMethod implements DMMethod
 {
-    public static final String NAME = "Edit Requirements";
+    private static final String NAME = "Edit Requirements";
+    private static final String PAGE = "edit_requirements";
 
-    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
     public RequirementsEditingMethod()
     {
-        this.name = NAME;
         list = new ArrayList<>();
         options = new ArrayList<>();
     }
@@ -44,7 +43,7 @@ public class RequirementsEditingMethod implements DMMethod
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -114,6 +113,6 @@ public class RequirementsEditingMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "edit_requirements";
+        return PAGE;
     }
 }

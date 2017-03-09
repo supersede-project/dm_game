@@ -61,8 +61,8 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
             datatype: "json",
             localdata: data,
             datafields: [
-                { name: 'applicationID', map: 'applicationID' },
-                { name: 'alertID' },
+                { name: 'applicationId', map: 'applicationId' },
+                { name: 'alertId' },
                 { name: 'id' },
                 { name: 'timestamp' },
                 { name: 'description' },
@@ -86,9 +86,9 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
 //                $("#treeGrid").jqxTreeGrid('expandRow', "0");
 //            },
             columns: [
-              { text: 'App', dataField: 'applicationID', width: 50 },
-              { text: 'Alert', dataField: 'alertID', width: 50 },
-              { text: 'ID', dataField: 'id', width: 50 },
+              { text: 'App', dataField: 'applicationId', width: 50 },
+              { text: 'Alert', dataField: 'alertId', width: 50 },
+              { text: 'Id', dataField: 'id', width: 50 },
               { text: 'Timestamp', dataField: 'timestamp', width: 100 },
               { text: 'Description', dataField: 'description', minWidth: 100, width: 200 },
               { text: 'Classification', dataField: 'classification', minWidth: 100, width: 150 },
@@ -98,7 +98,7 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
               { text: 'Overall.', dataField: 'overall', width: 50 }
 //              { text: 'Features.', dataField: 'features', width: 120 }
             ]
-        ,groups: ['applicationID', 'alertID']
+        ,groups: ['applicationId', 'alertId']
         });
     });
     

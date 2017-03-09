@@ -1,24 +1,38 @@
 <script src="supersede-dm-app/js/process.js"></script>
+
+<style>
+h1, h2 {
+    text-align: center;
+}
+#actions {
+    margin: 0 auto;
+}
+</style>
+
 <div class="container" ng-controller="process">
 
-    <table style="width:100%"><tr>
-    <td>
-    <h2>Users: {{userCount}}</h2>
-    <h2>Criteria: {{criteriaCount}}</h2>
-    <h2>Requirements: {{requirementsCount}}</h2>
+    <h1>Process Details</h1>
+
     <h2>Status: {{processStatus}}</h2>
-    </td>
-    <td>
+
+    <h2>Users</h2>
+    <div id="users"></div>
+
+    <h2>Criteria</h2>
+    <div id="criteria"></div>
+
+    <h2>Requirements</h2>
+    <div id="requirements"></div>
+
     <div id="barGauge"></div>
-    </td>
-    </tr></table>
 
-
-    <table><tr>
-    <td><input style='margin-top: 20px;' value="Prev" type="button" id='btnPrevPhase' /></td>
-    <td>Available actions
-    <div id='procList'></div></td>
-    <td><input style='margin-top: 20px;' value="Next" type="button" id='btnNextPhase' /></td>
-    </tr></table>
+    <h2>Available Actions</h2>
+    <table id="actions">
+        <tr>
+            <td><input value="Prev" type="button" id='btnPrevPhase' /></td>
+            <td><div id='procList'></div></td>
+            <td><input value="Next" type="button" id='btnNextPhase' /></td>
+        </tr>
+    </table>
 
 </div>
