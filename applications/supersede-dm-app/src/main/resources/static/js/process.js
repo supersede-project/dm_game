@@ -57,25 +57,20 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     function loadActivities() {
         console.log("Loading activities");
         $http.get('supersede-dm-app/processes/available_activities?procId=' + procId).success(function (data) {
-            console.log("Activities:");
-            console.log(data);
             $("#procList").jqxListBox({
-                source: data, width: 700, height: 250,
+                source: data,
+                width: 700,
+                height: 250,
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
                     var imgurl = 'supersede-dm-app/img/process.png';
                     var img = '<img height="50" width="50" src="' + imgurl + '"/>';
                     var table =
-                        '<table style="min-width: 130px;">' +
-                        '<tr><td style="width: 40px;" rowspan="2">' +
+                        '<table style="min-width: 130px">' +
+                        '<tr><td style="width: 40px">' +
                         img + '</td><td>' +
-                        datarecord.methodName +
-                        '</td></tr><tr><td>' +
-                        '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
-                        'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">Open</a>' +
-                        '</jqx-link-button>' +
-                        '</td></tr>' +
-                        '</table>';
+                        '<a href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">' + datarecord.methodName +
+                        '</a></td></tr></table>';
                     return table;
                 }
             });
