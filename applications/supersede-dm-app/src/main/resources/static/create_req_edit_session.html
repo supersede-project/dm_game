@@ -13,13 +13,28 @@ input, form {
 
 <div ng-controller="create_req_edit_session">
 
-	<h1>Start Collaborative Requirements Editing Session?</h1>
+	<div ng-show="!ongoingSession()">
+		
+		<h1>Start Collaborative Requirements Editing Session?</h1>
 
-	<br>
+		<br>
 
-	<div align="center">
-		<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
-		<jqx-button ng-click="proceed()">Proceed</jqx-button>
+		<div align="center">
+			<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+			<jqx-button ng-click="proceed()">Proceed</jqx-button>
+		</div>
 	</div>
 
+	<div ng-show="ongoingSession()">
+	
+		<h1>Close Ongoing Collaborative Requirements Editing Session?</h1>
+		
+		<br>
+
+		<div align="center">
+			<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+			<jqx-button ng-click="close()">Close session</jqx-button>
+		</div>
+	</div>
+	
 </div>
