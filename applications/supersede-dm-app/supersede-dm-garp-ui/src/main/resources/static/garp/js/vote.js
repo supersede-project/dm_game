@@ -81,7 +81,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         };
 
         var getRequirements = function() {
-            $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + $scope.currentCriterion.criterionId)
+            $http.get('supersede-dm-app/garp/game/requirements?gameId=' + gameId + '&criterion=' + $scope.currentCriterion.criteriaId)
             .success(function(data) {
                 $scope.requirements = data;
 
@@ -102,7 +102,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
 
         function saveRanking() {
             var data = $("#sortable").jqxSortable("toArray");
-            rankings[$scope.currentCriterion.criterionId] = data;
+            rankings[$scope.currentCriterion.criteriaId] = data;
 
             if ($scope.lastCriterion === false) {
                 currentCriterionIndex++;
