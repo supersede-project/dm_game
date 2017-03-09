@@ -17,30 +17,92 @@ var app = angular.module('w5app');
 app.controllerProvider.register('process', function($scope, $http, $location) {
 
     var procId = $location.search().procId;
-    $scope.userCount = undefined;
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/users/list",
+        url: "supersede-dm-app/processes/users/list/detailed",
         params: { procId: procId }
-    }).success(function(data){
-        $scope.userCount = data.length;
+    }).success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'userId' },
+                { name: 'name' },
+                { name: 'email' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#users").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: '20%' },
+                { text: 'Name', datafield: 'name', width: '40%' },
+                { text: 'Email', datafield: 'email', width: '40%' }
+            ]
+        });
     });
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/criteria/list",
+        url: "supersede-dm-app/processes/criteria/list/detailed",
         params: { procId: procId }
-    }).success(function(data){
-        $scope.criteriaCount = data.length;
+    }).success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'criterionId' },
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#criteria").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'criterionId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Description', datafield: 'description', width: '60%' }
+            ]
+        });
     });
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/requirements/count",
+        url: "supersede-dm-app/processes/requirements/list",
         params: { procId: procId }
     }).success(function(data){
-        $scope.requirementsCount = data;
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'requirementId' },
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#requirements").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'requirementId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Description', datafield: 'description', width: '60%' }
+            ]
+        });
     });
 
     $http({
