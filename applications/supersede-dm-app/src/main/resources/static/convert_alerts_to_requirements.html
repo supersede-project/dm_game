@@ -40,6 +40,11 @@ h1 {
                     <strong>Overall Sentiment</strong>: {{alert.overall}}<br>
                 </div>
             </div>
+            <div>
+                <jqx-button ng-click="convertToRequirement(alert.alertId)">Convert to requirement</jqx-button>
+                <jqx-button ng-click="discard(alert.alertId)">Discard</jqx-button>
+                <p id="{{'converted' + alert.alertId}}"></p>
+            </div>
         </div>
     </div>
 

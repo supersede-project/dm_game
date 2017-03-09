@@ -18,6 +18,16 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
 
     $scope.procId = $location.search().procId;
 
+    $scope.convertToRequirement = function (alertId) {
+        console.log("Alert " + alertId + " successfully converted to a requirement");
+        $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully converted to a requirement</strong>");
+    };
+
+    $scope.discard = function (alertId) {
+        console.log("Alert " + alertId + " successfully discarded");
+        $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully discarded</strong>");
+    };
+
     function getAvailableAlerts() {
         $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
             $scope.alerts = data;
