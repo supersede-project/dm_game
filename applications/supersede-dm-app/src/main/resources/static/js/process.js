@@ -117,14 +117,21 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     });
 
     function loadActivities() {
-        console.log("Loading activities");
-        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId).success(function (data) {
+        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId)
+        .success(function (data) {
+            console.log("Loading activities:");
+            console.log(data);
+            $("#procList").jqxListBox('clear');
             $("#procList").jqxListBox({
                 source: data,
                 width: 700,
                 height: 250,
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
+                    if (datarecord === undefined)
+                    {
+                        return "";
+                    }
                     var imgurl = 'supersede-dm-app/img/process.png';
                     var img = '<img height="50" width="50" src="' + imgurl + '"/>';
                     var table =
