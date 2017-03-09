@@ -38,13 +38,13 @@ import eu.supersede.gr.model.HReceivedUserRequest;
 public class AlertsRest
 {
     @Autowired
-    private AppsJpa jpaApps;
+    private AppsJpa appsJpa;
 
     @Autowired
-    private AlertsJpa jpaAlerts;
+    private AlertsJpa alertsJpa;
 
     @Autowired
-    private ReceivedUserRequestsJpa jpaReceivedUserRequests;
+    private ReceivedUserRequestsJpa receivedUserRequestsJpa;
 
     /**
      * Return all the requirements.
@@ -53,15 +53,15 @@ public class AlertsRest
     public List<Alert> getAlerts()
     {
         List<Alert> list = new ArrayList<>();
-        List<HApp> apps = jpaApps.findAll();
+        List<HApp> apps = appsJpa.findAll();
 
         for (HApp app : apps)
         {
-            List<HAlert> alerts = jpaAlerts.findAlertsForApp(app.getId());
+            List<HAlert> alerts = alertsJpa.findAlertsForApp(app.getId());
 
             for (HAlert alert : alerts)
             {
-                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
+                List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alert.getId());
 
                 if (requests.size() < 1)
                 {
@@ -97,9 +97,9 @@ public class AlertsRest
     @RequestMapping(value = "/discard", method = RequestMethod.PUT)
     public void discard(@RequestParam String alertId)
     {
-        HAlert alert = jpaAlerts.findOne(alertId);
+        HAlert alert = alertsJpa.findOne(alertId);
         System.out.println("Discarding alert " + alert.getId());
-        jpaAlerts.delete(alert);
+        alertsJpa.delete(alert);
     }
 
     public static class FlattenedAlert
@@ -120,15 +120,15 @@ public class AlertsRest
     public List<FlattenedAlert> getAlertsTree()
     {
         List<FlattenedAlert> list = new ArrayList<>();
-        List<HApp> apps = jpaApps.findAll();
+        List<HApp> apps = appsJpa.findAll();
 
         for (HApp app : apps)
         {
-            List<HAlert> alerts = jpaAlerts.findAll();
+            List<HAlert> alerts = alertsJpa.findAll();
 
             for (HAlert alert : alerts)
             {
-                List<HReceivedUserRequest> requests = jpaReceivedUserRequests.findRequestsForAlert(alert.getId());
+                List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alert.getId());
 
                 if (requests == null || requests.size() == 0)
                 {
@@ -156,5 +156,11 @@ public class AlertsRest
         }
 
         return list;
+    }
+
+    @RequestMapping(value = "/userrequests", method = RequestMethod.GET)
+    public List<HReceivedUserRequest> getReceivedUserRequests(@RequestParam String alertId)
+    {
+        return receivedUserRequestsJpa.findRequestsForAlert(alertId);
     }
 }

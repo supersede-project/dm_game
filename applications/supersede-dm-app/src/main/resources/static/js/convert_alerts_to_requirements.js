@@ -18,6 +18,8 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
 
     var procId = $location.search().procId;
 
+    $scope.userRequests = [];
+
     $scope.convertToRequirement = function (alertId) {
         $http.put('supersede-dm-app/processes/alerts/convert?alertId=' + alertId + '&procId=' + procId)
         .success(function (data) {
@@ -42,9 +44,22 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
 
     function getAvailableAlerts() {
         $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
-            $scope.alerts = data;
+            var alerts = data;
             console.log("Alerts:");
-            console.log($scope.alerts);
+            console.log(alerts);
+
+            for (var i = 0; i < alerts.length; i++) {
+                $http.get('supersede-dm-app/alerts/userrequests?alertId=' + alerts[i].id)
+                .success(function (data) {
+                    for (var j = 0; j < data.length; i++) {
+                        $scope.userRequests.push(data[j]);
+                    }
+                }).error(function (err, data) {
+                    console.log("Unable to retrieve user requests for alert " + alerts[i].id);
+                    console.log(err);
+                    console.log(data);
+                });
+            }
         });
     }
 

@@ -24,20 +24,18 @@ h1 {
 	<h1>Convert Alerts To Requirements</h1>
 
     <div id="alerts">
-        <div ng-repeat="alert in alerts">
+        <div ng-repeat="userRequest in userRequests">
             <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
                 <div>
-                    <strong>Alert {{alert.alertId}}</strong>
+                    <strong>Alert {{userRequest.id}}</strong>
                 </div>
                 <div style="background-color: #ffd11a">
-                    <strong>Application Id</strong>: {{alert.applicationId}}<br>
-                    <strong>Timestamp</strong>: {{alert.timestamp}}<br>
-                    <strong>Accuracy</strong>: {{alert.accuracy}}<br>
-                    <strong>Classification</strong>: {{alert.classification}}<br>
                     <strong>Description</strong>: {{alert.description}}<br>
-                    <strong>Negative Sentiment</strong>: {{alert.neg}}<br>
-                    <strong>Positive Sentiment</strong>: {{alert.pos}}<br>
-                    <strong>Overall Sentiment</strong>: {{alert.overall}}<br>
+                    <strong>Classification</strong>: {{userRequest.classification}}<br>
+                    <strong>Accuracy</strong>: {{userRequest.accuracy}}<br>
+                    <strong>Positive Sentiment</strong>: {{alert.positiveSentiment}}<br>
+                    <strong>Negative Sentiment</strong>: {{alert.negativeSentiment}}<br>
+                    <strong>Overall Sentiment</strong>: {{alert.overallSentiment}}<br>
                 </div>
             </div>
             <div>
