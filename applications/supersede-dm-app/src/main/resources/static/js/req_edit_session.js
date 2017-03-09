@@ -216,8 +216,51 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             url: "supersede-dm-app/processes/requirements/new?procId=" + $scope.procId + "&name=" + reqName,
             method: 'POST'
         }).success(function (data) {
-        	$("#requirements-listbox").jqxListBox('addItem', { 
-                source: data,
+        	console.log( $scope.requirements );
+        	$scope.requirements.push( data );
+        	console.log( $scope.requirements );
+        	
+        	loadRequirements();
+        	
+//            $("#requirements-listbox").jqxListBox('clear');
+//            var source = {
+//                    localdata: data,
+//                    datatype: "array"
+//                };
+//            var dataAdapter = new $.jqx.dataAdapter(source);
+//        	$("#requirements-listbox").jqxListBox('addItem', { 
+//                source: dataAdapter,
+//                displayMember: "name",
+//                valueMember: "id",
+//                height: '100%', width: '100%',
+//                renderer: function (index, label, value) {
+//                    var datarecord = data[index];
+//                    var text = datarecord.name;
+//                    return text;
+//                }
+//        	} );
+        }).error(function (err) {
+            console.log(err.message);
+        });
+    }
+    
+    var loadRequirements = function() {
+        $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
+        .success(function (data) {
+        	
+            $("#requirements-listbox").jqxListBox('clear');
+            
+            $scope.requirements = data;
+
+            $scope.actNum = data.length;
+
+            var source = {
+                localdata: data,
+                datatype: "array"
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $('#requirements-listbox').jqxListBox({ selectedIndex: 0,
+                source: dataAdapter,
                 displayMember: "name",
                 valueMember: "id",
                 height: '100%', width: '100%',
@@ -226,48 +269,24 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                     var text = datarecord.name;
                     return text;
                 }
-        	} );
-        }).error(function (err) {
-            console.log(err.message);
+            });
+            $('#requirements-listbox').on('select', function (event) {
+                var args = event.args;
+                var item = $('#requirements-listbox').jqxListBox('getItem', args.index);
+                if (item != null) {
+                	console.log(item.originalItem.requirementId);
+                	$scope.reqId = item.originalItem.requirementId;
+                	$scope.reqUrl = "supersede-dm-app/req_edit_page.html?procId=" + $scope.procId + 
+                		"&activityId=" + $scope.activityId + 
+                		"&reqId=" + $scope.reqId;
+                	$scope.$apply();
+                }
+            });
+
         });
     }
-
-    $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
-    .success(function (data) {
-        $scope.requirements = data;
-
-        $scope.actNum = data.length;
-
-        var source = {
-            localdata: data,
-            datatype: "array"
-        };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $('#requirements-listbox').jqxListBox({ selectedIndex: 0,
-            source: dataAdapter,
-            displayMember: "name",
-            valueMember: "id",
-            height: '100%', width: '100%',
-            renderer: function (index, label, value) {
-                var datarecord = data[index];
-                var text = datarecord.name;
-                return text;
-            }
-        });
-        $('#requirements-listbox').on('select', function (event) {
-            var args = event.args;
-            var item = $('#requirements-listbox').jqxListBox('getItem', args.index);
-            if (item != null) {
-            	console.log(item.originalItem.requirementId);
-            	$scope.reqId = item.originalItem.requirementId;
-            	$scope.reqUrl = "supersede-dm-app/req_edit_page.html?procId=" + $scope.procId + 
-            		"&activityId=" + $scope.activityId + 
-            		"&reqId=" + $scope.reqId;
-            	$scope.$apply();
-            }
-        });
-
-    });
+    
+    loadRequirements();
 });
 
 $(document).ready(function () {
