@@ -221,6 +221,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
             params: { procId: $scope.procId, idlist: $scope.gameOpinionProvidersId }
         })
         .success(function(data) {
+            $location.url('supersede-dm-app/process?procId='+$scope.procId);
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");
@@ -331,6 +332,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
             params: { procId: $scope.procId, idlist: $scope.gameCriteriaId }
         })
         .success(function(data) {
+            $location.url('supersede-dm-app/process?procId='+$scope.procId);
 //            $("#game_created").html("<strong>Game successfully created!</strong>");
         }).error(function(err, data){
 //            $("#game_created").html("<strong>Unable to create the game!</strong>");
