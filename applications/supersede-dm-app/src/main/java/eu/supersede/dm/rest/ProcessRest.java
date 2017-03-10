@@ -149,7 +149,7 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/close", method = RequestMethod.POST)
-    public void closeProcess(@RequestParam Long procId)
+    public void closeProcess(@RequestParam Long procId) throws Exception
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
 
@@ -158,13 +158,20 @@ public class ProcessRest
             return;
         }
 
+        if (mgr.getOngoingActivities().size() > 0)
+        {
+            throw new Exception("In order to close a process, you must close all the activities, first");
+        }
+
         for (HActivity a : mgr.getOngoingActivities())
         {
             DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
+
             if (m != null)
             {
                 // TODO: let the method remote its data?
             }
+
             mgr.deleteActivity(a);
         }
 

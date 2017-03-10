@@ -106,7 +106,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             params: { procId: $scope.procId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
-            $("#imported").html("<strong>Requirements successfully added to the process!</strong>");
+            $scope.home();
         }).error(function (err, data) {
             $("#imported").html("<strong>Unable to add the selected requirements to the process!</strong>");
             console.log(err);
@@ -211,7 +211,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
             params: { procId: $scope.procId, idlist: $scope.gameOpinionProvidersId }
         })
         .success(function (data) {
-            $("#imported").html("<strong>Users successfully added to the process!</strong>");
+            $scope.home();
         }).error(function (err, data) {
             $("#imported").html("<strong>Unable to add the selected users to the process!</strong>");
             console.log(err);
@@ -317,7 +317,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
             params: { procId: $scope.procId, idlist: $scope.gameCriteriaId }
         })
         .success(function (data) {
-            $("#imported").html("<strong>Criteria successfully added to the process!</strong>");
+            $scope.home();
         }).error(function (err, data) {
             $("#imported").html("<strong>Unable to add the selected criteria to the process!</strong>");
             console.log(err);
@@ -445,7 +445,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             params: { procId: $scope.procId, alertsId: $scope.alertsId }
         })
         .success(function (data) {
-            $("#imported").html("<strong>Alerts successfully added to the process!</strong>");
+            $scope.home();
         }).error(function (err, data) {
             $("#imported").html("<strong>Unable to add the selected alerts to the process!</strong>");
             console.log(err);
