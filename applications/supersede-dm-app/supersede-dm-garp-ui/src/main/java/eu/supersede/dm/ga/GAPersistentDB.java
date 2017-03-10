@@ -238,12 +238,13 @@ public class GAPersistentDB
 
             if (info == null)
             {
+                // Game not found
                 continue;
             }
 
             HActivity activity = activitiesJpa.findOne(info.getActivityId());
 
-            if (activity.getProcessId() == processId)
+            if (activity.getProcessId() != null && activity.getProcessId().equals(processId.longValue()))
             {
                 HGAGameSummary summary = extract(info);
                 games.add(summary);
