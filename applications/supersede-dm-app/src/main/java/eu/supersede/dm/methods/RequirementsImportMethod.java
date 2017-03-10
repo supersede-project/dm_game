@@ -28,15 +28,14 @@ import eu.supersede.gr.model.RequirementStatus;
 
 public class RequirementsImportMethod implements DMMethod
 {
-    public static final String NAME = "Import Requirements";
+    private static final String NAME = "Import Requirements";
+    private static final String PAGE = "import_requirements";
 
-    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
     public RequirementsImportMethod()
     {
-        this.name = NAME;
         list = new ArrayList<>();
         options = new ArrayList<>();
     }
@@ -44,7 +43,7 @@ public class RequirementsImportMethod implements DMMethod
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -57,12 +56,6 @@ public class RequirementsImportMethod implements DMMethod
     public List<DMRoleSpec> getRoleList()
     {
         return list;
-    }
-
-    @Override
-    public String getPage(ProcessManager mgr)
-    {
-        return "import_requirements";
     }
 
     @Override
@@ -105,5 +98,11 @@ public class RequirementsImportMethod implements DMMethod
         });
 
         return list;
+    }
+
+    @Override
+    public String getPage(ProcessManager mgr)
+    {
+        return PAGE;
     }
 }

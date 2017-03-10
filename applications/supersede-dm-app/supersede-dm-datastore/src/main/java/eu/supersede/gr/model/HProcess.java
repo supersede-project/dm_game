@@ -29,6 +29,8 @@ public class HProcess {
 	
 	private ProcessStatus status = ProcessStatus.InProgress;
 	
+	private String phaseName;
+	
 	
 	public Long getId() {
 		return id;
@@ -68,6 +70,14 @@ public class HProcess {
 
 	public void setStatus(ProcessStatus status) {
 		this.status = status;
+	}
+
+	public String getPhaseName() {
+		return phaseName;
+	}
+
+	public void setPhaseName(String phaseName) {
+		this.phaseName = phaseName;
 	}
 
 }

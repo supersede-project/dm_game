@@ -10,22 +10,15 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+*/
 
-var app = angular.module('w5app');
+package eu.supersede.gr.model;
 
-app.controllerProvider.register('confirm_requirements', function($scope, $http, $location) {
-
-	$scope.procId = $location.search().procId;
-	
-	$scope.proceed = function() {
-		$http.put('supersede-dm-app/processes/requirements/confirm?procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
-	};
-	
-	$scope.cancel = function() {
-		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-	};
-
-});
+public class RequirementProperties
+{
+    public static final String CLASSIFICATION = "classification";
+    public static final String ACCURACY = "accuracy";
+    public static final String POSITIVE_SENTIMENT = "positive_sentiment";
+    public static final String NEGATIVE_SENTIMENT = "negative_sentiment";
+    public static final String OVERALL_SENTIMENT = "overall_sentiment";
+}

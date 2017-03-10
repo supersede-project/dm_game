@@ -17,35 +17,97 @@ var app = angular.module('w5app');
 app.controllerProvider.register('process', function($scope, $http, $location) {
 
     var procId = $location.search().procId;
-    $scope.userCount = undefined;
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/users/list",
+        url: "supersede-dm-app/processes/users/list/detailed",
         params: { procId: procId }
-    }).success(function(data){
-        $scope.userCount = data.length;
+    }).success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'userId' },
+                { name: 'name' },
+                { name: 'email' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#users").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: '20%' },
+                { text: 'Name', datafield: 'name', width: '40%' },
+                { text: 'Email', datafield: 'email', width: '40%' }
+            ]
+        });
     });
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/criteria/list",
+        url: "supersede-dm-app/processes/criteria/list/detailed",
         params: { procId: procId }
-    }).success(function(data){
-        $scope.criteriaCount = data.length;
+    }).success(function(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'criterionId' },
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#criteria").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'criterionId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Description', datafield: 'description', width: '60%' }
+            ]
+        });
     });
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/requirements/count",
+        url: "supersede-dm-app/processes/requirements/list",
         params: { procId: procId }
     }).success(function(data){
-        $scope.requirementsCount = data;
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'requirementId' },
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#requirements").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'requirementId', width: '15%' },
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Description', datafield: 'description', width: '60%' }
+            ]
+        });
     });
 
     $http({
         method: 'GET',
-        url: "supersede-dm-app/processes/requirements/stablestatus",
+        url: "supersede-dm-app/processes/status",
         params: { procId: procId },
         headers: {
             'Content-Type': undefined
@@ -55,27 +117,29 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     });
 
     function loadActivities() {
-        console.log("Loading activities");
-        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId).success(function (data) {
-            console.log("Activities:");
+        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId)
+        .success(function (data) {
+            console.log("Loading activities:");
             console.log(data);
+            $("#procList").jqxListBox('clear');
             $("#procList").jqxListBox({
-                source: data, width: 700, height: 250,
+                source: data,
+                width: 700,
+                height: 250,
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
+                    if (datarecord === undefined)
+                    {
+                        return "";
+                    }
                     var imgurl = 'supersede-dm-app/img/process.png';
                     var img = '<img height="50" width="50" src="' + imgurl + '"/>';
                     var table =
-                        '<table style="min-width: 130px;">' +
-                        '<tr><td style="width: 40px;" rowspan="2">' +
+                        '<table style="min-width: 130px">' +
+                        '<tr><td style="width: 40px">' +
                         img + '</td><td>' +
-                        datarecord.methodName +
-                        '</td></tr><tr><td>' +
-                        '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
-                        'href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">Open</a>' +
-                        '</jqx-link-button>' +
-                        '</td></tr>' +
-                        '</table>';
+                        '<a href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">' + datarecord.methodName +
+                        '</a></td></tr></table>';
                     return table;
                 }
             });
@@ -84,37 +148,19 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     loadActivities();
 
-//    $http.get('supersede-dm-app/processes/requirements/statusmap?procId=' + $scope.procId ).success(function(data) {
-//        console.log(data);
-//        $('#barGauge').jqxBarGauge({colorScheme: "scheme02", width: 400, height: 400,
-//            values: [102, 115, 130, 137], max: 150,
-//            labels: {
-//                formatFunction: function (value) {
-//                    var realVal = parseInt(value);
-//                    if( realVal == 0 ) return "Unconfirmed";
-//                    if( realVal == 1 ) return "Editable";
-//                    if( realVal == 2 ) return "Confirmed";
-//                    if( realVal == 3 ) return "Enacted";
-//                    if( realVal == 4 ) return "Discarded";
-//                    return "Other";
-//                },
-//                font: { size: 12 },
-//                indent: 10
-//            }
-//        });
-//    });
-
-//    $scope.next = function() {
-//        $http({
-//            method: 'GET',
-//            url: "supersede-dm-app/processes/requirements/next",
-//            params: { procId: $scope.procId }
-//        }).success(function(data){
-//            $scope.loadActivities();
-//        });
-//    };
-
     $("#btnPrevPhase").jqxButton({ width: 60, height: 250 });
+    $("#btnPrevPhase").on('click', function() {
+        $http({
+            method: 'GET',
+            url: "supersede-dm-app/processes/requirements/prev",
+            params: { procId: procId }
+        }).success(function (data) {
+        	$scope.processStatus = data;
+            loadActivities();
+        }).error(function (error) {
+            console.log(error);
+        });
+    } );
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
     $("#btnNextPhase").on('click', function() {
         $http({
@@ -122,12 +168,10 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             url: "supersede-dm-app/processes/requirements/next",
             params: { procId: procId }
         }).success(function (data) {
+        	$scope.processStatus = data;
             loadActivities();
         }).error(function (error) {
             console.log(error);
         });
     } );
-});
-
-$(document).ready(function () {
 });

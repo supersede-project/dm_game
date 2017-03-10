@@ -66,6 +66,8 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
             .success(function(data) {
                 criteria = data;
+                console.log("criteria:");
+                console.log(criteria);
                 $scope.currentCriterion = criteria[currentCriterionIndex];
 
                 if (criteria.length == 1) {

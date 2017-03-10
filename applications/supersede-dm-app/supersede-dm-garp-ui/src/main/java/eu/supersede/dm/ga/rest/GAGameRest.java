@@ -48,10 +48,10 @@ import eu.supersede.gr.model.ValutationCriteria;
 public class GAGameRest
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     @Autowired
     private GAPersistentDB persistentDB;
-    
+
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName)
     {
@@ -61,14 +61,10 @@ public class GAGameRest
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/newgame", method = RequestMethod.POST)
-    public void createNewGame(
-    		Authentication authentication, 
-    		@RequestParam String name,
-            @RequestParam Long[] gameRequirements, 
-            @RequestBody Map<String, ?> weights,
-            @RequestParam Long[] gameOpinionProviders, 
-            @RequestParam Long[] gameNegotiators,
-            @RequestParam(defaultValue="-1") Long procId )
+    public void createNewGame(Authentication authentication, @RequestParam String name,
+            @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
+            @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators,
+            @RequestParam(defaultValue = "-1") Long procId)
     {
         String criteriaKey = "criteria";
         String playersKey = "players";
@@ -110,7 +106,7 @@ public class GAGameRest
         }
 
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
-                gameOpinionProviders, gameNegotiators, procId );
+                gameOpinionProviders, gameNegotiators, procId);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -174,12 +170,12 @@ public class GAGameRest
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
         List<Long> reqs = persistentDB.getRankingsCriterion(gameId, userId, criterion);
         List<Requirement> requirements = new ArrayList<>();
-        
+
         if (reqs.size() > 0)
         {
             for (Long requirementId : reqs)
             {
-                requirements.add( DMGame.get().getJpa().requirements.findOne(requirementId));
+                requirements.add(DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
         else
@@ -188,7 +184,7 @@ public class GAGameRest
 
             for (Long requirementId : tmp)
             {
-                requirements.add( DMGame.get().getJpa().requirements.findOne(requirementId));
+                requirements.add(DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
 
@@ -219,10 +215,20 @@ public class GAGameRest
         List<ValutationCriteria> criteria = new ArrayList<>();
         Set<Long> criteriaIds = persistentDB.getCriteriaWeights(gameId).keySet();
 
+        System.out.println("game criteria ids: " + criteriaIds.size());
+
         for (Long criterionId : criteriaIds)
         {
-            criteria.add( DMGame.get().getJpa().criteria.findOne(criterionId));
+            System.out.println("Searching for criterion " + criterionId);
+            ValutationCriteria criterion = DMGame.get().getJpa().criteria.findOne(criterionId);
+            if (criterion == null)
+            {
+                System.out.println("Criterion " + criterionId + " not found");
+            }
+            criteria.add(criterion);
         }
+
+        System.out.println("game criteria: " + criteria.size());
 
         return criteria;
     }
@@ -370,60 +376,61 @@ public class GAGameRest
 
         return prioritizations;
     }
-    
+
     @RequestMapping(value = "id", method = RequestMethod.GET)
-    public Long activit2gameId( 
-    		Authentication authentication, 
-    		@RequestParam Long procId, 
-    		@RequestParam Long activityId ) {
-    	return persistentDB.getGameId( activityId );
-    }
-    
-    @RequestMapping(value = "/enact", method = RequestMethod.PUT)
-    public void doEnactGame(@RequestParam Long gameId )
+    public Long activit2gameId(Authentication authentication, @RequestParam Long procId, @RequestParam Long activityId)
     {
-        System.out.println("Sending requirements for enactment" );
-        
+        return persistentDB.getGameId(activityId);
+    }
+
+    @RequestMapping(value = "/enact", method = RequestMethod.PUT)
+    public void doEnactGame(Authentication authentication, @RequestParam Long gameId)
+    {
+        System.out.println("Sending requirements for enactment");
+
+        String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         GAGameDetails game = persistentDB.getGameInfo(gameId);
-        
         double max = game.getRequirements().size();
-        
         FeatureList list = new FeatureList();
-        
         int pos = 0;
-        for( Long reqId : game.getRequirements() )
+
+        for (Long reqId : game.getRequirements())
         {
-        	Requirement r = DMGame.get().getJpa().requirements.findOne( reqId );
+            Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
             Feature feature = new Feature();
-            feature.setName( r.getName() );
+            feature.setName(r.getName());
             feature.setPriority((int) (1 + (pos / max) * 5));
             feature.setId("" + r.getRequirementId());
             System.out.println("Added feature with id: " + feature.getId());
             list.list().add(feature);
             pos++;
         }
-        
-        try {
-        	
-//        	EnactmentService.get().send(list, true );
-        	
-        	for( Long reqId : game.getRequirements() )
+
+        try
+        {
+            EnactmentService.get().send(list, true, tenant);
+
+            for (Long reqId : game.getRequirements())
             {
-    			Requirement r = DMGame.get().getJpa().requirements.findOne( reqId );
-    			if( r == null ) continue;
-    			RequirementStatus oldStatus = RequirementStatus.valueOf( r.getStatus() );
-    			if( RequirementStatus.next( oldStatus ).contains( RequirementStatus.Enacted ) ) {
-    				r.setStatus( RequirementStatus.Enacted.getValue() );
-    				DMGame.get().getJpa().requirements.save( r );
-    			}
-    		
+                Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
+
+                if (r == null)
+                {
+                    continue;
+                }
+
+                RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
+                if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
+                {
+                    r.setStatus(RequirementStatus.Enacted.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
             }
-        	
         }
-        catch( Exception ex ) {
-        	ex.printStackTrace();
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
-        
     }
-    
 }

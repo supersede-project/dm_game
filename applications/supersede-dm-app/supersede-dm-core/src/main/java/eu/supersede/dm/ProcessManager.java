@@ -14,6 +14,7 @@
 
 package eu.supersede.dm;
 
+import java.util.Collection;
 import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
@@ -26,6 +27,15 @@ import eu.supersede.gr.model.ValutationCriteria;
 
 public interface ProcessManager
 {
+	
+	// Phases
+	
+	public String getCurrentPhase();
+	
+	public Collection<String> getNextPhases();
+	
+	public void setNextPhase( String phaseName ) throws Exception;
+	
     // Requirements
 
     public void addRequirement(Requirement r);
@@ -37,6 +47,8 @@ public interface ProcessManager
     public void setRequirementsStatus(List<Requirement> reqs, Integer status);
 
     public void removeRequirement(Long reqId);
+    
+    public Requirement getRequirement( Long reqId );
 
     // Criteria
 
@@ -75,6 +87,8 @@ public interface ProcessManager
     public List<HActivity> getOngoingActivities();
 
     public List<HActivity> getOngoingActivities(String methodName);
+    
+    public void deleteActivity( HActivity a );
 
     // Properties
 

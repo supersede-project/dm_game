@@ -26,16 +26,17 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
-public class CriteriaImportMethod implements DMMethod
+public class CreateRequirementsEditingSession implements DMMethod
 {
-    private static final String NAME = "Select Criteria";
-    private static final String PAGE = "import_criteria";
+    public static final String NAME = "Open Collaborative Requirements Editing Session";
 
+    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
-    public CriteriaImportMethod()
+    public CreateRequirementsEditingSession()
     {
+        this.name = NAME;
         list = new ArrayList<>();
         options = new ArrayList<>();
     }
@@ -43,9 +44,9 @@ public class CriteriaImportMethod implements DMMethod
     @Override
     public String getName()
     {
-        return NAME;
+        return this.name;
     }
-
+    
     @Override
     public DMObjective getObjective()
     {
@@ -58,26 +59,10 @@ public class CriteriaImportMethod implements DMMethod
         return list;
     }
 
-    public String getPage(String step)
-    {
-        return "";
-    }
-
     @Override
     public List<DMOption> getOptions()
     {
         return this.options;
-    }
-
-    public void setOption(String optName, String optValue)
-    {
-        // TODO
-    }
-
-    public void init(ProcessManager status)
-    {
-        // String pid = executor.startBPMN( "supersedeAHPDM" );
-        // status.setProperty( "pid", pid );
     }
 
     @Override
@@ -90,23 +75,15 @@ public class CriteriaImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.requirements() )
                 {
-                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
+                    if (r.getStatus() != RequirementStatus.Editable.getValue())
                     {
-                        return true;
+                        return false;
                     }
-                    if (r.getStatus() == RequirementStatus.Editable.getValue())
-                    {
-                        return true;
-                    }
-                }
-                if (mgr.requirements().size() < 1)
-                {
-                    return true;
                 }
 
-                return false;
+                return true;
             }
         });
 
@@ -116,6 +93,6 @@ public class CriteriaImportMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return PAGE;
+        return "create_req_edit_session";
     }
 }

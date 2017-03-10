@@ -66,7 +66,7 @@ public class IntegrationRest
 
         if (halert == null)
         {
-            halert = new HAlert(alert.getId(), alert.getTimestamp());
+            halert = new HAlert(alert.getId(), alert.getApplicationId(), alert.getTimestamp());
             halert.setApplicationId(app.getId());
             halert = DMGame.get().getJpa().alerts.save(halert);
         }

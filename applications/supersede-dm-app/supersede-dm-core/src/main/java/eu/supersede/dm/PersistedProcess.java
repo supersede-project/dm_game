@@ -15,6 +15,7 @@
 package eu.supersede.dm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
@@ -22,6 +23,7 @@ import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.HProperty;
 import eu.supersede.gr.model.HPropertyBag;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
@@ -248,4 +250,57 @@ public class PersistedProcess extends AbstractProcessManager
         process.setStatus(status);
         DMGame.get().getJpa().processes.save(process);
     }
+
+	@Override
+	public void deleteActivity(HActivity a) {
+		PropertyBag bag = getProperties( a );
+		List<HProperty> properties = bag.properties();
+		for( HProperty p : properties ) {
+			DMGame.get().getJpa().properties.delete( p.getId() );
+		}
+		DMGame.get().getJpa().propertyBags.delete( bag.id );
+		DMGame.get().getJpa().activities.delete( a.getId() );
+	}
+	
+	@Override
+	public String getCurrentPhase() {
+		HProcess process = getProcess();
+		String phaseName = getProcessPhaseName( process );
+		if( phaseName == null ) {
+			phaseName = DMGame.get().getLifecycle().getInitPhase().getName();
+		}
+		return phaseName;
+	}
+
+	@Override
+	public Collection<String> getNextPhases() {
+		DMLifecycle lifecycle = DMGame.get().getLifecycle();
+		DMPhase phase = lifecycle.getPhase( getCurrentPhase() );
+		List<String> phases = new ArrayList<>();
+		for( DMPhase n : phase.getNextPhases() ) {
+			phases.add( n.getName() );
+		}
+		return phases;
+	}
+	
+	String getProcessPhaseName( HProcess process ) {
+		String ret = process.getPhaseName();
+		if( ret == null ) {
+			ret = DMGame.get().getLifecycle().getInitPhase().getName();
+		}
+		return ret;
+	}
+	
+	@Override
+	public void setNextPhase(String phaseName) throws Exception {
+		try {
+			HProcess process = getProcess();
+			DMGame.get().getLifecycle().getPhase( getProcessPhaseName( process ) ).checkPreconditions( this );
+			process.setPhaseName( phaseName );
+			DMGame.get().getJpa().processes.save( process );
+		}
+		catch( Exception ex ) {
+			throw ex;
+		}
+	}
 }

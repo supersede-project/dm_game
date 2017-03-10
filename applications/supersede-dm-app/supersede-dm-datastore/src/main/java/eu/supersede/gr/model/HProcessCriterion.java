@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;

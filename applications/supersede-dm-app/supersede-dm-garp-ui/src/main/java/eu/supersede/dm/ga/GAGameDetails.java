@@ -61,6 +61,7 @@ public class GAGameDetails
 
     public Map<Long, Double> getCriteriaWeights()
     {
+        System.out.println("criteria weights size: " + criteriaWeights.size());
         return criteriaWeights;
     }
 

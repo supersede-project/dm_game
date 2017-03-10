@@ -1,0 +1,40 @@
+<script src="supersede-dm-app/js/create_req_edit_session.js"></script>
+
+<style>
+h1, h2, h3 {
+	text-align: center;
+}
+
+input, form {
+	margin: 0 auto;
+	width: 500px;
+}
+</style>
+
+<div ng-controller="create_req_edit_session">
+
+	<div ng-show="!ongoingSession()">
+		
+		<h1>Start Collaborative Requirements Editing Session?</h1>
+
+		<br>
+
+		<div align="center">
+			<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+			<jqx-button ng-click="proceed()">Proceed</jqx-button>
+		</div>
+	</div>
+
+	<div ng-show="ongoingSession()">
+	
+		<h1>Close Ongoing Collaborative Requirements Editing Session?</h1>
+		
+		<br>
+
+		<div align="center">
+			<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+			<jqx-button ng-click="close()">Close session</jqx-button>
+		</div>
+	</div>
+	
+</div>

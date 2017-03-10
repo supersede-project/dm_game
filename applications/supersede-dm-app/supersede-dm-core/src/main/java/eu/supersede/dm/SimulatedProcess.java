@@ -15,6 +15,7 @@
 package eu.supersede.dm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,9 @@ public class SimulatedProcess extends AbstractProcessManager
     private List<Requirement> requirements;
     private Map<Long, List<HProcessMember>> members;
     private Map<Long, List<HActivity>> activities;
-
+    
+    String phaseName = DMGame.get().getLifecycle().getInitPhase().getName();
+    
     public SimulatedProcess(Long processId)
     {
         requirements = new ArrayList<>();
@@ -266,4 +269,55 @@ public class SimulatedProcess extends AbstractProcessManager
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public Requirement getRequirement(Long reqId) {
+		for( Requirement r : requirements ) {
+			if( r.getRequirementId() == reqId ) {
+				return r;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void deleteActivity(HActivity a) {
+		List<HActivity> actList = activities.get( this.processId );
+		if( actList == null ) {
+			return;
+		}
+		for( HActivity existing : actList ) {
+			if( existing.getId() == a.getId() ) {
+				actList.remove( a.getId() );
+				return;
+			}
+		}
+	}
+
+	@Override
+	public String getCurrentPhase() {
+		return this.phaseName;
+	}
+
+	@Override
+	public Collection<String> getNextPhases() {
+		DMLifecycle lifecycle = DMGame.get().getLifecycle();
+		DMPhase phase = lifecycle.getPhase( this.phaseName );
+		List<String> phases = new ArrayList<>();
+		for( DMPhase n : phase.getNextPhases() ) {
+			phases.add( n.getName() );
+		}
+		return phases;
+	}
+
+	@Override
+	public void setNextPhase(String phaseName) throws Exception {
+		try {
+			DMGame.get().getLifecycle().getPhase( this.phaseName ).checkPreconditions( this );
+			this.phaseName = phaseName;
+		}
+		catch( Exception ex ) {
+			throw ex;
+		}
+	}
 }

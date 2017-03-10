@@ -56,7 +56,7 @@
             <h3>Criterion {{criterion.name}}</h3>
 
             <div ng-repeat="player in gameOpinionProviders.localdata"
-                 id="{{'criterion' + criterion.criteriaId + 'player' + player.userId}}"
+                 id="{{'criterion' + criterion.sourceId + 'player' + player.userId}}"
                  style="margin-top: 10px; margin-bottom: 10px">
                 <span><strong>Opinion Provider</strong>: {{player.name}}</span>
                 <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
@@ -75,7 +75,7 @@
 
     <div id="page3" ng-show="currentPage == 'page3'">
         <h2>Define Criteria Weights</h2>
-        <div align="center" ng-repeat="criterion in gameCriteria.localdata" id="{{'criterion' + criterion.criteriaId}}"
+        <div align="center" ng-repeat="criterion in gameCriteria.localdata" id="{{'criterion' + criterion.sourceId}}"
              style="margin-top: 10px; margin-bottom: 10px">
             <span><strong>Criterion</strong>: {{criterion.name}}</span>
             <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"

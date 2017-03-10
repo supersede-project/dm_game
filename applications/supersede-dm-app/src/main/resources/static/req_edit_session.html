@@ -1,0 +1,25 @@
+<script src="supersede-dm-app/js/req_edit_session.js"></script>
+
+<div ng-controller="req_edit_session" style="height: 100vh">
+
+	<h1>Edit Requirements</h1>
+
+	<div id="mainSplitter">
+
+
+		<div class="splitter-panel">
+			<div>
+				<jqx-button ng-click="newReq()">New</jqx-button>
+				<div style="border: none;" id="requirements-listbox"></div>
+			</div>
+		</div>
+
+
+		<div class="splitter-panel">
+
+			<div ng-include="reqUrl"></div>
+
+		</div>
+	</div>
+
+</div>

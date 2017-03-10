@@ -15,5 +15,5 @@ public interface DMMethod {
 	public List<DMCondition>	preconditions();
 	
 	public String				getPage( ProcessManager mgr );
-
+	
 }

@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
