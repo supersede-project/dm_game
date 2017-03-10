@@ -24,6 +24,11 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     $scope.gameOpinionProvidersId = [];
     $scope.gameNegotiatorsId = [];
 
+    $scope.now = function()
+    {
+        return new Date().toJSON().slice(0,19).replace("T", " ");
+    };
+
     var availableRequirements = {};
     var availableCriteria = {};
     var availablePlayers = {};
@@ -31,6 +36,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     var weightsId = {};
     var gameName;
 
+    $scope.game = {title: "Decision Making Process " + $scope.now()};
+    
     weightsId.players = {};
     weightsId.criteria = {};
 
@@ -374,6 +381,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         })
         .success(function(data) {
             $("#game_created").html("<strong>Game successfully created!</strong>");
+            $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
         }).error(function(err, data){
             $("#game_created").html("<strong>Unable to create the game!</strong>");
             console.log(err);
@@ -382,7 +390,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/garp/home');
+        $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
     };
 
     getAvailableRequirements();

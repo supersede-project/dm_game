@@ -18,7 +18,8 @@
 
         <h2>Name</h2>
         <form>
-            <input id="game_name" type="text" value="Decision Making Process">
+<!--             <input id="game_name" type="text" value="Decision Making Process"> -->
+             <input id="game_name" type="text" ng-model="game.title" placeholder="Decision Making Process" jqx-width="'98%'"/>
         </form>
 
         <h2>Requirements</h2>
@@ -44,8 +45,8 @@
         <br>
 
         <div align="center">
-            <jqx-button style="margin-right: 10px" ng-click="definePlayersWeights()">Next</jqx-button>
             <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="definePlayersWeights()">Next</jqx-button>
         </div>
     </div>
 
@@ -68,8 +69,8 @@
         <br>
 
         <div align="center">
-            <jqx-button style="margin-right: 10px" ng-click="defineCriteriaWeights()">Next</jqx-button>
             <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="defineCriteriaWeights()">Next</jqx-button>
         </div>
     </div>
 
@@ -86,8 +87,8 @@
         <br>
 
         <div align="center">
-            <jqx-button style="margin-right: 10px" ng-click="showSummary()">Next</jqx-button>
             <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="showSummary()">Next</jqx-button>
         </div>
     </div>
 

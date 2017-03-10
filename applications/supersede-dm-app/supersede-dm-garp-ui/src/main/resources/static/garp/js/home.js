@@ -150,7 +150,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     };
 
     $scope.gameDetails = function(gameId) {
-        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId);
+        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId).search('procId',$scope.procId);
     };
 
     $scope.selectSolution = function(gameId) {

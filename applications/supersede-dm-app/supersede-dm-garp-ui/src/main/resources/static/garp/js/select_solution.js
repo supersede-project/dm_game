@@ -15,6 +15,9 @@
 var app = angular.module("w5app");
 
 app.controllerProvider.register("select_solution", function($scope, $http, $location) {
+	
+	$scope.procId = $location.search().procId;
+	
     var gameId = $location.search().gameId;
     var gameRequirements = {};
     var gameStatus;
@@ -23,98 +26,118 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.currentPage = "page1";
     $scope.ranking = {};
     $scope.solutions = [];
-
-    $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
-    .success(function (data) {
-        gameStatus = data.status;
-
-        $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+    
+    var loadPage = function() {
+    	
+        $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
-            $scope.ranking = data;
+            gameStatus = data.status;
 
-            if (!$scope.emptyRanking()) {
-                $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-                .success(function (data) {
+            $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+            .success(function (data) {
+                $scope.ranking = data;
 
-                    for (var i = 0; i < data.length; i++) {
-                        var requirementId = data[i].requirementId;
-                        gameRequirements[requirementId] = data[i];
-                    }
-                }).error(function (err) {
-                    alert(err.message);
-                });
-            }
+                if (!$scope.emptyRanking()) {
+                    $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+                    .success(function (data) {
+
+                        for (var i = 0; i < data.length; i++) {
+                            var requirementId = data[i].requirementId;
+                            gameRequirements[requirementId] = data[i];
+                        }
+                    }).error(function (err) {
+                        alert(err.message);
+                    });
+                }
+            }).error(function (err) {
+                alert(err.message);
+            });
         }).error(function (err) {
             alert(err.message);
         });
-    }).error(function (err) {
-        alert(err.message);
-    });
 
-    function setCurrentPage(page) {
-        $scope.currentPage = 'page' + page;
+        function setCurrentPage(page) {
+            $scope.currentPage = 'page' + page;
+        }
+
+        function getSolutions() {
+            $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
+            .success(function(data) {
+                $scope.solutions = data;
+            }).error(function(err){
+                alert(err.message);
+            });
+        }
+
+        $scope.getRequirement = function(requirementId) {
+            return gameRequirements[requirementId];
+        };
+
+        $scope.showSolutions = function () {
+            getSolutions();
+            setCurrentPage(2);
+        };
+
+        $scope.selectSolution = function() {
+            var solutionIndex = $("#select_solution").val();
+            var selectedSolution = $scope.solutions[solutionIndex - 1];
+
+            $http({
+                url: "supersede-dm-app/garp/game/solution",
+                data: selectedSolution,
+                method: 'POST',
+                params: {gameId : gameId}
+            }).success(function(){
+                $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
+            }).error(function(err){
+                $("#selected_solution").html("<strong>Unable to save the solution!</strong>");
+                console.log(err.message);
+            });
+        };
+
+        $scope.selectSolutionAndStop = function () {
+            $scope.selectSolution();
+
+            $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId)
+            .success(function (data) {
+                $("#game_status").html("<strong>Game successfully closed!</strong>");
+            }).error(function (err) {
+                $("#game_status").html("<strong>Unable to close the game!</strong>");
+                console.log(err.message);
+            });
+        };
+
+        $scope.emptyRanking = function() {
+            return Object.keys($scope.ranking).length === 0;
+        };
+
+        $scope.gameOpen = function () {
+            return gameStatus == open;
+        };
+
+        $scope.canSelectSolution = function () {
+            return $scope.gameOpen() && !$scope.emptyRanking();
+        };
+
+        $scope.home = function() {
+            $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
+        };
     }
-
-    function getSolutions() {
-        $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
-        .success(function(data) {
-            $scope.solutions = data;
-        }).error(function(err){
-            alert(err.message);
-        });
+    
+    if( typeof gameId === 'undefined' || gameId === null ){
+    	$http({
+            method: 'GET',
+            url: "supersede-dm-app/garp/game/id",
+            params: { procId: $scope.procId, activityId: $scope.activityId },
+            headers: {
+                'Content-Type': undefined
+              }
+        }).success(function(data){
+            console.log( "Received: " + data );
+            loadPage(data);
+    	});
     }
-
-    $scope.getRequirement = function(requirementId) {
-        return gameRequirements[requirementId];
-    };
-
-    $scope.showSolutions = function () {
-        getSolutions();
-        setCurrentPage(2);
-    };
-
-    $scope.selectSolution = function() {
-        var solutionIndex = $("#select_solution").val();
-        var selectedSolution = $scope.solutions[solutionIndex - 1];
-
-        $http({
-            url: "supersede-dm-app/garp/game/solution",
-            data: selectedSolution,
-            method: 'POST',
-            params: {gameId : gameId}
-        }).success(function(){
-            $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
-        }).error(function(err){
-            $("#selected_solution").html("<strong>Unable to save the solution!</strong>");
-            console.log(err.message);
-        });
-    };
-
-    $scope.selectSolutionAndStop = function () {
-        $scope.selectSolution();
-
-        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId)
-        .success(function (data) {
-            $("#game_status").html("<strong>Game successfully closed!</strong>");
-        }).error(function (err) {
-            $("#game_status").html("<strong>Unable to close the game!</strong>");
-            console.log(err.message);
-        });
-    };
-
-    $scope.emptyRanking = function() {
-        return Object.keys($scope.ranking).length === 0;
-    };
-
-    $scope.gameOpen = function () {
-        return gameStatus == open;
-    };
-
-    $scope.canSelectSolution = function () {
-        return $scope.gameOpen() && !$scope.emptyRanking();
-    };
-
-    $scope.home = function() {
-        $location.url('supersede-dm-app/garp/home');
-    };
+    else {
+    	loadPage();
+    }
 });

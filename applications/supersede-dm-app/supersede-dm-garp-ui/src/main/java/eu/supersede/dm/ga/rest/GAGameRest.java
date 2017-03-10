@@ -198,9 +198,9 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/closegame", method = RequestMethod.POST)
-    public void closeGame(Authentication authentication, Long gameId)
+    public void closeGame(Authentication authentication, @RequestParam("procId") Long procId, Long gameId)
     {
-        persistentDB.closeGame(gameId);
+        persistentDB.closeGame( gameId, procId );
     }
 
     @RequestMapping(value = "/opengame", method = RequestMethod.POST)

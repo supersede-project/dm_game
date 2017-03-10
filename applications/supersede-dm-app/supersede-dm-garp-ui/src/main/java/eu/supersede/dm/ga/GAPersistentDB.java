@@ -36,6 +36,7 @@ import eu.supersede.dm.DMGame;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.PropertyBag;
 import eu.supersede.dm.methods.GAMethod;
+import eu.supersede.dm.methods.GANegotiatorVotingMethod;
 import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameStatus;
@@ -204,6 +205,12 @@ public class GAPersistentDB
             for (Long userId : opinionProviders)
             {
                 HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
+                PropertyBag bag = mgr.getProperties(a);
+                bag.set("gameId", "" + gameId);
+            }
+            for( Long userId : negotiators )
+            {
+                HActivity a = mgr.createActivity(GANegotiatorVotingMethod.NAME, userId);
                 PropertyBag bag = mgr.getProperties(a);
                 bag.set("gameId", "" + gameId);
             }
@@ -406,8 +413,21 @@ public class GAPersistentDB
         return d;
     }
 
-    public void closeGame(Long gameId)
+    public void closeGame( Long gameId, Long processId )
     {
+    	ProcessManager mgr = DMGame.get().getProcessManager( processId );
+    	
+		List<HActivity> activities = mgr.getOngoingActivities( GAPlayerVotingMethod.NAME );
+		
+		for( HActivity a : activities ) {
+			PropertyBag bag = mgr.getProperties( a );
+			Long ongoingGame = Long.parseLong( bag.get( "gameId", "0" ) );
+			if( ongoingGame != gameId ) {
+				continue;
+			}
+			mgr.deleteActivity( a );
+		}
+		
         HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
         gameInfo.setStatus(GAGameStatus.Closed.name());
         gamesJpa.save(gameInfo);
