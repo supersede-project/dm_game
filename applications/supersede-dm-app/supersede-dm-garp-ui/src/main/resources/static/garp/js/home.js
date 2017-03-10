@@ -30,7 +30,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     }
 
     function getGamesAsSupervisor() {
-        $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor')
+        $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor&procId=' + $scope.procId)
         .success(function(data) {
             console.log(data);
             var source = {

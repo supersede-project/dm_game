@@ -40,6 +40,7 @@ import eu.supersede.dm.methods.GANegotiatorVotingMethod;
 import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameStatus;
+import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;
 import eu.supersede.gr.jpa.GAGameRankingsJpa;
@@ -82,6 +83,9 @@ public class GAPersistentDB
 
     @Autowired
     private GAGameSolutionsJpa solutionsJpa;
+
+    @Autowired
+    private ActivitiesJpa activitiesJpa;
 
     public Long getProcessId(Long activityId)
     {
@@ -223,7 +227,7 @@ public class GAPersistentDB
                 ", negotiators: " + negotiators.size());
     }
 
-    public List<HGAGameSummary> getGamesByRole(Long userId, String roleName)
+    public List<HGAGameSummary> getGamesByRoleAndProcess(Long userId, String roleName, Long processId)
     {
         List<HGAGameSummary> games = new ArrayList<>();
         List<Long> gameList = participationJpa.findGames(userId, roleName);
@@ -237,8 +241,13 @@ public class GAPersistentDB
                 continue;
             }
 
-            HGAGameSummary summary = extract(info);
-            games.add(summary);
+            HActivity activity = activitiesJpa.findOne(info.getActivityId());
+
+            if (activity.getProcessId() == processId)
+            {
+                HGAGameSummary summary = extract(info);
+                games.add(summary);
+            }
         }
 
         return games;

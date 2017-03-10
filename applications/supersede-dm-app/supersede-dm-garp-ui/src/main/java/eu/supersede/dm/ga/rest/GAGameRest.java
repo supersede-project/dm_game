@@ -53,10 +53,10 @@ public class GAGameRest
     private GAPersistentDB persistentDB;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
-    public List<HGAGameSummary> getGames(Authentication authentication, String roleName)
+    public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long procId)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
-        return persistentDB.getGamesByRole(userId, roleName);
+        return persistentDB.getGamesByRoleAndProcess(userId, roleName, procId);
     }
 
     @SuppressWarnings("unchecked")
@@ -200,7 +200,7 @@ public class GAGameRest
     @RequestMapping(value = "/closegame", method = RequestMethod.POST)
     public void closeGame(Authentication authentication, @RequestParam("procId") Long procId, Long gameId)
     {
-        persistentDB.closeGame( gameId, procId );
+        persistentDB.closeGame(gameId, procId);
     }
 
     @RequestMapping(value = "/opengame", method = RequestMethod.POST)
