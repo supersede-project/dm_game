@@ -384,17 +384,16 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
-    public void doEnactGame(@RequestParam Long gameId)
+    public void doEnactGame(Authentication authentication, @RequestParam Long gameId)
     {
         System.out.println("Sending requirements for enactment");
 
+        String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         GAGameDetails game = persistentDB.getGameInfo(gameId);
-
         double max = game.getRequirements().size();
-
         FeatureList list = new FeatureList();
-
         int pos = 0;
+
         for (Long reqId : game.getRequirements())
         {
             Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
@@ -409,29 +408,29 @@ public class GAGameRest
 
         try
         {
-
-            EnactmentService.get().send(list, true);
+            EnactmentService.get().send(list, true, tenant);
 
             for (Long reqId : game.getRequirements())
             {
                 Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
+
                 if (r == null)
+                {
                     continue;
+                }
+
                 RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
                 if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
                 {
                     r.setStatus(RequirementStatus.Enacted.getValue());
                     DMGame.get().getJpa().requirements.save(r);
                 }
-
             }
-
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
-
     }
-
 }

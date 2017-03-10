@@ -1,3 +1,17 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.dm.services;
 
 import java.util.ArrayList;
@@ -14,84 +28,94 @@ import eu.supersede.integration.api.replan.controller.types.AddFeaturesForProjec
 import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 import eu.supersede.integration.api.replan.controller.types.Priority;
 
-public class EnactmentService {
+public class EnactmentService
+{
+    private static EnactmentService instance = new EnactmentService();
 
-	private static EnactmentService instance = new EnactmentService();
+    public static EnactmentService get()
+    {
+        return instance;
+    }
 
-	public static EnactmentService get() {
-		return instance;
-	}
+    /*
+     * Temporary Method - to be finalized
+     */
+    public void send(FeatureList features, boolean useIF, String tenant)
+    {
+        List<FeatureWP3> list = new ArrayList<>();
 
-	/*
-	 * Temporary Method - to be finalized
-	 */
-	public void send( FeatureList features, boolean useIF ) {
+        for (Feature f : features.list())
+        {
+            try
+            {
+                FeatureWP3 fwp3 = new FeatureWP3();
+                fwp3.setArguments("");
+                fwp3.setDescription("");
+                fwp3.setEffort(1.0);
+                fwp3.setHardDependencies(new ArrayList<>());
+                fwp3.setId(Integer.parseInt(f.getId()));
+                fwp3.setName(f.getName());
+                fwp3.setPriority(getPriorityEnum(f.getPriority()));
+                fwp3.setRequiredSkills(new ArrayList<>());
+                fwp3.setSoftDependencies(new ArrayList<>());
+                list.add(fwp3);
+            }
+            catch (Exception ex)
+            {
+                System.err.println("Skip feature with ID: " + f.getId() + " (" + f.getName() + ")");
+            }
+        }
 
-		List<FeatureWP3> list = new ArrayList<>();
+        try
+        {
+            AddFeaturesForProjectPayload p = new AddFeaturesForProjectPayload();
+            p.setConstraints(new ArrayList<>());
+            p.setEvaluationTime("");
+            p.setFeatures(list);
 
-		for( Feature f : features.list() ) {
-			try {
-				FeatureWP3 fwp3 = new FeatureWP3();
-				fwp3.setArguments( "" );
-				fwp3.setDescription( "" );
-				fwp3.setEffort( 1.0 );
-				fwp3.setHardDependencies( new ArrayList<>() );
-				fwp3.setId( Integer.parseInt( f.getId() ) );
-				fwp3.setName( f.getName() );
-				fwp3.setPriority( getPriorityEnum( f.getPriority() ) );
-				fwp3.setRequiredSkills( new ArrayList<>() );
-				fwp3.setSoftDependencies( new ArrayList<>() );
-				list.add( fwp3 );
-			}
-			catch( Exception ex ) {
-				System.err.println( "Skip feature with ID: " + f.getId() + " (" + f.getName() + ")" );
-			}
-		}
+            if (useIF)
+            {
+                IReplanController replan = new ReplanControllerProxy();
+                replan.addFeaturesToProjectById(p, tenant);
+            }
+            else
+            {
+                String json = new Gson().toJson(p);
 
-		try {
-			AddFeaturesForProjectPayload p = new AddFeaturesForProjectPayload();
-			p.setConstraints( new ArrayList<>() );
-			p.setEvaluationTime( "" );
-			p.setFeatures( list );
+                json = json.replaceAll("\\bevaluationTime\\b", "evaluation_time");
+                json = json.replaceAll("\\bhardDependencies\\b", "hard_dependencies");
+                json = json.replaceAll("\\bsoftDependencies\\b", "soft_dependencies");
 
-			if( useIF ) {
-				IReplanController replan = new ReplanControllerProxy();
-				replan.addFeaturesToProjectById( p, 0 );
-			}
-			else {
-				
-				String json = new Gson().toJson( p );
-				
-				json = json.replaceAll( "\\bevaluationTime\\b", "evaluation_time" );
-				json = json.replaceAll( "\\bhardDependencies\\b", "hard_dependencies" );
-				json = json.replaceAll( "\\bsoftDependencies\\b", "soft_dependencies" );
-				
-				System.out.println( json );
-				
-				RESTClient client = new RESTClient( "http://supersede.es.atos.net:8280/replan" );
-				
-				client.post( "projects/1/features" )
-				.header( "Content-Type", "application/json" )
-				.header( "Cache-Control", "no-cache" )
-				.send( json );
-				
-			}
+                System.out.println(json);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                RESTClient client = new RESTClient("http://supersede.es.atos.net:8280/replan");
 
-	}
+                client.post("projects/1/features").header("Content-Type", "application/json")
+                        .header("Cache-Control", "no-cache").send(json);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	private Priority getPriorityEnum( int priority ) {
-		switch( priority ) {
-		case 5: return Priority.FIVE;
-		case 4: return Priority.FOUR;
-		case 3: return Priority.THREE;
-		case 2: return Priority.TWO;
-		case 1: return Priority.ONE;
-		default: return Priority.ONE;
-		}
-	}
-
+    private Priority getPriorityEnum(int priority)
+    {
+        switch (priority)
+        {
+            case 5:
+                return Priority.FIVE;
+            case 4:
+                return Priority.FOUR;
+            case 3:
+                return Priority.THREE;
+            case 2:
+                return Priority.TWO;
+            case 1:
+                return Priority.ONE;
+            default:
+                return Priority.ONE;
+        }
+    }
 }

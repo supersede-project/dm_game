@@ -63,9 +63,9 @@ import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
+import eu.supersede.gr.model.GamePlayerPoint;
 import eu.supersede.gr.model.HAHPCriteriasMatrixData;
 import eu.supersede.gr.model.HAHPGame;
-import eu.supersede.gr.model.GamePlayerPoint;
 import eu.supersede.gr.model.HAHPJudgeAct;
 import eu.supersede.gr.model.HAHPPlayerMove;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
@@ -125,19 +125,15 @@ public class GameRest
     private NotificationUtil notificationUtil;
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
-    public Long activit2gameId( 
-    		Authentication authentication, 
-    		@RequestParam Long procId, 
-    		@RequestParam Long activityId ) {
-    	HActivity a = DMGame.get().getJpa().activities.findOne( activityId );
-    	String ret = DMGame.get().getProcessManager( procId ).getProperties( a ).get( "gameId", "" );
-    	return Long.parseLong( ret );
+    public Long activit2gameId(Authentication authentication, @RequestParam Long procId, @RequestParam Long activityId)
+    {
+        HActivity a = DMGame.get().getJpa().activities.findOne(activityId);
+        String ret = DMGame.get().getProcessManager(procId).getProperties(a).get("gameId", "");
+        return Long.parseLong(ret);
     }
-    
+
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<HAHPGame> getGames(
-    		Authentication authentication, 
-    		@RequestParam(required = false) Boolean finished,
+    public List<HAHPGame> getGames(Authentication authentication, @RequestParam(required = false) Boolean finished,
             @RequestParam(defaultValue = "false") Boolean byUser)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
@@ -324,10 +320,12 @@ public class GameRest
     }
 
     @RequestMapping(value = "/enact/{gameId}", method = RequestMethod.PUT)
-    public void doEnactGame(@PathVariable Long gameId, @RequestParam("useIF") Boolean useIf)
+    public void doEnactGame(Authentication authentication, @PathVariable Long gameId,
+            @RequestParam("useIF") Boolean useIf)
     {
         System.out.println("Sending requirements fo enactment - useIF = " + useIf.booleanValue());
 
+        String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         HAHPGame g = games.findOne(gameId);
         double max = 1;
         Map<String, Double> rs = AHPRest.CalculateAHP(g.getCriterias(), g.getRequirements(),
@@ -353,13 +351,12 @@ public class GameRest
             list.list().add(feature);
         }
 
-        EnactmentService.get().send(list, (useIf != null ? useIf.booleanValue() : true));
+        EnactmentService.get().send(list, (useIf != null ? useIf.booleanValue() : true), tenant);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createGame(Authentication auth, @RequestBody HAHPGame game,
-            @RequestParam(required = true) String criteriaValues,
-            @RequestParam Long procId )
+            @RequestParam(required = true) String criteriaValues, @RequestParam Long procId)
             throws JsonParseException, JsonMappingException, IOException
     {
         TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>()
@@ -405,17 +402,17 @@ public class GameRest
 
         game.setFinished(false);
         game = games.save(game);
-        
-        ProcessManager mgr = DMGame.get().getProcessManager( procId );
-        HActivity a = mgr.createActivity( AHPPlayerMethod.NAME, ((DatabaseUser)auth.getPrincipal()).getUserId() );
-        PropertyBag bag = mgr.getProperties( a );
-        bag.set( "gameId", "" + game.getGameId() );
-        
+
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        HActivity a = mgr.createActivity(AHPPlayerMethod.NAME, ((DatabaseUser) auth.getPrincipal()).getUserId());
+        PropertyBag bag = mgr.getProperties(a);
+        bag.set("gameId", "" + game.getGameId());
+
         for (int i = 0; i < cs.size() - 1; i++)
         {
             for (int j = i + 1; j < cs.size(); j++)
             {
-            	HAHPCriteriasMatrixData cmd = new HAHPCriteriasMatrixData();
+                HAHPCriteriasMatrixData cmd = new HAHPCriteriasMatrixData();
                 cmd.setGame(game);
                 cmd.setRowCriteria(cs.get(j));
                 cmd.setColumnCriteria(cs.get(i));

@@ -1,12 +1,8 @@
 <script src="supersede-dm-app/js/imports.js"></script>
 
 <style>
-    h1, h2, h3 {
+    h1 {
         text-align: center;
-    }
-    input, form {
-        margin: 0 auto;
-        width: 500px;
     }
 </style>
 
@@ -14,40 +10,16 @@
 
     <h1>Import requirements into current process</h1>
 
-<!--     <div id="page1" ng-show="currentPage == 'page1'"> -->
+    <div style="font-size: 13px; font-family: Verdana">
+        <div id="requirements"></div>
+    </div>
 
-<!--         <h2>Name</h2> -->
-<!--         <form> -->
-<!--             <input id="game_name" type="text" value="Decision Making Process"> -->
-<!--         </form> -->
+    <br>
 
-<!--         <h2>Requirements</h2> -->
-        <div style="font-size: 13px; font-family: Verdana">
-            <div id="requirements"></div>
-        </div>
-
-<!--         <h2>Criteria</h2> -->
-<!--         <div style="font-size: 13px; font-family: Verdana"> -->
-<!--             <div id="criteria"></div> -->
-<!--         </div> -->
-
-<!--         <h2>Opinion Providers</h2> -->
-<!--         <div style="font-size: 13px; font-family: Verdana"> -->
-<!--             <div id="opinion_providers"></div> -->
-<!--         </div> -->
-
-<!--         <h2>Negotiators</h2> -->
-<!--         <div style="font-size: 13px; font-family: Verdana"> -->
-<!--             <div id="negotiators"></div> -->
-<!--         </div> -->
-
-        <br>
-
-        <div align="center">
-            <jqx-button style="margin-right: 10px" ng-click="done()">Import</jqx-button>
-            <jqx-button ng-click="home()">Cancel</jqx-button>
-        </div>
-<!--     </div> -->
-
+    <div align="center">
+        <jqx-button style="margin-right: 10px" ng-click="importRequirements()">Import</jqx-button>
+        <jqx-button ng-click="home()">Back</jqx-button>
+        <p id="imported"></p>
+    </div>
 
 </div>
