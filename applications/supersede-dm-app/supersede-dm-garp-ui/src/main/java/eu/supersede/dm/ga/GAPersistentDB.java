@@ -133,6 +133,7 @@ public class GAPersistentDB
 
         HActivity activity = new HActivity();
         activity.setMethodName(GAMethod.NAME);
+        activity.setProcessId(processId);
         HActivity persistentActivity = DMGame.get().getJpa().activities.save(activity);
 
         gameSummary.setActivityId(persistentActivity.getId());
@@ -208,7 +209,7 @@ public class GAPersistentDB
                 PropertyBag bag = mgr.getProperties(a);
                 bag.set("gameId", "" + gameId);
             }
-            for( Long userId : negotiators )
+            for (Long userId : negotiators)
             {
                 HActivity a = mgr.createActivity(GANegotiatorVotingMethod.NAME, userId);
                 PropertyBag bag = mgr.getProperties(a);
@@ -413,21 +414,23 @@ public class GAPersistentDB
         return d;
     }
 
-    public void closeGame( Long gameId, Long processId )
+    public void closeGame(Long gameId, Long processId)
     {
-    	ProcessManager mgr = DMGame.get().getProcessManager( processId );
-    	
-		List<HActivity> activities = mgr.getOngoingActivities( GAPlayerVotingMethod.NAME );
-		
-		for( HActivity a : activities ) {
-			PropertyBag bag = mgr.getProperties( a );
-			Long ongoingGame = Long.parseLong( bag.get( "gameId", "0" ) );
-			if( ongoingGame != gameId ) {
-				continue;
-			}
-			mgr.deleteActivity( a );
-		}
-		
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+
+        List<HActivity> activities = mgr.getOngoingActivities(GAPlayerVotingMethod.NAME);
+
+        for (HActivity a : activities)
+        {
+            PropertyBag bag = mgr.getProperties(a);
+            Long ongoingGame = Long.parseLong(bag.get("gameId", "0"));
+            if (ongoingGame != gameId)
+            {
+                continue;
+            }
+            mgr.deleteActivity(a);
+        }
+
         HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
         gameInfo.setStatus(GAGameStatus.Closed.name());
         gamesJpa.save(gameInfo);
