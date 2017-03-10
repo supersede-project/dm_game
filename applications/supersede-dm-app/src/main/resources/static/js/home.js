@@ -147,22 +147,13 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 }
                 var table =
                     '<table style="min-width: 100%;">' +
-                    '<tr><td style="width: 40px;" rowspan="2">' + "img" + '</td><td>' +
-                    datarecord.methodName +
-                    '</td>' +
-                    '<td style="width: 40px;" rowspan="2">' +
-//                    action +
-                    '</td>' +
-                    '</tr><tr><td>' +
-//                    "Created: " + datarecord.date +
-                    '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
-                    'href="#/supersede-dm-app/' + datarecord.url +
+                    '<tr><td style="width: 40px;">' + "img" + '</td><td>' +
+                    '<a href="#/supersede-dm-app/' + datarecord.url +
                     '?procId=' + datarecord.processId +
                     '&activityId=' + datarecord.activityId +
-//                    '&gameId=' + datarecord.properties.gameId +
-                    '">View</a>' +
-                    '</jqx-link-button>' +
+                    '">' + datarecord.methodName + '</a>' +
                     '</td></tr></table>';
+                console.log(table);
                 return table;
             }
         });
@@ -206,9 +197,9 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                     }
                     var table =
                         '<table style="min-width: 100%;">' +
-                        '<tr><td style="width: 40px;" rowspan="2">' + action + '</td><td>' +
+                        '<tr><td style="width: 40px;">' + action + '</td><td>' +
                         datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
-                        '<td style="width: 40px;" rowspan="2">' +
+                        '<td style="width: 40px;">' +
                         '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
                         'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' +
                         '<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');">Close</a></jqx-button>' +
