@@ -151,30 +151,33 @@ public class ProcessRest
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public void closeProcess(@RequestParam Long procId)
     {
-    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
-    	
-    	if( mgr == null ) {
-    		return;
-    	}
-    	
-        for( HActivity a : mgr.getOngoingActivities() ) {
-        	DMMethod m = DMLibrary.get().getMethod( a.getMethodName() );
-        	if( m != null ) {
-//        		TODO: let the method remote its data?
-        	}
-        	mgr.deleteActivity( a );
-        }
-    	
-        HProcess p = DMGame.get().getProcess(procId);
-        
-        if( p == null )
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+
+        if (mgr == null)
         {
-        	
             return;
         }
-        
+
+        for (HActivity a : mgr.getOngoingActivities())
+        {
+            DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
+            if (m != null)
+            {
+                // TODO: let the method remote its data?
+            }
+            mgr.deleteActivity(a);
+        }
+
+        HProcess p = DMGame.get().getProcess(procId);
+
+        if (p == null)
+        {
+
+            return;
+        }
+
         p.setStatus(ProcessStatus.Closed);
-        
+
         DMGame.get().getJpa().processes.save(p);
     }
 
@@ -191,7 +194,7 @@ public class ProcessRest
         if (p.getStatus() == ProcessStatus.InProgress)
         {
             System.err.println("Can't delete process with id " + procId + ": you must close it first");
-            throw new RuntimeException( "Can't delete process with id " + procId + ": you must close it first" );
+            return;
         }
 
         System.out.println("Deleted process " + procId);
@@ -201,7 +204,7 @@ public class ProcessRest
     // Requirements
 
     @RequestMapping(value = "/requirements/import", method = RequestMethod.POST)
-    public void importRequirements(@RequestParam Long procId, @RequestParam List<Long> requirementsId)
+    public void importRequirements(@RequestParam Long procId, @RequestParam(required = false) List<Long> requirementsId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
 
@@ -210,6 +213,12 @@ public class ProcessRest
         for (Requirement requirement : requirements)
         {
             proc.removeRequirement(requirement.getRequirementId());
+        }
+
+        if (requirementsId == null)
+        {
+            // No requirement has been added to the process
+            return;
         }
 
         for (Long requirementId : requirementsId)
@@ -221,7 +230,6 @@ public class ProcessRest
                 continue;
             }
 
-            // r.setStatus(RequirementStatus.Editable.getValue());
             proc.addRequirement(r);
         }
     }
@@ -409,17 +417,18 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/requirements/new", method = RequestMethod.POST)
-    public Requirement createRequirement( @RequestParam Long procId, @RequestParam String name )
+    public Requirement createRequirement(@RequestParam Long procId, @RequestParam String name)
     {
-    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
-    	if( mgr == null ) {
-    		return null;
-    	}
-    	Requirement r = new Requirement();
-    	r.setName( name );
-    	r = DMGame.get().getJpa().requirements.save( r );
-    	mgr.addRequirement( r );
-    	return r;
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return null;
+        }
+        Requirement r = new Requirement();
+        r.setName(name);
+        r = DMGame.get().getJpa().requirements.save(r);
+        mgr.addRequirement(r);
+        return r;
     }
 
     @RequestMapping(value = "/requirements/property/submit", method = RequestMethod.POST)
@@ -440,88 +449,103 @@ public class ProcessRest
     public String setNextPhase(@RequestParam Long procId) throws Exception
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        
+
         String phaseName = mgr.getCurrentPhase();
-        
-        DMPhase phase = DMGame.get().getLifecycle().getPhase( phaseName );
-        
-        if( phase.getNextPhases().isEmpty() ) {
-        	throw new RuntimeException( "No next phase available" );
+
+        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
+
+        if (phase.getNextPhases().isEmpty())
+        {
+            throw new RuntimeException("No next phase available");
         }
-        
+
         // Assume only one next phase is possible
-        
-        for( DMPhase n : phase.getNextPhases() ) {
-        	try {
-				n.checkPreconditions( mgr );
-				n.activate( mgr );
-				mgr.setNextPhase( n.getName() );
-				return n.getName();
-			} catch (Exception e) {
-				throw e;
-			}
+
+        for (DMPhase n : phase.getNextPhases())
+        {
+            try
+            {
+                n.checkPreconditions(mgr);
+                n.activate(mgr);
+                mgr.setNextPhase(n.getName());
+                return n.getName();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        
-        throw new Exception( "No next phase available" );
+
+        throw new Exception("No next phase available");
     }
 
     @RequestMapping(value = "/requirements/prev", method = RequestMethod.GET, produces = "text/plain")
     public String setPrevPhase(@RequestParam Long procId) throws Exception
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        
+
         String phaseName = mgr.getCurrentPhase();
-        
-        DMPhase phase = DMGame.get().getLifecycle().getPhase( phaseName );
-        
-        if( phase.getPrevPhases().isEmpty() ) {
-        	throw new RuntimeException( "No next phase available" );
+
+        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
+
+        if (phase.getPrevPhases().isEmpty())
+        {
+            throw new RuntimeException("No next phase available");
         }
-        
+
         // Assume only one next phase is possible
-        
-        for( DMPhase n : phase.getPrevPhases() ) {
-        	try {
-				n.checkPreconditions( mgr );
-				n.activate( mgr );
-				mgr.setNextPhase( n.getName() );
-				return n.getName();
-			} catch (Exception e) {
-				throw e;
-			}
+
+        for (DMPhase n : phase.getPrevPhases())
+        {
+            try
+            {
+                n.checkPreconditions(mgr);
+                n.activate(mgr);
+                mgr.setNextPhase(n.getName());
+                return n.getName();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        
-        throw new Exception( "No next phase available" );
+
+        throw new Exception("No next phase available");
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
     public String getStatus(@RequestParam Long procId)
     {
-    	String ret = DMGame.get().getProcessManager(procId).getCurrentPhase();
-    	if( ret == null ) {
-    		ret = DMGame.get().getLifecycle().getInitPhase().getName();
-    	}
-    	return ret;
+        String ret = DMGame.get().getProcessManager(procId).getCurrentPhase();
+        if (ret == null)
+        {
+            ret = DMGame.get().getLifecycle().getInitPhase().getName();
+        }
+        return ret;
     }
 
     // Criteria
 
     @RequestMapping(value = "/criteria/import", method = RequestMethod.POST)
-    public void importCriteria(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    public void importCriteria(@RequestParam Long procId, @RequestParam(required = false) List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<HProcessCriterion> processCriteria = proc.getProcessCriteria();
 
         for (HProcessCriterion processCriterion : processCriteria)
         {
-            System.out.println("Removing criterion " + processCriterion.getCriterionId() + " from process " + procId);
             proc.removeCriterion(processCriterion.getCriterionId(), processCriterion.getSourceId(),
                     processCriterion.getProcessId());
         }
 
+        if (idlist == null)
+        {
+            // No criterion has been added to the process.
+            return;
+        }
+
         for (Long cid : idlist)
         {
-            System.out.println("Adding criterion " + cid + " to process " + procId);
             ValutationCriteria c = DMGame.get().getCriterion(cid);
             proc.addCriterion(c);
         }
@@ -551,7 +575,7 @@ public class ProcessRest
     // Users
 
     @RequestMapping(value = "/users/import", method = RequestMethod.POST)
-    public void importUsers(@RequestParam Long procId, @RequestParam List<Long> idlist)
+    public void importUsers(@RequestParam Long procId, @RequestParam(required = false) List<Long> idlist)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         List<HProcessMember> processMembers = proc.getProcessMembers();
@@ -559,6 +583,12 @@ public class ProcessRest
         for (HProcessMember processMember : processMembers)
         {
             proc.removeProcessMember(processMember.getId(), processMember.getUserId(), processMember.getProcessId());
+        }
+
+        if (idlist == null)
+        {
+            // No user has been added to the process.
+            return;
         }
 
         for (Long userid : idlist)
@@ -671,23 +701,21 @@ public class ProcessRest
     public void importAlerts(@RequestParam Long procId, @RequestParam(required = false) List<String> alertsId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-
         List<HAlert> alerts = proc.getAlerts();
 
         for (HAlert alert : alerts)
         {
-            System.out.println("Removing alert " + alert.getId() + " from process " + procId);
             proc.removeAlert(alert.getId());
         }
 
         if (alertsId == null)
         {
+            // No alert has been added to the process.
             return;
         }
 
         for (String alertId : alertsId)
         {
-            System.out.println("Trying to add alert " + alertId);
             HAlert alert = DMGame.get().getJpa().alerts.findOne(alertId);
 
             if (alert == null)
@@ -695,7 +723,6 @@ public class ProcessRest
                 continue;
             }
 
-            System.out.println("Adding alert " + alert.getId() + " to process " + procId);
             proc.addAlert(alert);
         }
     }
@@ -706,59 +733,64 @@ public class ProcessRest
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         return proc.getAlerts();
     }
-    
-    @RequestMapping( value="/methods/{methodname}/{action}", method = RequestMethod.POST )
-    public void postToMethod( 
-    		@PathVariable String methodName, 
-    		@PathVariable String action,
-    		@RequestParam Map<String,String> args ) {
-    	DMMethod m = DMLibrary.get().getMethod( methodName );
-    	if( m != null ) {
-//    		m.post( action, args );
-    	}
+
+    @RequestMapping(value = "/methods/{methodname}/{action}", method = RequestMethod.POST)
+    public void postToMethod(@PathVariable String methodName, @PathVariable String action,
+            @RequestParam Map<String, String> args)
+    {
+        DMMethod m = DMLibrary.get().getMethod(methodName);
+        if (m != null)
+        {
+            // m.post( action, args );
+        }
     }
-    
-    @RequestMapping( value="/requirements/edit/collaboratively", method = RequestMethod.POST )
-    public void createRequirementsEditingSession( 
-    		@RequestParam(required=false) String act,
-    		@RequestParam Long procId ) {
-    	
-    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
-    	if( mgr == null ) {
-    		return;
-    	}
-    	
-    	if( "close".equals( act ) ) {
-    		
-    		List<HActivity> activities = mgr.getOngoingActivities( AccessRequirementsEditingSession.NAME );
-    		
-    		for( HActivity a : activities ) {
-    			mgr.deleteActivity( a );
-    		}
-    		
-    	}
-    	else {
-    		
-    		for( HProcessMember m : mgr.getProcessMembers() ) {
-    			mgr.createActivity( AccessRequirementsEditingSession.NAME, m.getUserId() );
-    		}
-    		
-    	}
+
+    @RequestMapping(value = "/requirements/edit/collaboratively", method = RequestMethod.POST)
+    public void createRequirementsEditingSession(@RequestParam(required = false) String act, @RequestParam Long procId)
+    {
+
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return;
+        }
+
+        if ("close".equals(act))
+        {
+
+            List<HActivity> activities = mgr.getOngoingActivities(AccessRequirementsEditingSession.NAME);
+
+            for (HActivity a : activities)
+            {
+                mgr.deleteActivity(a);
+            }
+
+        }
+        else
+        {
+
+            for (HProcessMember m : mgr.getProcessMembers())
+            {
+                mgr.createActivity(AccessRequirementsEditingSession.NAME, m.getUserId());
+            }
+
+        }
     }
-    
-    @RequestMapping( value="/requirements/edit/collaboratively", method = RequestMethod.GET )
-    public List<HActivity> getRequirementsEditingSession( 
-    		@RequestParam Long procId ) {
-    	
-    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
-    	if( mgr == null ) {
-    		return new ArrayList<>();
-    	}
-    	
-    	return mgr.getOngoingActivities( AccessRequirementsEditingSession.NAME );
-    	
+
+    @RequestMapping(value = "/requirements/edit/collaboratively", method = RequestMethod.GET)
+    public List<HActivity> getRequirementsEditingSession(@RequestParam Long procId)
+    {
+
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        if (mgr == null)
+        {
+            return new ArrayList<>();
+        }
+
+        return mgr.getOngoingActivities(AccessRequirementsEditingSession.NAME);
+
     }
-    
+
     @RequestMapping(value = "/alerts/convert", method = RequestMethod.PUT)
     public void convertAlertToRequirement(@RequestParam String alertId, Long procId)
     {
