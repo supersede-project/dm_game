@@ -133,6 +133,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		GA_VARIANT = gaVariant;
 //		numberOfPlayers = numPlayers;
 		readProblem(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile);
+		REQUIREMENT_IDS.clear();
 		REQUIREMENT_IDS.addAll(requirements.keySet());
 		Collections.sort(REQUIREMENT_IDS);
 		numberOfRequirements = requirements.size();
@@ -168,6 +169,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		
 		numberOfPlayers = playerRankings.keySet().size(); // playerWeights.get("c1").keySet().size();
 		
+		REQUIREMENT_IDS.clear();
 		REQUIREMENT_IDS.addAll(requirements.keySet());
 		Collections.sort(REQUIREMENT_IDS);
 		numberOfRequirements = requirements.size();
