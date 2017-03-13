@@ -15,10 +15,11 @@
 var app = angular.module("w5app");
 
 app.controllerProvider.register("select_solution", function($scope, $http, $location) {
-	
+
     $scope.procId = $location.search().procId;
     $scope.activityId = $location.search().activityId;
-	
+    $scope.criteriaNames = {};
+
     var gameId = $location.search().gameId;
     var gameRequirements = {};
     var gameStatus;
@@ -27,29 +28,45 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.currentPage = "page1";
     $scope.ranking = {};
     $scope.solutions = [];
-    
-    function loadPage() {
 
+    function loadPage() {
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
             gameStatus = data.status;
 
-            $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+            $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
             .success(function (data) {
-                $scope.ranking = data;
-
-                if (!$scope.emptyRanking()) {
-                    $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-                    .success(function (data) {
-
-                        for (var i = 0; i < data.length; i++) {
-                            var requirementId = data[i].requirementId;
-                            gameRequirements[requirementId] = data[i];
-                        }
-                    }).error(function (err) {
-                        alert(err.message);
-                    });
+                console.log("criteria:");
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    console.log(data[i]);
+                    $scope.criteriaNames[data[i].criteriaId] = data[i].name;
+                    console.log("criteria names:");
+                    console.log($scope.criteriaNames);
                 }
+
+                console.log("criteria names:");
+                console.log($scope.criteriaNames);
+
+                $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+                .success(function (data) {
+                    $scope.ranking = data;
+
+                    if (!$scope.emptyRanking()) {
+                        $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+                        .success(function (data) {
+
+                            for (var i = 0; i < data.length; i++) {
+                                var requirementId = data[i].requirementId;
+                                gameRequirements[requirementId] = data[i];
+                            }
+                        }).error(function (err) {
+                            alert(err.message);
+                        });
+                    }
+                }).error(function (err) {
+                    alert(err.message);
+                });
             }).error(function (err) {
                 alert(err.message);
             });
@@ -124,9 +141,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.home = function() {
         $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
     };
-    
+
     if( typeof gameId === 'undefined' || gameId === null ){
-    	$http({
+        $http({
             method: 'GET',
             url: "supersede-dm-app/garp/game/id",
             params: { procId: $scope.procId, activityId: $scope.activityId },
@@ -136,9 +153,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         }).success(function(data){
             gameId = data;
             loadPage();
-    	});
+        });
     }
     else {
-    	loadPage();
+        loadPage();
     }
 });
