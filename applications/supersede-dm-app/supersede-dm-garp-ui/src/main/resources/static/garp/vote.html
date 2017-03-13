@@ -25,7 +25,7 @@
 </style>
 <div ng-controller="vote">
     <div ng-show="canVote()">
-        <h1>Requirements Ordering for Criterion {{currentCriterion.criteriaId}}</h1>
+        <h1>Criterion: {{currentCriterion.name}}</h1>
 
         <div ng-show="gameOpen() && solutionSelected()">
             <h2>Current Global Ranking</h2>
