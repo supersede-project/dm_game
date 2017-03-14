@@ -80,4 +80,14 @@ public class GAPlayerVotingMethod implements DMMethod
     {
         return "garp/vote";
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Vote in a prioritization task";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Vote in a prioritization task";
+	}
 }

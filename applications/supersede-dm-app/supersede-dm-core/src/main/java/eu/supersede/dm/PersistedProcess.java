@@ -25,6 +25,8 @@ import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.HProperty;
 import eu.supersede.gr.model.HPropertyBag;
+import eu.supersede.gr.model.HRequirementScore;
+import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
@@ -302,5 +304,57 @@ public class PersistedProcess extends AbstractProcessManager
 		catch( Exception ex ) {
 			throw ex;
 		}
+	}
+
+	@Override
+	public List<RequirementsRanking> getRankings() {
+		List<HRequirementsRanking> hlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessId( this.processId );
+		List<RequirementsRanking> list = new ArrayList<>();
+		for( HRequirementsRanking rr : hlist ) {
+			RequirementsRanking ranking = new RequirementsRanking();
+			ranking.setId( rr.getId() );
+			ranking.setName( rr.getName() );
+			ranking.setProcessId( rr.getProcessId() );
+//			ranking.setSelected( rr.g );
+			List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() );
+			ranking.setList( scores );
+			list.add( ranking );
+		}
+		return list;
+	}
+
+	@Override
+	public RequirementsRanking getRanking( Long rankingId) {
+		HRequirementsRanking rr = DMGame.get().getJpa().requirementsRankings.findOne( rankingId );
+		RequirementsRanking ranking = new RequirementsRanking();
+		ranking.setId( rr.getId() );
+		ranking.setName( rr.getName() );
+		ranking.setProcessId( rr.getProcessId() );
+		ranking.setList( DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() ) );
+		return ranking;
+	}
+
+	@Override
+	public Long createRanking(String name) {
+		HRequirementsRanking rr = new HRequirementsRanking();
+		rr.setName( name );
+		rr.setProcessId( this.processId );
+		rr = DMGame.get().getJpa().requirementsRankings.save( rr );
+		return rr.getId();
+	}
+	
+	@Override
+	public RequirementsRanking getRankingByName(String name) {
+		List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName( this.processId, name );
+		if( rlist.size() != 1 ) {
+			return null;
+		}
+		HRequirementsRanking rr = rlist.get( 0 );
+		RequirementsRanking ranking = new RequirementsRanking();
+		ranking.setId( rr.getId() );
+		ranking.setName( rr.getName() );
+		ranking.setProcessId( rr.getProcessId() );
+		ranking.setList( DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() ) );
+		return ranking;
 	}
 }

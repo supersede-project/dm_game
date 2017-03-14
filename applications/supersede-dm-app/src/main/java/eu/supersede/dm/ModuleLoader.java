@@ -37,6 +37,8 @@ import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
+import eu.supersede.gr.jpa.RequirementsRankingsJpa;
+import eu.supersede.gr.jpa.RequirementsScoresJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HAlert;
@@ -97,6 +99,12 @@ public class ModuleLoader
     @Autowired
     private MultiJpaProvider multiJpaProvider;
 
+    @Autowired
+    private RequirementsRankingsJpa requirementsRankings;
+
+    @Autowired
+    private RequirementsScoresJpa scores;
+
     public ModuleLoader()
     {
 
@@ -120,6 +128,8 @@ public class ModuleLoader
         jpa.requirementDependencies = jpaRequirementDependencies;
         jpa.properties = jpaProperties;
         jpa.propertyBags = jpaPropertyBags;
+        jpa.requirementsRankings = requirementsRankings;
+        jpa.scoresJpa = scores;
 
         DMGame.init(jpa);
 

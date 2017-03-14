@@ -99,4 +99,15 @@ public interface ProcessManager
     public ProcessStatus getProcessStatus();
 
     public void setProcessStatus(ProcessStatus status);
+    
+    // Rankings
+    
+    public Long createRanking( String name );
+    
+    public List<RequirementsRanking> getRankings();
+    
+    public RequirementsRanking getRanking( Long rankingId );
+    
+    public RequirementsRanking getRankingByName( String name );
+    
 }

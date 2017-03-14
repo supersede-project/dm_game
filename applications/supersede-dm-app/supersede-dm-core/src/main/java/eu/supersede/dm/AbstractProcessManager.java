@@ -41,7 +41,7 @@ public abstract class AbstractProcessManager implements ProcessManager
                 // continue;
                 // }
                 ActivityEntry ae = new ActivityEntry();
-                ae.setMethodName(m.getName());
+                ae.setMethodName( m.getLabel( this ) );
                 ae.setEntryUrl(m.getPage(this));
                 // ae.setEntryUrl( gui.getEntryUrl() );
                 list.add(ae);

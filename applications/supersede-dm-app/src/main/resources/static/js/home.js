@@ -219,9 +219,12 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     loadProcesses = $scope.loadProcesses;
 
     $scope.createNewProcess = function() {
-        $http.post('supersede-dm-app/processes/new').success(function(data) {
-            loadProcesses();
-        });
+    	var name = prompt( "Enter process name", "");
+    	if( name != null ) {
+    		$http.post('supersede-dm-app/processes/new?name=' + name).success(function(data) {
+    			loadProcesses();
+    		});
+    	}
     };
 
     loadProcesses();

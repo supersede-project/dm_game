@@ -96,4 +96,14 @@ public class AccessRequirementsEditingSession implements DMMethod
     {
         return "req_edit_session";
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Edit Requirements Collaboratively";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Edit Requirements Collaboratively";
+	}
 }

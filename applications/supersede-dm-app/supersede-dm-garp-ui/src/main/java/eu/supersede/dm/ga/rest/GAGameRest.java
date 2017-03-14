@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.DMGame;
+import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.ga.GAGameDetails;
@@ -39,6 +40,9 @@ import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.model.HGAGameSummary;
+import eu.supersede.gr.model.HRequirementScore;
+import eu.supersede.gr.model.HRequirementsRanking;
+import eu.supersede.gr.model.Priority;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -382,7 +386,76 @@ public class GAGameRest
     {
         return persistentDB.getGameId(activityId);
     }
+    
+    @RequestMapping(value = "/rankings/save", method = RequestMethod.PUT)
+    public void saveRanking( @RequestParam Long procId, @RequestParam Long gameId, @RequestParam String name )
+    {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	
+    	if( mgr == null ) {
+    		return;
+    	}
+    	
+        GAGameDetails game = persistentDB.getGameInfo(gameId);
+        
+        try
+        {
+        	HRequirementsRanking rr = null;
+        	List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName( procId, name );
+        	
+        	if( rlist.size() < 1 ) {
+        		rr = new HRequirementsRanking();
+        		rr.setName( name );
+        		rr.setProcessId( procId );
+        		rr.setSelected( true );
+        		DMGame.get().getJpa().requirementsRankings.save( rlist );
+        		rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName( procId, name );
+        	}
+        	
+            double max = game.getRequirements().size();
+            double pos = 0;
+            
+            for (Long reqId : persistentDB.getSolution(gameId) )
+            {
+                Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
 
+                if (r == null)
+                {
+                    continue;
+                }
+                
+                HRequirementScore score = new HRequirementScore();
+                score.setRankingId( rr.getId() );
+                score.setRequirementId( reqId );
+                if( max > 5 ) {
+                	score.setPriority( Priority.fromNumber( (int)(1 + ( pos / max ) * 5) ) );
+                }
+                else {
+                	score.setPriority( Priority.fromNumber( (int)pos +1 ) );
+                }
+                score = DMGame.get().getJpa().scoresJpa.save( score );
+                
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    public List<Requirement> getUnprioritizedRequirements( @RequestParam Long procId, @RequestParam Long gameId )
+    {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	
+    	GAGameDetails game = persistentDB.getGameInfo(gameId);
+    	
+    	for( Long reqId : game.getRequirements() ) {
+    		
+    	}
+    	
+    	return new ArrayList<>();
+    }
+    
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
     public void doEnactGame(Authentication authentication, @RequestParam Long gameId)
     {
@@ -394,7 +467,7 @@ public class GAGameRest
         FeatureList list = new FeatureList();
         int pos = 0;
 
-        for (Long reqId : game.getRequirements())
+        for (Long reqId : persistentDB.getSolution(gameId) )
         {
             Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
             Feature feature = new Feature();

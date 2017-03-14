@@ -1,0 +1,51 @@
+<script src="supersede-dm-app/js/show_ranking.js"></script>
+
+<style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    .solutions > div > div, .rankings > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    .solutions div, .rankings div {
+        padding: 5px;
+    }
+    .solutions > div > div:hover, .rankings > div > div:hover {
+        border: 1px solid #356AA0;
+    }
+    p {
+        margin: 1em;
+    }
+</style>
+
+<div ng-controller="show_ranking">
+
+            <div ng-repeat="(id, criterionRanking) in ranking">
+                <h2>Opinion Provider {{$index + 1}}</h2>
+
+                <div class="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
+                    <h3>Criterion {{criterionId}}</h3>
+
+                    <div ng-repeat="requirementId in requirements">
+                        <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                            <div>
+                                <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                            </div>
+                            <div style="background-color: #ffd11a">
+                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div align="center">
+                <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
+                <jqx-button ng-click="home()">GA Home</jqx-button>
+            </div>
+
+        </div>
+
+</div>

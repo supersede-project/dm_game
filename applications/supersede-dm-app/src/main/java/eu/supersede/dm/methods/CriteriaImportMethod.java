@@ -23,8 +23,6 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
 public class CriteriaImportMethod implements DMMethod
 {
@@ -90,23 +88,25 @@ public class CriteriaImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
-                    {
-                        return true;
-                    }
-                    if (r.getStatus() == RequirementStatus.Editable.getValue())
-                    {
-                        return true;
-                    }
-                }
-                if (mgr.requirements().size() < 1)
-                {
-                    return true;
-                }
-
-                return false;
+            	return "Initialization".equals( mgr.getCurrentPhase() );
+            	
+//                for (Requirement r : mgr.requirements())
+//                {
+//                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
+//                    {
+//                        return true;
+//                    }
+//                    if (r.getStatus() == RequirementStatus.Editable.getValue())
+//                    {
+//                        return true;
+//                    }
+//                }
+//                if (mgr.requirements().size() < 1)
+//                {
+//                    return true;
+//                }
+//
+//                return false;
             }
         });
 
@@ -118,4 +118,14 @@ public class CriteriaImportMethod implements DMMethod
     {
         return PAGE;
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Select Criteria";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Select Criteria";
+	}
 }

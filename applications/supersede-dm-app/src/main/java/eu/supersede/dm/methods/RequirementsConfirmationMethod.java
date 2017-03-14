@@ -23,8 +23,6 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
 public class RequirementsConfirmationMethod implements DMMethod
 {
@@ -90,30 +88,8 @@ public class RequirementsConfirmationMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                if (mgr.getProcessMembers() == null)
-                {
-                    return false;
-                }
-
-                if (mgr.getProcessMembers().size() < 1)
-                {
-                    return false;
-                }
-
-                if (mgr.getRequirementsCount() < 2)
-                {
-                    return false;
-                }
-
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() != RequirementStatus.Editable.getValue())
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+            	return false;
+            	
             }
         });
 
@@ -125,4 +101,14 @@ public class RequirementsConfirmationMethod implements DMMethod
     {
         return PAGE;
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Confirm Requirements";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Confirm Requirements";
+	}
 }

@@ -55,4 +55,14 @@ public class GANegotiatorVotingMethod implements DMMethod {
 		return "garp/select_solution";
 	}
 
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Negotiate a prioritization task";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Negotiate a prioritization task";
+	}
+
 }

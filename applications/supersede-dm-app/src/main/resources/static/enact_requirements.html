@@ -1,0 +1,32 @@
+<script src="supersede-dm-app/js/enact_requirements.js"></script>
+
+<style>
+h1, h2, h3 {
+	text-align: center;
+}
+
+input, form {
+	margin: 0 auto;
+	width: 500px;
+}
+</style>
+
+<div ng-controller="enact_requirements">
+
+	<div ng-show="!ongoingSession()">
+		
+		<h1>Enact the Requirements?</h1>
+
+		<br>
+
+		<h3>This will end the requirements prioritization process</h3>
+		
+		<br>
+
+		<div align="center">
+			<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+			<jqx-button ng-click="proceed()">Proceed</jqx-button>
+		</div>
+	</div>
+
+</div>

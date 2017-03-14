@@ -320,4 +320,28 @@ public class SimulatedProcess extends AbstractProcessManager
 			throw ex;
 		}
 	}
+
+	@Override
+	public List<RequirementsRanking> getRankings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequirementsRanking getRanking(Long rankingId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long createRanking(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequirementsRanking getRankingByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

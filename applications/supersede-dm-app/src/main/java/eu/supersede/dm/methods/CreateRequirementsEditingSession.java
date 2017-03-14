@@ -23,8 +23,6 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
 public class CreateRequirementsEditingSession implements DMMethod
 {
@@ -75,15 +73,7 @@ public class CreateRequirementsEditingSession implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements() )
-                {
-                    if (r.getStatus() != RequirementStatus.Editable.getValue())
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+            	return "Editing".equals( mgr.getCurrentPhase() );
             }
         });
 
@@ -95,4 +85,14 @@ public class CreateRequirementsEditingSession implements DMMethod
     {
         return "create_req_edit_session";
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Manage Collaborative Requirements Editing Session";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Manage Collaborative Requirements Editing Session";
+	}
 }

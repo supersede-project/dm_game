@@ -14,39 +14,31 @@
 
 package eu.supersede.dm.depcheck;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import eu.supersede.fe.application.ApplicationUtil;
 
 @Component
 public class DepCheckUILoader
 {
-    @Autowired
-    private ApplicationUtil au;
+//    @Autowired
+//    private ApplicationUtil au;
 
     @PostConstruct
     public void load()
     {
-        System.out.println("Registering DepCheck app");
-
-        Map<String, String> labels = new HashMap<>();
-        List<String> roles;
-
-        labels = new HashMap<>();
-        roles = new ArrayList<>();
-        labels.put("", "DepCheck Home");
-        roles.add("DM_ADMIN");
-        roles.add("OPINION_PROVIDER");
-        roles.add("DECISION_SCOPE_PROVIDER");
-        roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "depcheck/home", labels, roles);
+//        System.out.println("Registering DepCheck app");
+//
+//        Map<String, String> labels = new HashMap<>();
+//        List<String> roles;
+//
+//        labels = new HashMap<>();
+//        roles = new ArrayList<>();
+//        labels.put("", "DepCheck Home");
+//        roles.add("DM_ADMIN");
+//        roles.add("OPINION_PROVIDER");
+//        roles.add("DECISION_SCOPE_PROVIDER");
+//        roles.add("OPINION_NEGOTIATOR");
+//        au.addApplicationPage("supersede-dm-app", "depcheck/home", labels, roles);
     }
 }

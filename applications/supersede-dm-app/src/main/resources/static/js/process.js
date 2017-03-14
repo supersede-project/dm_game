@@ -159,6 +159,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             loadActivities();
         }).error(function (error) {
             console.log(error);
+            window.alert( error );
         });
     } );
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });

@@ -17,6 +17,8 @@ import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
+import eu.supersede.gr.jpa.RequirementsRankingsJpa;
+import eu.supersede.gr.jpa.RequirementsScoresJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HActivity;
@@ -49,20 +51,22 @@ public class DMGame
 
     public static class JpaProvider
     {
-        public UsersJpa users;
-        public RequirementsJpa requirements;
-        public ValutationCriteriaJpa criteria;
-        public ProcessesJpa processes;
-        public ProcessMembersJpa members;
-        public ActivitiesJpa activities;
-        public ProcessCriteriaJpa processCriteria;
-        public AlertsJpa alerts;
-        public AppsJpa apps;
-        public ReceivedUserRequestsJpa receivedUserRequests;
-        public RequirementsPropertiesJpa requirementProperties;
-        public RequirementsDependenciesJpa requirementDependencies;
-        public PropertiesJpa properties;
-        public PropertyBagsJpa propertyBags;
+        public UsersJpa						users;
+        public RequirementsJpa				requirements;
+        public ValutationCriteriaJpa		criteria;
+        public ProcessesJpa					processes;
+        public ProcessMembersJpa			members;
+        public ActivitiesJpa				activities;
+        public ProcessCriteriaJpa			processCriteria;
+        public AlertsJpa					alerts;
+        public AppsJpa						apps;
+        public ReceivedUserRequestsJpa		receivedUserRequests;
+        public RequirementsPropertiesJpa	requirementProperties;
+        public RequirementsDependenciesJpa	requirementDependencies;
+        public PropertiesJpa				properties;
+        public PropertyBagsJpa				propertyBags;
+        public RequirementsRankingsJpa		requirementsRankings;
+        public RequirementsScoresJpa		scoresJpa;
     }
 
     JpaProvider jpa;
@@ -176,14 +180,19 @@ public class DMGame
     	return this.lifecycle;
     }
     
-    public HProcess createEmptyProcess()
+    public HProcess createEmptyProcess( String name )
     {
         HProcess proc = new HProcess();
         proc.setObjective(DMObjective.PrioritizeRequirements.name());
         proc.setStartTime(new Date(System.currentTimeMillis()));
         proc.setPhaseName( 	lifecycle.getInitPhase().getName() );
         proc = jpa.processes.save(proc);
-        proc.setName("Process " + proc.getId());
+        if( name == null ) {
+        	proc.setName("Process " + proc.getId());
+        }
+        else {
+        	proc.setName( name );
+        }
         proc = jpa.processes.save(proc);
         return proc;
     }

@@ -124,4 +124,14 @@ public class AHPPlayerMethod implements DMMethod
         return "ahprp/player_moves";
     }
 
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Play AHP game session";
+	}
+
+	@Override
+	public String getLabel( ProcessManager mgr ) {
+		return "Play AHP game session";
+	}
+
 }

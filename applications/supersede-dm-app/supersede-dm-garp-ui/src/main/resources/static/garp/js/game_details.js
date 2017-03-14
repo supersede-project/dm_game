@@ -26,9 +26,17 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.gameId = gameId;
     $scope.procId = $location.search().procId;
 
+    $scope.now = function()
+    {
+        return new Date().toJSON().slice(0,19).replace("T", " ");
+    }
+
     $scope.enact = function(gameId,useIf){
-        $http.put('supersede-dm-app/garp/game/enact?gameId=' + $scope.gameId ).success(function(data) {
+        $http.post('supersede-dm-app/processes/rankings/create?procId=' + $scope.procId + "&name=GA-Default" ).success(function(data) {
+            $location.url('supersede-dm-app/process').search('procId',$scope.procId);
         });
+//        $http.put('supersede-dm-app/garp/game/enact?gameId=' + $scope.gameId ).success(function(data) {
+//        });
     };
 
     $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)

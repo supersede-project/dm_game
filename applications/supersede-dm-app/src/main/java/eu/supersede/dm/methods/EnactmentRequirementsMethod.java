@@ -23,19 +23,18 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
-public class RequirementsImportMethod implements DMMethod
+public class EnactmentRequirementsMethod implements DMMethod
 {
-    private static final String NAME = "Import Requirements";
-    private static final String PAGE = "import_requirements";
+    public static final String NAME = "enact-requirements-method";
 
+    private String name;
     private List<DMRoleSpec> list;
     private List<DMOption> options;
 
-    public RequirementsImportMethod()
+    public EnactmentRequirementsMethod()
     {
+        this.name = NAME;
         list = new ArrayList<>();
         options = new ArrayList<>();
     }
@@ -43,9 +42,9 @@ public class RequirementsImportMethod implements DMMethod
     @Override
     public String getName()
     {
-        return NAME;
+        return this.name;
     }
-
+    
     @Override
     public DMObjective getObjective()
     {
@@ -64,17 +63,6 @@ public class RequirementsImportMethod implements DMMethod
         return this.options;
     }
 
-    public void setOption(String optName, String optValue)
-    {
-        // TODO
-    }
-
-    public void init(ProcessManager status)
-    {
-        // String pid = executor.startBPMN( "supersedeAHPDM" );
-        // status.setProperty( "pid", pid );
-    }
-
     @Override
     public List<DMCondition> preconditions()
     {
@@ -85,15 +73,7 @@ public class RequirementsImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() != RequirementStatus.Unconfirmed.getValue())
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+            	return "Terminated".equals( mgr.getCurrentPhase() );
             }
         });
 
@@ -103,16 +83,16 @@ public class RequirementsImportMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return PAGE;
+        return "enact_requirements";
     }
 
 	@Override
 	public String getDescription(ProcessManager arg0) {
-		return "Import Requirements";
+		return "Enact prioritized requirements";
 	}
 
 	@Override
 	public String getLabel(ProcessManager arg0) {
-		return "Import Requirements";
+		return "Enact prioritized requirements";
 	}
 }

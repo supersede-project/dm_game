@@ -23,8 +23,6 @@ import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
 public class UsersImportMethod implements DMMethod
 {
@@ -85,23 +83,25 @@ public class UsersImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                if (mgr.requirements().size() < 1)
-                {
-                    return true;
-                }
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
-                    {
-                        return true;
-                    }
-                    if (r.getStatus() == RequirementStatus.Editable.getValue())
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+            	return "Initialization".equals( mgr.getCurrentPhase() );
+            	
+//                if (mgr.requirements().size() < 1)
+//                {
+//                    return true;
+//                }
+//                for (Requirement r : mgr.requirements())
+//                {
+//                    if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
+//                    {
+//                        return true;
+//                    }
+//                    if (r.getStatus() == RequirementStatus.Editable.getValue())
+//                    {
+//                        return true;
+//                    }
+//                }
+//
+//                return false;
             }
         });
 
@@ -113,4 +113,14 @@ public class UsersImportMethod implements DMMethod
     {
         return PAGE;
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Add Users";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Add Users";
+	}
 }

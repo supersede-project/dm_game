@@ -32,7 +32,6 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ahp.algorithm.AHPStructure;
 import eu.supersede.dm.ahp.algorithm.Ahp;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementStatus;
 
 public class AHPRequirementsPrioritizationMethod implements DMMethod
 {
@@ -230,20 +229,22 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                if (mgr.getRequirementsCount() < 1)
-                {
-                    return false;
-                }
-
-                for (Requirement r : mgr.requirements())
-                {
-                    if (r.getStatus() != RequirementStatus.Confirmed.getValue())
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+            	return "Prioritization".equals( mgr.getCurrentPhase() );
+            	
+//                if (mgr.getRequirementsCount() < 1)
+//                {
+//                    return false;
+//                }
+//
+//                for (Requirement r : mgr.requirements())
+//                {
+//                    if (r.getStatus() != RequirementStatus.Confirmed.getValue())
+//                    {
+//                        return false;
+//                    }
+//                }
+//
+//                return true;
             }
         });
         return list;
@@ -254,5 +255,15 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
     {
         return "ahprp/home";
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "AHP session";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "AHP session";
+	}
 
 }

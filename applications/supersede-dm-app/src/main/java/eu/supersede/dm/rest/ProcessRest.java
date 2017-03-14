@@ -20,7 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +40,11 @@ import eu.supersede.dm.DMPhase;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ProcessRole;
 import eu.supersede.dm.PropertyBag;
+import eu.supersede.dm.RequirementsRanking;
+import eu.supersede.dm.datamodel.Feature;
+import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
+import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
@@ -53,6 +60,7 @@ import eu.supersede.gr.model.HProperty;
 import eu.supersede.gr.model.HReceivedUserRequest;
 import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.HRequirementProperty;
+import eu.supersede.gr.model.HRequirementScore;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementProperties;
@@ -91,9 +99,9 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
-    public Long newProcess()
+    public Long newProcess( @RequestParam(required=false) String name )
     {
-        return DMGame.get().createEmptyProcess().getId();
+        return DMGame.get().createEmptyProcess( name ).getId();
     }
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
@@ -485,7 +493,15 @@ public class ProcessRest
 
         throw new Exception("No next phase available");
     }
-
+    
+    @ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex) {
+		ErrorResponse error = new ErrorResponse();
+		error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		error.setMessage(ex.getMessage());
+		return new ResponseEntity<ErrorResponse>(error, HttpStatus.OK);
+	}
+    
     @RequestMapping(value = "/requirements/prev", method = RequestMethod.GET, produces = "text/plain")
     public String setPrevPhase(@RequestParam Long procId) throws Exception
     {
@@ -655,12 +671,12 @@ public class ProcessRest
         for (HActivity a : activities)
         {
             ActivityDetails d = new ActivityDetails();
-            d.setActivityId(a.getId());
-            d.setMethodName(a.getMethodName());
-            d.setProcessId(a.getProcessId());
-            d.setUserId(a.getUserId());
             ProcessManager mgr = DMGame.get().getProcessManager(a.getProcessId());
             DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
+            d.setActivityId(a.getId());
+            d.setMethodName( m.getLabel( mgr ) );
+            d.setProcessId(a.getProcessId());
+            d.setUserId(a.getUserId());
 
             if (m != null)
             {
@@ -835,4 +851,121 @@ public class ProcessRest
         System.out.println("Discarding alert " + alertId);
         alertsJpa.delete(alert);
     }
+    
+    @RequestMapping(value = "/rankings/create", method = RequestMethod.POST)
+    public void createRanking(Authentication authentication, @RequestParam Long procId, @RequestParam String name )
+    {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	
+    	RequirementsRanking rr = mgr.getRankingByName( name );
+    	
+    	if( rr == null ) {
+    		Long id = mgr.createRanking( name );
+    		rr = mgr.getRanking( id );
+    	}
+    	
+//        System.out.println("Sending requirements for enactment");
+        
+        String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
+        FeatureList list = new FeatureList();
+        
+        List<Requirement> requirements = new ArrayList<>();
+        
+        for( HRequirementScore score : rr.getList() )
+        {
+            Requirement r = DMGame.get().getJpa().requirements.findOne( score.getRequirementId() );
+            Feature feature = new Feature();
+            feature.setName(r.getName());
+            feature.setPriority( score.getPriority().asNumber() );
+            feature.setId("" + r.getRequirementId());
+            list.list().add(feature);
+            requirements.add( r );
+        }
+
+        try
+        {
+            EnactmentService.get().send(list, true, tenant);
+
+            for( Requirement r : requirements )
+            {
+                RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
+                if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
+                {
+                    r.setStatus(RequirementStatus.Enacted.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    @RequestMapping(value = "/rankings/list", method = RequestMethod.GET)
+    public List<RequirementsRanking> getRankings( @RequestParam Long procId ) {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	if( mgr == null ) {
+    		return null;
+    	}
+    	return mgr.getRankings();
+    }
+    
+    @RequestMapping(value = "/rankings/enact", method = RequestMethod.PUT)
+    public void doEnactRanking(Authentication authentication, @RequestParam Long procId, @RequestParam Long rankingId )
+    {
+    	ProcessManager mgr = DMGame.get().getProcessManager( procId );
+    	
+    	System.out.println("Sending requirements for enactment");
+    	
+    	List<RequirementsRanking> rlist = mgr.getRankings();
+    	
+    	for( RequirementsRanking rr : rlist )
+    	{
+    		if( !rr.isSelected() ) {
+    			continue;
+    		}
+        	
+            String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
+            FeatureList list = new FeatureList();
+            
+            List<Requirement> requirements = new ArrayList<>();
+            
+            for( HRequirementScore score : rr.getList() )
+            {
+                Requirement r = DMGame.get().getJpa().requirements.findOne( score.getRequirementId() );
+                Feature feature = new Feature();
+                feature.setName(r.getName());
+                feature.setPriority( score.getPriority().asNumber() );
+                feature.setId("" + r.getRequirementId());
+                list.list().add(feature);
+                requirements.add( r );
+            }
+
+            try
+            {
+                EnactmentService.get().send(list, true, tenant);
+
+                for( Requirement r : requirements )
+                {
+                    RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
+                    if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
+                    {
+                        r.setStatus(RequirementStatus.Enacted.getValue());
+                        DMGame.get().getJpa().requirements.save(r);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+    		
+    	}
+    	
+//    	RequirementsRanking rr = mgr.getRanking( rankingId );
+    }
+    
 }

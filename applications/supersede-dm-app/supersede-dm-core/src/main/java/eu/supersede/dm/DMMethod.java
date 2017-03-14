@@ -16,4 +16,8 @@ public interface DMMethod {
 	
 	public String				getPage( ProcessManager mgr );
 	
+	public String				getLabel( ProcessManager mgr );
+	
+	public String				getDescription( ProcessManager mgr );
+	
 }

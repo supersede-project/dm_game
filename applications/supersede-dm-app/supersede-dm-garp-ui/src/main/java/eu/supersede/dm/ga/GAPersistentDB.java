@@ -236,6 +236,7 @@ public class GAPersistentDB
         {
             HGAGameSummary info = gamesJpa.findOne(gameId);
 
+            // FIXME: in case of game deletion, some participations may be left behind
             if (info == null)
             {
                 // Game not found
@@ -243,6 +244,11 @@ public class GAPersistentDB
             }
 
             HActivity activity = activitiesJpa.findOne(info.getActivityId());
+            
+            // FIXME: in case of game deletion, some activities may be left behind
+            if( activity == null ) {
+            	continue;
+            }
 
             if (activity.getProcessId() != null && activity.getProcessId().equals(processId.longValue()))
             {

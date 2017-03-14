@@ -114,4 +114,14 @@ public class AlertsImportMethod implements DMMethod
     {
         return PAGE;
     }
+
+	@Override
+	public String getDescription(ProcessManager arg0) {
+		return "Import Alerts";
+	}
+
+	@Override
+	public String getLabel(ProcessManager arg0) {
+		return "Import Alerts";
+	}
 }
