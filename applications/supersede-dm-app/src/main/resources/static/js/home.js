@@ -153,7 +153,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                     '&activityId=' + datarecord.activityId +
                     '">' + datarecord.methodName + '</a>' +
                     '</td></tr></table>';
-                console.log(table);
                 return table;
             }
         });
