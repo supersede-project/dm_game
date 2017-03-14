@@ -29,7 +29,9 @@ public class PrioritizationSolution extends
 	 * 
 	 */
 	private static final long serialVersionUID = 8291497080139627973L;
-	
+
+	private static String[] criteriaNames;
+	private static int index = 0;
 	
 	/** Constructor */
 	public PrioritizationSolution(PermutationProblem<?> problem) {
@@ -50,10 +52,22 @@ public class PrioritizationSolution extends
 		for (int i = 0; i < getNumberOfVariables(); i++) {
 			setVariableValue(i, randomSequence.get(i));
 		}
+		
+		criteriaNames = new String[getNumberOfObjectives()];
+		index = 0;
 	}
 
-	
+	public void addCriterionName (String name, int idx){
+		criteriaNames[idx] = name;
+	}
+	public void addCriterionName (String name){
+		criteriaNames[index++] = name;
+	}
 
+	public String getCriterionName (int index){
+		return criteriaNames[index];
+	}
+	
 	/** Copy Constructor */
 	public PrioritizationSolution(PrioritizationSolution solution) {
 		super(solution.problem);

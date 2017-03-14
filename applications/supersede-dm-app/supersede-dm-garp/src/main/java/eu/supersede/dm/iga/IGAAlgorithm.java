@@ -98,7 +98,36 @@ public class IGAAlgorithm
     public List<Map<String, Double>> calc()
     {
         ArrayList<Map<String, Double>> finalRanking = new ArrayList<>();
-        double crossoverProbability = 0.9;
+        
+        List<PermutationSolution<?>> solutions = runGA();
+
+        for (PermutationSolution<?> s : solutions)
+        {
+            finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution) s).toRanks()));
+        }
+        
+        return finalRanking;
+    }
+    
+    public List<GARequirementsRanking> calc2(){
+    	List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking> ();
+    	List<PermutationSolution<?>> solutions = runGA();
+
+        for (PermutationSolution<?> s : solutions){
+            PrioritizationSolution ps = (PrioritizationSolution) s;
+            GARequirementsRanking r = new GARequirementsRanking();
+            r.setRequirements(Arrays.asList(ps.getVariablesStringArray()));
+            for (int i = 0; i < ps.getNumberOfObjectives(); i++){
+            	r.addObjective(ps.getCriterionName(i), ps.getObjective(i));
+            }
+            pareto.add(r);
+        }
+    	return pareto;
+    }
+    
+    private List<PermutationSolution<?>> runGA (){
+    	Set<PermutationSolution<?>> uniqueSolutions = new HashSet<PermutationSolution<?>> ();
+    	double crossoverProbability = 0.9;
         CrossoverOperator crossover = new PMXCrossover(crossoverProbability);
 
         int searchBudget = 10000;
@@ -135,12 +164,9 @@ public class IGAAlgorithm
             algorithm = new NSGAII<PermutationSolution<?>>(problem, searchBudget, populationSize, crossover, mutation,
                     selection, evaluator);
             algorithm.run();
-            List<PermutationSolution<?>> pareto = (List<PermutationSolution<?>>) algorithm.getResult();
-
-            for (PermutationSolution<?> s : pareto)
-            {
-                finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution) s).toRanks()));
-            }
+            uniqueSolutions.addAll((List<PermutationSolution<?>>) algorithm.getResult());
+//            solutions.addAll(pareto);
+            
         }
         else
         {
@@ -149,11 +175,14 @@ public class IGAAlgorithm
                     selection, evaluator);
             algorithm.run();
             PrioritizationSolution solution = (PrioritizationSolution) algorithm.getResult();
+            uniqueSolutions.add(solution);
             System.out.println(solution.toNamedStringWithObjectives());
-            finalRanking.add(MapUtil.sortByValue(solution.toRanks()));
+            //finalRanking.add(MapUtil.sortByValue(solution.toRanks()));
         }
-
-        return finalRanking;
+        
+        List<PermutationSolution<?>> solutions = new ArrayList<PermutationSolution<?>> ();
+        solutions.addAll(uniqueSolutions);
+        return solutions;
     }
 
     /**

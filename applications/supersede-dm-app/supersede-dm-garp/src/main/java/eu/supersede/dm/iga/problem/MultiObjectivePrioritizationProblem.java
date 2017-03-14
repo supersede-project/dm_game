@@ -95,6 +95,7 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 			}
 			d *= cw;
 			d /= numberOfPlayers; // numberOfRequirements; // TODO WHY was this numberOfRequirements ?!
+			solution.addCriterionName(criterion, idx);
 			solution.setObjective(idx++, d);
 		}
 
