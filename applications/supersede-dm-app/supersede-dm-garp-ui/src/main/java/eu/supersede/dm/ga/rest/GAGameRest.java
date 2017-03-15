@@ -516,7 +516,7 @@ public class GAGameRest
                 rr.setName(name);
                 rr.setProcessId(procId);
                 rr.setSelected(true);
-                DMGame.get().getJpa().requirementsRankings.save(rlist);
+                DMGame.get().getJpa().requirementsRankings.save(rr);
                 rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName(procId, name);
             }
 
