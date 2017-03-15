@@ -339,9 +339,9 @@ public class PersistedProcess extends AbstractProcessManager
             ranking.setId(rr.getId());
             ranking.setName(rr.getName());
             ranking.setProcessId(rr.getProcessId());
-            // ranking.setSelected( rr.g );
+            ranking.setSelected(rr.isSelected());
             List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId());
-            ranking.setList(scores);
+            ranking.setScores(scores);
             list.add(ranking);
         }
 
@@ -356,7 +356,7 @@ public class PersistedProcess extends AbstractProcessManager
         ranking.setId(rr.getId());
         ranking.setName(rr.getName());
         ranking.setProcessId(rr.getProcessId());
-        ranking.setList(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
+        ranking.setScores(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
         return ranking;
     }
 
@@ -386,7 +386,7 @@ public class PersistedProcess extends AbstractProcessManager
         ranking.setId(rr.getId());
         ranking.setName(rr.getName());
         ranking.setProcessId(rr.getProcessId());
-        ranking.setList(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
+        ranking.setScores(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
         ranking.setSelected(true);
         return ranking;
     }

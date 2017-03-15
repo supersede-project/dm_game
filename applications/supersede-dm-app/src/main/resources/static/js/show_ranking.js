@@ -16,32 +16,23 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('show_ranking', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
-	
-    $scope.ranking = {};
-	
-	$scope.proceed = function() {
-		$http.post('supersede-dm-app/processes/requirements/edit/collaboratively?procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
-	};
-	
-	$scope.cancel = function() {
-		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-	};
-	
-	$scope.close = function() {
-		$http.post('supersede-dm-app/processes/requirements/edit/collaboratively?act=close&procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
-	};
-	
-	$scope.ongoingSession = function() {
-		return $scope.session === true;
-	}
+    var requirements = {};
+
+    $scope.procId = $location.search().procId;
+
+    $scope.getRequirement = function (requirementId) {
+        return requirements[requirementId];
+    };
 	
 	$http.get('supersede-dm-app/processes/rankings/list?procId=' + $scope.procId ).success(function(data) {
-		console.log( data );
-        $scope.ranking = data;
+	    $scope.rankings = data;
+
+	    $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
+        .success(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                var requirementId = data[i].requirementId;
+                requirements[requirementId] = data[i];
+            }
+        });
 	});
 });

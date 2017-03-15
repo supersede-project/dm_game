@@ -56,7 +56,7 @@ public class ProcessRankingsRest
         FeatureList list = new FeatureList();
         List<Requirement> requirements = new ArrayList<>();
 
-        for (HRequirementScore score : rr.getList())
+        for (HRequirementScore score : rr.getScores())
         {
             Requirement r = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
             Feature feature = new Feature();
@@ -120,7 +120,7 @@ public class ProcessRankingsRest
 
             List<Requirement> requirements = new ArrayList<>();
 
-            for (HRequirementScore score : rr.getList())
+            for (HRequirementScore score : rr.getScores())
             {
                 Requirement r = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
                 Feature feature = new Feature();
