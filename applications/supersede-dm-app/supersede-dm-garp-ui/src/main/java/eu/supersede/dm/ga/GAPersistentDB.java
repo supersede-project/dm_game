@@ -250,6 +250,11 @@ public class GAPersistentDB
             	continue;
             }
 
+            if (activity == null)
+            {
+                continue;
+            }
+
             if (activity.getProcessId() != null && activity.getProcessId().equals(processId.longValue()))
             {
                 HGAGameSummary summary = extract(info);

@@ -4,8 +4,11 @@
     h1, h2, h3 {
         text-align: center;
     }
-    input {
-        width: 40%;
+    input, textarea {
+        width: 50%;
+    }
+    textarea {
+        height: 10em;
     }
 </style>
 
@@ -15,15 +18,15 @@
     </div>
 
     <div ng-show="!emptyRequirements()">
-        <h1>Edit Requirements</h1>
+        <h1>Edit Requirements for Process {{procId}}</h1>
 
         <h2>Current Requirement</h2>
         <div style="font-size: 13px; font-family: Verdana">
             <form>
-                <strong>Name:</strong>
+                <strong>Name:</strong><br>
                 <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
-                <strong>Description:</strong>
-                <input id="current_requirement_description" type="text" value="{{currentRequirement.description}}"><br><br><br>
+                <strong>Description:</strong><br>
+                <textarea id="current_requirement_description" value="{{currentRequirement.description}}"></textarea><br><br><br>
             </form>
             <jqx-button ng-click="updateRequirement()">Update requirement</jqx-button>
             <p id="requirement_status"></p>

@@ -15,13 +15,13 @@
 var app = angular.module('w5app');
 app.controllerProvider.register('edit_requirements', function($scope, $http, $location) {
 
-    var procId = $location.search().procId;
     var dependencies = {};
     var properties = [];
 
     var currentRequirementIndex = 0;
     var currentRequirementId;
 
+    $scope.procId = $location.search().procId;
     $scope.requirements = [];
 
     function getAvailableDependencies() {
@@ -103,7 +103,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     }
 
     function getRequirementProperties() {
-        $http.get('supersede-dm-app/processes/requirements/properties?procId=' + procId + '&requirementId=' + currentRequirementId)
+        $http.get('supersede-dm-app/processes/requirements/properties?procId=' + $scope.procId + '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
             console.log("properties:");
@@ -134,7 +134,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
-            params: {procId: procId},
+            params: {procId: $scope.procId},
             method: 'POST'
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
@@ -170,7 +170,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         else {
             $http({
                 url: "supersede-dm-app/processes/requirements/property/submit",
-                params: { procId: procId, requirementId: currentRequirementId, propertyName: propertyName, propertyValue: propertyValue },
+                params: { procId: $scope.procId, requirementId: currentRequirementId, propertyName: propertyName, propertyValue: propertyValue },
                 method: 'POST'
             }).success(function () {
                 $("#property_status").html("<strong>Property successfully saved!</strong>");
@@ -204,7 +204,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     };
 
-    $http.get('supersede-dm-app/processes/requirements/list?procId=' + procId)
+    $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
     .success(function (data) {
         $scope.requirements = data;
         loadCurrentRequirement();
