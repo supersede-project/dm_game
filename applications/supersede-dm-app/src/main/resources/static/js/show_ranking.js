@@ -45,6 +45,3 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
         $scope.ranking = data;
 	});
 });
-
-$(document).ready(function () {
-});
