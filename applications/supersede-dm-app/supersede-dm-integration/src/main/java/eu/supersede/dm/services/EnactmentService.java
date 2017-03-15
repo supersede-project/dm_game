@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import eu.supersede.dm.agent.RESTClient;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.integration.api.replan.controller.exception.ReplanControllerDuplicatedIdException;
 import eu.supersede.integration.api.replan.controller.proxies.IReplanController;
 import eu.supersede.integration.api.replan.controller.proxies.ReplanControllerProxy;
 import eu.supersede.integration.api.replan.controller.types.AddFeaturesForProjectPayload;
@@ -93,6 +94,11 @@ public class EnactmentService
                 client.post("projects/1/features").header("Content-Type", "application/json")
                         .header("Cache-Control", "no-cache").send(json);
             }
+        }
+        catch (ReplanControllerDuplicatedIdException e)
+        {
+            System.out.println(e.getMessage());
+            return;
         }
         catch (Exception e)
         {

@@ -16,19 +16,16 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('enact_requirements', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
+	var procId = $location.search().procId;
 
 	$scope.proceed = function() {
-		$http.put('supersede-dm-app/processes/enact?gameId=' + $scope.gameId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
+	    $http.put('supersede-dm-app/processes/rankings/enact?procId=' + procId)
+        .success(function (data) {
+			$location.url('supersede-dm-app/process?procId=' + procId);
 		});
 	};
 
 	$scope.cancel = function() {
-		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
+		$location.url('supersede-dm-app/process?procId=' + procId);
 	};
-
-});
-
-$(document).ready(function () {
 });

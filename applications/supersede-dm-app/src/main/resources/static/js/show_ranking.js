@@ -18,6 +18,7 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
 
     var requirements = {};
 
+    $scope.rankings = {};
     $scope.procId = $location.search().procId;
 
     $scope.getRequirement = function (requirementId) {
@@ -35,4 +36,8 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
             }
         });
 	});
+
+	$scope.empty = function () {
+	    return $scope.rankings.length === 0;
+	};
 });

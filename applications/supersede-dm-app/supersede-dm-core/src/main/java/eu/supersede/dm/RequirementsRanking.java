@@ -25,11 +25,14 @@ public class RequirementsRanking
     private Long processId;
     private String name;
     private Boolean selected;
+    private Boolean enacted;
     private List<HRequirementScore> scores;
 
     public RequirementsRanking()
     {
         scores = new ArrayList<>();
+        selected = false;
+        enacted = false;
     }
 
     public Long getId()
@@ -70,6 +73,16 @@ public class RequirementsRanking
     public void setSelected(boolean selected)
     {
         this.selected = selected;
+    }
+
+    public Boolean isEnacted()
+    {
+        return enacted;
+    }
+
+    public void setEnacted(Boolean enacted)
+    {
+        this.enacted = enacted;
     }
 
     public List<HRequirementScore> getScores()

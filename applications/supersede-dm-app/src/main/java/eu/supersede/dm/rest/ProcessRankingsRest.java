@@ -17,6 +17,7 @@ package eu.supersede.dm.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +31,9 @@ import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.RequirementsRankingsJpa;
 import eu.supersede.gr.model.HRequirementScore;
+import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 
@@ -38,6 +41,9 @@ import eu.supersede.gr.model.RequirementStatus;
 @RequestMapping("processes/rankings")
 public class ProcessRankingsRest
 {
+    @Autowired
+    private RequirementsRankingsJpa requirementsRankingsJpa;
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public void createRanking(Authentication authentication, @RequestParam Long procId, @RequestParam String name)
     {
@@ -102,7 +108,7 @@ public class ProcessRankingsRest
     }
 
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
-    public void doEnactRanking(Authentication authentication, @RequestParam Long procId, @RequestParam Long rankingId)
+    public void doEnactRanking(Authentication authentication, @RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
         System.out.println("Sending requirements for enactment");
@@ -110,7 +116,7 @@ public class ProcessRankingsRest
 
         for (RequirementsRanking rr : rlist)
         {
-            if (!rr.isSelected())
+            if (!rr.isSelected() || rr.isEnacted())
             {
                 continue;
             }
@@ -145,6 +151,10 @@ public class ProcessRankingsRest
                         DMGame.get().getJpa().requirements.save(r);
                     }
                 }
+
+                HRequirementsRanking rankings = requirementsRankingsJpa.findOne(rr.getId());
+                rankings.setEnacted(true);
+                requirementsRankingsJpa.save(rankings);
             }
             catch (Exception ex)
             {
