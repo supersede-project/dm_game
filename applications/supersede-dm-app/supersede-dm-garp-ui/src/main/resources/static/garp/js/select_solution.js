@@ -20,7 +20,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.activityId = $location.search().activityId;
     $scope.criteriaNames = {};
 
-    var gameId = $location.search().gameId;
+    var gameId;
     var gameRequirements = {};
     var gameStatus;
     var open = 'Open';
@@ -139,23 +139,18 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
+        $location.url('supersede-dm-app/home');
     };
 
-    if( typeof gameId === 'undefined' || gameId === null ){
-        $http({
-            method: 'GET',
-            url: "supersede-dm-app/garp/game/id",
-            params: { procId: $scope.procId, activityId: $scope.activityId },
-            headers: {
-                'Content-Type': undefined
-              }
-        }).success(function(data){
-            gameId = data;
-            loadPage();
-        });
-    }
-    else {
+    $http({
+        method: 'GET',
+        url: "supersede-dm-app/garp/game/id",
+        params: { procId: $scope.procId, activityId: $scope.activityId },
+        headers: {
+            'Content-Type': undefined
+        }
+    }).success(function (data) {
+        gameId = data;
         loadPage();
-    }
+    });
 });

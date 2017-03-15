@@ -48,7 +48,7 @@
 
             <div align="center">
                 <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
-                <jqx-button ng-click="home()">GA Home</jqx-button>
+                <jqx-button ng-click="home()">Back</jqx-button>
             </div>
 
         </div>
@@ -77,7 +77,7 @@
                 </select>
                 <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
                 <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
-                <jqx-button ng-click="home()">GA Home</jqx-button>
+                <jqx-button ng-click="home()">Back</jqx-button>
 
                 <p id="selected_solution"></p>
                 <p id="game_status"></p>
@@ -88,14 +88,14 @@
     <div ng-show="!gameOpen()">
         <div align="center">
             <p><strong>You can not select a solution because the game has been closed!</strong></p>
-            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button ng-click="home()">Back</jqx-button>
         </div>
     </div>
 
     <div ng-show="gameOpen && emptyRanking()">
         <div align="center">
             <p><strong>You can not select a solution because no ranking has been submitted yet!</strong></p>
-            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button ng-click="home()">Back</jqx-button>
         </div>
     </div>
 </div>
