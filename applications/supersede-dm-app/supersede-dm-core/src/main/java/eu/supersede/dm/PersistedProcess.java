@@ -203,6 +203,7 @@ public class PersistedProcess extends AbstractProcessManager
         return new PropertyBag(a);
     }
 
+    @Override
     public Requirement getRequirement(Long reqId)
     {
         return DMGame.get().getJpa().requirements.findOne(reqId);
@@ -253,108 +254,140 @@ public class PersistedProcess extends AbstractProcessManager
         DMGame.get().getJpa().processes.save(process);
     }
 
-	@Override
-	public void deleteActivity(HActivity a) {
-		PropertyBag bag = getProperties( a );
-		List<HProperty> properties = bag.properties();
-		for( HProperty p : properties ) {
-			DMGame.get().getJpa().properties.delete( p.getId() );
-		}
-		DMGame.get().getJpa().propertyBags.delete( bag.id );
-		DMGame.get().getJpa().activities.delete( a.getId() );
-	}
-	
-	@Override
-	public String getCurrentPhase() {
-		HProcess process = getProcess();
-		String phaseName = getProcessPhaseName( process );
-		if( phaseName == null ) {
-			phaseName = DMGame.get().getLifecycle().getInitPhase().getName();
-		}
-		return phaseName;
-	}
+    @Override
+    public void deleteActivity(HActivity a)
+    {
+        PropertyBag bag = getProperties(a);
+        List<HProperty> properties = bag.properties();
 
-	@Override
-	public Collection<String> getNextPhases() {
-		DMLifecycle lifecycle = DMGame.get().getLifecycle();
-		DMPhase phase = lifecycle.getPhase( getCurrentPhase() );
-		List<String> phases = new ArrayList<>();
-		for( DMPhase n : phase.getNextPhases() ) {
-			phases.add( n.getName() );
-		}
-		return phases;
-	}
-	
-	String getProcessPhaseName( HProcess process ) {
-		String ret = process.getPhaseName();
-		if( ret == null ) {
-			ret = DMGame.get().getLifecycle().getInitPhase().getName();
-		}
-		return ret;
-	}
-	
-	@Override
-	public void setNextPhase(String phaseName) throws Exception {
-		try {
-			HProcess process = getProcess();
-			DMGame.get().getLifecycle().getPhase( getProcessPhaseName( process ) ).checkPreconditions( this );
-			process.setPhaseName( phaseName );
-			DMGame.get().getJpa().processes.save( process );
-		}
-		catch( Exception ex ) {
-			throw ex;
-		}
-	}
+        for (HProperty p : properties)
+        {
+            DMGame.get().getJpa().properties.delete(p.getId());
+        }
 
-	@Override
-	public List<RequirementsRanking> getRankings() {
-		List<HRequirementsRanking> hlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessId( this.processId );
-		List<RequirementsRanking> list = new ArrayList<>();
-		for( HRequirementsRanking rr : hlist ) {
-			RequirementsRanking ranking = new RequirementsRanking();
-			ranking.setId( rr.getId() );
-			ranking.setName( rr.getName() );
-			ranking.setProcessId( rr.getProcessId() );
-//			ranking.setSelected( rr.g );
-			List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() );
-			ranking.setList( scores );
-			list.add( ranking );
-		}
-		return list;
-	}
+        DMGame.get().getJpa().propertyBags.delete(bag.id);
+        DMGame.get().getJpa().activities.delete(a.getId());
+    }
 
-	@Override
-	public RequirementsRanking getRanking( Long rankingId) {
-		HRequirementsRanking rr = DMGame.get().getJpa().requirementsRankings.findOne( rankingId );
-		RequirementsRanking ranking = new RequirementsRanking();
-		ranking.setId( rr.getId() );
-		ranking.setName( rr.getName() );
-		ranking.setProcessId( rr.getProcessId() );
-		ranking.setList( DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() ) );
-		return ranking;
-	}
+    @Override
+    public String getCurrentPhase()
+    {
+        HProcess process = getProcess();
+        String phaseName = getProcessPhaseName(process);
 
-	@Override
-	public Long createRanking(String name) {
-		HRequirementsRanking rr = new HRequirementsRanking();
-		rr.setName( name );
-		rr.setProcessId( this.processId );
-		rr = DMGame.get().getJpa().requirementsRankings.save( rr );
-		return rr.getId();
-	}
-	
-	@Override
-	public RequirementsRanking getRankingByName(String name) {
-		List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName( this.processId, name );
-		if( rlist.size() != 1 ) {
-			return null;
-		}
-		HRequirementsRanking rr = rlist.get( 0 );
-		RequirementsRanking ranking = new RequirementsRanking();
-		ranking.setId( rr.getId() );
-		ranking.setName( rr.getName() );
-		ranking.setProcessId( rr.getProcessId() );
-		ranking.setList( DMGame.get().getJpa().scoresJpa.findRankingsByRankingId( rr.getId() ) );
-		return ranking;
-	}
+        if (phaseName == null)
+        {
+            phaseName = DMGame.get().getLifecycle().getInitPhase().getName();
+        }
+
+        return phaseName;
+    }
+
+    @Override
+    public Collection<String> getNextPhases()
+    {
+        DMLifecycle lifecycle = DMGame.get().getLifecycle();
+        DMPhase phase = lifecycle.getPhase(getCurrentPhase());
+        List<String> phases = new ArrayList<>();
+
+        for (DMPhase n : phase.getNextPhases())
+        {
+            phases.add(n.getName());
+        }
+
+        return phases;
+    }
+
+    String getProcessPhaseName(HProcess process)
+    {
+        String ret = process.getPhaseName();
+
+        if (ret == null)
+        {
+            ret = DMGame.get().getLifecycle().getInitPhase().getName();
+        }
+
+        return ret;
+    }
+
+    @Override
+    public void setNextPhase(String phaseName) throws Exception
+    {
+        try
+        {
+            HProcess process = getProcess();
+            DMGame.get().getLifecycle().getPhase(getProcessPhaseName(process)).checkPreconditions(this);
+            process.setPhaseName(phaseName);
+            DMGame.get().getJpa().processes.save(process);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    @Override
+    public List<RequirementsRanking> getRankings()
+    {
+        List<HRequirementsRanking> hlist = DMGame.get().getJpa().requirementsRankings
+                .findRankingsByProcessId(this.processId);
+        List<RequirementsRanking> list = new ArrayList<>();
+
+        for (HRequirementsRanking rr : hlist)
+        {
+            RequirementsRanking ranking = new RequirementsRanking();
+            ranking.setId(rr.getId());
+            ranking.setName(rr.getName());
+            ranking.setProcessId(rr.getProcessId());
+            // ranking.setSelected( rr.g );
+            List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId());
+            ranking.setList(scores);
+            list.add(ranking);
+        }
+
+        return list;
+    }
+
+    @Override
+    public RequirementsRanking getRanking(Long rankingId)
+    {
+        HRequirementsRanking rr = DMGame.get().getJpa().requirementsRankings.findOne(rankingId);
+        RequirementsRanking ranking = new RequirementsRanking();
+        ranking.setId(rr.getId());
+        ranking.setName(rr.getName());
+        ranking.setProcessId(rr.getProcessId());
+        ranking.setList(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
+        return ranking;
+    }
+
+    @Override
+    public Long createRanking(String name)
+    {
+        HRequirementsRanking rr = new HRequirementsRanking();
+        rr.setName(name);
+        rr.setProcessId(this.processId);
+        rr = DMGame.get().getJpa().requirementsRankings.save(rr);
+        return rr.getId();
+    }
+
+    @Override
+    public RequirementsRanking getRankingByName(String name)
+    {
+        List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings
+                .findRankingsByProcessIdAndName(this.processId, name);
+
+        if (rlist.size() != 1)
+        {
+            return null;
+        }
+
+        HRequirementsRanking rr = rlist.get(0);
+        RequirementsRanking ranking = new RequirementsRanking();
+        ranking.setId(rr.getId());
+        ranking.setName(rr.getName());
+        ranking.setProcessId(rr.getProcessId());
+        ranking.setList(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
+        ranking.setSelected(true);
+        return ranking;
+    }
 }
