@@ -1,3 +1,17 @@
+/*
+   (C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package eu.supersede.dm;
 
 import java.sql.Date;
@@ -51,148 +65,187 @@ public class DMGame
 
     public static class JpaProvider
     {
-        public UsersJpa						users;
-        public RequirementsJpa				requirements;
-        public ValutationCriteriaJpa		criteria;
-        public ProcessesJpa					processes;
-        public ProcessMembersJpa			members;
-        public ActivitiesJpa				activities;
-        public ProcessCriteriaJpa			processCriteria;
-        public AlertsJpa					alerts;
-        public AppsJpa						apps;
-        public ReceivedUserRequestsJpa		receivedUserRequests;
-        public RequirementsPropertiesJpa	requirementProperties;
-        public RequirementsDependenciesJpa	requirementDependencies;
-        public PropertiesJpa				properties;
-        public PropertyBagsJpa				propertyBags;
-        public RequirementsRankingsJpa		requirementsRankings;
-        public RequirementsScoresJpa		scoresJpa;
+        public UsersJpa users;
+        public RequirementsJpa requirements;
+        public ValutationCriteriaJpa criteria;
+        public ProcessesJpa processes;
+        public ProcessMembersJpa members;
+        public ActivitiesJpa activities;
+        public ProcessCriteriaJpa processCriteria;
+        public AlertsJpa alerts;
+        public AppsJpa apps;
+        public ReceivedUserRequestsJpa receivedUserRequests;
+        public RequirementsPropertiesJpa requirementProperties;
+        public RequirementsDependenciesJpa requirementDependencies;
+        public PropertiesJpa properties;
+        public PropertyBagsJpa propertyBags;
+        public RequirementsRankingsJpa requirementsRankings;
+        public RequirementsScoresJpa scoresJpa;
     }
 
     JpaProvider jpa;
-    
+
     DMLifecycle lifecycle = new DMLifecycle();
-    
-    private DMGame() {
-    	lifecycle.addInitialPhase( new DMPhase( "Initialization" ) {
-    		public void activate( ProcessManager mgr ) {
+
+    private DMGame()
+    {
+        lifecycle.addInitialPhase(new DMPhase("Initialization")
+        {
+            @Override
+            public void activate(ProcessManager mgr)
+            {
                 for (Requirement r : mgr.requirements())
                 {
-                    r.setStatus( RequirementStatus.Unconfirmed.getValue());
+                    r.setStatus(RequirementStatus.Unconfirmed.getValue());
                     DMGame.get().getJpa().requirements.save(r);
                 }
-      		}
-    	} );
-    	lifecycle.addPhase( new DMPhase( "Editing" ) {
-    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
-    			
+            }
+        });
+        lifecycle.addPhase(new DMPhase("Editing")
+        {
+            @Override
+            public void checkPreconditions(ProcessManager mgr) throws Exception
+            {
+
                 if (mgr.getRequirementsCount() == 0)
                 {
-                    throw new Exception( "At least one requirement must exist in the process" );
+                    throw new Exception("At least one requirement must exist in the process");
                 }
-                
-                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
-                for (Requirement r : mgr.requirements()) {
-                	map.put( r.getStatus(), r );
-                }
-                
-                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
-                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
-                }
-                
-                if( map.count( RequirementStatus.Enacted.getValue() ) > 0 ) {
-                	throw new Exception( "There are already enacted requirements" );
-                }
-                
-                if( (map.count( RequirementStatus.Unconfirmed.getValue() ) > 0) & (map.count( RequirementStatus.Confirmed.getValue() ) > 0) ) {
-                	throw new Exception( "Not a valid state: there are both unconfirmed and already confirmed requirements" );
-                }
-            }
-    		public void activate( ProcessManager mgr ) {
-              for (Requirement r : mgr.requirements())
-              {
-                  r.setStatus( RequirementStatus.Editable.getValue());
-                  DMGame.get().getJpa().requirements.save(r);
-              }
-    		}
-    	} );
-    	lifecycle.addPhase( new DMPhase( "Prioritization" ) {
-    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
-    			
-                if (mgr.getRequirementsCount() == 0)
-                {
-                    throw new Exception( "At least one requirement must exist in the process" );
-                }
-                
-                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
-                for (Requirement r : mgr.requirements()) {
-                	map.put( r.getStatus(), r );
-                }
-                
-                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
-                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
-                }
-                
-                if( map.count( RequirementStatus.Enacted.getValue() ) > 0 ) {
-                	throw new Exception( "There are already enacted requirements" );
-                }
-                
-                if( (map.count( RequirementStatus.Unconfirmed.getValue() ) > 0) ) {
-                	throw new Exception( "Not a valid state: there are still unconfirmed requirements" );
-                }
-            }
-    		public void activate( ProcessManager mgr ) {
+
+                DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
+
                 for (Requirement r : mgr.requirements())
                 {
-                    r.setStatus( RequirementStatus.Confirmed.getValue());
-                    DMGame.get().getJpa().requirements.save(r);
+                    map.put(r.getStatus(), r);
                 }
-      		}
-    	} );
-    	lifecycle.addPhase( new DMPhase( "Terminated" ) {
-    		public void checkPreconditions( ProcessManager mgr ) throws Exception {
-    			
-                if (mgr.getRequirementsCount() == 0)
+
+                if (map.count(RequirementStatus.Discarded.getValue()) == map.size())
                 {
-                    throw new Exception( "At least one requirement must exist in the process" );
+                    throw new Exception("No requirements can be edited (all of them are discarded)");
                 }
-                
-                DuplicateMap<Integer,Requirement> map = new DuplicateMap<>();
-                for (Requirement r : mgr.requirements()) {
-                	map.put( r.getStatus(), r );
+
+                if (map.count(RequirementStatus.Enacted.getValue()) > 0)
+                {
+                    throw new Exception("There are already enacted requirements");
                 }
-                
-                if( map.count( RequirementStatus.Discarded.getValue() ) == map.size() ) {
-                	throw new Exception( "No requirements can be edited (all of them are discarded)" );
-                }
-                
-                if( map.count( RequirementStatus.Confirmed.getValue() ) < map.size() ) {
-                	throw new Exception( "Not all the requirements are confirmed" );
+
+                if ((map.count(RequirementStatus.Unconfirmed.getValue()) > 0)
+                        & (map.count(RequirementStatus.Confirmed.getValue()) > 0))
+                {
+                    throw new Exception(
+                            "Not a valid state: there are both unconfirmed and already confirmed requirements");
                 }
             }
-    	} );
-    	lifecycle.setNext( "Initialization", "Editing" );
-    	lifecycle.setNext( "Editing", "Prioritization" );
-    	lifecycle.setNext( "Prioritization", "Terminated" );
+
+            @Override
+            public void activate(ProcessManager mgr)
+            {
+                for (Requirement r : mgr.requirements())
+                {
+                    r.setStatus(RequirementStatus.Editable.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
+            }
+        });
+        lifecycle.addPhase(new DMPhase("Prioritization")
+        {
+            @Override
+            public void checkPreconditions(ProcessManager mgr) throws Exception
+            {
+                if (mgr.getRequirementsCount() == 0)
+                {
+                    throw new Exception("At least one requirement must exist in the process");
+                }
+
+                DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
+
+                for (Requirement r : mgr.requirements())
+                {
+                    map.put(r.getStatus(), r);
+                }
+
+                if (map.count(RequirementStatus.Discarded.getValue()) == map.size())
+                {
+                    throw new Exception("No requirements can be edited (all of them are discarded)");
+                }
+
+                if (map.count(RequirementStatus.Enacted.getValue()) > 0)
+                {
+                    throw new Exception("There are already enacted requirements");
+                }
+
+                if ((map.count(RequirementStatus.Unconfirmed.getValue()) > 0))
+                {
+                    throw new Exception("Not a valid state: there are still unconfirmed requirements");
+                }
+            }
+
+            @Override
+            public void activate(ProcessManager mgr)
+            {
+                for (Requirement r : mgr.requirements())
+                {
+                    r.setStatus(RequirementStatus.Confirmed.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
+                }
+            }
+        });
+        lifecycle.addPhase(new DMPhase("Terminated")
+        {
+            @Override
+            public void checkPreconditions(ProcessManager mgr) throws Exception
+            {
+                if (mgr.getRequirementsCount() == 0)
+                {
+                    throw new Exception("At least one requirement must exist in the process");
+                }
+
+                DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
+
+                for (Requirement r : mgr.requirements())
+                {
+                    map.put(r.getStatus(), r);
+                }
+
+                if (map.count(RequirementStatus.Discarded.getValue()) == map.size())
+                {
+                    throw new Exception("No requirements can be edited (all of them are discarded)");
+                }
+
+                if (map.count(RequirementStatus.Confirmed.getValue()) < map.size())
+                {
+                    throw new Exception("Not all the requirements are confirmed");
+                }
+            }
+        });
+
+        lifecycle.setNext("Initialization", "Editing");
+        lifecycle.setNext("Editing", "Prioritization");
+        lifecycle.setNext("Prioritization", "Terminated");
     }
-    
-    public DMLifecycle getLifecycle() {
-    	return this.lifecycle;
+
+    public DMLifecycle getLifecycle()
+    {
+        return this.lifecycle;
     }
-    
-    public HProcess createEmptyProcess( String name )
+
+    public HProcess createEmptyProcess(String name)
     {
         HProcess proc = new HProcess();
         proc.setObjective(DMObjective.PrioritizeRequirements.name());
         proc.setStartTime(new Date(System.currentTimeMillis()));
-        proc.setPhaseName( 	lifecycle.getInitPhase().getName() );
+        proc.setPhaseName(lifecycle.getInitPhase().getName());
         proc = jpa.processes.save(proc);
-        if( name == null ) {
-        	proc.setName("Process " + proc.getId());
+
+        if (name == null)
+        {
+            proc.setName("Process " + proc.getId());
         }
-        else {
-        	proc.setName( name );
+        else
+        {
+            proc.setName(name);
         }
+
         proc = jpa.processes.save(proc);
         return proc;
     }
@@ -208,14 +261,9 @@ public class DMGame
 
         List<HActivity> activities = mgr.getOngoingActivities();
 
-        if (activities == null)
+        if (activities != null && activities.size() > 0)
         {
-            return;
-        }
-
-        if (activities.size() > 0)
-        {
-            throw new RuntimeException(
+            System.err.println(
                     "This process contains ongoing activities. To close it, you must close the activities first.");
         }
 

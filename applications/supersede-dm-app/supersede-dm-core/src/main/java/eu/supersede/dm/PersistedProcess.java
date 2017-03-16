@@ -131,7 +131,7 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public List<HActivity> getOngoingActivities()
     {
-        return new ArrayList<>();
+        return DMGame.get().jpa.activities.findByProcessId(processId);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public List<HActivity> getOngoingActivities(String methodName)
     {
-        return DMGame.get().jpa.activities.find(this.processId, methodName);
+        return DMGame.get().jpa.activities.findByProcessAndMethodName(processId, methodName);
     }
 
     @Override

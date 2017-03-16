@@ -115,11 +115,6 @@ public class ProcessRest
             return;
         }
 
-        if (mgr.getOngoingActivities().size() > 0)
-        {
-            throw new Exception("In order to close a process, you must close all the activities, first");
-        }
-
         for (HActivity a : mgr.getOngoingActivities())
         {
             DMMethod m = DMLibrary.get().getMethod(a.getMethodName());
@@ -161,7 +156,6 @@ public class ProcessRest
             return;
         }
 
-        System.out.println("Deleted process " + procId);
         DMGame.get().deleteProcess(procId);
     }
 
