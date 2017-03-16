@@ -68,13 +68,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             {
                 width: "100%",
                 source: dataAdapter,
-                //            pageable: true,
-                //            columnsResize: true,
-                //            altRows: true,
                 groupable: true,
-                //            ready: function () {
-                //                $("#treeGrid").jqxTreeGrid('expandRow', "0");
-                //            },
                 columns: [
                   { text: 'App', dataField: 'applicationId', width: "15%" },
                   { text: 'Alert', dataField: 'alertId', width: "10%" },
@@ -86,7 +80,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                   { text: 'Pos.', dataField: 'pos', width: "5%" },
                   { text: 'Neg.', dataField: 'neg', width: "5%" },
                   { text: 'Overall.', dataField: 'overall', width: "5%" }
-    //              { text: 'Features.', dataField: 'features', width: 120 }
                 ],
             groups: ['applicationId', 'alertId']
             });
@@ -94,7 +87,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
         });
     });
-
 
     // Get requirements
     $http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1').success(function(data) {
@@ -180,8 +172,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 itemHeight: 70, width: '100%',
                 renderer: function (index, label, value) {
                     var datarecord = data[index];
-                    //                    var imgurl = '../../images/' + label.toLowerCase() + '.png';
-                    //                    var img = '<img height="50" width="40" src="' + imgurl + '"/>';
 
                     if (datarecord === undefined) {
                         return "";
@@ -199,10 +189,9 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                         '<tr><td style="width: 40px;">' + action + '</td><td>' +
                         datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
                         '<td style="width: 40px;">' +
-                        '<jqx-link-button jqx-width="200" jqx-height="30"> <a ' +
-                        'href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a></jqx-link-button>' +
-                        '<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');">Close</a></jqx-button>' +
-                        '<jqx-link-button style="margin-left: 10px")"><a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');">Delete</a></jqx-button>' +
+                        '<a href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a>' +
+                        '<a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Close</a>' +
+                        '<a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Delete</a>' +
                         '</td>' +
                         '</tr><tr><td>' +
                         "Created: " + datarecord.date +
