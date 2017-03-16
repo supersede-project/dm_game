@@ -105,8 +105,6 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         $http.get('supersede-dm-app/processes/requirements/properties?procId=' + $scope.procId + '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
-            console.log("properties:");
-            console.log(properties);
             fillPropertiesGrid();
         });
     }
@@ -121,8 +119,6 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
 
     $scope.submitDependencies = function () {
         saveDependencies();
-        console.log("Submit dependencies");
-        console.log(dependencies);
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
@@ -182,7 +178,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             console.log(err.message);
         });
     };
-    
+
     $scope.newRequirement = function () {
         var reqName = prompt("Requirement name", "");
         if (typeof reqName === 'undefined' || reqName === null) {
@@ -192,9 +188,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             url: "supersede-dm-app/processes/requirements/new?procId=" + $scope.procId + "&name=" + reqName,
             method: 'POST'
         }).success(function (data) {
-            console.log(requirements);
             requirements.push(data);
-            console.log(requirements);
             loadRequirements();
         }).error(function (err) {
             console.log(err.message);
@@ -210,7 +204,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             }
         }
     }
-    
+
     function loadRequirements() {
         $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
         .success(function (data) {
@@ -244,6 +238,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                     loadCurrentRequirement();
                 }
             });
+
+            currentRequirementId = requirements[currentRequirementIndex].requirementId;
             loadCurrentRequirement();
         });
     }

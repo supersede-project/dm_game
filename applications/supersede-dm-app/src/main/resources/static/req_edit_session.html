@@ -10,25 +10,26 @@
     textarea {
         height: 10em;
     }
+    #left_splitter {
+        height: 100%;
+    }
     #current_requirement {
         padding: 2%;
     }
 </style>
 
-<div ng-controller="req_edit_session" style="height: 100vh">
+<div ng-controller="req_edit_session" style="height: 1000px">
 
 	<h1>Edit Requirements for Process {{procId}}</h1>
 
 	<div id="mainSplitter">
 
-		<div class="splitter-panel">
-			<div>
-				<jqx-button ng-click="newRequirement()">New</jqx-button>
-				<div style="border: none;" id="requirements-listbox"></div>
-			</div>
+		<div id="left_splitter">
+			<jqx-button ng-click="newRequirement()">New</jqx-button>
+			<div style="border: none;" id="requirements-listbox"></div>
 		</div>
 
-		<div id="current_requirement" class="splitter-panel">
+		<div id="current_requirement">
             <div style="font-size: 13px; font-family: Verdana">
                 <form>
                     <strong>Name:</strong><br>
