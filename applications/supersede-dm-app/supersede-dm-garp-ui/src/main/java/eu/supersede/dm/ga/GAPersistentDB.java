@@ -431,17 +431,34 @@ public class GAPersistentDB
     public void closeGame(Long gameId, Long processId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(processId);
+        List<HActivity> opinionProvidersActivities = mgr.getOngoingActivities(GAPlayerVotingMethod.NAME);
+        List<HActivity> negotiatorsActivities = mgr.getOngoingActivities(GANegotiatorVotingMethod.NAME);
 
-        List<HActivity> activities = mgr.getOngoingActivities(GAPlayerVotingMethod.NAME);
-
-        for (HActivity a : activities)
+        for (HActivity a : opinionProvidersActivities)
         {
             PropertyBag bag = mgr.getProperties(a);
             Long ongoingGame = Long.parseLong(bag.get("gameId", "0"));
-            if (ongoingGame != gameId)
+
+            if (!ongoingGame.equals(gameId))
             {
+                // Found property of another game
                 continue;
             }
+
+            mgr.deleteActivity(a);
+        }
+
+        for (HActivity a : negotiatorsActivities)
+        {
+            PropertyBag bag = mgr.getProperties(a);
+            Long ongoingGame = Long.parseLong(bag.get("gameId", "0"));
+
+            if (!ongoingGame.equals(gameId))
+            {
+                // Found property of another game
+                continue;
+            }
+
             mgr.deleteActivity(a);
         }
 

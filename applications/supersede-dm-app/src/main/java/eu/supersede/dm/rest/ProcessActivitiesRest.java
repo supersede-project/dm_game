@@ -64,7 +64,7 @@ public class ProcessActivitiesRest
 
             PropertyBag bag = mgr.getProperties(a);
 
-            for (HProperty p : bag.properties())
+            for (HProperty p : bag.getProperties())
             {
                 d.setProperty(p.getKey(), p.getValue());
             }

@@ -258,7 +258,7 @@ public class PersistedProcess extends AbstractProcessManager
     public void deleteActivity(HActivity a)
     {
         PropertyBag bag = getProperties(a);
-        List<HProperty> properties = bag.properties();
+        List<HProperty> properties = bag.getProperties();
 
         for (HProperty p : properties)
         {
