@@ -104,6 +104,8 @@ public class GAPersistentDB
             Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
             Long[] gameOpinionProviders, Long[] gameNegotiators, Long processId)
     {
+        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         List<Long> requirements = new ArrayList<>();
         List<Long> opinionProviders = new ArrayList<>();
         List<Long> negotiators = new ArrayList<>();
@@ -127,18 +129,14 @@ public class GAPersistentDB
         long currentTime = System.currentTimeMillis();
         gameSummary.setId(currentTime);
         gameSummary.setName(name);
-        gameSummary.setOwner(((DatabaseUser) authentication.getPrincipal()).getUserId());
+        gameSummary.setOwner(currentUser.getUserId());
 
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
         gameSummary.setDate(sdfDate.format(now));
 
         gameSummary.setStatus(GAGameStatus.Open.name());
-
-        HActivity activity = new HActivity();
-        activity.setMethodName(GAMethod.NAME);
-        activity.setProcessId(processId);
-        HActivity persistentActivity = DMGame.get().getJpa().activities.save(activity);
+        HActivity persistentActivity = mgr.createActivity(GAMethod.NAME, currentUser.getUserId());
 
         gameSummary.setActivityId(persistentActivity.getId());
         HGAGameSummary persistedGameSummary = gamesJpa.save(gameSummary);
@@ -206,7 +204,6 @@ public class GAPersistentDB
 
         if (processId != -1)
         {
-            ProcessManager mgr = DMGame.get().getProcessManager(processId);
             for (Long userId : opinionProviders)
             {
                 HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
@@ -244,12 +241,8 @@ public class GAPersistentDB
             }
 
             HActivity activity = activitiesJpa.findOne(info.getActivityId());
-            
-            // FIXME: in case of game deletion, some activities may be left behind
-            if( activity == null ) {
-            	continue;
-            }
 
+            // FIXME: in case of game deletion, some activities may be left behind
             if (activity == null)
             {
                 continue;
