@@ -217,7 +217,13 @@ public class PersistedProcess extends AbstractProcessManager
         if (r != null)
         {
             r.setProcessId(-1L);
-            r.setStatus(RequirementStatus.Unconfirmed.getValue());
+
+            // Reset the requirement status only if it is not enacted
+            if (!r.getStatus().equals(RequirementStatus.Enacted.getValue()))
+            {
+                r.setStatus(RequirementStatus.Unconfirmed.getValue());
+            }
+
             DMGame.get().jpa.requirements.save(r);
         }
     }
