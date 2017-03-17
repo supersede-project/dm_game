@@ -53,7 +53,7 @@ public class ProcessRequirementsRest
     public void importRequirements(@RequestParam Long procId, @RequestParam(required = false) List<Long> requirementsId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        List<Requirement> requirements = proc.requirements();
+        List<Requirement> requirements = proc.getRequirements();
 
         for (Requirement requirement : requirements)
         {
@@ -83,7 +83,7 @@ public class ProcessRequirementsRest
     public List<Requirement> getRequirementsList(@RequestParam Long procId)
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
-        return proc.requirements();
+        return proc.getRequirements();
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -106,7 +106,7 @@ public class ProcessRequirementsRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         Map<String, Integer> count = new HashMap<>();
-        List<Requirement> requirements = proc.requirements();
+        List<Requirement> requirements = proc.getRequirements();
 
         for (Requirement r : requirements)
         {
@@ -145,7 +145,7 @@ public class ProcessRequirementsRest
         {
             RequirementStatus status = RequirementStatus.valueOf(statusString);
 
-            for (Requirement r : mgr.requirements())
+            for (Requirement r : mgr.getRequirements())
             {
                 r.setStatus(status.getValue());
                 DMGame.get().getJpa().requirements.save(r);
@@ -167,7 +167,7 @@ public class ProcessRequirementsRest
         count.put(RequirementStatus.Confirmed.getValue(), 0);
         count.put(RequirementStatus.Enacted.getValue(), 0);
         count.put(RequirementStatus.Discarded.getValue(), 0);
-        List<Requirement> requirements = proc.requirements();
+        List<Requirement> requirements = proc.getRequirements();
 
         if (requirements.size() < 1)
         {
@@ -210,7 +210,7 @@ public class ProcessRequirementsRest
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         Map<String, Integer> count = new HashMap<>();
 
-        for (Requirement r : proc.requirements())
+        for (Requirement r : proc.getRequirements())
         {
             String str = RequirementStatus.valueOf(r.getStatus()).name();
             Integer n = count.get(str);
@@ -231,7 +231,7 @@ public class ProcessRequirementsRest
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
 
-        for (Requirement r : mgr.requirements())
+        for (Requirement r : mgr.getRequirements())
         {
             if (r == null)
             {
@@ -259,6 +259,35 @@ public class ProcessRequirementsRest
                 requirementsDependenciesJpa.save(requirementDependency);
             }
         }
+    }
+
+    @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
+    public Map<Long, List<Long>> getDependencies(@RequestParam Long procId)
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        List<Requirement> requirements = mgr.getRequirements();
+
+        Map<Long, List<Long>> dependencies = new HashMap<>();
+
+        for (Requirement requirement : requirements)
+        {
+            Long requirementId = requirement.getRequirementId();
+            List<Long> requirementDependencies = new ArrayList<>();
+            List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
+                    .findByRequirementId(requirementId);
+
+            for (HRequirementDependency dependency : storedDependencies)
+            {
+                requirementDependencies.add(dependency.getDependencyId());
+            }
+
+            if (requirementDependencies.size() > 0)
+            {
+                dependencies.put(requirementId, requirementDependencies);
+            }
+        }
+
+        return dependencies;
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)

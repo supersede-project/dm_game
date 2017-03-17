@@ -9,9 +9,6 @@ import eu.supersede.gr.model.HRequirementDependency;
 
 public interface RequirementsDependenciesJpa extends JpaRepository<HRequirementDependency, Long>
 {
-    @Query("SELECT d FROM HRequirementDependency d WHERE dependerId = ?1")
-    List<HRequirementDependency> findDependenciesByDependerId(Long reqId);
-
-    @Query("SELECT d FROM HRequirementDependency d WHERE dependeeId = ?1")
-    List<HRequirementDependency> findDependenciesByDependeeId(Long reqId);
+    @Query("SELECT d FROM HRequirementDependency d WHERE requirementId = ?1")
+    List<HRequirementDependency> findByRequirementId(Long requirementId);
 }

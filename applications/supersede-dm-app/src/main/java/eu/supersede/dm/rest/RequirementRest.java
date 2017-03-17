@@ -117,7 +117,7 @@ public class RequirementRest
         {
             RequirementDetails details = new RequirementDetails(r);
             List<HRequirementDependency> deps = DMGame.get().getJpa().requirementDependencies
-                    .findDependenciesByDependerId(r.getRequirementId());
+                    .findByRequirementId(r.getRequirementId());
             for (HRequirementDependency d : deps)
             {
                 details.addDependency(d);

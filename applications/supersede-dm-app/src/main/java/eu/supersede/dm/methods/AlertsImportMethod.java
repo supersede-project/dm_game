@@ -90,14 +90,14 @@ public class AlertsImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     if (r.getStatus() == RequirementStatus.Unconfirmed.getValue())
                     {
                         return true;
                     }
                 }
-                if (mgr.requirements().size() < 1)
+                if (mgr.getRequirements().size() < 1)
                 {
                     return true;
                 }
@@ -115,13 +115,15 @@ public class AlertsImportMethod implements DMMethod
         return PAGE;
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Import Alerts";
-	}
+    @Override
+    public String getDescription(ProcessManager arg0)
+    {
+        return "Import Alerts";
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Import Alerts";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return "Import Alerts";
+    }
 }

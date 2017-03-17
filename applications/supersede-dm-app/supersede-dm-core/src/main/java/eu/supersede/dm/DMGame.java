@@ -94,7 +94,7 @@ public class DMGame
             @Override
             public void activate(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     r.setStatus(RequirementStatus.Unconfirmed.getValue());
                     DMGame.get().getJpa().requirements.save(r);
@@ -114,7 +114,7 @@ public class DMGame
 
                 DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
 
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     map.put(r.getStatus(), r);
                 }
@@ -140,7 +140,7 @@ public class DMGame
             @Override
             public void activate(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     r.setStatus(RequirementStatus.Editable.getValue());
                     DMGame.get().getJpa().requirements.save(r);
@@ -159,7 +159,7 @@ public class DMGame
 
                 DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
 
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     map.put(r.getStatus(), r);
                 }
@@ -183,7 +183,7 @@ public class DMGame
             @Override
             public void activate(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     r.setStatus(RequirementStatus.Confirmed.getValue());
                     DMGame.get().getJpa().requirements.save(r);
@@ -202,7 +202,7 @@ public class DMGame
 
                 DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
 
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     map.put(r.getStatus(), r);
                 }
@@ -267,7 +267,7 @@ public class DMGame
                     "This process contains ongoing activities. To close it, you must close the activities first.");
         }
 
-        for (Requirement r : mgr.requirements())
+        for (Requirement r : mgr.getRequirements())
         {
             mgr.removeRequirement(r.getRequirementId());
         }

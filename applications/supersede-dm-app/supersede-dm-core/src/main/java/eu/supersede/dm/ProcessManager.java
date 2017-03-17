@@ -27,28 +27,28 @@ import eu.supersede.gr.model.ValutationCriteria;
 
 public interface ProcessManager
 {
-	
-	// Phases
-	
-	public String getCurrentPhase();
-	
-	public Collection<String> getNextPhases();
-	
-	public void setNextPhase( String phaseName ) throws Exception;
-	
+
+    // Phases
+
+    public String getCurrentPhase();
+
+    public Collection<String> getNextPhases();
+
+    public void setNextPhase(String phaseName) throws Exception;
+
     // Requirements
 
     public void addRequirement(Requirement r);
 
-    public List<Requirement> requirements();
+    public List<Requirement> getRequirements();
 
     public int getRequirementsCount();
 
     public void setRequirementsStatus(List<Requirement> reqs, Integer status);
 
     public void removeRequirement(Long reqId);
-    
-    public Requirement getRequirement( Long reqId );
+
+    public Requirement getRequirement(Long reqId);
 
     // Criteria
 
@@ -87,8 +87,8 @@ public interface ProcessManager
     public List<HActivity> getOngoingActivities();
 
     public List<HActivity> getOngoingActivities(String methodName);
-    
-    public void deleteActivity( HActivity a );
+
+    public void deleteActivity(HActivity a);
 
     // Properties
 
@@ -99,15 +99,15 @@ public interface ProcessManager
     public ProcessStatus getProcessStatus();
 
     public void setProcessStatus(ProcessStatus status);
-    
+
     // Rankings
-    
-    public Long createRanking( String name );
-    
+
+    public Long createRanking(String name);
+
     public List<RequirementsRanking> getRankings();
-    
-    public RequirementsRanking getRanking( Long rankingId );
-    
-    public RequirementsRanking getRankingByName( String name );
-    
+
+    public RequirementsRanking getRanking(Long rankingId);
+
+    public RequirementsRanking getRankingByName(String name);
+
 }

@@ -147,7 +147,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
         AHPStructure objAHP = new AHPStructure();
 
         Set<String> topics = new HashSet<>();
-        for (Requirement r : status.requirements())
+        for (Requirement r : status.getRequirements())
         {
             if (!"".equals(r.getTopic()))
             {
@@ -175,7 +175,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
 
         {
             List<String> reqs = new ArrayList<>();
-            for (Requirement req : status.requirements())
+            for (Requirement req : status.getRequirements())
             {
                 reqs.add("" + req.getRequirementId());
             }
@@ -195,9 +195,9 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
 
         for (String topic : topics)
         {
-            for (Requirement r1 : status.requirements())
+            for (Requirement r1 : status.getRequirements())
             {
-                for (Requirement r2 : status.requirements())
+                for (Requirement r2 : status.getRequirements())
                 {
                     // Preference from 0 to 8
                     objAHP.setOptionPreference("" + r1.getRequirementId(), "" + r2.getRequirementId(), topic,
@@ -229,22 +229,22 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	return "Prioritization".equals( mgr.getCurrentPhase() );
-            	
-//                if (mgr.getRequirementsCount() < 1)
-//                {
-//                    return false;
-//                }
-//
-//                for (Requirement r : mgr.requirements())
-//                {
-//                    if (r.getStatus() != RequirementStatus.Confirmed.getValue())
-//                    {
-//                        return false;
-//                    }
-//                }
-//
-//                return true;
+                return "Prioritization".equals(mgr.getCurrentPhase());
+
+                // if (mgr.getRequirementsCount() < 1)
+                // {
+                // return false;
+                // }
+                //
+                // for (Requirement r : mgr.requirements())
+                // {
+                // if (r.getStatus() != RequirementStatus.Confirmed.getValue())
+                // {
+                // return false;
+                // }
+                // }
+                //
+                // return true;
             }
         });
         return list;
@@ -256,14 +256,16 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
         return "ahprp/home";
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "AHP session";
-	}
+    @Override
+    public String getDescription(ProcessManager arg0)
+    {
+        return "AHP session";
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "AHP session";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return "AHP session";
+    }
 
 }

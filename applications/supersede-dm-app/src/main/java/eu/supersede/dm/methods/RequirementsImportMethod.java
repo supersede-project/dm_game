@@ -85,7 +85,7 @@ public class RequirementsImportMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                for (Requirement r : mgr.requirements())
+                for (Requirement r : mgr.getRequirements())
                 {
                     if (r.getStatus() != RequirementStatus.Unconfirmed.getValue())
                     {
@@ -106,13 +106,15 @@ public class RequirementsImportMethod implements DMMethod
         return PAGE;
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Import Requirements";
-	}
+    @Override
+    public String getDescription(ProcessManager arg0)
+    {
+        return "Import Requirements";
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Import Requirements";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return "Import Requirements";
+    }
 }

@@ -49,7 +49,7 @@ public class PersistedProcess extends AbstractProcessManager
     }
 
     @Override
-    public List<Requirement> requirements()
+    public List<Requirement> getRequirements()
     {
         return DMGame.get().jpa.requirements.findRequirementsByProcessId(processId);
     }
@@ -57,7 +57,7 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public int getRequirementsCount()
     {
-        return requirements().size();
+        return getRequirements().size();
     }
 
     @Override
