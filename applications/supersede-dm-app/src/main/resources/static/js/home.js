@@ -220,14 +220,20 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
 
 function closeProcess(procId) {
     console.log("closing process " + procId);
-    http.post('supersede-dm-app/processes/close?procId=' + procId).success(function (data) {
+    http.post('supersede-dm-app/processes/close?procId=' + procId)
+    .success(function (data) {
         loadProcesses();
+    }).error(function(err) {
+        alert(err.message);
     });
 }
 
 function deleteProcess(procId) {
     console.log("deleting process " + procId);
-    http.post('supersede-dm-app/processes/delete?procId=' + procId).success(function (data) {
+    http.post('supersede-dm-app/processes/delete?procId=' + procId)
+    .success(function (data) {
         loadProcesses();
+    }).error(function(err) {
+        alert(err.message);
     });
 }
