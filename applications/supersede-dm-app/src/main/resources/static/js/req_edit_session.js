@@ -35,6 +35,41 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         return availableDependencies;
     }
 
+    function getAddedDependencies() {
+        $http.get('supersede-dm-app/processes/requirements/dependencies/list?procId=' + $scope.procId)
+        .success(function (data) {
+            var addedDependencies = data;
+            console.log("added dependencies:");
+            console.log(addedDependencies);
+            var dependenciesRows = $("#dependencies").jqxGrid("getrows").length;
+            console.log("rows: " + dependenciesRows);
+
+            if (addedDependencies[currentRequirementId] === undefined)
+            {
+                return;
+            }
+
+            for (var i = 0; i < dependenciesRows; i++) {
+                var added = false;
+                var currentDependency = $("#dependencies").jqxGrid("getrowdatabyid", i);
+
+                for (var j = 0; j < addedDependencies[currentRequirementId].length; j++) {
+                    if (addedDependencies[currentRequirementId][j] === currentDependency.requirementId) {
+                        $("#dependencies").jqxGrid("selectrow", i);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    $("#dependencies").jqxGrid("unselectrow", i);
+                }
+            }
+        }).error(function (err) {
+            console.log(err.message);
+        });
+    }
+
     function fillDependenciesGrid() {
         var availableRequirements = {
             datatype: "json",
@@ -64,6 +99,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                 { text: 'Description', datafield: 'description' }
             ]
         });
+
+        getAddedDependencies();
     }
 
     function fillPropertiesGrid() {
@@ -118,6 +155,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
 
         fillDependenciesGrid();
         getRequirementProperties();
+        $("#submitted").html("");
         $("#requirement_status").html("");
         $("#property_status").html("");
     }

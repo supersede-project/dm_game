@@ -253,6 +253,14 @@ public class ProcessRequirementsRest
     {
         for (Long requirementId : dependencies.keySet())
         {
+            // Delete previously stored dependencies
+            for (HRequirementDependency storedDependency : requirementsDependenciesJpa
+                    .findByRequirementId(requirementId))
+            {
+                requirementsDependenciesJpa.delete(storedDependency);
+            }
+
+            // Store new dependencies
             for (Long dependencyId : dependencies.get(requirementId))
             {
                 HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
@@ -284,6 +292,16 @@ public class ProcessRequirementsRest
             if (requirementDependencies.size() > 0)
             {
                 dependencies.put(requirementId, requirementDependencies);
+            }
+        }
+
+        for (Long requirementId : dependencies.keySet())
+        {
+            System.out.println("Dependencies of " + requirementId + ":");
+
+            for (Long dependencyId : dependencies.get(requirementId))
+            {
+                System.out.println("Dependency: " + dependencyId);
             }
         }
 
