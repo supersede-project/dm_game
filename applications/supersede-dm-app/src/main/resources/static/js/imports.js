@@ -33,7 +33,8 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     };
 
     function getAvailableRequirements() {
-        $http.get('supersede-dm-app/requirement')
+        // Get all the requirements that are not enacted
+        $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3')
         .success(function(data) {
             availableRequirements = {
                 datatype: "json",
