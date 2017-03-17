@@ -16,10 +16,9 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('plan', function($scope, $http, $location) {
 
-    $scope.now = function()
-    {
-        return new Date().toJSON().slice(0,19).replace("T", " ");
-    }
+    $scope.now = function () {
+        return new Date().toJSON().slice(0, 19).replace("T", " ");
+    };
 
     $scope.players = [];
     $scope.requirements = [];
@@ -43,6 +42,8 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
         {
             $scope.players.push(data[i]);
         }
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $http.get('supersede-dm-app/requirement')
@@ -54,8 +55,9 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                      ReqId: data[i].requirementId,
                      ReqName: data[i].name,
                      ReqStatus: "Requirement" } );
-//                     ReqDesc: data[i].description } );
         }
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $http.get('supersede-dm-app/criteria')
@@ -64,16 +66,36 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
         {
             $scope.criterias.push(data[i]);
         }
+    }).error(function (err) {
+        alert(err.message);
     });
 
-    $scope.doPlan = function()
-    {
+    var showDetails = function (details, index) {
+        while ($(".jqx-expander-header").length > 1) {
+            $('#jqxNavigationBar').jqxNavigationBar('remove', 1);
+        }
+
+        $('#jqxNavigationBar').jqxNavigationBar(
+                'update', '0', 'Step ' + index, '<ul><li>Method: ' + details.activities[0].methodName + '</li></ul>');
+        $('#jqxNavigationBar').jqxNavigationBar(
+                'add', 'Requirements', '<ul><li>Requirement 1</li><li>Requirement 2</li></ul>');
+        var users = '<ul><li>' + details.activities[0].options.players + '</li></ul>';
+
+        $('#jqxNavigationBar').jqxNavigationBar('add', 'Users', users);
+        var optString = "<ul>";
+        optString += "<li>Gamification: " + details.activities[0].options.gamification;
+        optString += "<li>Negotiator: " + details.activities[0].options.negotiator;
+        optString += "</ul>";
+        $('#jqxNavigationBar').jqxNavigationBar('add', 'Options', optString);
+    };
+
+    $scope.doPlan = function () {
         var accuracy = $("#accuracyLevel").jqxSlider('value');
 
         $('#jqxLoader').jqxLoader('open');
 
-        $http.get('supersede-dm-app/orchestration/plan?accuracy='+accuracy).success(
-                function(data) {
+        $http.get('supersede-dm-app/orchestration/plan?accuracy=' + accuracy).success(
+                function (data) {
 
                     var dock = $("#jqxDockPanel").jqxDockPanel('getInstance');
                     $('#container').jqxDraw();
@@ -82,7 +104,7 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                     renderer.clear();
 
                     var top = 50;
-                    var hgap = (dock.height - top) / (data.steps.length +3);
+                    var hgap = (dock.height - top) / (data.steps.length + 3);
                     var maxx = dock.width;
 
                     // Running variable, representing the bottom y of the last drawn element
@@ -91,9 +113,8 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                     renderer.width = maxx;
                     var size = renderer.getSize();
                     var centerx = size.width / 2;
-                    var centery = size.height / 2 ;
 
-                    var circleElement = renderer.circle( centerx, top + 25, 25, {});
+                    var circleElement = renderer.circle(centerx, top + 25, 25, {});
                     renderer.attr(circleElement, { fill: 'white', stroke: 'black' });
                     cury = top + 50;
 
@@ -101,58 +122,35 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
 
                     var elemh = 50;
 
-                    for( i = 0; i < data.steps.length; i++ ) {
+                    for (var i = 0; i < data.steps.length; i++) {
                         var ofsy = top + hgap + (i * hgap);
                         var shapeTask = renderer.path(
                                 "M " + (centerx - 40) + " " + ofsy + " " +
                                 "L " + (centerx + 40) + " " + ofsy + " " +
                                 "L " + (centerx + 40) + " " + (ofsy + elemh) + " " +
                                 "L " + (centerx - 40) + " " + (ofsy + elemh) + " " +
-                                "Z" );
-                        renderer.attr( shapeTask, { fill: 'white', stroke: 'black' });
-                        renderer.text( "Step " + (i +1), centerx, ofsy,
+                                "Z");
+                        renderer.attr(shapeTask, { fill: 'white', stroke: 'black' });
+                        renderer.text("Step " + (i + 1), centerx, ofsy,
                                 undefined, 50, 0, { 'class': 'largeText', fill: 'black', stroke: 'grey' }, false, 'center', 'center', 'centermiddle');
-                        for( j = 0; j < data.steps[i].activities.length; j++ ) {
-                            renderer.text( data.steps[i].activities[j].methodName, centerx, ofsy + 15,
+                        for (var j = 0; j < data.steps[i].activities.length; j++) {
+                            renderer.text(data.steps[i].activities[j].methodName, centerx, ofsy + 15,
                                     undefined, 50, 0,
                                     { 'class': 'largeText', fill: 'black', stroke: 'grey' },
                                     false, 'center', 'center', 'centermiddle');
                         }
 
-                        var lineElement = renderer.path(
-                                "M " + centerx + "," + cury + " " +
-                                "L " + centerx + ", " + (ofsy) + " ", { stroke: '#777777' });
-
-
                         var step = data.steps[i];
-                        var showDetails = function(details,index) {
-                            while( $(".jqx-expander-header").length > 1 ) {
-                                $('#jqxNavigationBar').jqxNavigationBar('remove', 1);
-                            }
-                            $('#jqxNavigationBar').jqxNavigationBar(
-                                    'update', '0', 'Step ' + index, '<ul><li>Method: ' + details.activities[0].methodName + '</li></ul>');
-//                            alert(details.activities[0].methodName);
-                            $('#jqxNavigationBar').jqxNavigationBar(
-                                    'add', 'Requirements', '<ul><li>Requirement 1</li><li>Requirement 2</li></ul>');
-                            var users = '<ul><li>' + details.activities[0].options.players + '</li></ul>';
-                            $('#jqxNavigationBar').jqxNavigationBar(
-                                    'add', 'Users', users );
-                            var optString = "<ul>";
-                            optString += "<li>Gamification: " + details.activities[0].options.gamification;
-                            optString += "<li>Negotiator: " + details.activities[0].options.negotiator;
-                            optString += "</ul>";
-                            $('#jqxNavigationBar').jqxNavigationBar(
-                                    'add', 'Options', optString );
-                        }
-                        renderer.on( shapeTask, 'click', function () {
-                            showDetails(step,i);
+
+                        renderer.on(shapeTask, 'click', function () {
+                            showDetails(step, i);
                         });
 
                         cury = ofsy + elemh;
                         lastElement = shapeTask;
                     }
 
-                    circleElement = renderer.circle( centerx, ((top + ((1 + data.steps.length) * hgap)) + 25), 25, {});
+                    circleElement = renderer.circle(centerx, ((top + ((1 + data.steps.length) * hgap)) + 25), 25, {});
                     renderer.attr(circleElement, { fill: 'white', stroke: 'black', 'stroke-width': '5' });
 
                     renderer.path(
@@ -162,11 +160,9 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                     renderer.refresh();
 
                     $('#jqxLoader').jqxLoader('close');
-
-//                    $('#jqxNavigationBar').jqxNavigationBar('update', '0', 'Requirements', '<ul><li>Requirement 1</li><li>Requirement 2</li></ul>');
                 }
             );
-    }
+    };
 
     $scope.toggleSelection = function(array, item)
     {
@@ -179,23 +175,18 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
         }
     };
 
-    $scope.toPage = function(p)
-    {
-        if(p == 3)
-        {
-            if($scope.game.players.length > 0 &&
+    $scope.toPage = function (p) {
+        if (p == 3) {
+            if ($scope.game.players.length > 0 &&
                     $scope.game.requirements.length > 1 &&
-                    $scope.game.criterias.length > 1)
-            {
+                    $scope.game.criterias.length > 1) {
                 $scope.currentPage = 'page3';
             }
         }
-        else
-        {
+        else {
             $scope.currentPage = 'page' + p;
         }
-    }
-
+    };
 });
 
 $(document).ready(function () {
@@ -216,19 +207,14 @@ $(document).ready(function () {
             switch (value) {
             case 0:
                 return "No precision; maximum speed";
-                break;
             case 1:
                 return "Prefer time saving over precision";
-                break;
             case 2:
                 return "Balance precision and time";
-                break;
             case 3:
                 return "Prefer precision over time saving";
-                break;
             case 4:
                 return "Max precision, no matter time";
-                break;
             }
         }
     });
@@ -262,14 +248,7 @@ $(document).ready(function () {
                   { text: 'Id', datafield: 'ReqId', width: 100 },
                   { text: 'Name', datafield: 'ReqName', width: 300 },
                   { text: 'Status', datafield: 'ReqStatus', width: 300 }
-//                  { text: 'Description', datafield: 'ReqDesc', width: 300 }
                 ]
             });
-
-//    $("#jqxgrid").jqxGrid("addrow",null,
-//            { selected: "true",
-//             ReqId: 'R01',
-//             ReqName: "ReqName" ,
-//             ReqDesc: "Description" } );
 });
 

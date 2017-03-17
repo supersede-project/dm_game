@@ -63,7 +63,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                 }
             }
         }).error(function (err) {
-            console.log(err.message);
+            alert(err.message);
         });
     }
 
@@ -140,6 +140,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         .success(function (data) {
             properties = data;
             fillPropertiesGrid();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -167,8 +169,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
         }).error(function (err) {
-            $("#submitted").html("<strong>Unable to save the dependencies!</strong>");
-            console.log(err.message);
+            $("#submitted").html("<strong>Unable to save the dependencies: " + err.message + "</strong>");
         });
     };
 
@@ -189,14 +190,15 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                 method: 'POST'
             }).success(function () {
                 $("#property_status").html("<strong>Property successfully saved!</strong>");
+
                 // Update the grid containing properties
                 getRequirementProperties();
+
                 // Clear the content of the two input fields
                 $("#property_name").val("");
                 $("#property_value").val("");
             }).error(function (err) {
-                $("#property_status").html("<strong>Unable to save the given property!</strong>");
-                console.log(err.message);
+                $("#property_status").html("<strong>Unable to save the given property: " + err.message + "</strong>");
             });
         }
     };
@@ -219,8 +221,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         }).success(function () {
             $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
         }).error(function (err) {
-            $("#requirement_status").html("<strong>Unable to update the given requirement!</strong>");
-            console.log(err.message);
+            $("#requirement_status").html("<strong>Unable to update the given requirement: " + err.message + "</strong>");
         });
     };
 
@@ -236,15 +237,13 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             requirements.push(data);
             loadRequirements();
         }).error(function (err) {
-            console.log(err.message);
+            alert(err.message);
         });
     };
 
     function getCurrentRequirementIndex() {
-        for (var i = 0; i < requirements.length; i++)
-        {
-            if (currentRequirementId === requirements[i].requirementId)
-            {
+        for (var i = 0; i < requirements.length; i++) {
+            if (currentRequirementId === requirements[i].requirementId) {
                 return i;
             }
         }
@@ -286,6 +285,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
 
             currentRequirementId = requirements[currentRequirementIndex].requirementId;
             loadCurrentRequirement();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 

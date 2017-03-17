@@ -109,6 +109,8 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             console.log("properties:");
             console.log(properties);
             fillPropertiesGrid();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -139,8 +141,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
         }).error(function (err) {
-            $("#submitted").html("<strong>Unable to save the dependencies!</strong>");
-            console.log(err.message);
+            $("#submitted").html("<strong>Unable to save the dependencies: " + err.message + "</strong>");
         });
     };
 
@@ -174,13 +175,15 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
                 method: 'POST'
             }).success(function () {
                 $("#property_status").html("<strong>Property successfully saved!</strong>");
+
                 // Update the grid containing properties
                 getRequirementProperties();
+
                 // Clear the content of the two input fields
                 $("#property_name").val("");
                 $("#property_value").val("");
             }).error(function (err) {
-                $("#property_status").html("<strong>Unable to save the given property!</strong>");
+                $("#property_status").html("<strong>Unable to save the given property: " + err.message + "</strong>");
                 console.log(err.message);
             });
         }
@@ -199,7 +202,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }).success(function () {
             $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
         }).error(function (err) {
-            $("#requirement_status").html("<strong>Unable to update the given requirement!</strong>");
+            $("#requirement_status").html("<strong>Unable to update the given requirement: " + err.message + "</strong>");
             console.log(err.message);
         });
     };
@@ -208,5 +211,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     .success(function (data) {
         $scope.requirements = data;
         loadCurrentRequirement();
+    }).error(function (err) {
+        alert(err.message);
     });
 });

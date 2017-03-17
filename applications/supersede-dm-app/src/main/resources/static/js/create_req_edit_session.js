@@ -19,8 +19,11 @@ app.controllerProvider.register('create_req_edit_session', function($scope, $htt
 	$scope.procId = $location.search().procId;
 	
 	$scope.proceed = function() {
-		$http.post('supersede-dm-app/processes/requirements/edit/collaboratively?procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
+	    $http.post('supersede-dm-app/processes/requirements/edit/collaboratively?procId=' + $scope.procId)
+        .success(function (data) {
+            $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        }).error(function (err) {
+            alert(err.message);
 		});
 	};
 	
@@ -29,19 +32,19 @@ app.controllerProvider.register('create_req_edit_session', function($scope, $htt
 	};
 	
 	$scope.close = function() {
-		$http.post('supersede-dm-app/processes/requirements/edit/collaboratively?act=close&procId=' + $scope.procId ).success(function(data) {
+	    $http.post('supersede-dm-app/processes/requirements/edit/collaboratively?act=close&procId=' + $scope.procId)
+        .success(function (data) {
 			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
+        }).error(function (err) {
+            alert(err.message);
+        });
 	};
 	
-	$scope.ongoingSession = function() {
-		return $scope.session === true;
-	}
+	$scope.ongoingSession = function () {
+	    return $scope.session === true;
+	};
 	
 	$http.get('supersede-dm-app/processes/requirements/edit/collaboratively?procId=' + $scope.procId ).success(function(data) {
 		$scope.session = (data.length > 0);
 	});
-});
-
-$(document).ready(function () {
 });

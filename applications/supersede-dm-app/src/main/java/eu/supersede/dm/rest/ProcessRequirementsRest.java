@@ -328,7 +328,7 @@ public class ProcessRequirementsRest
             }
             catch (Exception e)
             {
-                throw new InternalServerErrorException(e.getMessage());
+                throw new InternalServerErrorException("No next phase available");
             }
         }
 
@@ -344,7 +344,7 @@ public class ProcessRequirementsRest
 
         if (phase.getPrevPhases().isEmpty())
         {
-            throw new InternalServerErrorException("No next phase available");
+            throw new InternalServerErrorException("No previous phase available");
         }
 
         // Assume only one next phase is possible
@@ -360,11 +360,11 @@ public class ProcessRequirementsRest
             }
             catch (Exception e)
             {
-                throw new InternalServerErrorException(e.getMessage());
+                throw new InternalServerErrorException("No previous phase available");
             }
         }
 
-        throw new InternalServerErrorException("No next phase available");
+        throw new InternalServerErrorException("No previous phase available");
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)

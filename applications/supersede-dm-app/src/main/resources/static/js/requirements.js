@@ -16,9 +16,9 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('requirements', function($scope, $http, $location) {
 
-	$scope.now = function() {
-		return new Date().toJSON().slice(0,19).replace("T", " ");
-	}
+    $scope.now = function () {
+        return new Date().toJSON().slice(0, 19).replace("T", " ");
+    };
 	
     $scope.players = [];
     $scope.requirements = [];
@@ -38,24 +38,26 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
     
     $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
 	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
+		for(var i = 0; i < data.length; i++) {
 			$scope.players.push(data[i]);
 		}
+	}).error(function(err) {
+	    alert(err.message);
 	});
     
-    $http.get('supersede-dm-app/requirement').success(function(data) {
+    $http.get('supersede-dm-app/requirement')
+    .success(function (data) {
 		for (var i = 0; i < data.length; i++) {
-			$scope.requirements.push(data[i]);
-		    $("#jqxListBox").jqxListBox('addItem', 
-		    		{ label: data[i].name } );
+		    $scope.requirements.push(data[i]);
+		    $("#jqxListBox").jqxListBox({ width: 700 });
+		    $("#jqxListBox").jqxListBox('addItem', { label: data[i].name } );
 		}
-	});
+    }).error(function (err) {
+        alert(err.message);
+    });
     
-    $http.get('supersede-dm-app/alerts/biglist').success(function(data) {
-    	
-//    	console.log( data );
-    	
+    $http.get('supersede-dm-app/alerts/biglist')
+    .success(function (data) {
         var source =
         {
             datatype: "json",
@@ -78,13 +80,7 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
         {
             width: 900,
             source: dataAdapter,
-//            pageable: true,
-//            columnsResize: true,
-//            altRows: true,
             groupable: true,
-//            ready: function () {
-//                $("#treeGrid").jqxTreeGrid('expandRow', "0");
-//            },
             columns: [
               { text: 'App', dataField: 'applicationId', width: 50 },
               { text: 'Alert', dataField: 'alertId', width: 50 },
@@ -96,18 +92,15 @@ app.controllerProvider.register('requirements', function($scope, $http, $locatio
               { text: 'Pos.', dataField: 'pos', width: 58 },
               { text: 'Neg.', dataField: 'neg', width: 58 },
               { text: 'Overall.', dataField: 'overall', width: 50 }
-//              { text: 'Features.', dataField: 'features', width: 120 }
-            ]
-        ,groups: ['applicationId', 'alertId']
+            ],
+            groups: ['applicationId', 'alertId']
         });
+    }).error(function (err) {
+        alert(err.message);
     });
     
-	$scope.toPage = function(page) {
-		alert(page);
-		$scope.currentPage = page;
-	}
-});
-
-$(document).ready(function () {
-        $("#jqxListBox").jqxListBox({ width: 700 });
+    $scope.toPage = function (page) {
+        alert(page);
+        $scope.currentPage = page;
+    };
 });

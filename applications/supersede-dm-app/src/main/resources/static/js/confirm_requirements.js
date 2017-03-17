@@ -19,13 +19,15 @@ app.controllerProvider.register('confirm_requirements', function($scope, $http, 
 	$scope.procId = $location.search().procId;
 	
 	$scope.proceed = function() {
-		$http.put('supersede-dm-app/processes/requirements/confirm?procId=' + $scope.procId ).success(function(data) {
-			$location.url('supersede-dm-app/process?procId=' + $scope.procId);
-		});
+	    $http.put('supersede-dm-app/processes/requirements/confirm?procId=' + $scope.procId)
+        .success(function (data) {
+            $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        }).error(function (err) {
+            alert(err.message);
+        });
 	};
 	
 	$scope.cancel = function() {
 		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
 	};
-
 });

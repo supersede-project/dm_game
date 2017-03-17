@@ -45,6 +45,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                 { text: 'Email', datafield: 'email', width: '40%' }
             ]
         });
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $http({
@@ -74,6 +76,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                 { text: 'Description', datafield: 'description', width: '60%' }
             ]
         });
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $http({
@@ -103,6 +107,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                 { text: 'Description', datafield: 'description', width: '60%' }
             ]
         });
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $http({
@@ -114,6 +120,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
           }
     }).success(function(data){
         $scope.processStatus = data;
+    }).error(function (err) {
+        alert(err.message);
     });
 
     function loadActivities() {
@@ -143,6 +151,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                     return table;
                 }
             });
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -157,9 +167,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         }).success(function (data) {
         	$scope.processStatus = data;
             loadActivities();
-        }).error(function (error) {
-            console.log(error);
-            window.alert( error );
+        }).error(function (err) {
+            alert(err.message);
         });
     } );
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
@@ -171,8 +180,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         }).success(function (data) {
         	$scope.processStatus = data;
             loadActivities();
-        }).error(function (error) {
-            console.log(error);
+        }).error(function (err) {
+            alert(err.message);
         });
     } );
 });

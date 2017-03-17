@@ -24,10 +24,9 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
         $http.put('supersede-dm-app/processes/alerts/convert?alertId=' + alertId + '&procId=' + procId)
         .success(function (data) {
             $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully converted to a requirement</strong>");
-        }).error(function(err, data) {
-            $("#converted" + alertId).html("<strong>Unable to convert alert " + alertId + " to a requirement</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function(err) {
+            $("#converted" + alertId).html("<strong>Unable to convert alert " + alertId +
+                " to a requirement: " + err.message + "</strong>");
         });
     };
 
@@ -35,12 +34,21 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
         $http.put('supersede-dm-app/alerts/discard?alertId=' + alertId)
         .success(function (data) {
             $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully discarded</strong>");
-        }).error(function (err, data) {
-            $("#converted" + alertId).html("<strong>Unable to discard alert " + alertId + "</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function (err) {
+            $("#converted" + alertId).html("<strong>Unable to discard alert " + alertId + ": " + err.message + "</strong>");
         });
     };
+
+    function getUserRequests(alertId) {
+        $http.get('supersede-dm-app/alerts/userrequests?alertId=' + alertId)
+        .success(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $scope.userRequests.push(data[i]);
+            }
+        }).error(function (err) {
+            alert("Unable to retrieve user requests for alert " + alertId + ": " + err.message);
+        });
+    }
 
     function getAvailableAlerts() {
         $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
@@ -49,17 +57,10 @@ app.controllerProvider.register('convert_alerts_to_requirements', function ($sco
             console.log(alerts);
 
             for (var i = 0; i < alerts.length; i++) {
-                $http.get('supersede-dm-app/alerts/userrequests?alertId=' + alerts[i].id)
-                .success(function (data) {
-                    for (var j = 0; j < data.length; i++) {
-                        $scope.userRequests.push(data[j]);
-                    }
-                }).error(function (err, data) {
-                    console.log("Unable to retrieve user requests for alert " + alerts[i].id);
-                    console.log(err);
-                    console.log(data);
-                });
+                getUserRequests(alerts[i].id);
             }
+        }).error(function (err) {
+            alert("Unable to retrieve alerts: " + err.message);
         });
     }
 

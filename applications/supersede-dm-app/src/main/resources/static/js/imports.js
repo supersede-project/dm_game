@@ -61,6 +61,8 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
             });
 
             getAddedRequirements();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -86,6 +88,8 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
                     $("#requirements").jqxGrid("unselectrow", i);
                 }
             }
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -108,10 +112,8 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         })
         .success(function(data) {
             $scope.home();
-        }).error(function (err, data) {
-            $("#imported").html("<strong>Unable to add the selected requirements to the process!</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function (err) {
+            $("#imported").html("<strong>Unable to add the selected requirements to the process: " + err.message + "</strong>");
         });
     };
 
@@ -167,6 +169,8 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
             });
 
             getAddedUsers();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -192,6 +196,8 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
                     $("#users").jqxGrid("unselectrow", i);
                 }
             }
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -213,10 +219,8 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
         })
         .success(function (data) {
             $scope.home();
-        }).error(function (err, data) {
-            $("#imported").html("<strong>Unable to add the selected users to the process!</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function (err) {
+            $("#imported").html("<strong>Unable to add the selected users to the process: " + err.message + "</strong>");
         });
     };
 
@@ -230,7 +234,6 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 app.controllerProvider.register('import_criteria', function($scope, $http, $location) {
 
     $scope.procId = $location.search().procId;
-
     $scope.gameCriteriaId = [];
 
     var availableCriteria = {};
@@ -273,6 +276,8 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
             });
 
             getAddedCriteria();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -298,6 +303,8 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                     $("#criteria").jqxGrid("unselectrow", i);
                 }
             }
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -319,10 +326,8 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         })
         .success(function (data) {
             $scope.home();
-        }).error(function (err, data) {
-            $("#imported").html("<strong>Unable to add the selected criteria to the process!</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function (err) {
+            $("#imported").html("<strong>Unable to add the selected criteria to the process: " + err.message + "</strong>");
         });
     };
 
@@ -336,7 +341,6 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
 app.controllerProvider.register('import_alerts', function ($scope, $http, $location) {
 
     $scope.procId = $location.search().procId;
-
     $scope.alertsId = [];
 
     var availableAlerts = {};
@@ -352,10 +356,9 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     };
 
     function getAvailableAlerts() {
-        $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
-
-            availableAlerts =
-            {
+        $http.get('supersede-dm-app/alerts/biglist')
+        .success(function (data) {
+            availableAlerts = {
                 datatype: "json",
                 localdata: data,
                 datafields: [
@@ -372,8 +375,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 ],
             };
             var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
-            $("#alerts").jqxGrid(
-            {
+            $("#alerts").jqxGrid({
                 width: "100%",
                 source: dataAdapter,
                 selectionmode: 'checkbox',
@@ -394,6 +396,8 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             });
 
             getAddedAlerts();
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -419,11 +423,12 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                     $("#alerts").jqxGrid("unselectrow", i);
                 }
             }
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
     function defineProcessData() {
-
         // TODO: check how to avoid having the same alert added multiple times if alerts are grouped by columns
         var selectedAlerts = $("#alerts").jqxGrid("selectedrowindexes");
         $scope.alerts.localdata = [];
@@ -447,10 +452,8 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         })
         .success(function (data) {
             $scope.home();
-        }).error(function (err, data) {
-            $("#imported").html("<strong>Unable to add the selected alerts to the process!</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function (err) {
+            $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
         });
     };
 

@@ -25,6 +25,8 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     $http.get('/supersede-dm-app/user/current')
     .success(function (data) {
         $scope.user = data;
+    }).error(function (err) {
+        alert(err.message);
     });
 
     $scope.hasRole = function (role) {
@@ -35,19 +37,18 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 }
             }
         }
+
         return false;
     };
 
     // Get alerts
-    $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
+    $http.get('supersede-dm-app/alerts/biglist')
+    .success(function (data) {
         $scope.alertsNum = data.length;
 
-        $http.get('supersede-dm-app/alerts/biglist').success(function (data) {
-            console.log("Alerts:");
-            console.log(data);
-
-            var source =
-            {
+        $http.get('supersede-dm-app/alerts/biglist')
+        .success(function (data) {
+            var source = {
                 datatype: "json",
                 localdata: data,
                 datafields: [
@@ -64,8 +65,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 ],
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#gridAlerts").jqxGrid(
-            {
+            $("#gridAlerts").jqxGrid({
                 width: "100%",
                 source: dataAdapter,
                 groupable: true,
@@ -85,11 +85,16 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             });
 
             $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
+        }).error(function (err) {
+            alert(err.message);
         });
+    }).error(function (err) {
+        alert(err.message);
     });
 
     // Get requirements
-    $http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1').success(function(data) {
+    $http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1')
+    .success(function (data) {
         $scope.reqNum = data.length;
 
         var source = {
@@ -112,10 +117,13 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
 
         $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
     });
 
     // Get activities
-    $http.get('supersede-dm-app/processes/activities/list').success(function(data) {
+    $http.get('supersede-dm-app/processes/activities/list')
+    .success(function (data) {
         $scope.actNum = data.length;
 
         var source = {
@@ -150,14 +158,14 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
 
         $("#expActivities").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
     });
 
 
     $scope.loadProcesses = function () {
-        $http.get('supersede-dm-app/processes/list').success(function (data) {
-            //            $('#listbox').jqxListBox('clear');
-            console.log("procNum:");
-            console.log(data.length);
+        $http.get('supersede-dm-app/processes/list')
+        .success(function (data) {
             $scope.procNum = data.length;
             var source = {
                 localdata: data,
@@ -201,6 +209,8 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             });
 
             $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
+        }).error(function (err) {
+            alert(err.message);
         });
     };
 
@@ -208,7 +218,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
 
     $scope.createNewProcess = function() {
     	var name = prompt( "Enter process name", "");
-    	if( name != null ) {
+        if (name !== null) {
     		$http.post('supersede-dm-app/processes/new?name=' + name).success(function(data) {
     			loadProcesses();
     		});
@@ -219,7 +229,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
 });
 
 function closeProcess(procId) {
-    console.log("closing process " + procId);
     http.post('supersede-dm-app/processes/close?procId=' + procId)
     .success(function (data) {
         loadProcesses();
@@ -229,7 +238,6 @@ function closeProcess(procId) {
 }
 
 function deleteProcess(procId) {
-    console.log("deleting process " + procId);
     http.post('supersede-dm-app/processes/delete?procId=' + procId)
     .success(function (data) {
         loadProcesses();

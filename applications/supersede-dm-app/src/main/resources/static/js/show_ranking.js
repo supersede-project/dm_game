@@ -34,6 +34,8 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
                 var requirementId = data[i].requirementId;
                 requirements[requirementId] = data[i];
             }
+        }).error(function(err) {
+            alert(err.message);
         });
 	});
 

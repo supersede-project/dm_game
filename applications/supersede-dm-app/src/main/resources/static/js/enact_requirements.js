@@ -22,7 +22,9 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
 	    $http.put('supersede-dm-app/processes/rankings/enact?procId=' + procId)
         .success(function (data) {
 			$location.url('supersede-dm-app/process?procId=' + procId);
-		});
+        }).error(function (err) {
+            alert(err.message);
+        });
 	};
 
 	$scope.cancel = function() {
