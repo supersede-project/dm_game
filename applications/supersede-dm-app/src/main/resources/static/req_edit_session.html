@@ -10,9 +10,6 @@
     textarea {
         height: 10em;
     }
-    #left_splitter {
-        height: 100%;
-    }
     #current_requirement {
         padding: 2%;
     }
@@ -35,7 +32,7 @@
                     <strong>Name:</strong><br>
                     <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
                     <strong>Description:</strong><br>
-                    <textarea id="current_requirement_description" value="{{currentRequirement.description}}"></textarea><br><br><br>
+                    <textarea id="current_requirement_description">{{currentRequirement.description}}</textarea><br><br><br>
                 </form>
                 <jqx-button ng-click="updateRequirement()">Update requirement</jqx-button>
                 <p id="requirement_status"></p>

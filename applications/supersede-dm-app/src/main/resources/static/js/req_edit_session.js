@@ -111,6 +111,11 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
 
     function loadCurrentRequirement() {
         $scope.currentRequirement = requirements[currentRequirementIndex];
+
+        // Force the content change of the textarea containing the requirement description
+        // TODO: check why it is not automatically updated
+        $("#current_requirement_description").val($scope.currentRequirement.description);
+
         fillDependenciesGrid();
         getRequirementProperties();
         $("#requirement_status").html("");
@@ -162,6 +167,11 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     };
 
     $scope.updateRequirement = function () {
+        // Update the local copy of the requirement
+        requirements[currentRequirementIndex].name = $("#current_requirement_name").val();
+        requirements[currentRequirementIndex].description = $("#current_requirement_description").val();
+
+        // Update the remote copy of the requirement
         var requirement = {};
         requirement.requirementId = currentRequirementId;
         requirement.name = $("#current_requirement_name").val();
@@ -222,7 +232,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                 source: dataAdapter,
                 displayMember: "name",
                 valueMember: "id",
-                height: '100%', width: '100%',
+                width: '100%',
                 renderer: function (index, label, value) {
                     return data[index].name;
                 }
