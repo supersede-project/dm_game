@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.ProcessManager;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
@@ -63,7 +64,7 @@ public class ProcessAlertsRest
 
         if (alertsId == null)
         {
-            // No alert has been added to the process.
+            // No alerts have been added to the process.
             return;
         }
 
@@ -73,7 +74,8 @@ public class ProcessAlertsRest
 
             if (alert == null)
             {
-                continue;
+                throw new NotFoundException(
+                        "Can't add alert with id " + alertId + " to the process because it does not exist");
             }
 
             proc.addAlert(alert);
@@ -83,8 +85,7 @@ public class ProcessAlertsRest
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<HAlert> getAlertsList(@RequestParam Long procId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
-        return proc.getAlerts();
+        return DMGame.get().getProcessManager(procId).getAlerts();
     }
 
     @RequestMapping(value = "/convert", method = RequestMethod.PUT)
@@ -92,7 +93,13 @@ public class ProcessAlertsRest
     {
         ProcessManager proc = DMGame.get().getProcessManager(procId);
         HAlert alert = alertsJpa.findOne(alertId);
-        System.out.println("Converting alert " + alertId + " to a requirement");
+
+        if (alert == null)
+        {
+            throw new NotFoundException(
+                    "Can't convert alert with id " + alertId + " to a requirement because it does not exist");
+        }
+
         List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alertId);
 
         if (requests == null || requests.size() == 0)
@@ -121,7 +128,7 @@ public class ProcessAlertsRest
                     RequirementProperties.OVERALL_SENTIMENT, "" + request.getOverallSentiment()));
         }
 
-        System.out.println("Discarding alert " + alertId);
+        // Discard alert
         alertsJpa.delete(alert);
     }
 }

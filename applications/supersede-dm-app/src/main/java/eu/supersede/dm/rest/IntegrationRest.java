@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.DMGame;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HApp;
 import eu.supersede.gr.model.HReceivedUserRequest;
@@ -58,8 +59,7 @@ public class IntegrationRest
 
         if (alert.getId() == null)
         {
-            System.err.println("alert.getId() IS NULL!");
-            alert.setID("id-" + System.currentTimeMillis());
+            throw new InternalServerErrorException("Can't notify alert without id");
         }
 
         HAlert halert = DMGame.get().getJpa().alerts.findOne(alert.getId());
@@ -77,8 +77,7 @@ public class IntegrationRest
 
             if (hrur.getId() == null)
             {
-                System.err.println("hrur.getID() IS NULL!");
-                hrur.setId("UR" + System.currentTimeMillis());
+                throw new InternalServerErrorException("Can't notify alert with a user request without id");
             }
 
             hrur.setAlertId(alert.getId());

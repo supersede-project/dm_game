@@ -50,14 +50,14 @@ public class CriteriaRest
     @RequestMapping("/{criteriaId}")
     public ValutationCriteria getCriteria(@PathVariable Long criteriaId)
     {
-        ValutationCriteria c = valutationCriterias.findOne(criteriaId);
+        ValutationCriteria criterion = valutationCriterias.findOne(criteriaId);
 
-        if (c == null)
+        if (criterion == null)
         {
-            throw new NotFoundException();
+            throw new NotFoundException("Criterion with id " + criteriaId + " does not exist");
         }
 
-        return c;
+        return criterion;
     }
 
     /**
@@ -122,9 +122,15 @@ public class CriteriaRest
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public void editCriteria(@RequestBody ValutationCriteria vc)
     {
-        ValutationCriteria criteria = valutationCriterias.findOne(vc.getCriteriaId());
-        criteria.setName(vc.getName());
-        criteria.setDescription(vc.getDescription());
-        valutationCriterias.save(criteria);
+        ValutationCriteria criterion = valutationCriterias.findOne(vc.getCriteriaId());
+
+        if (criterion == null)
+        {
+            throw new NotFoundException("Can't edit criterion with id " + vc.getCriteriaId() + ": it does not exist");
+        }
+
+        criterion.setName(vc.getName());
+        criterion.setDescription(vc.getDescription());
+        valutationCriterias.save(criterion);
     }
 }

@@ -216,6 +216,13 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     };
 
     loadProcesses();
+
+    http.post('supersede-dm-app/processes/delete?procId=5467568765')
+    .success(function (data) {
+        loadProcesses();
+    }).error(function(err) {
+        alert(err.message);
+    });
 });
 
 function closeProcess(procId) {

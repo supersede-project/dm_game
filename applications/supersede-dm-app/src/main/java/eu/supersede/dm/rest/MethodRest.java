@@ -34,6 +34,7 @@ public class MethodRest
             @RequestParam Map<String, String> args)
     {
         DMMethod m = DMLibrary.get().getMethod(methodName);
+
         if (m != null)
         {
             // m.post( action, args );

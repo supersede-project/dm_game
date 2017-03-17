@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import eu.supersede.fe.exception.InternalServerErrorException;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.AppsJpa;
@@ -253,17 +255,11 @@ public class DMGame
     public void deleteProcess(Long procId)
     {
         ProcessManager mgr = getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return;
-        }
-
         List<HActivity> activities = mgr.getOngoingActivities();
 
         if (activities != null && activities.size() > 0)
         {
-            System.err.println(
+            throw new InternalServerErrorException(
                     "This process contains ongoing activities. To close it, you must close the activities first.");
         }
 
@@ -288,7 +284,14 @@ public class DMGame
 
     public HProcess getProcess(Long processId)
     {
-        return jpa.processes.findOne(processId);
+        HProcess process = jpa.processes.findOne(processId);
+
+        if (process == null)
+        {
+            throw new NotFoundException("Can't find process with id: " + processId);
+        }
+
+        return process;
     }
 
     public PersistedProcess getProcessManager(Long processId)
@@ -303,12 +306,19 @@ public class DMGame
 
     public ValutationCriteria getCriterion(Long id)
     {
-        return this.jpa.criteria.findOne(id);
+        ValutationCriteria criterion = jpa.criteria.findOne(id);
+
+        if (criterion == null)
+        {
+            throw new NotFoundException("Criterion with id " + id + " not found!");
+        }
+
+        return criterion;
     }
 
     public JpaProvider getJpa()
     {
-        return this.jpa;
+        return jpa;
     }
 
     public List<User> getCandidateProcessUsers()

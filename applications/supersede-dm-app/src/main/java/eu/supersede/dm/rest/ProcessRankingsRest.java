@@ -30,6 +30,7 @@ import eu.supersede.dm.RequirementsRanking;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.services.EnactmentService;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.RequirementsRankingsJpa;
 import eu.supersede.gr.model.HRequirementScore;
@@ -56,7 +57,7 @@ public class ProcessRankingsRest
             rr = mgr.getRanking(id);
         }
 
-        // System.out.println("Sending requirements for enactment");
+        // Send requirements for enacting
 
         String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         FeatureList list = new FeatureList();
@@ -64,13 +65,20 @@ public class ProcessRankingsRest
 
         for (HRequirementScore score : rr.getScores())
         {
-            Requirement r = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
+            Requirement requirement = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
+
+            if (requirement == null)
+            {
+                throw new NotFoundException(
+                        "Can't enact requirement with id " + score.getRequirementId() + " because it does not exist");
+            }
+
             Feature feature = new Feature();
-            feature.setName(r.getName());
+            feature.setName(requirement.getName());
             feature.setPriority(score.getPriority().asNumber());
-            feature.setId("" + r.getRequirementId());
+            feature.setId("" + requirement.getRequirementId());
             list.list().add(feature);
-            requirements.add(r);
+            requirements.add(requirement);
         }
 
         try
@@ -97,21 +105,13 @@ public class ProcessRankingsRest
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<RequirementsRanking> getRankings(@RequestParam Long procId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return null;
-        }
-
-        return mgr.getRankings();
+        return DMGame.get().getProcessManager(procId).getRankings();
     }
 
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
     public void doEnactRanking(Authentication authentication, @RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        System.out.println("Sending requirements for enactment");
         List<RequirementsRanking> rlist = mgr.getRankings();
 
         for (RequirementsRanking rr : rlist)
@@ -128,13 +128,20 @@ public class ProcessRankingsRest
 
             for (HRequirementScore score : rr.getScores())
             {
-                Requirement r = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
+                Requirement requirement = DMGame.get().getJpa().requirements.findOne(score.getRequirementId());
+
+                if (requirement == null)
+                {
+                    throw new NotFoundException("Can't enact requirement with id " + score.getRequirementId()
+                            + " because it does not exist");
+                }
+
                 Feature feature = new Feature();
-                feature.setName(r.getName());
+                feature.setName(requirement.getName());
                 feature.setPriority(score.getPriority().asNumber());
-                feature.setId("" + r.getRequirementId());
+                feature.setId("" + requirement.getRequirementId());
                 list.list().add(feature);
-                requirements.add(r);
+                requirements.add(requirement);
             }
 
             try

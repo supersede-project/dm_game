@@ -30,6 +30,8 @@ import eu.supersede.dm.DMGame;
 import eu.supersede.dm.DMPhase;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
+import eu.supersede.fe.exception.InternalServerErrorException;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
@@ -68,36 +70,34 @@ public class ProcessRequirementsRest
 
         for (Long requirementId : requirementsId)
         {
-            Requirement r = DMGame.get().getJpa().requirements.findOne(requirementId);
+            Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
-            if (r == null)
+            if (requirement == null)
             {
-                continue;
+                throw new NotFoundException(
+                        "Can't add requirement with id " + requirementId + " to the process because it does not exist");
             }
 
-            proc.addRequirement(r);
+            proc.addRequirement(requirement);
         }
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<Requirement> getRequirementsList(@RequestParam Long procId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
-        return proc.getRequirements();
+        return DMGame.get().getProcessManager(procId).getRequirements();
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public Requirement getRequirement(@RequestParam Long procId, @RequestParam Long reqId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
-        return proc.getRequirement(reqId);
+        return DMGame.get().getProcessManager(procId).getRequirement(reqId);
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public int getRequirementsCount(@RequestParam Long procId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
-        return proc.getRequirementsCount();
+        return DMGame.get().getProcessManager(procId).getRequirementsCount();
     }
 
     // Checks if a certain status pertains ALL the requirements
@@ -135,25 +135,12 @@ public class ProcessRequirementsRest
             @RequestParam(name = "status") String statusString)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        RequirementStatus status = RequirementStatus.valueOf(statusString);
 
-        if (mgr == null)
+        for (Requirement r : mgr.getRequirements())
         {
-            return;
-        }
-
-        try
-        {
-            RequirementStatus status = RequirementStatus.valueOf(statusString);
-
-            for (Requirement r : mgr.getRequirements())
-            {
-                r.setStatus(status.getValue());
-                DMGame.get().getJpa().requirements.save(r);
-            }
-        }
-        catch (Exception ex)
-        {
-            throw ex;
+            r.setStatus(status.getValue());
+            DMGame.get().getJpa().requirements.save(r);
         }
     }
 
@@ -233,11 +220,6 @@ public class ProcessRequirementsRest
 
         for (Requirement r : mgr.getRequirements())
         {
-            if (r == null)
-            {
-                continue;
-            }
-
             RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
 
             if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Confirmed))
@@ -272,8 +254,7 @@ public class ProcessRequirementsRest
     @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
     public Map<Long, List<Long>> getDependencies(@RequestParam Long procId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
-        List<Requirement> requirements = mgr.getRequirements();
+        List<Requirement> requirements = DMGame.get().getProcessManager(procId).getRequirements();
 
         Map<Long, List<Long>> dependencies = new HashMap<>();
 
@@ -301,17 +282,10 @@ public class ProcessRequirementsRest
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public Requirement createRequirement(@RequestParam Long procId, @RequestParam String name)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return null;
-        }
-
         Requirement r = new Requirement();
         r.setName(name);
         r = DMGame.get().getJpa().requirements.save(r);
-        mgr.addRequirement(r);
+        DMGame.get().getProcessManager(procId).addRequirement(r);
         return r;
     }
 
@@ -338,7 +312,7 @@ public class ProcessRequirementsRest
 
         if (phase.getNextPhases().isEmpty())
         {
-            throw new RuntimeException("No next phase available");
+            throw new InternalServerErrorException("No next phase available");
         }
 
         // Assume only one next phase is possible
@@ -354,11 +328,11 @@ public class ProcessRequirementsRest
             }
             catch (Exception e)
             {
-                throw e;
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
 
-        throw new Exception("No next phase available");
+        throw new InternalServerErrorException("No next phase available");
     }
 
     @RequestMapping(value = "/prev", method = RequestMethod.GET, produces = "text/plain")
@@ -370,7 +344,7 @@ public class ProcessRequirementsRest
 
         if (phase.getPrevPhases().isEmpty())
         {
-            throw new RuntimeException("No next phase available");
+            throw new InternalServerErrorException("No next phase available");
         }
 
         // Assume only one next phase is possible
@@ -386,35 +360,23 @@ public class ProcessRequirementsRest
             }
             catch (Exception e)
             {
-                throw e;
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
 
-        throw new Exception("No next phase available");
+        throw new InternalServerErrorException("No next phase available");
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)
     public List<HActivity> getRequirementsEditingSession(@RequestParam Long procId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return new ArrayList<>();
-        }
-
-        return mgr.getOngoingActivities(AccessRequirementsEditingSession.NAME);
+        return DMGame.get().getProcessManager(procId).getOngoingActivities(AccessRequirementsEditingSession.NAME);
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.POST)
     public void createRequirementsEditingSession(@RequestParam(required = false) String act, @RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return;
-        }
 
         if ("close".equals(act))
         {

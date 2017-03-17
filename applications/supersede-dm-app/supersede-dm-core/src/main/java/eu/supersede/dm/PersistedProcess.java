@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
@@ -124,7 +125,13 @@ public class PersistedProcess extends AbstractProcessManager
     public void removeAlert(String id)
     {
         HAlert alert = DMGame.get().jpa.alerts.findOne(id);
-        alert.setProcessId(Long.MIN_VALUE);
+
+        if (alert == null)
+        {
+            throw new NotFoundException("Can't remove alert with id " + id + " because it does not exist");
+        }
+
+        alert.setProcessId(-1L);
         DMGame.get().jpa.alerts.save(alert);
     }
 
@@ -185,20 +192,20 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public PropertyBag getProperties(HActivity a)
     {
-        HPropertyBag bag = null;
+        HPropertyBag bag;
 
         if (a.getPropertyBag() != null)
         {
             bag = DMGame.get().jpa.propertyBags.findOne(a.getPropertyBag());
         }
-
-        if (bag == null)
+        else
         {
             bag = new HPropertyBag();
             bag = DMGame.get().jpa.propertyBags.save(bag);
-            a.setPropertyBag(bag.getId());
-            a = DMGame.get().jpa.activities.save(a);
         }
+
+        a.setPropertyBag(bag.getId());
+        a = DMGame.get().jpa.activities.save(a);
 
         return new PropertyBag(a);
     }
@@ -243,19 +250,32 @@ public class PersistedProcess extends AbstractProcessManager
     @Override
     public ProcessStatus getProcessStatus()
     {
-        HProcess process = getProcess();
-        return process.getStatus();
+        return getProcess().getStatus();
     }
 
     private HProcess getProcess()
     {
-        return DMGame.get().getJpa().processes.findOne(this.processId);
+        HProcess process = DMGame.get().getJpa().processes.findOne(processId);
+
+        if (process == null)
+        {
+            throw new NotFoundException("Process with id " + processId + " does not exist");
+        }
+
+        return process;
     }
 
     @Override
     public void setProcessStatus(ProcessStatus status)
     {
         HProcess process = getProcess();
+
+        if (process == null)
+        {
+            throw new NotFoundException(
+                    "Can't change status of process with id " + processId + " because it does not exist");
+        }
+
         process.setStatus(status);
         DMGame.get().getJpa().processes.save(process);
     }
@@ -304,16 +324,16 @@ public class PersistedProcess extends AbstractProcessManager
         return phases;
     }
 
-    String getProcessPhaseName(HProcess process)
+    public String getProcessPhaseName(HProcess process)
     {
-        String ret = process.getPhaseName();
+        String phaseName = process.getPhaseName();
 
-        if (ret == null)
+        if (phaseName == null)
         {
-            ret = DMGame.get().getLifecycle().getInitPhase().getName();
+            phaseName = DMGame.get().getLifecycle().getInitPhase().getName();
         }
 
-        return ret;
+        return phaseName;
     }
 
     @Override
@@ -380,7 +400,7 @@ public class PersistedProcess extends AbstractProcessManager
     public RequirementsRanking getRankingByName(String name)
     {
         List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings
-                .findRankingsByProcessIdAndName(this.processId, name);
+                .findRankingsByProcessIdAndName(processId, name);
 
         if (rlist.size() != 1)
         {

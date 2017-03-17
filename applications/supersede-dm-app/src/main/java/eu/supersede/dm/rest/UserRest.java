@@ -72,22 +72,23 @@ public class UserRest
 
         if (proxyUser == null)
         {
-            throw new NotFoundException();
+            throw new NotFoundException("Can't find user with id " + currentUser.getUserId());
         }
 
-        User u = users.findOne(userId);
+        User user = users.findOne(userId);
 
-        if (u == null)
+        if (user == null)
         {
-            u = new User(userId);
-            u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
-            users.save(u);
-            u = users.findOne(userId);
+            // Save the user in the database if it is not already present
+            user = new User(userId);
+            user.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+            user.setEmail(proxyUser.getEmail());
+            return users.save(user);
         }
-
-        u.setEmail(proxyUser.getEmail());
-
-        return u;
+        else
+        {
+            return user;
+        }
     }
 
     /**
@@ -170,9 +171,10 @@ public class UserRest
     public List<User> getCriteriaUsers(@PathVariable Long criteriaId)
     {
         ValutationCriteria v = valutationCriterias.findOne(criteriaId);
+
         if (v == null)
         {
-            throw new NotFoundException();
+            throw new NotFoundException("Criterion with id " + criteriaId + " does not exist");
         }
 
         List<User> userList = userCriteriaPoints.findUsersByValutationCriteria(v);

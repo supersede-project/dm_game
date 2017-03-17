@@ -17,9 +17,6 @@ package eu.supersede.dm.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +27,7 @@ import eu.supersede.dm.DMGame;
 import eu.supersede.dm.DMLibrary;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.ProcessManager;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.ProcessStatus;
@@ -76,44 +74,20 @@ public class ProcessRest
     public String getProcessStatus(@RequestParam Long procId)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return "";
-        }
-
         return mgr.getProcessStatus().name();
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.POST)
-    public void getProcessStatus(@RequestParam Long procId, @RequestParam String status)
+    public void setProcessStatus(@RequestParam Long procId, @RequestParam String status)
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return;
-        }
-
-        try
-        {
-            mgr.setProcessStatus(ProcessStatus.valueOf(status));
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex.getMessage());
-        }
+        mgr.setProcessStatus(ProcessStatus.valueOf(status));
     }
 
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public void closeProcess(@RequestParam Long procId) throws Exception
     {
         ProcessManager mgr = DMGame.get().getProcessManager(procId);
-
-        if (mgr == null)
-        {
-            return;
-        }
 
         for (HActivity a : mgr.getOngoingActivities())
         {
@@ -128,15 +102,7 @@ public class ProcessRest
         }
 
         HProcess p = DMGame.get().getProcess(procId);
-
-        if (p == null)
-        {
-
-            return;
-        }
-
         p.setStatus(ProcessStatus.Closed);
-
         DMGame.get().getJpa().processes.save(p);
     }
 
@@ -145,40 +111,26 @@ public class ProcessRest
     {
         HProcess p = DMGame.get().getProcess(procId);
 
-        if (p == null)
-        {
-            return;
-        }
-
         if (p.getStatus() == ProcessStatus.InProgress)
         {
-            System.err.println("Can't delete process with id " + procId + ": you must close it first");
-            return;
+            throw new InternalServerErrorException(
+                    "Can't delete process with id " + procId + ": you must close it first");
         }
 
         DMGame.get().deleteProcess(procId);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex)
-    {
-        ErrorResponse error = new ErrorResponse();
-        error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        error.setMessage(ex.getMessage());
-        return new ResponseEntity<ErrorResponse>(error, HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
     public String getStatus(@RequestParam Long procId)
     {
-        String ret = DMGame.get().getProcessManager(procId).getCurrentPhase();
+        String status = DMGame.get().getProcessManager(procId).getCurrentPhase();
 
-        if (ret == null)
+        if (status == null)
         {
-            ret = DMGame.get().getLifecycle().getInitPhase().getName();
+            status = DMGame.get().getLifecycle().getInitPhase().getName();
         }
 
-        return ret;
+        return status;
     }
 
     @RequestMapping(value = "/available_activities", method = RequestMethod.GET)

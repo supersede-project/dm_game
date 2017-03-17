@@ -29,17 +29,16 @@ import eu.supersede.dm.OrchestratorUtil;
 @RequestMapping("/orchestration")
 public class OrchestrationRest
 {
-	@Autowired
-	private OrchestratorUtil orchestratorDemo;
+    @Autowired
+    private OrchestratorUtil orchestratorDemo;
 
-	@RequestMapping(value = "/plan", method = RequestMethod.GET)
-	public String doPlan(@RequestParam(defaultValue = "2") Integer accuracy)
-	{
-		DMSolution sol = orchestratorDemo.plan(accuracy);
-		Gson gson = new Gson();
-		String ret = gson.toJson(sol);
-		System.out.println(ret);
-		return ret;
-	}
-
+    @RequestMapping(value = "/plan", method = RequestMethod.GET)
+    public String doPlan(@RequestParam(defaultValue = "2") Integer accuracy)
+    {
+        DMSolution sol = orchestratorDemo.plan(accuracy);
+        Gson gson = new Gson();
+        String ret = gson.toJson(sol);
+        System.out.println(ret);
+        return ret;
+    }
 }

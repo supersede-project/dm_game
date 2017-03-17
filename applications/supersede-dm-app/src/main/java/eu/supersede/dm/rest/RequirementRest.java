@@ -47,6 +47,9 @@ public class RequirementRest
     @Autowired
     private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
+    @Autowired
+    private EntityManager entityManager;
+
     /**
      * Return the requirement with the given id.
      * @param requirementId
@@ -54,19 +57,15 @@ public class RequirementRest
     @RequestMapping("/{requirementId}")
     public Requirement getRequirement(@PathVariable Long requirementId)
     {
-        Requirement c = DMGame.get().getJpa().requirements.findOne(requirementId);
+        Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
-        if (c == null)
+        if (requirement == null)
         {
-            throw new NotFoundException();
+            throw new NotFoundException("Requirement with id " + requirementId + " does not exist");
         }
 
-        return c;
+        return requirement;
     }
-
-    // @PersistenceContext(unitName="dq")
-    @Autowired
-    EntityManager em;
 
     /**
      * Return all the requirements.
@@ -84,15 +83,16 @@ public class RequirementRest
         {
             filter += " processId = " + procId;
         }
-        if ("Neq".equals(procFx))
+        else if ("Neq".equals(procFx))
         {
             filter += " processId != " + procId;
         }
+
         if ("Eq".equals(statusFx))
         {
             filter += " status = " + status;
         }
-        if ("Neq".equals(statusFx))
+        else if ("Neq".equals(statusFx))
         {
             filter += " status != " + status;
         }
@@ -101,11 +101,10 @@ public class RequirementRest
 
         if (!filter.equals(""))
         {
-
             query = query + " WHERE" + filter;
         }
 
-        return em.createQuery(query, Requirement.class).getResultList();
+        return entityManager.createQuery(query, Requirement.class).getResultList();
     }
 
     @RequestMapping(value = "details/list", method = RequestMethod.GET)
@@ -113,23 +112,29 @@ public class RequirementRest
     {
         List<RequirementDetails> list = new ArrayList<>();
         List<Requirement> reqlist = DMGame.get().getJpa().requirements.findAll();
+
         for (Requirement r : reqlist)
         {
             RequirementDetails details = new RequirementDetails(r);
             List<HRequirementDependency> deps = DMGame.get().getJpa().requirementDependencies
                     .findByRequirementId(r.getRequirementId());
+
             for (HRequirementDependency d : deps)
             {
                 details.addDependency(d);
             }
+
             List<HRequirementProperty> props = DMGame.get().getJpa().requirementProperties
                     .findPropertiesByRequirementId(r.getRequirementId());
+
             for (HRequirementProperty p : props)
             {
                 details.setProperty(p);
             }
+
             list.add(details);
         }
+
         return list;
     }
 
@@ -188,6 +193,13 @@ public class RequirementRest
     public void editRequirement(@RequestBody Requirement r)
     {
         Requirement requirement = DMGame.get().getJpa().requirements.findOne(r.getRequirementId());
+
+        if (requirement == null)
+        {
+            throw new NotFoundException(
+                    "Can't edit requirement with id " + r.getRequirementId() + " because it does not exist");
+        }
+
         requirement.setName(r.getName());
         requirement.setDescription(r.getDescription());
         DMGame.get().getJpa().requirements.save(requirement);

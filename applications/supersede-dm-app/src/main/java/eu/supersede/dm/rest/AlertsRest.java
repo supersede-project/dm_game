@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.datamodel.Alert;
 import eu.supersede.dm.datamodel.RequestClassification;
 import eu.supersede.dm.datamodel.UserRequest;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.AppsJpa;
 import eu.supersede.gr.jpa.ReceivedUserRequestsJpa;
@@ -98,7 +99,12 @@ public class AlertsRest
     public void discard(@RequestParam String alertId)
     {
         HAlert alert = alertsJpa.findOne(alertId);
-        System.out.println("Discarding alert " + alert.getId());
+
+        if (alert == null)
+        {
+            throw new NotFoundException("Can't delete alert with id " + alertId + " because it does not exist");
+        }
+
         alertsJpa.delete(alert);
     }
 
