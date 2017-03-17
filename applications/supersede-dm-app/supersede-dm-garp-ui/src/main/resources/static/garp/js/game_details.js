@@ -29,6 +29,8 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         $http.put('supersede-dm-app/garp/game/rankings/save?procId=' + $scope.procId + "&gameId=" + gameId + "&name=GA-Default")
         .success(function (data) {
             $location.url('supersede-dm-app/process').search('procId', $scope.procId);
+        }).error(function (err) {
+            alert(err.message);
         });
     };
 
@@ -40,14 +42,14 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
             var currentRequirement = requirements[i];
             $scope.gameRequirements[currentRequirement.requirementId] = currentRequirement;
         }
-    }).error(function(err){
+    }).error(function(err) {
         alert(err.message);
     });
 
     $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
     .success(function(data) {
         $scope.solution = data;
-    }).error(function(err){
+    }).error(function(err) {
         alert(err.message);
     });
 
@@ -67,8 +69,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         .success(function(data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function(err){
-            $("#game_status").html("<strong>Unable to close the game!</strong>");
-            console.log(err.message);
+            $("#game_status").html("<strong>Unable to close the game: " + err.message + "</strong>");
         });
     };
 
@@ -77,8 +78,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         .success(function (data) {
             $("#game_status").html("<strong>Game successfully opened!</strong>");
         }).error(function (err) {
-            $("#game_status").html("<strong>Unable to open the game!</strong>");
-            console.log(err.message);
+            $("#game_status").html("<strong>Unable to open the game: " + err.message + "</strong>");
         });
     };
 

@@ -127,8 +127,6 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     function loadActivities() {
         $http.get('supersede-dm-app/processes/available_activities?procId=' + procId)
         .success(function (data) {
-            console.log("Loading activities:");
-            console.log(data);
             $("#procList").jqxListBox('clear');
             $("#procList").jqxListBox({
                 source: data,

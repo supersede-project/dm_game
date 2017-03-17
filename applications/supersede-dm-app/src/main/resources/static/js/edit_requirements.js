@@ -106,8 +106,6 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         $http.get('supersede-dm-app/processes/requirements/properties?procId=' + $scope.procId + '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
-            console.log("properties:");
-            console.log(properties);
             fillPropertiesGrid();
         }).error(function (err) {
             alert(err.message);
@@ -131,8 +129,6 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     $scope.submitDependencies = function () {
         saveDependencies();
-        console.log("Submit dependencies");
-        console.log(dependencies);
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
@@ -184,7 +180,6 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
                 $("#property_value").val("");
             }).error(function (err) {
                 $("#property_status").html("<strong>Unable to save the given property: " + err.message + "</strong>");
-                console.log(err.message);
             });
         }
     };
@@ -203,7 +198,6 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
         }).error(function (err) {
             $("#requirement_status").html("<strong>Unable to update the given requirement: " + err.message + "</strong>");
-            console.log(err.message);
         });
     };
 

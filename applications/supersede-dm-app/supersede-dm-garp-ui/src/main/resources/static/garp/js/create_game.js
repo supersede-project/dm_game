@@ -163,13 +163,14 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                     { text: 'Description', datafield: 'description' }
                 ]
             });
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
     function getAvailablePlayers() {
         $http.get('supersede-dm-app/processes/users/list/detailed?procId=' + $scope.procId)
         .success(function(data) {
-        	console.log( data );
             availablePlayers = {
                 datatype: "json",
                 datafields: [
@@ -207,6 +208,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                     { text: 'Email', datafield: 'email' }
                 ]
             });
+        }).error(function (err) {
+            alert(err.message);
         });
     }
 
@@ -237,9 +240,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
 
-        console.log("selected opinion providers:");
-        console.log($scope.gameOpinionProviders.localdata);
-
         var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
         for (i = 0; i < selectedNegotiators.length; i++) {
             var selectedNegotiator = $("#negotiators").jqxGrid('getrowdata', selectedNegotiators[i]);
@@ -249,11 +249,10 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function setPlayersWeights() {
-        console.log("Set player weights");
         for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
             var currentCriterion = $scope.gameCriteria.localdata[i];
             weightsId.players[currentCriterion.sourceId] = {};
-            console.log(weightsId);
+
             for (var j = 0; j < $scope.gameOpinionProviders.localdata.length; j++) {
                 var currentOpinionProvider = $scope.gameOpinionProviders.localdata[j];
                 var opinionProviderValue = $("#criterion" + currentCriterion.sourceId + "player" + currentOpinionProvider.userId + " > div").jqxSlider('value');
@@ -261,23 +260,17 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 weights.players.localdata[i].sourceId = currentCriterion.sourceId;
                 weights.players.localdata[i].weight = opinionProviderValue;
                 weightsId.players[currentCriterion.sourceId][currentOpinionProvider.userId] = opinionProviderValue;
-                console.log(weightsId);
             }
         }
     }
 
     function setCriteriaWeights() {
-        console.log("Set criteria weights");
         for (var i = 0; i < $scope.gameCriteria.localdata.length; i++) {
             var currentCriterion = $scope.gameCriteria.localdata[i];
             var criterionValue = $("#criterion" + currentCriterion.sourceId + " > div").jqxSlider('value');
-            console.log(currentCriterion.sourceId + " = " + criterionValue);
-            console.log("criterion value:");
-            console.log(criterionValue);
             weights.criteria.localdata.push(currentCriterion);
             weights.criteria.localdata[i].weight = criterionValue;
             weightsId.criteria[currentCriterion.sourceId] = criterionValue;
-            console.log(weightsId);
         }
     }
 
@@ -366,8 +359,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     };
 
     $scope.create_game = function () {
-        console.log("sending weights:");
-        console.log(weightsId);
         $http({
             method: 'POST',
             url: "supersede-dm-app/garp/game/newgame",
@@ -382,10 +373,8 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         .success(function(data) {
             $("#game_created").html("<strong>Game successfully created!</strong>");
             $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
-        }).error(function(err, data){
-            $("#game_created").html("<strong>Unable to create the game!</strong>");
-            console.log(err);
-            console.log(data);
+        }).error(function(err) {
+            $("#game_created").html("<strong>Unable to create the game: " + err.message + "</strong>");
         });
     };
 

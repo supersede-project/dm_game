@@ -36,17 +36,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
             $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
             .success(function (data) {
-                console.log("criteria:");
-                console.log(data);
                 for (var i = 0; i < data.length; i++) {
-                    console.log(data[i]);
                     $scope.criteriaNames[data[i].criteriaId] = data[i].name;
-                    console.log("criteria names:");
-                    console.log($scope.criteriaNames);
                 }
-
-                console.log("criteria names:");
-                console.log($scope.criteriaNames);
 
                 $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
                 .success(function (data) {
@@ -106,11 +98,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             data: selectedSolution,
             method: 'POST',
             params: {gameId : gameId}
-        }).success(function(){
+        }).success(function() {
             $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
-        }).error(function(err){
-            $("#selected_solution").html("<strong>Unable to save the solution!</strong>");
-            console.log(err.message);
+        }).error(function(err) {
+            $("#selected_solution").html("<strong>Unable to save the solution: " + err.message + "</strong>");
         });
     };
 
@@ -121,8 +112,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         .success(function (data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function (err) {
-            $("#game_status").html("<strong>Unable to close the game!</strong>");
-            console.log(err.message);
+            $("#game_status").html("<strong>Unable to close the game: " + err.message + "</strong>");
         });
     };
 
@@ -152,5 +142,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     }).success(function (data) {
         gameId = data;
         loadPage();
+    }).error(function (err) {
+        alert(err.message);
     });
 });

@@ -34,8 +34,6 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     var gameId = $location.search().id;
     
     var loadPage = function() {
-    	console.log("Building page");
-    	
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
             gameStatus = data.status;
@@ -66,8 +64,6 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
         .success(function(data) {
             criteria = data;
-            console.log("criteria:");
-            console.log(criteria);
             $scope.currentCriterion = criteria[currentCriterionIndex];
 
             if (criteria.length == 1) {
@@ -75,7 +71,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             }
 
             getRequirements();
-        }).error(function(err){
+        }).error(function(err) {
             alert(err.message);
         });
     };
@@ -91,7 +87,7 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             }
 
             $("#sortable").jqxSortable();
-        }).error(function(err){
+        }).error(function(err) {
             alert(err.message);
         });
     };
@@ -120,18 +116,15 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
 
     $scope.submitPriorities = function() {
         saveRanking();
-        console.log("saving rankings:");
-        console.log(rankings);
         $http({
             url: "supersede-dm-app/garp/game/submit",
             data: rankings,
             method: 'POST',
             params: {gameId : gameId}
-        }).success(function(){
+        }).success(function() {
             $scope.home();
-        }).error(function(err){
-            $("#voted").html("<strong>Unable to save the rankings!</strong>");
-            console.log(err.message);
+        }).error(function(err) {
+            $("#voted").html("<strong>Unable to save the rankings: " + err.message + "</strong>");
         });
     };
 
@@ -173,12 +166,10 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     };
 
     if( !(typeof gameId === 'undefined') ) {
-        console.log( "Loading page directly" );
     	loadPage(gameId);
     }
     else 
     {
-        console.log( "Getting remote mapping" );
     	$http({
             method: 'GET',
             url: "supersede-dm-app/garp/game/id",
@@ -186,10 +177,11 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             headers: {
                 'Content-Type': undefined
               }
-        }).success(function(data){
-            console.log("Received: " + data);
+        }).success(function(data) {
             gameId = data;
             loadPage();
-    	});
+        }).error(function (err) {
+            alert(err.message);
+        });
     }
 });

@@ -22,6 +22,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
         if (a.date < b.date) {
             return 1;
         }
+
         if (a.date > b.date) {
             return -1;
         }
@@ -32,7 +33,6 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     function getGamesAsSupervisor() {
         $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor&procId=' + $scope.procId)
         .success(function(data) {
-            console.log(data);
             var source = {
                 datatype: "json",
                 datafields: [
@@ -64,6 +64,8 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
                     { text: '', datafield: 'id', width: '15%', align: 'center', cellsalign: 'center', cellsrenderer: cellsrenderer }
                 ]
             });
+        }).error(function(err) {
+            alert(err.message);
         });
     }
 
