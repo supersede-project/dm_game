@@ -295,16 +295,6 @@ public class ProcessRequirementsRest
             }
         }
 
-        for (Long requirementId : dependencies.keySet())
-        {
-            System.out.println("Dependencies of " + requirementId + ":");
-
-            for (Long dependencyId : dependencies.get(requirementId))
-            {
-                System.out.println("Dependency: " + dependencyId);
-            }
-        }
-
         return dependencies;
     }
 

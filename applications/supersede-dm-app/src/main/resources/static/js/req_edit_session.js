@@ -39,10 +39,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         $http.get('supersede-dm-app/processes/requirements/dependencies/list?procId=' + $scope.procId)
         .success(function (data) {
             var addedDependencies = data;
-            console.log("added dependencies:");
-            console.log(addedDependencies);
             var dependenciesRows = $("#dependencies").jqxGrid("getrows").length;
-            console.log("rows: " + dependenciesRows);
 
             if (addedDependencies[currentRequirementId] === undefined)
             {
