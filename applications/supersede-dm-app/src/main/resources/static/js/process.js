@@ -18,6 +18,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     var processId = $location.search().processId;
 
+    $scope.process = {};
+
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/users/list/detailed",
@@ -111,19 +113,6 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         alert(err.message);
     });
 
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/processes/status",
-        params: { processId: processId },
-        headers: {
-            'Content-Type': undefined
-          }
-    }).success(function(data){
-        $scope.processStatus = data;
-    }).error(function (err) {
-        alert(err.message);
-    });
-
     function loadActivities() {
         $http.get('supersede-dm-app/processes/available_activities?processId=' + processId)
         .success(function (data) {
@@ -154,32 +143,33 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         });
     }
 
+    $http.get('supersede-dm-app/processes/details?processId=' + processId)
+    .success(function (data) {
+        $scope.process = data;
+    }).error(function (err) {
+        alert(err.message);
+    });
+
     loadActivities();
 
     $("#btnPrevPhase").jqxButton({ width: 60, height: 250 });
-    $("#btnPrevPhase").on('click', function() {
-        $http({
-            method: 'GET',
-            url: "supersede-dm-app/processes/requirements/prev",
-            params: { processId: processId }
-        }).success(function (data) {
-        	$scope.processStatus = data;
+    $("#btnPrevPhase").on('click', function () {
+        $http.get('supersede-dm-app/processes/prev?processId=' + processId)
+        .success(function (data) {
+            $scope.process = data;
             loadActivities();
-        }).error(function (err) {
-            alert(err.message);
+        }).error(function (error) {
+            alert(error.message);
         });
     } );
     $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
     $("#btnNextPhase").on('click', function() {
-        $http({
-            method: 'GET',
-            url: "supersede-dm-app/processes/requirements/next",
-            params: { processId: processId }
-        }).success(function (data) {
-        	$scope.processStatus = data;
+        $http.get('supersede-dm-app/processes/next?processId=' + processId)
+        .success(function (data) {
+            $scope.process = data;
             loadActivities();
-        }).error(function (err) {
-            alert(err.message);
+        }).error(function (error) {
+            alert(error.message);
         });
-    } );
+    });
 });

@@ -19,6 +19,7 @@ import java.util.List;
 
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HAlert;
+import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.ProcessStatus;
@@ -27,6 +28,13 @@ import eu.supersede.gr.model.ValutationCriteria;
 
 public interface ProcessManager
 {
+    // Process
+
+    public HProcess getProcess();
+
+    public ProcessStatus getProcessStatus();
+
+    public void setProcessStatus(ProcessStatus status);
 
     // Phases
 
@@ -93,12 +101,6 @@ public interface ProcessManager
     // Properties
 
     public PropertyBag getProperties(HActivity a);
-
-    // Process status
-
-    public ProcessStatus getProcessStatus();
-
-    public void setProcessStatus(ProcessStatus status);
 
     // Rankings
 

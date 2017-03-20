@@ -26,6 +26,7 @@ import eu.supersede.dm.ActivityEntry;
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.DMLibrary;
 import eu.supersede.dm.DMMethod;
+import eu.supersede.dm.DMPhase;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.gr.model.HActivity;
@@ -143,5 +144,70 @@ public class ProcessRest
     public List<ActivityEntry> getNextActivities(Long processId)
     {
         return DMGame.get().getProcessManager(processId).findNextActivities(DMLibrary.get().methods());
+    }
+
+    @RequestMapping(value = "/next", method = RequestMethod.GET)
+    public HProcess setNextPhase(@RequestParam Long processId) throws Exception
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+        String phaseName = mgr.getCurrentPhase();
+        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
+
+        if (phase.getNextPhases().isEmpty())
+        {
+            throw new InternalServerErrorException("No next phase available");
+        }
+
+        // Assume only one next phase is possible
+
+        for (DMPhase n : phase.getNextPhases())
+        {
+            try
+            {
+                n.checkPreconditions(mgr);
+                n.activate(mgr);
+                mgr.setNextPhase(n.getName());
+                return mgr.getProcess();
+            }
+            catch (Exception e)
+            {
+                throw new InternalServerErrorException("No next phase available");
+            }
+        }
+
+        throw new InternalServerErrorException("No next phase available");
+    }
+
+    @RequestMapping(value = "/prev", method = RequestMethod.GET)
+    public HProcess setPrevPhase(@RequestParam Long processId) throws Exception
+    {
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+        String phaseName = mgr.getCurrentPhase();
+        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
+
+        if (phase.getPrevPhases().isEmpty())
+        {
+            System.out.println("Error!");
+            throw new InternalServerErrorException("No previous phase available");
+        }
+
+        // Assume only one next phase is possible
+
+        for (DMPhase n : phase.getPrevPhases())
+        {
+            try
+            {
+                n.checkPreconditions(mgr);
+                n.activate(mgr);
+                mgr.setNextPhase(n.getName());
+                return mgr.getProcess();
+            }
+            catch (Exception e)
+            {
+                throw new InternalServerErrorException("No previous phase available");
+            }
+        }
+
+        throw new InternalServerErrorException("No previous phase available");
     }
 }

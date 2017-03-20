@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.dm.DMGame;
-import eu.supersede.dm.DMPhase;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
-import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
@@ -302,70 +300,6 @@ public class ProcessRequirementsRest
     public List<HRequirementProperty> getProperties(@RequestParam Long processId, @RequestParam Long requirementId)
     {
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
-    }
-
-    @RequestMapping(value = "/next", method = RequestMethod.GET, produces = "text/plain")
-    public String setNextPhase(@RequestParam Long processId) throws Exception
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
-        String phaseName = mgr.getCurrentPhase();
-        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
-
-        if (phase.getNextPhases().isEmpty())
-        {
-            throw new InternalServerErrorException("No next phase available");
-        }
-
-        // Assume only one next phase is possible
-
-        for (DMPhase n : phase.getNextPhases())
-        {
-            try
-            {
-                n.checkPreconditions(mgr);
-                n.activate(mgr);
-                mgr.setNextPhase(n.getName());
-                return n.getName();
-            }
-            catch (Exception e)
-            {
-                throw new InternalServerErrorException("No next phase available");
-            }
-        }
-
-        throw new InternalServerErrorException("No next phase available");
-    }
-
-    @RequestMapping(value = "/prev", method = RequestMethod.GET, produces = "text/plain")
-    public String setPrevPhase(@RequestParam Long processId) throws Exception
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
-        String phaseName = mgr.getCurrentPhase();
-        DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
-
-        if (phase.getPrevPhases().isEmpty())
-        {
-            throw new InternalServerErrorException("No previous phase available");
-        }
-
-        // Assume only one next phase is possible
-
-        for (DMPhase n : phase.getPrevPhases())
-        {
-            try
-            {
-                n.checkPreconditions(mgr);
-                n.activate(mgr);
-                mgr.setNextPhase(n.getName());
-                return n.getName();
-            }
-            catch (Exception e)
-            {
-                throw new InternalServerErrorException("No previous phase available");
-            }
-        }
-
-        throw new InternalServerErrorException("No previous phase available");
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)

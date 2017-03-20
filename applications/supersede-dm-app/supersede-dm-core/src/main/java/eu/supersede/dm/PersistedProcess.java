@@ -253,7 +253,8 @@ public class PersistedProcess extends AbstractProcessManager
         return getProcess().getStatus();
     }
 
-    private HProcess getProcess()
+    @Override
+    public HProcess getProcess()
     {
         HProcess process = DMGame.get().getJpa().processes.findOne(processId);
 
