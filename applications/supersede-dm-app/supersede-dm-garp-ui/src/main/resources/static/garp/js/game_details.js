@@ -25,7 +25,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.solution = [];
     $scope.processId = $location.search().processId;
 
-    $scope.enact = function () {
+    $scope.saveRankings = function () {
         $http.put('supersede-dm-app/garp/game/rankings/save?processId=' + $scope.processId + "&gameId=" + gameId + "&name=GA-Default")
         .success(function (data) {
             $location.url('supersede-dm-app/process').search('processId', $scope.processId);

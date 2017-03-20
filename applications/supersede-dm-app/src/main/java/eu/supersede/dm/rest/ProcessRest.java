@@ -171,11 +171,11 @@ public class ProcessRest
             }
             catch (Exception e)
             {
-                throw new InternalServerErrorException("No next phase available");
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
 
-        throw new InternalServerErrorException("No next phase available");
+        throw new InternalServerErrorException("No previous phase available");
     }
 
     @RequestMapping(value = "/prev", method = RequestMethod.GET)
@@ -203,7 +203,7 @@ public class ProcessRest
             }
             catch (Exception e)
             {
-                throw new InternalServerErrorException("No previous phase available");
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
 

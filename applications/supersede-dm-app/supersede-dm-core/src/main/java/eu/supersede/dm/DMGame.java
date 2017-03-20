@@ -218,6 +218,11 @@ public class DMGame
                 {
                     throw new Exception("Not all the requirements are confirmed");
                 }
+
+                if (mgr.getRankings().size() == 0)
+                {
+                    throw new Exception("No ranking has been saved yet for this process");
+                }
             }
         });
 
