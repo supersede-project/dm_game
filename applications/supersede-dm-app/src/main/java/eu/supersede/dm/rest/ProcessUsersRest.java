@@ -34,9 +34,9 @@ import eu.supersede.gr.model.User;
 public class ProcessUsersRest
 {
     @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public void importUsers(@RequestParam Long procId, @RequestParam(required = false) List<Long> idlist)
+    public void importUsers(@RequestParam Long processId, @RequestParam(required = false) List<Long> idlist)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<HProcessMember> processMembers = proc.getProcessMembers();
 
         for (HProcessMember processMember : processMembers)
@@ -57,9 +57,9 @@ public class ProcessUsersRest
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Long> getUserList(@RequestParam Long procId)
+    public List<Long> getUserList(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<Long> list = new ArrayList<>();
 
         for (HProcessMember member : proc.getProcessMembers())
@@ -71,9 +71,9 @@ public class ProcessUsersRest
     }
 
     @RequestMapping(value = "/list/detailed", method = RequestMethod.GET)
-    public List<User> getUserObjectList(@RequestParam Long procId)
+    public List<User> getUserObjectList(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<User> list = new ArrayList<>();
 
         for (HProcessMember member : proc.getProcessMembers())

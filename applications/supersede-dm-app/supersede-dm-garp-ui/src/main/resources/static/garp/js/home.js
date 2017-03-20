@@ -16,7 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $location) {
 	
-	$scope.procId = $location.search().procId;
+	$scope.processId = $location.search().processId;
 	
     function compareGamesByDate(a, b) {
         if (a.date < b.date) {
@@ -31,7 +31,7 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     }
 
     function getGamesAsSupervisor() {
-        $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor&procId=' + $scope.procId)
+        $http.get('supersede-dm-app/garp/game/games?roleName=Supervisor&processId=' + $scope.processId)
         .success(function(data) {
             var source = {
                 datatype: "json",
@@ -70,11 +70,11 @@ app.controllerProvider.register('home', function($scope, $http, $location) {
     }
 
     $scope.createNew = function() {
-        $location.url('supersede-dm-app/garp/create_game').search('procId',$scope.procId);
+        $location.url('supersede-dm-app/garp/create_game').search('processId',$scope.processId);
     };
 
     $scope.gameDetails = function(gameId) {
-        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId).search('procId',$scope.procId);
+        $location.url('supersede-dm-app/garp/game_details').search('gameId', gameId).search('processId',$scope.processId);
     };
 
     getGamesAsSupervisor();

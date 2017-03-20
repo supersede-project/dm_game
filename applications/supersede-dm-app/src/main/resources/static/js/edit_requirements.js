@@ -20,8 +20,8 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     var currentRequirementIndex = 0;
     var currentRequirementId;
+    var processId = $location.search().processId;
 
-    $scope.procId = $location.search().procId;
     $scope.requirements = [];
 
     function getAvailableDependencies() {
@@ -103,7 +103,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     }
 
     function getRequirementProperties() {
-        $http.get('supersede-dm-app/processes/requirements/properties?procId=' + $scope.procId + '&requirementId=' + currentRequirementId)
+        $http.get('supersede-dm-app/processes/requirements/properties?processId=' + processId + '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
             fillPropertiesGrid();
@@ -132,7 +132,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
-            params: {procId: $scope.procId},
+            params: {processId: processId},
             method: 'POST'
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
@@ -167,7 +167,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         else {
             $http({
                 url: "supersede-dm-app/processes/requirements/property/submit",
-                params: { procId: $scope.procId, requirementId: currentRequirementId, propertyName: propertyName, propertyValue: propertyValue },
+                params: { processId: processId, requirementId: currentRequirementId, propertyName: propertyName, propertyValue: propertyValue },
                 method: 'POST'
             }).success(function () {
                 $("#property_status").html("<strong>Property successfully saved!</strong>");
@@ -201,7 +201,14 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     };
 
-    $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
+    $http.get('supersede-dm-app/processes/details?processId=' + processId)
+    .success(function (data) {
+        $scope.processName = data.name;
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
     .success(function (data) {
         $scope.requirements = data;
         loadCurrentRequirement();

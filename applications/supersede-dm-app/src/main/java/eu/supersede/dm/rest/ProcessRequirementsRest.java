@@ -52,9 +52,10 @@ public class ProcessRequirementsRest
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public void importRequirements(@RequestParam Long procId, @RequestParam(required = false) List<Long> requirementsId)
+    public void importRequirements(@RequestParam Long processId,
+            @RequestParam(required = false) List<Long> requirementsId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<Requirement> requirements = proc.getRequirements();
 
         for (Requirement requirement : requirements)
@@ -83,28 +84,28 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Requirement> getRequirementsList(@RequestParam Long procId)
+    public List<Requirement> getRequirementsList(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getRequirements();
+        return DMGame.get().getProcessManager(processId).getRequirements();
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public Requirement getRequirement(@RequestParam Long procId, @RequestParam Long reqId)
+    public Requirement getRequirement(@RequestParam Long processId, @RequestParam Long reqId)
     {
-        return DMGame.get().getProcessManager(procId).getRequirement(reqId);
+        return DMGame.get().getProcessManager(processId).getRequirement(reqId);
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int getRequirementsCount(@RequestParam Long procId)
+    public int getRequirementsCount(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getRequirementsCount();
+        return DMGame.get().getProcessManager(processId).getRequirementsCount();
     }
 
     // Checks if a certain status pertains ALL the requirements
     @RequestMapping(value = "/stablestatus", method = RequestMethod.GET, produces = "text/plain")
-    public String getRequirementsStableStatus(@RequestParam Long procId)
+    public String getRequirementsStableStatus(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         Map<String, Integer> count = new HashMap<>();
         List<Requirement> requirements = proc.getRequirements();
 
@@ -131,10 +132,10 @@ public class ProcessRequirementsRest
 
     // Sets a same status to ALL the requirements
     @RequestMapping(value = "/stablestatus", method = RequestMethod.POST, produces = "text/plain")
-    public void setRequirementsStableStatus(@RequestParam Long procId,
+    public void setRequirementsStableStatus(@RequestParam Long processId,
             @RequestParam(name = "status") String statusString)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         RequirementStatus status = RequirementStatus.valueOf(statusString);
 
         for (Requirement r : mgr.getRequirements())
@@ -145,9 +146,9 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
-    public String getRequirementsStatus(@RequestParam Long procId)
+    public String getRequirementsStatus(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         Map<Integer, Integer> count = new HashMap<>();
         count.put(RequirementStatus.Unconfirmed.getValue(), 0);
         count.put(RequirementStatus.Editable.getValue(), 0);
@@ -192,9 +193,9 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/statusmap", method = RequestMethod.GET, produces = "application/json")
-    public Map<String, Integer> getRequirementsStatusMap(@RequestParam Long procId)
+    public Map<String, Integer> getRequirementsStatusMap(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         Map<String, Integer> count = new HashMap<>();
 
         for (Requirement r : proc.getRequirements())
@@ -214,9 +215,9 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/confirm", method = RequestMethod.PUT)
-    public void confirmRequirements(@RequestParam Long procId)
+    public void confirmRequirements(@RequestParam Long processId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
         for (Requirement r : mgr.getRequirements())
         {
@@ -231,7 +232,7 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
-    public void setDependencies(@RequestParam Long procId, @RequestBody Map<Long, List<Long>> dependencies)
+    public void setDependencies(@RequestParam Long processId, @RequestBody Map<Long, List<Long>> dependencies)
     {
         for (Long requirementId : dependencies.keySet())
         {
@@ -252,9 +253,9 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
-    public Map<Long, List<Long>> getDependencies(@RequestParam Long procId)
+    public Map<Long, List<Long>> getDependencies(@RequestParam Long processId)
     {
-        List<Requirement> requirements = DMGame.get().getProcessManager(procId).getRequirements();
+        List<Requirement> requirements = DMGame.get().getProcessManager(processId).getRequirements();
 
         Map<Long, List<Long>> dependencies = new HashMap<>();
 
@@ -280,17 +281,17 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Requirement createRequirement(@RequestParam Long procId, @RequestParam String name)
+    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
     {
         Requirement r = new Requirement();
         r.setName(name);
         r = DMGame.get().getJpa().requirements.save(r);
-        DMGame.get().getProcessManager(procId).addRequirement(r);
+        DMGame.get().getProcessManager(processId).addRequirement(r);
         return r;
     }
 
     @RequestMapping(value = "/property/submit", method = RequestMethod.POST)
-    public void setProperties(@RequestParam Long procId, @RequestParam Long requirementId,
+    public void setProperties(@RequestParam Long processId, @RequestParam Long requirementId,
             @RequestParam String propertyName, @RequestParam String propertyValue)
     {
         HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
@@ -298,15 +299,15 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
-    public List<HRequirementProperty> getProperties(@RequestParam Long procId, @RequestParam Long requirementId)
+    public List<HRequirementProperty> getProperties(@RequestParam Long processId, @RequestParam Long requirementId)
     {
         return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
     }
 
     @RequestMapping(value = "/next", method = RequestMethod.GET, produces = "text/plain")
-    public String setNextPhase(@RequestParam Long procId) throws Exception
+    public String setNextPhase(@RequestParam Long processId) throws Exception
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         String phaseName = mgr.getCurrentPhase();
         DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
 
@@ -336,9 +337,9 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/prev", method = RequestMethod.GET, produces = "text/plain")
-    public String setPrevPhase(@RequestParam Long procId) throws Exception
+    public String setPrevPhase(@RequestParam Long processId) throws Exception
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         String phaseName = mgr.getCurrentPhase();
         DMPhase phase = DMGame.get().getLifecycle().getPhase(phaseName);
 
@@ -368,15 +369,16 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)
-    public List<HActivity> getRequirementsEditingSession(@RequestParam Long procId)
+    public List<HActivity> getRequirementsEditingSession(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getOngoingActivities(AccessRequirementsEditingSession.NAME);
+        return DMGame.get().getProcessManager(processId).getOngoingActivities(AccessRequirementsEditingSession.NAME);
     }
 
     @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.POST)
-    public void createRequirementsEditingSession(@RequestParam(required = false) String act, @RequestParam Long procId)
+    public void createRequirementsEditingSession(@RequestParam(required = false) String act,
+            @RequestParam Long processId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
         if ("close".equals(act))
         {

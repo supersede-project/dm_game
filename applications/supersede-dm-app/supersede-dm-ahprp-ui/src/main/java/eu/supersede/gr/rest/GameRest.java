@@ -125,10 +125,11 @@ public class GameRest
     private NotificationUtil notificationUtil;
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
-    public Long activit2gameId(Authentication authentication, @RequestParam Long procId, @RequestParam Long activityId)
+    public Long activit2gameId(Authentication authentication, @RequestParam Long processId,
+            @RequestParam Long activityId)
     {
         HActivity a = DMGame.get().getJpa().activities.findOne(activityId);
-        String ret = DMGame.get().getProcessManager(procId).getProperties(a).get("gameId", "");
+        String ret = DMGame.get().getProcessManager(processId).getProperties(a).get("gameId", "");
         return Long.parseLong(ret);
     }
 
@@ -356,7 +357,7 @@ public class GameRest
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createGame(Authentication auth, @RequestBody HAHPGame game,
-            @RequestParam(required = true) String criteriaValues, @RequestParam Long procId)
+            @RequestParam(required = true) String criteriaValues, @RequestParam Long processId)
             throws JsonParseException, JsonMappingException, IOException
     {
         TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>()
@@ -403,7 +404,7 @@ public class GameRest
         game.setFinished(false);
         game = games.save(game);
 
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         HActivity a = mgr.createActivity(AHPPlayerMethod.NAME, ((DatabaseUser) auth.getPrincipal()).getUserId());
         PropertyBag bag = mgr.getProperties(a);
         bag.set("gameId", "" + game.getGameId());

@@ -252,9 +252,9 @@ public class DMGame
         return proc;
     }
 
-    public void deleteProcess(Long procId)
+    public void deleteProcess(Long processId)
     {
-        ProcessManager mgr = getProcessManager(procId);
+        ProcessManager mgr = getProcessManager(processId);
         List<HActivity> activities = mgr.getOngoingActivities();
 
         if (activities != null && activities.size() > 0)
@@ -278,7 +278,7 @@ public class DMGame
             mgr.removeCriterion(c.getCriterionId(), c.getSourceId(), c.getProcessId());
         }
 
-        jpa.processes.delete(procId);
+        jpa.processes.delete(processId);
         // TODO: let all methods cleanup their stuff (e.g. games) in the db, if necessary
     }
 

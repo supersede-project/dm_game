@@ -16,7 +16,7 @@ var app = angular.module("w5app");
 
 app.controllerProvider.register("select_solution", function($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
     $scope.activityId = $location.search().activityId;
     $scope.criteriaNames = {};
 
@@ -108,7 +108,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.selectSolutionAndStop = function () {
         $scope.selectSolution();
 
-        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&procId=" + $scope.procId)
+        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + $scope.processId)
         .success(function (data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function (err) {
@@ -135,7 +135,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $http({
         method: 'GET',
         url: "supersede-dm-app/garp/game/id",
-        params: { procId: $scope.procId, activityId: $scope.activityId },
+        params: { processId: $scope.processId, activityId: $scope.activityId },
         headers: {
             'Content-Type': undefined
         }

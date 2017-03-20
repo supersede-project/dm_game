@@ -16,10 +16,10 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $rootScope, $location) {
 	
-	$scope.procId = $location.search().procId;
+	$scope.processId = $location.search().processId;
 	
 	$scope.dmactions = function(gameId) {
-        $location.url('#/supersede-dm-app/ahprp/games').search('procId', procId);
+        $location.url('#/supersede-dm-app/ahprp/games').search('processId', processId);
     };
     
     $http.get('/supersede-dm-app/user/current')

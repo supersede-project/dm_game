@@ -52,9 +52,9 @@ public class ProcessAlertsRest
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public void importAlerts(@RequestParam Long procId, @RequestParam(required = false) List<String> alertsId)
+    public void importAlerts(@RequestParam Long processId, @RequestParam(required = false) List<String> alertsId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<HAlert> alerts = proc.getAlerts();
 
         for (HAlert alert : alerts)
@@ -83,15 +83,15 @@ public class ProcessAlertsRest
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<HAlert> getAlertsList(@RequestParam Long procId)
+    public List<HAlert> getAlertsList(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getAlerts();
+        return DMGame.get().getProcessManager(processId).getAlerts();
     }
 
     @RequestMapping(value = "/convert", method = RequestMethod.PUT)
-    public void convertAlertToRequirement(@RequestParam String alertId, Long procId)
+    public void convertAlertToRequirement(@RequestParam String alertId, Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         HAlert alert = alertsJpa.findOne(alertId);
 
         if (alert == null)

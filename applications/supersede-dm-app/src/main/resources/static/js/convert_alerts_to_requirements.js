@@ -16,12 +16,12 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('convert_alerts_to_requirements', function ($scope, $http, $location) {
 
-    var procId = $location.search().procId;
+    var processId = $location.search().processId;
 
     $scope.userRequests = [];
 
     $scope.convertToRequirement = function (alertId) {
-        $http.put('supersede-dm-app/processes/alerts/convert?alertId=' + alertId + '&procId=' + procId)
+        $http.put('supersede-dm-app/processes/alerts/convert?alertId=' + alertId + '&processId=' + processId)
         .success(function (data) {
             $("#converted" + alertId).html("<strong>Alert " + alertId + " successfully converted to a requirement</strong>");
         }).error(function(err) {

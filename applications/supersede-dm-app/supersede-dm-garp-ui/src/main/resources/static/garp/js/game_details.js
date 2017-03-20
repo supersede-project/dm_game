@@ -23,12 +23,12 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
 
     $scope.gameRequirements = {};
     $scope.solution = [];
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
 
     $scope.enact = function () {
-        $http.put('supersede-dm-app/garp/game/rankings/save?procId=' + $scope.procId + "&gameId=" + gameId + "&name=GA-Default")
+        $http.put('supersede-dm-app/garp/game/rankings/save?processId=' + $scope.processId + "&gameId=" + gameId + "&name=GA-Default")
         .success(function (data) {
-            $location.url('supersede-dm-app/process').search('procId', $scope.procId);
+            $location.url('supersede-dm-app/process').search('processId', $scope.processId);
         }).error(function (err) {
             alert(err.message);
         });
@@ -65,7 +65,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.closeGame = function() {
-        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&procId=" + $scope.procId)
+        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + $scope.processId)
         .success(function(data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function(err){
@@ -74,7 +74,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.openGame = function () {
-        $http.post('supersede-dm-app/garp/game/opengame?gameId=' + gameId + "&procId=" + $scope.procId)
+        $http.post('supersede-dm-app/garp/game/opengame?gameId=' + gameId + "&processId=" + $scope.processId)
         .success(function (data) {
             $("#game_status").html("<strong>Game successfully opened!</strong>");
         }).error(function (err) {

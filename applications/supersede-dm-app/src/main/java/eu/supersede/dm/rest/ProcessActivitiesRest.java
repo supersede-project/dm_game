@@ -74,9 +74,9 @@ public class ProcessActivitiesRest
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.GET)
-    public Map<String, List<Long>> getActivityGroups(@RequestParam Long procId)
+    public Map<String, List<Long>> getActivityGroups(@RequestParam Long processId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         List<HActivity> activities = mgr.getOngoingActivities();
         Map<String, List<Long>> map = new HashMap<>();
 

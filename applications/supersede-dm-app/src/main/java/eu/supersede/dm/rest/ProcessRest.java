@@ -51,6 +51,12 @@ public class ProcessRest
         return DMGame.get().createEmptyProcess(name).getId();
     }
 
+    @RequestMapping(value = "details", method = RequestMethod.GET)
+    public HProcess getProcess(@RequestParam Long processId)
+    {
+        return DMGame.get().getProcess(processId);
+    }
+
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public List<JqxProcess> getProcessList()
     {
@@ -71,23 +77,23 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.GET)
-    public String getProcessStatus(@RequestParam Long procId)
+    public String getProcessStatus(@RequestParam Long processId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         return mgr.getProcessStatus().name();
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.POST)
-    public void setProcessStatus(@RequestParam Long procId, @RequestParam String status)
+    public void setProcessStatus(@RequestParam Long processId, @RequestParam String status)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         mgr.setProcessStatus(ProcessStatus.valueOf(status));
     }
 
     @RequestMapping(value = "/close", method = RequestMethod.POST)
-    public void closeProcess(@RequestParam Long procId) throws Exception
+    public void closeProcess(@RequestParam Long processId) throws Exception
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
         for (HActivity a : mgr.getOngoingActivities())
         {
@@ -101,29 +107,29 @@ public class ProcessRest
             mgr.deleteActivity(a);
         }
 
-        HProcess p = DMGame.get().getProcess(procId);
+        HProcess p = DMGame.get().getProcess(processId);
         p.setStatus(ProcessStatus.Closed);
         DMGame.get().getJpa().processes.save(p);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public void deleteProcess(@RequestParam Long procId)
+    public void deleteProcess(@RequestParam Long processId)
     {
-        HProcess p = DMGame.get().getProcess(procId);
+        HProcess p = DMGame.get().getProcess(processId);
 
         if (p.getStatus() == ProcessStatus.InProgress)
         {
             throw new InternalServerErrorException(
-                    "Can't delete process with id " + procId + ": you must close it first");
+                    "Can't delete process with id " + processId + ": you must close it first");
         }
 
-        DMGame.get().deleteProcess(procId);
+        DMGame.get().deleteProcess(processId);
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
-    public String getStatus(@RequestParam Long procId)
+    public String getStatus(@RequestParam Long processId)
     {
-        String status = DMGame.get().getProcessManager(procId).getCurrentPhase();
+        String status = DMGame.get().getProcessManager(processId).getCurrentPhase();
 
         if (status == null)
         {
@@ -134,8 +140,8 @@ public class ProcessRest
     }
 
     @RequestMapping(value = "/available_activities", method = RequestMethod.GET)
-    public List<ActivityEntry> getNextActivities(Long procId)
+    public List<ActivityEntry> getNextActivities(Long processId)
     {
-        return DMGame.get().getProcessManager(procId).findNextActivities(DMLibrary.get().methods());
+        return DMGame.get().getProcessManager(processId).findNextActivities(DMLibrary.get().methods());
     }
 }

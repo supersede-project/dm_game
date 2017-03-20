@@ -16,7 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 	
-	$scope.procId = $location.search().procId;
+	$scope.processId = $location.search().processId;
 	
     $scope.currentPage = "page1";
     $scope.gameRequirementsId = [];
@@ -109,7 +109,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function getAvailableRequirements() {
-        $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId )
+        $http.get('supersede-dm-app/processes/requirements/list?processId=' + $scope.processId )
         .success(function(data) {
             availableRequirements = {
                 datatype: "json",
@@ -138,7 +138,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function getAvailableCriteria() {
-        $http.get('supersede-dm-app/processes/criteria/list/detailed?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/criteria/list/detailed?processId=' + $scope.processId)
         .success(function(data) {
             availableCriteria = {
                 datatype: "json",
@@ -169,7 +169,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     }
 
     function getAvailablePlayers() {
-        $http.get('supersede-dm-app/processes/users/list/detailed?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/users/list/detailed?processId=' + $scope.processId)
         .success(function(data) {
             availablePlayers = {
                 datatype: "json",
@@ -368,18 +368,18 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             	gameRequirements: $scope.gameRequirementsId, 
             	gameOpinionProviders: $scope.gameOpinionProvidersId,
                 gameNegotiators: $scope.gameNegotiatorsId,
-                procId: $scope.procId }
+                processId: $scope.processId }
         })
         .success(function(data) {
             $("#game_created").html("<strong>Game successfully created!</strong>");
-            $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
+            $location.url('supersede-dm-app/garp/home').search('processId',$scope.processId);
         }).error(function(err) {
             $("#game_created").html("<strong>Unable to create the game: " + err.message + "</strong>");
         });
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/garp/home').search('procId',$scope.procId);
+        $location.url('supersede-dm-app/garp/home').search('processId',$scope.processId);
     };
 
     getAvailableRequirements();

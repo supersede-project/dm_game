@@ -16,7 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('create_game', function($scope, $http, $location) {
 	
-	$scope.procId = $location.search().procId;
+	$scope.processId = $location.search().processId;
 	
     $scope.now = function()
     {
@@ -102,12 +102,11 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
 
     $scope.createGame = function()
     {
-    	console.log( $scope.procId );
         $http({
             url: "supersede-dm-app/ahprp/game",
             data: $scope.game,
             method: 'POST',
-            params: {criteriaValues : $scope.choices, procId: $scope.procId }
+            params: {criteriaValues : $scope.choices, processId: $scope.processId }
         }).success(function(data){
             $scope.game = {
             		players : [], 
@@ -119,7 +118,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             $scope.currentPage = 'page1';
             $location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
         }).error(function(err){
-            console.log(err);
+            alert(err.message);
         });
     };
 });

@@ -93,7 +93,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     });
 
     // Get requirements
-    $http.get('supersede-dm-app/requirement?procFx=Eq&procId=-1')
+    $http.get('supersede-dm-app/requirement?procFx=Eq&processId=-1')
     .success(function (data) {
         $scope.reqNum = data.length;
 
@@ -149,7 +149,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                     '<table style="min-width: 100%;">' +
                     '<tr><td style="width: 40px;">' + "img" + '</td><td>' +
                     '<a href="#/supersede-dm-app/' + datarecord.url +
-                    '?procId=' + datarecord.processId +
+                    '?processId=' + datarecord.processId +
                     '&activityId=' + datarecord.activityId +
                     '">' + datarecord.methodName + '</a>' +
                     '</td></tr></table>';
@@ -197,7 +197,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                         '<tr><td style="width: 40px;">' + action + '</td><td>' +
                         datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
                         '<td style="width: 40px;">' +
-                        '<a href="#/supersede-dm-app/process?procId=' + datarecord.id + '">View</a>' +
+                        '<a href="#/supersede-dm-app/process?processId=' + datarecord.id + '">View</a>' +
                         '<a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Close</a>' +
                         '<a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Delete</a>' +
                         '</td>' +
@@ -228,8 +228,8 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     loadProcesses();
 });
 
-function closeProcess(procId) {
-    http.post('supersede-dm-app/processes/close?procId=' + procId)
+function closeProcess(processId) {
+    http.post('supersede-dm-app/processes/close?processId=' + processId)
     .success(function (data) {
         loadProcesses();
     }).error(function(err) {
@@ -237,8 +237,8 @@ function closeProcess(procId) {
     });
 }
 
-function deleteProcess(procId) {
-    http.post('supersede-dm-app/processes/delete?procId=' + procId)
+function deleteProcess(processId) {
+    http.post('supersede-dm-app/processes/delete?processId=' + processId)
     .success(function (data) {
         loadProcesses();
     }).error(function(err) {

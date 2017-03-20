@@ -58,10 +58,10 @@ public class GAGameRest
     private GAPersistentDB persistentDB;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
-    public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long procId)
+    public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long processId)
     {
         Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
-        return persistentDB.getGamesByRoleAndProcess(userId, roleName, procId);
+        return persistentDB.getGamesByRoleAndProcess(userId, roleName, processId);
     }
 
     @SuppressWarnings("unchecked")
@@ -69,7 +69,7 @@ public class GAGameRest
     public void createNewGame(Authentication authentication, @RequestParam String name,
             @RequestParam Long[] gameRequirements, @RequestBody Map<String, ?> weights,
             @RequestParam Long[] gameOpinionProviders, @RequestParam Long[] gameNegotiators,
-            @RequestParam(defaultValue = "-1") Long procId)
+            @RequestParam(defaultValue = "-1") Long processId)
     {
         String criteriaKey = "criteria";
         String playersKey = "players";
@@ -111,7 +111,7 @@ public class GAGameRest
         }
 
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
-                gameOpinionProviders, gameNegotiators, procId);
+                gameOpinionProviders, gameNegotiators, processId);
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -203,9 +203,9 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/closegame", method = RequestMethod.POST)
-    public void closeGame(Authentication authentication, @RequestParam("procId") Long procId, Long gameId)
+    public void closeGame(Authentication authentication, @RequestParam("processId") Long processId, Long gameId)
     {
-        persistentDB.closeGame(gameId, procId);
+        persistentDB.closeGame(gameId, processId);
     }
 
     @RequestMapping(value = "/opengame", method = RequestMethod.POST)
@@ -487,15 +487,16 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
-    public Long activit2gameId(Authentication authentication, @RequestParam Long procId, @RequestParam Long activityId)
+    public Long activit2gameId(Authentication authentication, @RequestParam Long processId,
+            @RequestParam Long activityId)
     {
         return persistentDB.getGameId(activityId);
     }
 
     @RequestMapping(value = "/rankings/save", method = RequestMethod.PUT)
-    public void saveRanking(@RequestParam Long procId, @RequestParam Long gameId, @RequestParam String name)
+    public void saveRanking(@RequestParam Long processId, @RequestParam Long gameId, @RequestParam String name)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
         if (mgr == null)
         {
@@ -508,16 +509,16 @@ public class GAGameRest
         {
             HRequirementsRanking rr = null;
             List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings
-                    .findRankingsByProcessIdAndName(procId, name);
+                    .findRankingsByProcessIdAndName(processId, name);
 
             if (rlist.size() < 1)
             {
                 rr = new HRequirementsRanking();
                 rr.setName(name);
-                rr.setProcessId(procId);
+                rr.setProcessId(processId);
                 rr.setSelected(true);
                 DMGame.get().getJpa().requirementsRankings.save(rr);
-                rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName(procId, name);
+                rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName(processId, name);
             }
 
             double max = game.getRequirements().size();
@@ -553,9 +554,9 @@ public class GAGameRest
         }
     }
 
-    public List<Requirement> getUnprioritizedRequirements(@RequestParam Long procId, @RequestParam Long gameId)
+    public List<Requirement> getUnprioritizedRequirements(@RequestParam Long processId, @RequestParam Long gameId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
         GAGameDetails game = persistentDB.getGameInfo(gameId);
 

@@ -20,8 +20,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     var requirements = [];
     var currentRequirementIndex = 0;
     var currentRequirementId;
-
-    $scope.procId = $location.search().procId;
+    var processId = $location.search().processId;
 
     function getAvailableDependencies() {
         var availableDependencies = [];
@@ -36,7 +35,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     }
 
     function getAddedDependencies() {
-        $http.get('supersede-dm-app/processes/requirements/dependencies/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/requirements/dependencies/list?processId=' + processId)
         .success(function (data) {
             var addedDependencies = data;
             var dependenciesRows = $("#dependencies").jqxGrid("getrows").length;
@@ -136,7 +135,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     }
 
     function getRequirementProperties() {
-        $http.get('supersede-dm-app/processes/requirements/properties?procId=' + $scope.procId + '&requirementId=' + currentRequirementId)
+        $http.get('supersede-dm-app/processes/requirements/properties?processId=' + processId +
+            '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
             fillPropertiesGrid();
@@ -164,7 +164,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
             data: dependencies,
-            params: {procId: $scope.procId},
+            params: {processId: processId},
             method: 'POST'
         }).success(function () {
             $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
@@ -184,7 +184,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             $http({
                 url: "supersede-dm-app/processes/requirements/property/submit",
                 params: {
-                    procId: $scope.procId, requirementId: currentRequirementId,
+                    processId: processId, requirementId: currentRequirementId,
                     propertyName: propertyName, propertyValue: propertyValue
                 },
                 method: 'POST'
@@ -231,7 +231,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             return;
         }
         $http({
-            url: "supersede-dm-app/processes/requirements/new?procId=" + $scope.procId + "&name=" + reqName,
+            url: "supersede-dm-app/processes/requirements/new?processId=" + processId + "&name=" + reqName,
             method: 'POST'
         }).success(function (data) {
             requirements.push(data);
@@ -250,7 +250,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     }
 
     function loadRequirements() {
-        $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
         .success(function (data) {
             $("#requirements-listbox").jqxListBox('clear');
             requirements = data;
@@ -289,6 +289,13 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             alert(err.message);
         });
     }
+
+    $http.get('supersede-dm-app/processes/details?processId=' + processId)
+    .success(function (data) {
+        $scope.processName = data.name;
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     loadRequirements();
 });

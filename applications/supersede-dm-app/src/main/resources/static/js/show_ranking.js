@@ -17,27 +17,37 @@ var app = angular.module('w5app');
 app.controllerProvider.register('show_ranking', function($scope, $http, $location) {
 
     var requirements = {};
+    var processId = $location.search().processId;
 
     $scope.rankings = {};
-    $scope.procId = $location.search().procId;
 
     $scope.getRequirement = function (requirementId) {
         return requirements[requirementId];
     };
-	
-	$http.get('supersede-dm-app/processes/rankings/list?procId=' + $scope.procId ).success(function(data) {
-	    $scope.rankings = data;
 
-	    $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
-        .success(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var requirementId = data[i].requirementId;
-                requirements[requirementId] = data[i];
-            }
-        }).error(function(err) {
-            alert(err.message);
-        });
-	});
+    $http.get('supersede-dm-app/processes/details?processId=' + processId)
+    .success(function (data) {
+        $scope.processName = data.name;
+    }).error(function (err) {
+        alert(err.message);
+    });
+	
+    $http.get('supersede-dm-app/processes/rankings/list?processId=' + processId)
+    .success(function (data) {
+        $scope.rankings = data;
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
+    .success(function (data) {
+        for (var i = 0; i < data.length; i++) {
+            var requirementId = data[i].requirementId;
+            requirements[requirementId] = data[i];
+        }
+    }).error(function (err) {
+        alert(err.message);
+    });
 
 	$scope.empty = function () {
 	    return $scope.rankings.length === 0;

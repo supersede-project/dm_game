@@ -19,7 +19,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     $scope.Math = Math;
 
     $scope.selectedGame = $location.search().gameId;
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
     $scope.activityId = $location.search().activityId;
     
     $scope.requirementsChoices = [];
@@ -314,7 +314,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
     	$http({
             method: 'GET',
             url: "supersede-dm-app/ahprp/game/id",
-            params: { procId: $scope.procId, activityId: $scope.activityId },
+            params: { processId: $scope.processId, activityId: $scope.activityId },
             headers: {
                 'Content-Type': undefined
               }

@@ -16,18 +16,18 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('confirm_requirements', function($scope, $http, $location) {
 
-	$scope.procId = $location.search().procId;
+	$scope.processId = $location.search().processId;
 	
 	$scope.proceed = function() {
-	    $http.put('supersede-dm-app/processes/requirements/confirm?procId=' + $scope.procId)
+	    $http.put('supersede-dm-app/processes/requirements/confirm?processId=' + $scope.processId)
         .success(function (data) {
-            $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+            $location.url('supersede-dm-app/process?processId=' + $scope.processId);
         }).error(function (err) {
             alert(err.message);
         });
 	};
 	
 	$scope.cancel = function() {
-		$location.url('supersede-dm-app/process?procId=' + $scope.procId);
+		$location.url('supersede-dm-app/process?processId=' + $scope.processId);
 	};
 });

@@ -32,9 +32,9 @@ import eu.supersede.gr.model.ValutationCriteria;
 public class ProcessCriteriaRest
 {
     @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public void importCriteria(@RequestParam Long procId, @RequestParam(required = false) List<Long> idlist)
+    public void importCriteria(@RequestParam Long processId, @RequestParam(required = false) List<Long> idlist)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<HProcessCriterion> processCriteria = proc.getProcessCriteria();
 
         for (HProcessCriterion processCriterion : processCriteria)
@@ -57,9 +57,9 @@ public class ProcessCriteriaRest
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Long> getCriteriaList(@RequestParam Long procId)
+    public List<Long> getCriteriaList(@RequestParam Long processId)
     {
-        ProcessManager proc = DMGame.get().getProcessManager(procId);
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<Long> list = new ArrayList<>();
 
         for (ValutationCriteria c : proc.getCriteria())
@@ -71,8 +71,8 @@ public class ProcessCriteriaRest
     }
 
     @RequestMapping(value = "/list/detailed", method = RequestMethod.GET)
-    public List<HProcessCriterion> getCriteriaObjectList(@RequestParam Long procId)
+    public List<HProcessCriterion> getCriteriaObjectList(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getProcessCriteria();
+        return DMGame.get().getProcessManager(processId).getProcessCriteria();
     }
 }

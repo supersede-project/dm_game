@@ -16,7 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('import_requirements', function($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
 
     $scope.gameRequirementsId = [];
 
@@ -67,7 +67,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     }
 
     function getAddedRequirements() {
-        $http.get('supersede-dm-app/processes/requirements/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/requirements/list?processId=' + $scope.processId)
         .success(function (data) {
             var addedRequirements = data;
             var requirementsRows = $("#requirements").jqxGrid("getrows").length;
@@ -108,7 +108,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/requirements/import",
-            params: { procId: $scope.procId, requirementsId: $scope.gameRequirementsId }
+            params: { processId: $scope.processId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
             $scope.home();
@@ -118,7 +118,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
     };
 
     getAvailableRequirements();
@@ -126,7 +126,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
 app.controllerProvider.register('import_users', function($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
     $scope.gameOpinionProvidersId = [];
 
     var availablePlayers = {};
@@ -175,7 +175,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
     }
 
     function getAddedUsers() {
-        $http.get('supersede-dm-app/processes/users/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/users/list?processId=' + $scope.processId)
         .success(function (data) {
             var addedUsers = data;
             var usersRows = $("#users").jqxGrid("getrows").length;
@@ -215,7 +215,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/users/import",
-            params: { procId: $scope.procId, idlist: $scope.gameOpinionProvidersId }
+            params: { processId: $scope.processId, idlist: $scope.gameOpinionProvidersId }
         })
         .success(function (data) {
             $scope.home();
@@ -225,7 +225,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
     };
 
     getAvailablePlayers();
@@ -233,7 +233,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
 app.controllerProvider.register('import_criteria', function($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
     $scope.gameCriteriaId = [];
 
     var availableCriteria = {};
@@ -282,7 +282,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     }
 
     function getAddedCriteria() {
-        $http.get('supersede-dm-app/processes/criteria/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/criteria/list?processId=' + $scope.processId)
         .success(function (data) {
             var addedCriteria = data;
             var criteriaRows = $("#criteria").jqxGrid("getrows").length;
@@ -322,7 +322,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/criteria/import",
-            params: { procId: $scope.procId, idlist: $scope.gameCriteriaId }
+            params: { processId: $scope.processId, idlist: $scope.gameCriteriaId }
         })
         .success(function (data) {
             $scope.home();
@@ -332,7 +332,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
     };
 
     getAvailableCriteria();
@@ -340,7 +340,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
 
 app.controllerProvider.register('import_alerts', function ($scope, $http, $location) {
 
-    $scope.procId = $location.search().procId;
+    $scope.processId = $location.search().processId;
     $scope.alertsId = [];
 
     var availableAlerts = {};
@@ -402,7 +402,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     }
 
     function getAddedAlerts() {
-        $http.get('supersede-dm-app/processes/alerts/list?procId=' + $scope.procId)
+        $http.get('supersede-dm-app/processes/alerts/list?processId=' + $scope.processId)
         .success(function (data) {
             var addedAlerts = data;
             var alertsRows = $("#alerts").jqxGrid("getrows").length;
@@ -448,7 +448,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/alerts/import",
-            params: { procId: $scope.procId, alertsId: $scope.alertsId }
+            params: { processId: $scope.processId, alertsId: $scope.alertsId }
         })
         .success(function (data) {
             $scope.home();
@@ -458,7 +458,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     };
 
     $scope.home = function () {
-        $location.url('supersede-dm-app/process?procId=' + $scope.procId);
+        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
     };
 
     getAvailableAlerts();

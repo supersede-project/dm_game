@@ -46,9 +46,9 @@ public class ProcessRankingsRest
     private RequirementsRankingsJpa requirementsRankingsJpa;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public void createRanking(Authentication authentication, @RequestParam Long procId, @RequestParam String name)
+    public void createRanking(Authentication authentication, @RequestParam Long processId, @RequestParam String name)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         RequirementsRanking rr = mgr.getRankingByName(name);
 
         if (rr == null)
@@ -103,15 +103,15 @@ public class ProcessRankingsRest
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<RequirementsRanking> getRankings(@RequestParam Long procId)
+    public List<RequirementsRanking> getRankings(@RequestParam Long processId)
     {
-        return DMGame.get().getProcessManager(procId).getRankings();
+        return DMGame.get().getProcessManager(processId).getRankings();
     }
 
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
-    public void doEnactRanking(Authentication authentication, @RequestParam Long procId)
+    public void doEnactRanking(Authentication authentication, @RequestParam Long processId)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(procId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
         List<RequirementsRanking> rlist = mgr.getRankings();
 
         for (RequirementsRanking rr : rlist)

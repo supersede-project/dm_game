@@ -24,10 +24,10 @@ import eu.supersede.gr.model.HActivity;
 public interface ActivitiesJpa extends JpaRepository<HActivity, Long>
 {
     @Query("SELECT a FROM HActivity a WHERE processId = ?1 AND methodName = ?2")
-    List<HActivity> findByProcessAndMethodName(Long procId, String methodName);
+    List<HActivity> findByProcessAndMethodName(Long processId, String methodName);
 
     @Query("SELECT a FROM HActivity a WHERE processId = ?1")
-    List<HActivity> findByProcessId(Long procId);
+    List<HActivity> findByProcessId(Long processId);
 
     @Query("SELECT a FROM HActivity a WHERE userId = ?1")
     List<HActivity> findByUser(Long userId);

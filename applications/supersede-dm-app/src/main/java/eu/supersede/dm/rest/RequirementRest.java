@@ -72,7 +72,7 @@ public class RequirementRest
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Requirement> getRequirements(@RequestParam(required = false) String procFx,
-            @RequestParam(required = false) Long procId, @RequestParam(required = false) String statusFx,
+            @RequestParam(required = false) Long processId, @RequestParam(required = false) String statusFx,
             @RequestParam(required = false) Integer status)
     {
 
@@ -81,11 +81,11 @@ public class RequirementRest
 
         if ("Eq".equals(procFx))
         {
-            filter += " processId = " + procId;
+            filter += " processId = " + processId;
         }
         else if ("Neq".equals(procFx))
         {
-            filter += " processId != " + procId;
+            filter += " processId != " + processId;
         }
 
         if ("Eq".equals(statusFx))

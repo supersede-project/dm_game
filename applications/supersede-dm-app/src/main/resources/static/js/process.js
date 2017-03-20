@@ -16,12 +16,12 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('process', function($scope, $http, $location) {
 
-    var procId = $location.search().procId;
+    var processId = $location.search().processId;
 
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/users/list/detailed",
-        params: { procId: procId }
+        params: { processId: processId }
     }).success(function(data) {
         var source = {
             datatype: "json",
@@ -52,7 +52,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/criteria/list/detailed",
-        params: { procId: procId }
+        params: { processId: processId }
     }).success(function(data) {
         var source = {
             datatype: "json",
@@ -83,7 +83,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/requirements/list",
-        params: { procId: procId }
+        params: { processId: processId }
     }).success(function(data){
         var source = {
             datatype: "json",
@@ -114,7 +114,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/status",
-        params: { procId: procId },
+        params: { processId: processId },
         headers: {
             'Content-Type': undefined
           }
@@ -125,7 +125,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     });
 
     function loadActivities() {
-        $http.get('supersede-dm-app/processes/available_activities?procId=' + procId)
+        $http.get('supersede-dm-app/processes/available_activities?processId=' + processId)
         .success(function (data) {
             $("#procList").jqxListBox('clear');
             $("#procList").jqxListBox({
@@ -144,7 +144,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                         '<table style="min-width: 130px">' +
                         '<tr><td style="width: 40px">' +
                         img + '</td><td>' +
-                        '<a href="#/supersede-dm-app/' + datarecord.entryUrl + '?procId=' + procId + '">' + datarecord.methodName +
+                        '<a href="#/supersede-dm-app/' + datarecord.entryUrl + '?processId=' + processId + '">' + datarecord.methodName +
                         '</a></td></tr></table>';
                     return table;
                 }
@@ -161,7 +161,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         $http({
             method: 'GET',
             url: "supersede-dm-app/processes/requirements/prev",
-            params: { procId: procId }
+            params: { processId: processId }
         }).success(function (data) {
         	$scope.processStatus = data;
             loadActivities();
@@ -174,7 +174,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         $http({
             method: 'GET',
             url: "supersede-dm-app/processes/requirements/next",
-            params: { procId: procId }
+            params: { processId: processId }
         }).success(function (data) {
         	$scope.processStatus = data;
             loadActivities();
