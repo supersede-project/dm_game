@@ -91,7 +91,7 @@ public class DMGame
 
     private DMGame()
     {
-        lifecycle.addInitialPhase(new DMPhase("Initialization")
+        lifecycle.addInitialPhase(new DMPhase(DMPhases.INITIALIZATION)
         {
             @Override
             public void activate(ProcessManager mgr)
@@ -103,7 +103,7 @@ public class DMGame
                 }
             }
         });
-        lifecycle.addPhase(new DMPhase("Editing")
+        lifecycle.addPhase(new DMPhase(DMPhases.EDITING)
         {
             @Override
             public void checkPreconditions(ProcessManager mgr) throws Exception
@@ -149,7 +149,7 @@ public class DMGame
                 }
             }
         });
-        lifecycle.addPhase(new DMPhase("Prioritization")
+        lifecycle.addPhase(new DMPhase(DMPhases.PRIORITIZATION)
         {
             @Override
             public void checkPreconditions(ProcessManager mgr) throws Exception
@@ -192,7 +192,7 @@ public class DMGame
                 }
             }
         });
-        lifecycle.addPhase(new DMPhase("Terminated")
+        lifecycle.addPhase(new DMPhase(DMPhases.TERMINATED)
         {
             @Override
             public void checkPreconditions(ProcessManager mgr) throws Exception
@@ -221,9 +221,9 @@ public class DMGame
             }
         });
 
-        lifecycle.setNext("Initialization", "Editing");
-        lifecycle.setNext("Editing", "Prioritization");
-        lifecycle.setNext("Prioritization", "Terminated");
+        lifecycle.setNext(DMPhases.INITIALIZATION, DMPhases.EDITING);
+        lifecycle.setNext(DMPhases.EDITING, DMPhases.PRIORITIZATION);
+        lifecycle.setNext(DMPhases.PRIORITIZATION, DMPhases.TERMINATED);
     }
 
     public DMLifecycle getLifecycle()

@@ -25,6 +25,7 @@ import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
+import eu.supersede.dm.DMPhases;
 import eu.supersede.dm.DMRole;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.DMTask;
@@ -35,7 +36,6 @@ import eu.supersede.gr.model.Requirement;
 
 public class AHPRequirementsPrioritizationMethod implements DMMethod
 {
-
     public static final String NAME = "AHP session";
 
     String name;
@@ -229,22 +229,7 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-                return "Prioritization".equals(mgr.getCurrentPhase());
-
-                // if (mgr.getRequirementsCount() < 1)
-                // {
-                // return false;
-                // }
-                //
-                // for (Requirement r : mgr.requirements())
-                // {
-                // if (r.getStatus() != RequirementStatus.Confirmed.getValue())
-                // {
-                // return false;
-                // }
-                // }
-                //
-                // return true;
+                return mgr.getCurrentPhase().equals(DMPhases.PRIORITIZATION);
             }
         });
         return list;

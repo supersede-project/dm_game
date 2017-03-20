@@ -21,6 +21,7 @@ import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
+import eu.supersede.dm.DMPhases;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
 
@@ -44,7 +45,7 @@ public class CreateRequirementsEditingSession implements DMMethod
     {
         return this.name;
     }
-    
+
     @Override
     public DMObjective getObjective()
     {
@@ -73,7 +74,7 @@ public class CreateRequirementsEditingSession implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	return "Editing".equals( mgr.getCurrentPhase() );
+                return mgr.getCurrentPhase().equals(DMPhases.EDITING);
             }
         });
 
@@ -86,13 +87,15 @@ public class CreateRequirementsEditingSession implements DMMethod
         return "create_req_edit_session";
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Manage Collaborative Requirements Editing Session";
-	}
+    @Override
+    public String getDescription(ProcessManager arg0)
+    {
+        return "Manage Collaborative Requirements Editing Session";
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Manage Collaborative Requirements Editing Session";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return "Manage Collaborative Requirements Editing Session";
+    }
 }

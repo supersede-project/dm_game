@@ -187,7 +187,6 @@ public class ProcessRest
 
         if (phase.getPrevPhases().isEmpty())
         {
-            System.out.println("Error!");
             throw new InternalServerErrorException("No previous phase available");
         }
 

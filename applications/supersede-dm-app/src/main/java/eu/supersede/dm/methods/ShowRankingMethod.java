@@ -21,12 +21,13 @@ import eu.supersede.dm.DMCondition;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMObjective;
 import eu.supersede.dm.DMOption;
+import eu.supersede.dm.DMPhases;
 import eu.supersede.dm.DMRoleSpec;
 import eu.supersede.dm.ProcessManager;
 
 public class ShowRankingMethod implements DMMethod
 {
-    public static final String NAME = "show-ranking-method";
+    public static final String NAME = "Show Ranking";
 
     private String name;
     private List<DMRoleSpec> list;
@@ -44,7 +45,7 @@ public class ShowRankingMethod implements DMMethod
     {
         return this.name;
     }
-    
+
     @Override
     public DMObjective getObjective()
     {
@@ -73,13 +74,15 @@ public class ShowRankingMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	if( "Prioritization".equals( mgr.getCurrentPhase() ) ) {
-            		return true;
-            	};
-            	if( "Termination".equals( mgr.getCurrentPhase() ) ) {
-            		return true;
-            	};
-            	return false;
+                if (mgr.getCurrentPhase().equals(DMPhases.PRIORITIZATION)
+                        || mgr.getCurrentPhase().equals(DMPhases.TERMINATED))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         });
 
@@ -92,13 +95,15 @@ public class ShowRankingMethod implements DMMethod
         return "show_ranking";
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Show current ranking";
-	}
+    @Override
+    public String getDescription(ProcessManager arg0)
+    {
+        return "Show current ranking";
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Show current ranking";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return "Show current ranking";
+    }
 }
