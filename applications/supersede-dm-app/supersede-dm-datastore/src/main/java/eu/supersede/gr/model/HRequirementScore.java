@@ -1,56 +1,52 @@
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.RequirementScoreId;
+
 @Entity
+@IdClass(RequirementScoreId.class)
 @Table(name = "h_requirements_scores")
-public class HRequirementScore {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	private Long rankingId;
-	
-	private Long requirementId;
-	
-	private Priority priority;
-	
-	
-	public Long getId() {
-		return id;
-	}
+public class HRequirementScore
+{
+    @Id
+    private Long rankingId;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Id
+    private Long requirementId;
 
-	public Long getRankingId() {
-		return rankingId;
-	}
+    private Priority priority;
 
-	public void setRankingId(Long rankingId) {
-		this.rankingId = rankingId;
-	}
+    public Long getRankingId()
+    {
+        return rankingId;
+    }
 
-	public Long getRequirementId() {
-		return requirementId;
-	}
+    public void setRankingId(Long rankingId)
+    {
+        this.rankingId = rankingId;
+    }
 
-	public void setRequirementId(Long requirementId) {
-		this.requirementId = requirementId;
-	}
+    public Long getRequirementId()
+    {
+        return requirementId;
+    }
 
-	public Priority getPriority() {
-		return priority;
-	}
+    public void setRequirementId(Long requirementId)
+    {
+        this.requirementId = requirementId;
+    }
 
-	public void setPriority(Priority priority) {
-		this.priority = priority;
-	}
+    public Priority getPriority()
+    {
+        return priority;
+    }
 
+    public void setPriority(Priority priority)
+    {
+        this.priority = priority;
+    }
 }

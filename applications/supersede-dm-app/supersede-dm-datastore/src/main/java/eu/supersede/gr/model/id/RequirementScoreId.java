@@ -16,39 +16,32 @@ package eu.supersede.gr.model.id;
 
 import java.io.Serializable;
 
-public class ProcessMemberId implements Serializable
+public class RequirementScoreId implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private Long userId;
-    private Long processId;
+    private Long rankingId;
+    private Long requirementId;
 
-    public ProcessMemberId()
+    public RequirementScoreId()
     {
 
     }
 
-    public ProcessMemberId(Long id, Long userId, Long processId)
+    public RequirementScoreId(Long rankingId, Long requirementId)
     {
-        this.id = id;
-        this.userId = userId;
-        this.processId = processId;
+        this.rankingId = rankingId;
+        this.requirementId = requirementId;
     }
 
-    public Long getId()
+    public Long getRankingId()
     {
-        return id;
+        return rankingId;
     }
 
-    public Long getUserId()
+    public Long getRequirementId()
     {
-        return userId;
-    }
-
-    public Long getProcessId()
-    {
-        return processId;
+        return requirementId;
     }
 
     @Override
@@ -64,19 +57,14 @@ public class ProcessMemberId implements Serializable
             return false;
         }
 
-        ProcessMemberId processMemberId = (ProcessMemberId) o;
+        RequirementScoreId requirementScoreId = (RequirementScoreId) o;
 
-        if (id != processMemberId.getId())
+        if (rankingId != requirementScoreId.getRankingId())
         {
             return false;
         }
 
-        if (userId != processMemberId.getUserId())
-        {
-            return false;
-        }
-
-        if (processId != processMemberId.getProcessId())
+        if (requirementId != requirementScoreId.getRequirementId())
         {
             return false;
         }
@@ -87,9 +75,8 @@ public class ProcessMemberId implements Serializable
     @Override
     public int hashCode()
     {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
-        result = 31 * result + (int) (processId ^ (processId >>> 32));
+        int result = (int) (rankingId ^ (rankingId >>> 32));
+        result = 31 * result + (int) (requirementId ^ (requirementId >>> 32));
         return result;
     }
 }

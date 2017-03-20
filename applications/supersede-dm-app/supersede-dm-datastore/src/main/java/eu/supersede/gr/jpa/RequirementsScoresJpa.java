@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.jpa;
 
 import java.util.List;
@@ -25,9 +21,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HRequirementScore;
 
-public interface RequirementsScoresJpa extends JpaRepository<HRequirementScore, Long> {
-	
+public interface RequirementsScoresJpa extends JpaRepository<HRequirementScore, Long>
+{
     @Query("SELECT r FROM HRequirementScore r WHERE rankingId = ?1")
-    List<HRequirementScore> findRankingsByRankingId( Long rankingId );
-
+    List<HRequirementScore> findRankingsByRankingId(Long rankingId);
 }

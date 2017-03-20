@@ -565,6 +565,7 @@ public class GAGameRest
                 HRequirementScore score = new HRequirementScore();
                 score.setRankingId(rr.getId());
                 score.setRequirementId(reqId);
+
                 if (max > 5)
                 {
                     score.setPriority(Priority.fromNumber((int) (1 + (pos / max) * 5)));
@@ -573,6 +574,7 @@ public class GAGameRest
                 {
                     score.setPriority(Priority.fromNumber((int) pos + 1));
                 }
+
                 score = DMGame.get().getJpa().scoresJpa.save(score);
 
             }
