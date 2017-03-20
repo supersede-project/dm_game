@@ -27,6 +27,7 @@ public class GAGameDetails
     private List<Long> requirements;
     private Map<Long, Double> criteriaWeights;
     private List<Long> opinionProviders;
+    private List<Long> negotiators;
     private Map<Long, Map<Long, Double>> playerWeights;
     private Map<Long, Map<Long, List<Long>>> rankings;
 
@@ -35,6 +36,7 @@ public class GAGameDetails
         requirements = new ArrayList<>();
         criteriaWeights = new HashMap<>();
         opinionProviders = new ArrayList<>();
+        negotiators = new ArrayList<>();
         playerWeights = new HashMap<>();
         rankings = new HashMap<>();
     }
@@ -68,6 +70,16 @@ public class GAGameDetails
     public void setCriteriaWeights(Map<Long, Double> criteriaWeights)
     {
         this.criteriaWeights = criteriaWeights;
+    }
+
+    public List<Long> getNegotiators()
+    {
+        return negotiators;
+    }
+
+    public void setNegotiators(List<Long> negotiators)
+    {
+        this.negotiators = negotiators;
     }
 
     public List<Long> getOpinionProviders()

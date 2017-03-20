@@ -28,7 +28,7 @@
             <h1>Current Ranking</h1>
 
             <div ng-repeat="(userId, criterionRanking) in ranking">
-                <h2>Opinion Provider {{$index + 1}}</h2>
+                <h2>{{getOpinionProviderName(userId)}}</h2>
 
                 <div class="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
                     <h3>Criterion {{criteriaNames[criterionId]}}</h3>

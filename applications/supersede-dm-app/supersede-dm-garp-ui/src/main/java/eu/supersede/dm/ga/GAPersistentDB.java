@@ -122,6 +122,7 @@ public class GAPersistentDB
 
         for (Long userId : gameNegotiators)
         {
+            System.out.println("Adding negotiator: " + userId);
             negotiators.add(userId);
         }
 
@@ -204,24 +205,34 @@ public class GAPersistentDB
 
         if (processId != -1)
         {
-            for (Long userId : opinionProviders)
-            {
-                HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
-                PropertyBag bag = mgr.getProperties(a);
-                bag.set("gameId", "" + gameId);
-            }
-            for (Long userId : negotiators)
-            {
-                HActivity a = mgr.createActivity(GANegotiatorVotingMethod.NAME, userId);
-                PropertyBag bag = mgr.getProperties(a);
-                bag.set("gameId", "" + gameId);
-            }
+            createActivities(processId, gameId);
         }
 
-        log.info(
-                "Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
-                        + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size(),
-                ", negotiators: " + negotiators.size());
+        log.info("Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
+                + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size() + ", negotiators: "
+                + negotiators.size());
+    }
+
+    private void createActivities(Long processId, Long gameId)
+    {
+        GAGameDetails gameDetails = getGameInfo(gameId);
+        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+
+        for (Long userId : gameDetails.getOpinionProviders())
+        {
+            System.out.println("Creating activity " + GAPlayerVotingMethod.NAME + " for user " + userId);
+            HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
+            PropertyBag bag = mgr.getProperties(a);
+            bag.set("gameId", "" + gameId);
+        }
+
+        for (Long userId : gameDetails.getNegotiators())
+        {
+            System.out.println("Creating activity " + GANegotiatorVotingMethod.NAME + " for user " + userId);
+            HActivity a = mgr.createActivity(GANegotiatorVotingMethod.NAME, userId);
+            PropertyBag bag = mgr.getProperties(a);
+            bag.set("gameId", "" + gameId);
+        }
     }
 
     public List<HGAGameSummary> getGamesByRoleAndProcess(Long userId, String roleName, Long processId)
@@ -375,10 +386,14 @@ public class GAPersistentDB
         List<Long> gameRequirements = gameRequirementsJpa.findRequirementIdsByGame(gameInfo.getId());
         d.setRequirements(gameRequirements);
 
-        // add users
+        // add opinion providers
         List<Long> opinionProviders = participationJpa.findParticipants(gameInfo.getId(),
                 GARole.OpinionProvider.name());
         d.setOpinionProviders(opinionProviders);
+
+        // add negotiators
+        List<Long> negotiators = participationJpa.findParticipants(gameInfo.getId(), GARole.Negotiator.name());
+        d.setNegotiators(negotiators);
 
         // add criteria weights
         List<Long> gameCriteria = criteriaJpa.findCriteriaByGame(gameInfo.getId());
@@ -467,11 +482,12 @@ public class GAPersistentDB
         gamesJpa.save(gameInfo);
     }
 
-    public void openGame(Long gameId)
+    public void openGame(Long processId, Long gameId)
     {
         HGAGameSummary gameInfo = gamesJpa.findOne(gameId);
         gameInfo.setStatus(GAGameStatus.Open.name());
         gamesJpa.save(gameInfo);
+        createActivities(processId, gameId);
     }
 
     private String serializeRankings(Map<Long, List<Long>> map)

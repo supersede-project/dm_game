@@ -24,6 +24,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     var gameRequirements = {};
     var gameStatus;
     var open = 'Open';
+    var opinionProviders = {};
 
     $scope.currentPage = "page1";
     $scope.ranking = {};
@@ -33,35 +34,57 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
             gameStatus = data.status;
+            loadOpinionProviders();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
 
-            $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
-            .success(function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    $scope.criteriaNames[data[i].criteriaId] = data[i].name;
-                }
+    function loadOpinionProviders() {
+        $http.get('supersede-dm-app/garp/game/opinionproviders?gameId=' + gameId)
+        .success(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                opinionProviders[data[i].userId] = data[i];
+            }
+            loadCriteria();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
 
-                $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
-                .success(function (data) {
-                    $scope.ranking = data;
+    function loadCriteria() {
+        $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
+        .success(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $scope.criteriaNames[data[i].criteriaId] = data[i].name;
+            }
+            loadRankings();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
 
-                    if (!$scope.emptyRanking()) {
-                        $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
-                        .success(function (data) {
+    function loadRankings() {
+        $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
+        .success(function (data) {
+            $scope.ranking = data;
 
-                            for (var i = 0; i < data.length; i++) {
-                                var requirementId = data[i].requirementId;
-                                gameRequirements[requirementId] = data[i];
-                            }
-                        }).error(function (err) {
-                            alert(err.message);
-                        });
-                    }
-                }).error(function (err) {
-                    alert(err.message);
-                });
-            }).error(function (err) {
-                alert(err.message);
-            });
+            if (!$scope.emptyRanking()) {
+                loadRequirements();
+            }
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    function loadRequirements() {
+        $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
+        .success(function (data) {
+
+            for (var i = 0; i < data.length; i++) {
+                var requirementId = data[i].requirementId;
+                gameRequirements[requirementId] = data[i];
+            }
         }).error(function (err) {
             alert(err.message);
         });
@@ -79,6 +102,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             alert(err.message);
         });
     }
+
+    $scope.getOpinionProviderName = function (userId) {
+        return opinionProviders[userId].name;
+    };
 
     $scope.getRequirement = function(requirementId) {
         return gameRequirements[requirementId];
@@ -132,14 +159,8 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         $location.url('supersede-dm-app/home');
     };
 
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/garp/game/id",
-        params: { processId: $scope.processId, activityId: $scope.activityId },
-        headers: {
-            'Content-Type': undefined
-        }
-    }).success(function (data) {
+    $http.get("supersede-dm-app/garp/game/id?processId=" + $scope.processId + "&activityId=" + $scope.activityId)
+    .success(function (data) {
         gameId = data;
         loadPage();
     }).error(function (err) {

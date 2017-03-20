@@ -17,18 +17,18 @@ var app = angular.module('w5app');
 app.controllerProvider.register('game_details', function($scope, $http, $location) {
 
     var gameId = $location.search().gameId;
+    var processId = $location.search().processId;
     var requirements = [];
     var gameStatus;
     var open = 'Open';
 
     $scope.gameRequirements = {};
     $scope.solution = [];
-    $scope.processId = $location.search().processId;
 
     $scope.saveRankings = function () {
-        $http.put('supersede-dm-app/garp/game/rankings/save?processId=' + $scope.processId + "&gameId=" + gameId + "&name=GA-Default")
+        $http.put('supersede-dm-app/garp/game/rankings/save?processId=' + processId + "&gameId=" + gameId + "&name=GA-Default")
         .success(function (data) {
-            $location.url('supersede-dm-app/process').search('processId', $scope.processId);
+            $location.url('supersede-dm-app/process').search('processId', processId);
         }).error(function (err) {
             alert(err.message);
         });
@@ -65,7 +65,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.closeGame = function() {
-        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + $scope.processId)
+        $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + processId)
         .success(function(data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
         }).error(function(err){
@@ -74,7 +74,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.openGame = function () {
-        $http.post('supersede-dm-app/garp/game/opengame?gameId=' + gameId + "&processId=" + $scope.processId)
+        $http.post('supersede-dm-app/garp/game/opengame?gameId=' + gameId + "&processId=" + processId)
         .success(function (data) {
             $("#game_status").html("<strong>Game successfully opened!</strong>");
         }).error(function (err) {

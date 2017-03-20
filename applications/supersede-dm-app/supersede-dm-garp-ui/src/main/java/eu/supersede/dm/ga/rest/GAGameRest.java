@@ -39,13 +39,16 @@ import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.GARequirementsRanking;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.dm.services.EnactmentService;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.HRequirementScore;
 import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.Priority;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
+import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
@@ -56,6 +59,9 @@ public class GAGameRest
 
     @Autowired
     private GAPersistentDB persistentDB;
+
+    @Autowired
+    private UsersJpa usersJpa;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long processId)
@@ -196,6 +202,29 @@ public class GAGameRest
         return requirements;
     }
 
+    @RequestMapping(value = "/opinionproviders", method = RequestMethod.GET)
+    public List<User> getOpinionProviders(Authentication authentication, Long gameId)
+    {
+        List<Long> opinionProvidersId = persistentDB.getGameInfo(gameId).getOpinionProviders();
+        List<User> opinionProviders = new ArrayList<>();
+
+        for (Long userId : opinionProvidersId)
+        {
+            User opinionProvider = usersJpa.findOne(userId);
+
+            if (opinionProvider != null)
+            {
+                opinionProviders.add(opinionProvider);
+            }
+            else
+            {
+                throw new NotFoundException("Unable to find user with id " + userId);
+            }
+        }
+
+        return opinionProviders;
+    }
+
     @RequestMapping(value = "/game", method = RequestMethod.GET)
     public HGAGameSummary getGame(Authentication authentication, Long gameId)
     {
@@ -203,15 +232,15 @@ public class GAGameRest
     }
 
     @RequestMapping(value = "/closegame", method = RequestMethod.POST)
-    public void closeGame(Authentication authentication, @RequestParam("processId") Long processId, Long gameId)
+    public void closeGame(Authentication authentication, @RequestParam Long processId, Long gameId)
     {
         persistentDB.closeGame(gameId, processId);
     }
 
     @RequestMapping(value = "/opengame", method = RequestMethod.POST)
-    public void openGame(Authentication authentication, Long gameId)
+    public void openGame(Authentication authentication, Long processId, Long gameId)
     {
-        persistentDB.openGame(gameId);
+        persistentDB.openGame(processId, gameId);
     }
 
     @RequestMapping(value = "/gamecriteria", method = RequestMethod.GET)
