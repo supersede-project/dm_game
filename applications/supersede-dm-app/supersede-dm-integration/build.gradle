@@ -39,6 +39,7 @@ dependencies {
     compile("org.apache.commons:commons-csv:1.0")
 
     compile("eu.supersede.if:eu.supersede.if.api:0.3.0-SNAPSHOT"){changing = true}
+    compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
 }
 
 eclipse {

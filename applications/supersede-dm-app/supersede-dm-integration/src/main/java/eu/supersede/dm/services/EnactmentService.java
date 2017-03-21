@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import eu.supersede.dm.agent.RESTClient;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.integration.api.replan.controller.exception.ReplanControllerDuplicatedIdException;
 import eu.supersede.integration.api.replan.controller.proxies.IReplanController;
 import eu.supersede.integration.api.replan.controller.proxies.ReplanControllerProxy;
@@ -97,12 +98,11 @@ public class EnactmentService
         }
         catch (ReplanControllerDuplicatedIdException e)
         {
-            System.out.println(e.getMessage());
-            return;
+            throw new InternalServerErrorException(e.getMessage());
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 

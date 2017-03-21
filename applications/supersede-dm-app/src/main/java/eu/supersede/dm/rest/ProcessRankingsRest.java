@@ -148,32 +148,23 @@ public class ProcessRankingsRest
                 requirements.add(requirement);
             }
 
-            try
-            {
-                EnactmentService.get().send(list, true, tenant);
+            EnactmentService.get().send(list, true, tenant);
 
-                for (Requirement r : requirements)
+            for (Requirement r : requirements)
+            {
+                RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+
+                if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
                 {
-                    RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
-
-                    if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Enacted))
-                    {
-                        r.setStatus(RequirementStatus.Enacted.getValue());
-                        DMGame.get().getJpa().requirements.save(r);
-                    }
+                    r.setStatus(RequirementStatus.Enacted.getValue());
+                    DMGame.get().getJpa().requirements.save(r);
                 }
+            }
 
-                HRequirementsRanking rankings = requirementsRankingsJpa
-                        .findRankingsByProcessIdAndName(rr.getProcessId(), rr.getName());
-                rankings.setEnacted(true);
-                requirementsRankingsJpa.save(rankings);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
+            HRequirementsRanking rankings = requirementsRankingsJpa.findRankingsByProcessIdAndName(rr.getProcessId(),
+                    rr.getName());
+            rankings.setEnacted(true);
+            requirementsRankingsJpa.save(rankings);
         }
-
-        // RequirementsRanking rr = mgr.getRanking( rankingId );
     }
 }
