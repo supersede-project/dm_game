@@ -199,21 +199,24 @@ public class GAGameRest
                 requirements.add(DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
-        
-        for( Requirement r : requirements ) {
-        	
-        	List<HRequirementProperty> list = DMGame.get().getJpa().requirementProperties.findPropertiesByRequirementId( r.getRequirementId() );
-        	
-        	String description = r.getDescription();
-        	
-        	for( HRequirementProperty p : list ) {
-        		description += "; " + p.getPropertyName() + ": " + p.getPropertyValue();
-        	}
-        	
-        	r.setDescription( description );
-        	
+
+        for (Requirement r : requirements)
+        {
+
+            List<HRequirementProperty> list = DMGame.get().getJpa().requirementProperties
+                    .findPropertiesByRequirementId(r.getRequirementId());
+
+            String description = r.getDescription();
+
+            for (HRequirementProperty p : list)
+            {
+                description += "; " + p.getPropertyName() + ": " + p.getPropertyValue();
+            }
+
+            r.setDescription(description);
+
         }
-        
+
         return requirements;
     }
 
@@ -264,20 +267,17 @@ public class GAGameRest
         List<ValutationCriteria> criteria = new ArrayList<>();
         Set<Long> criteriaIds = persistentDB.getCriteriaWeights(gameId).keySet();
 
-        System.out.println("game criteria ids: " + criteriaIds.size());
-
         for (Long criterionId : criteriaIds)
         {
-            System.out.println("Searching for criterion " + criterionId);
             ValutationCriteria criterion = DMGame.get().getJpa().criteria.findOne(criterionId);
+
             if (criterion == null)
             {
-                System.out.println("Criterion " + criterionId + " not found");
+                throw new NotFoundException("Criterion " + criterionId + " not found");
             }
+
             criteria.add(criterion);
         }
-
-        System.out.println("game criteria: " + criteria.size());
 
         return criteria;
     }
@@ -340,7 +340,6 @@ public class GAGameRest
 
         for (Long userId : participantIds)
         {
-            System.out.println("Getting ranking of user " + userId);
             String player = "" + userId;
             players.add(player);
             Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
@@ -352,12 +351,10 @@ public class GAGameRest
 
                 for (Long criterionId : userRanking.keySet())
                 {
-                    System.out.println("Criterion " + criterionId);
                     List<String> requirements = new ArrayList<>();
 
                     for (Long requirement : userRanking.get(criterionId))
                     {
-                        System.out.println("Adding requirement: " + requirement);
                         requirements.add("" + requirement);
                     }
 
@@ -458,7 +455,6 @@ public class GAGameRest
 
         for (Long userId : participantIds)
         {
-            System.out.println("Getting ranking of user " + userId);
             String player = "" + userId;
             players.add(player);
             Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
@@ -470,12 +466,10 @@ public class GAGameRest
 
                 for (Long criterionId : userRanking.keySet())
                 {
-                    System.out.println("Criterion " + criterionId);
                     List<String> requirements = new ArrayList<>();
 
                     for (Long requirement : userRanking.get(criterionId))
                     {
-                        System.out.println("Adding requirement: " + requirement);
                         requirements.add("" + requirement);
                     }
 
@@ -595,8 +589,6 @@ public class GAGameRest
     @RequestMapping(value = "/enact", method = RequestMethod.PUT)
     public void doEnactGame(Authentication authentication, @RequestParam Long gameId)
     {
-        System.out.println("Sending requirements for enactment");
-
         String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         GAGameDetails game = persistentDB.getGameInfo(gameId);
         double max = game.getRequirements().size();
@@ -610,7 +602,6 @@ public class GAGameRest
             feature.setName(r.getName());
             feature.setPriority((int) (1 + (pos / max) * 5));
             feature.setId("" + r.getRequirementId());
-            System.out.println("Added feature with id: " + feature.getId());
             list.list().add(feature);
             pos++;
         }

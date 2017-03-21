@@ -38,6 +38,7 @@ import eu.supersede.dm.PropertyBag;
 import eu.supersede.dm.methods.GAMethod;
 import eu.supersede.dm.methods.GANegotiatorVotingMethod;
 import eu.supersede.dm.methods.GAPlayerVotingMethod;
+import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.data.GAGameStatus;
 import eu.supersede.gr.jpa.ActivitiesJpa;
@@ -122,7 +123,6 @@ public class GAPersistentDB
 
         for (Long userId : gameNegotiators)
         {
-            System.out.println("Adding negotiator: " + userId);
             negotiators.add(userId);
         }
 
@@ -224,7 +224,6 @@ public class GAPersistentDB
 
         for (Long userId : gameDetails.getOpinionProviders())
         {
-            System.out.println("Creating activity " + GAPlayerVotingMethod.NAME + " for user " + userId);
             HActivity a = mgr.createActivity(GAPlayerVotingMethod.NAME, userId);
             PropertyBag bag = mgr.getProperties(a);
             bag.set("gameId", "" + gameId);
@@ -232,7 +231,6 @@ public class GAPersistentDB
 
         for (Long userId : gameDetails.getNegotiators())
         {
-            System.out.println("Creating activity " + GANegotiatorVotingMethod.NAME + " for user " + userId);
             HActivity a = mgr.createActivity(GANegotiatorVotingMethod.NAME, userId);
             PropertyBag bag = mgr.getProperties(a);
             bag.set("gameId", "" + gameId);
@@ -550,8 +548,7 @@ public class GAPersistentDB
 
         if (gi == null)
         {
-            System.out.println("gi is null");
-            return new HashMap<>();
+            throw new NotFoundException("Unable to find game with id " + gameId);
         }
 
         return gi.getCriteriaWeights();
