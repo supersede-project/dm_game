@@ -139,6 +139,10 @@ public class GAPersistentDB
         gameSummary.setStatus(GAGameStatus.Open.name());
         HActivity persistentActivity = mgr.createActivity(GAMethod.NAME, currentUser.getUserId());
 
+        // temporary workaround to avoid supervisor activities to be shown in home page
+        persistentActivity.setUserId(null);
+        activitiesJpa.save(persistentActivity);
+
         gameSummary.setActivityId(persistentActivity.getId());
         HGAGameSummary persistedGameSummary = gamesJpa.save(gameSummary);
         Long gameId = persistedGameSummary.getId();
