@@ -41,27 +41,7 @@ public class AHPUILoader
         List<String> roles;
 
         labels = new HashMap<>();
-        roles = new ArrayList<>();
-        labels.put("", "AHP Home");
-        roles.add("DM_ADMIN");
-        roles.add("OPINION_PROVIDER");
-        roles.add("DECISION_SCOPE_PROVIDER");
-        roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "ahprp/home", labels, roles);
-
-        labels = new HashMap<>();
-        labels.put("", "APP Home");
-        roles = new ArrayList<>();
-        roles = new ArrayList<>();
-        roles.add("DM_ADMIN");
-        roles.add("OPINION_PROVIDER");
-        roles.add("DECISION_SCOPE_PROVIDER");
-        roles.add("OPINION_NEGOTIATOR");
-        au.addApplicationPage("supersede-dm-app", "ahprp/game_page", labels, roles);
-
-        labels = new HashMap<>();
-        labels.put("", "Edit Requirements");
-        roles = new ArrayList<>();
+        labels.put("", "Edit Queued Requirements");
         roles = new ArrayList<>();
         roles.add("DM_ADMIN");
         roles.add("DECISION_SCOPE_PROVIDER");
