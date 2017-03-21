@@ -525,63 +525,40 @@ public class GAGameRest
     @RequestMapping(value = "/rankings/save", method = RequestMethod.PUT)
     public void saveRanking(@RequestParam Long processId, @RequestParam Long gameId, @RequestParam String name)
     {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
-
-        if (mgr == null)
-        {
-            return;
-        }
-
         GAGameDetails game = persistentDB.getGameInfo(gameId);
+        HRequirementsRanking requirementsRanking = new HRequirementsRanking();
+        requirementsRanking.setName(name);
+        requirementsRanking.setProcessId(processId);
+        requirementsRanking.setSelected(true);
+        DMGame.get().getJpa().requirementsRankings.save(requirementsRanking);
 
-        try
+        int max = game.getRequirements().size();
+        int pos = 0;
+
+        for (Long reqId : persistentDB.getSolution(gameId))
         {
-            HRequirementsRanking rr = null;
-            List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings
-                    .findRankingsByProcessIdAndName(processId, name);
+            Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
 
-            if (rlist.size() < 1)
+            if (r == null)
             {
-                rr = new HRequirementsRanking();
-                rr.setName(name);
-                rr.setProcessId(processId);
-                rr.setSelected(true);
-                DMGame.get().getJpa().requirementsRankings.save(rr);
-                rlist = DMGame.get().getJpa().requirementsRankings.findRankingsByProcessIdAndName(processId, name);
+                throw new NotFoundException("Requirement with id " + reqId + " not found");
             }
 
-            double max = game.getRequirements().size();
-            double pos = 0;
+            HRequirementScore score = new HRequirementScore();
+            score.setRankingId(requirementsRanking.getId());
+            score.setRequirementId(reqId);
 
-            for (Long reqId : persistentDB.getSolution(gameId))
+            if (max > 5)
             {
-                Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
-
-                if (r == null)
-                {
-                    continue;
-                }
-
-                HRequirementScore score = new HRequirementScore();
-                score.setRankingId(rr.getId());
-                score.setRequirementId(reqId);
-
-                if (max > 5)
-                {
-                    score.setPriority(Priority.fromNumber((int) (1 + (pos / max) * 5)));
-                }
-                else
-                {
-                    score.setPriority(Priority.fromNumber((int) pos + 1));
-                }
-
-                score = DMGame.get().getJpa().scoresJpa.save(score);
-
+                score.setPriority(Priority.fromNumber(1 + (pos / max) * 5));
             }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
+            else
+            {
+                score.setPriority(Priority.fromNumber(pos + 1));
+            }
+
+            score = DMGame.get().getJpa().scoresJpa.save(score);
+            pos++;
         }
     }
 
