@@ -23,6 +23,6 @@ import eu.supersede.gr.model.HRequirementScore;
 
 public interface RequirementsScoresJpa extends JpaRepository<HRequirementScore, Long>
 {
-    @Query("SELECT r FROM HRequirementScore r WHERE rankingId = ?1")
-    List<HRequirementScore> findRankingsByRankingId(Long rankingId);
+    @Query("SELECT r FROM HRequirementScore r WHERE processId = ?1 AND rankingName = ?2")
+    List<HRequirementScore> findByProcessIdAndRankingName(Long rankingId, String name);
 }

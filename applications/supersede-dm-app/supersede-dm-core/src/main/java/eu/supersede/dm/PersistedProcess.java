@@ -360,14 +360,14 @@ public class PersistedProcess extends AbstractProcessManager
                 .findRankingsByProcessId(this.processId);
         List<RequirementsRanking> list = new ArrayList<>();
 
-        for (HRequirementsRanking rr : hlist)
+        for (HRequirementsRanking requirementsRanking : hlist)
         {
             RequirementsRanking ranking = new RequirementsRanking();
-            ranking.setId(rr.getId());
-            ranking.setName(rr.getName());
-            ranking.setProcessId(rr.getProcessId());
-            ranking.setSelected(rr.isSelected());
-            List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId());
+            ranking.setProcessId(requirementsRanking.getProcessId());
+            ranking.setName(requirementsRanking.getName());
+            ranking.setSelected(requirementsRanking.isSelected());
+            List<HRequirementScore> scores = DMGame.get().getJpa().scoresJpa
+                    .findByProcessIdAndRankingName(requirementsRanking.getProcessId(), requirementsRanking.getName());
             ranking.setScores(scores);
             list.add(ranking);
         }
@@ -376,45 +376,33 @@ public class PersistedProcess extends AbstractProcessManager
     }
 
     @Override
-    public RequirementsRanking getRanking(Long rankingId)
-    {
-        HRequirementsRanking rr = DMGame.get().getJpa().requirementsRankings.findOne(rankingId);
-        RequirementsRanking ranking = new RequirementsRanking();
-        ranking.setId(rr.getId());
-        ranking.setName(rr.getName());
-        ranking.setProcessId(rr.getProcessId());
-        ranking.setScores(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
-        return ranking;
-    }
-
-    @Override
-    public Long createRanking(String name)
+    public HRequirementsRanking createRanking(String name)
     {
         HRequirementsRanking rr = new HRequirementsRanking();
+        rr.setProcessId(processId);
         rr.setName(name);
-        rr.setProcessId(this.processId);
-        rr = DMGame.get().getJpa().requirementsRankings.save(rr);
-        return rr.getId();
+        return DMGame.get().getJpa().requirementsRankings.save(rr);
     }
 
     @Override
     public RequirementsRanking getRankingByName(String name)
     {
-        List<HRequirementsRanking> rlist = DMGame.get().getJpa().requirementsRankings
+        HRequirementsRanking requirementsRanking = DMGame.get().getJpa().requirementsRankings
                 .findRankingsByProcessIdAndName(processId, name);
 
-        if (rlist.size() != 1)
+        if (requirementsRanking == null)
         {
             return null;
         }
 
-        HRequirementsRanking rr = rlist.get(0);
         RequirementsRanking ranking = new RequirementsRanking();
-        ranking.setId(rr.getId());
-        ranking.setName(rr.getName());
-        ranking.setProcessId(rr.getProcessId());
-        ranking.setScores(DMGame.get().getJpa().scoresJpa.findRankingsByRankingId(rr.getId()));
-        ranking.setSelected(true);
+        ranking.setProcessId(requirementsRanking.getProcessId());
+        ranking.setName(requirementsRanking.getName());
+        ranking.setSelected(requirementsRanking.isSelected());
+        ranking.setEnacted(requirementsRanking.isEnacted());
+        ranking.setScores(DMGame.get().getJpa().scoresJpa
+                .findByProcessIdAndRankingName(requirementsRanking.getProcessId(), requirementsRanking.getName()));
+
         return ranking;
     }
 }

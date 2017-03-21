@@ -53,8 +53,12 @@ public class ProcessRankingsRest
 
         if (rr == null)
         {
-            Long id = mgr.createRanking(name);
-            rr = mgr.getRanking(id);
+            HRequirementsRanking requirementsRanking = mgr.createRanking(name);
+            rr = new RequirementsRanking();
+            rr.setProcessId(processId);
+            rr.setName(name);
+            rr.setSelected(requirementsRanking.isSelected());
+            rr.setEnacted(requirementsRanking.isEnacted());
         }
 
         // Send requirements for enacting
@@ -159,7 +163,8 @@ public class ProcessRankingsRest
                     }
                 }
 
-                HRequirementsRanking rankings = requirementsRankingsJpa.findOne(rr.getId());
+                HRequirementsRanking rankings = requirementsRankingsJpa
+                        .findRankingsByProcessIdAndName(rr.getProcessId(), rr.getName());
                 rankings.setEnacted(true);
                 requirementsRankingsJpa.save(rankings);
             }
@@ -167,7 +172,6 @@ public class ProcessRankingsRest
             {
                 ex.printStackTrace();
             }
-
         }
 
         // RequirementsRanking rr = mgr.getRanking( rankingId );

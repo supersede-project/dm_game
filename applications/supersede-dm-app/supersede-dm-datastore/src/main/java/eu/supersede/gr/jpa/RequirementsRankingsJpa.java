@@ -25,12 +25,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.HRequirementsRanking;
 
-public interface RequirementsRankingsJpa extends JpaRepository<HRequirementsRanking, Long> {
-	
+public interface RequirementsRankingsJpa extends JpaRepository<HRequirementsRanking, Long>
+{
     @Query("SELECT r FROM HRequirementsRanking r WHERE processId = ?1")
-    List<HRequirementsRanking> findRankingsByProcessId( Long processId );
+    List<HRequirementsRanking> findRankingsByProcessId(Long processId);
 
     @Query("SELECT r FROM HRequirementsRanking r WHERE processId = ?1 AND name = ?2")
-    List<HRequirementsRanking> findRankingsByProcessIdAndName( Long processId, String name );
-
+    HRequirementsRanking findRankingsByProcessIdAndName(Long processId, String name);
 }

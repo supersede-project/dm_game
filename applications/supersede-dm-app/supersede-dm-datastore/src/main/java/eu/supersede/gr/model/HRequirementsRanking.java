@@ -15,21 +15,23 @@
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import eu.supersede.gr.model.id.RequirementRankingId;
+
 @Entity
+@IdClass(RequirementRankingId.class)
 @Table(name = "h_requirements_rankings")
 public class HRequirementsRanking
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     private Long processId;
+
+    @Id
     private String name;
+
     private Boolean selected;
     private Boolean enacted;
 
@@ -37,16 +39,6 @@ public class HRequirementsRanking
     {
         selected = false;
         enacted = false;
-    }
-
-    public Long getId()
-    {
-        return id;
-    }
-
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     public Long getProcessId()

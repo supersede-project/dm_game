@@ -21,7 +21,6 @@ import eu.supersede.gr.model.HRequirementScore;
 
 public class RequirementsRanking
 {
-    private Long id;
     private Long processId;
     private String name;
     private Boolean selected;
@@ -33,16 +32,6 @@ public class RequirementsRanking
         scores = new ArrayList<>();
         selected = false;
         enacted = false;
-    }
-
-    public Long getId()
-    {
-        return id;
-    }
-
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     public Long getProcessId()

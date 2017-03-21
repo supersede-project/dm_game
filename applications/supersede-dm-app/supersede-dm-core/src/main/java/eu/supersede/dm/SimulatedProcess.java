@@ -25,6 +25,7 @@ import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -349,14 +350,7 @@ public class SimulatedProcess extends AbstractProcessManager
     }
 
     @Override
-    public RequirementsRanking getRanking(Long rankingId)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Long createRanking(String name)
+    public HRequirementsRanking createRanking(String name)
     {
         // TODO Auto-generated method stub
         return null;

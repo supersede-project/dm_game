@@ -545,7 +545,8 @@ public class GAGameRest
             }
 
             HRequirementScore score = new HRequirementScore();
-            score.setRankingId(requirementsRanking.getId());
+            score.setProcessId(requirementsRanking.getProcessId());
+            score.setRankingName(requirementsRanking.getName());
             score.setRequirementId(reqId);
 
             if (max > 5)

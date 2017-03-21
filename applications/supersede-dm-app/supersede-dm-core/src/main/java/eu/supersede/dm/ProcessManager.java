@@ -22,6 +22,7 @@ import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HProcess;
 import eu.supersede.gr.model.HProcessCriterion;
 import eu.supersede.gr.model.HProcessMember;
+import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.ProcessStatus;
 import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.ValutationCriteria;
@@ -104,12 +105,9 @@ public interface ProcessManager
 
     // Rankings
 
-    public Long createRanking(String name);
+    public HRequirementsRanking createRanking(String name);
 
     public List<RequirementsRanking> getRankings();
 
-    public RequirementsRanking getRanking(Long rankingId);
-
     public RequirementsRanking getRankingByName(String name);
-
 }

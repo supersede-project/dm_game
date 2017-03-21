@@ -16,24 +16,22 @@ package eu.supersede.gr.model.id;
 
 import java.io.Serializable;
 
-public class RequirementScoreId implements Serializable
+public class RequirementRankingId implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
     private Long processId;
-    private String rankingName;
-    private Long requirementId;
+    private String name;
 
-    public RequirementScoreId()
+    public RequirementRankingId()
     {
 
     }
 
-    public RequirementScoreId(Long processId, String rankingName, Long requirementId)
+    public RequirementRankingId(Long processId, String name)
     {
         this.processId = processId;
-        this.rankingName = rankingName;
-        this.requirementId = requirementId;
+        this.name = name;
     }
 
     public Long getProcessId()
@@ -41,14 +39,9 @@ public class RequirementScoreId implements Serializable
         return processId;
     }
 
-    public String getRankingName()
+    public String getName()
     {
-        return rankingName;
-    }
-
-    public Long getRequirementId()
-    {
-        return requirementId;
+        return name;
     }
 
     @Override
@@ -64,19 +57,14 @@ public class RequirementScoreId implements Serializable
             return false;
         }
 
-        RequirementScoreId requirementScoreId = (RequirementScoreId) o;
+        RequirementRankingId requirementRankingId = (RequirementRankingId) o;
 
-        if (processId != requirementScoreId.getProcessId())
+        if (processId != requirementRankingId.getProcessId())
         {
             return false;
         }
 
-        if (!(rankingName.equals(requirementScoreId.getRankingName())))
-        {
-            return false;
-        }
-
-        if (requirementId != requirementScoreId.getRequirementId())
+        if (!name.equals(requirementRankingId.getName()))
         {
             return false;
         }
@@ -88,8 +76,7 @@ public class RequirementScoreId implements Serializable
     public int hashCode()
     {
         int result = (int) (processId ^ (processId >>> 32));
-        result = 31 * result + rankingName.hashCode();
-        result = 31 * result + (int) (requirementId ^ (requirementId >>> 32));
+        result = 31 * result + name.hashCode();
         return result;
     }
 }

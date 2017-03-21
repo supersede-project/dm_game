@@ -13,21 +13,34 @@ import eu.supersede.gr.model.id.RequirementScoreId;
 public class HRequirementScore
 {
     @Id
-    private Long rankingId;
+    private Long processId;
+
+    @Id
+    private String rankingName;
 
     @Id
     private Long requirementId;
 
     private Priority priority;
 
-    public Long getRankingId()
+    public Long getProcessId()
     {
-        return rankingId;
+        return processId;
     }
 
-    public void setRankingId(Long rankingId)
+    public void setProcessId(Long processId)
     {
-        this.rankingId = rankingId;
+        this.processId = processId;
+    }
+
+    public String getRankingName()
+    {
+        return rankingName;
+    }
+
+    public void setRankingName(String rankingName)
+    {
+        this.rankingName = rankingName;
     }
 
     public Long getRequirementId()
