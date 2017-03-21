@@ -43,6 +43,7 @@ import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.model.HGAGameSummary;
+import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.HRequirementScore;
 import eu.supersede.gr.model.HRequirementsRanking;
 import eu.supersede.gr.model.Priority;
@@ -198,7 +199,21 @@ public class GAGameRest
                 requirements.add(DMGame.get().getJpa().requirements.findOne(requirementId));
             }
         }
-
+        
+        for( Requirement r : requirements ) {
+        	
+        	List<HRequirementProperty> list = DMGame.get().getJpa().requirementProperties.findPropertiesByRequirementId( r.getRequirementId() );
+        	
+        	String description = r.getDescription();
+        	
+        	for( HRequirementProperty p : list ) {
+        		description += "; " + p.getPropertyName() + ": " + p.getPropertyValue();
+        	}
+        	
+        	r.setDescription( description );
+        	
+        }
+        
         return requirements;
     }
 
