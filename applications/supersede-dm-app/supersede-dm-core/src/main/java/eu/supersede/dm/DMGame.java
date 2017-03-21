@@ -108,6 +108,15 @@ public class DMGame
             @Override
             public void checkPreconditions(ProcessManager mgr) throws Exception
             {
+                if (mgr.getProcessMembers() == null || mgr.getProcessMembers().size() == 0)
+                {
+                    throw new Exception("At least one user must exist in the process");
+                }
+
+                if (mgr.getCriteriaCount() == 0)
+                {
+                    throw new Exception("At least one criterion must exist in the process");
+                }
 
                 if (mgr.getRequirementsCount() == 0)
                 {
