@@ -1,0 +1,125 @@
+<script src="supersede-dm-app/garp/js/create_game.js"></script>
+
+<style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    input, form {
+        margin: 0 auto;
+        width: 500px;
+    }
+</style>
+
+<div ng-controller="create_game">
+
+    <h1>Create New Game</h1>
+
+    <div id="page1" ng-show="currentPage == 'page1'">
+
+        <h2>Name</h2>
+        <form>
+<!--             <input id="game_name" type="text" value="Decision Making Process"> -->
+             <input id="game_name" type="text" ng-model="game.title" placeholder="Decision Making Process" jqx-width="'98%'"/>
+        </form>
+
+        <h2>Requirements</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="requirements"></div>
+        </div>
+
+        <h2>Criteria</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="criteria"></div>
+        </div>
+
+        <h2>Opinion Providers</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="opinion_providers"></div>
+        </div>
+
+        <h2>Negotiators</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="negotiators"></div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="definePlayersWeights()">Next</jqx-button>
+        </div>
+    </div>
+
+    <div id="page2" ng-show="currentPage == 'page2'">
+        <h2>Define Players Weights</h2>
+
+        <div align="center" ng-repeat="criterion in gameCriteria.localdata">
+            <h3>Criterion {{criterion.name}}</h3>
+
+            <div ng-repeat="player in gameOpinionProviders.localdata"
+                 id="{{'criterion' + criterion.sourceId + 'player' + player.userId}}"
+                 style="margin-top: 10px; margin-bottom: 10px">
+                <span><strong>Opinion Provider</strong>: {{player.name}}</span>
+                <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
+                        jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1" jqx-tool-tip="true">
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="defineCriteriaWeights()">Next</jqx-button>
+        </div>
+    </div>
+
+    <div id="page3" ng-show="currentPage == 'page3'">
+        <h2>Define Criteria Weights</h2>
+        <div align="center" ng-repeat="criterion in gameCriteria.localdata" id="{{'criterion' + criterion.sourceId}}"
+             style="margin-top: 10px; margin-bottom: 10px">
+            <span><strong>Criterion</strong>: {{criterion.name}}</span>
+            <div jqx-slider jqx-height="60" jqx-value="1" jqx-min="0" jqx-max="1" jqx-ticks-frequency="0.25"
+                jqx-show-minor-ticks="true" jqx-minor-ticks-frequency="0.1" jqx-show-tick-labels="true" jqx-step="0.1"  jqx-tool-tip="true">
+            </div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <jqx-button style="margin-right: 10px" ng-click="showSummary()">Next</jqx-button>
+        </div>
+    </div>
+
+    <div id="page4" ng-show="currentPage == 'page4'">
+        <h2>New Game Summary</h2>
+        <h3>Requirements</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_requirements"></div>
+        </div>
+
+        <h3>Criteria</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_criteria"></div>
+        </div>
+
+        <h3>Opinion Providers</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_opinion_providers"></div>
+        </div>
+
+        <h3>Negotiators</h3>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="game_negotiators"></div>
+        </div>
+
+        <br>
+
+        <div align="center">
+            <jqx-button style="margin-right: 10px" ng-click="create_game()">Create Game</jqx-button>
+            <jqx-button ng-click="home()">GA Home</jqx-button>
+            <p id="game_created"></p>
+        </div>
+    </div>
+</div>

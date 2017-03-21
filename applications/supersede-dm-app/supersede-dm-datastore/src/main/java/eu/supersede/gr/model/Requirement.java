@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
@@ -26,50 +22,99 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for Requirement.
-*/
-
 @Entity
-@Table(name="requirements")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Requirement {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+@Table(name = "requirements")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class Requirement
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long requirementId;
+
     private String name;
     private String description;
-    
-    public Requirement() {
+    private Integer status;
+    private Long processId;
+
+    public Requirement()
+    {
+        processId = -1L;
+        status = RequirementStatus.Unconfirmed.getValue();
     }
- 
-    public Requirement(String name, String description) {
+
+    public Requirement(String name, String description)
+    {
+        this();
         this.name = name;
-        this.setDescription(description);
+        this.description = description;
     }
- 
-    public Long getRequirementId() {
+
+    public Long getRequirementId()
+    {
         return requirementId;
     }
- 
-    public void setRequirementId(Long requirementId) {
+
+    public void setRequirementId(Long requirementId)
+    {
         this.requirementId = requirementId;
     }
- 
-    public String getName() {
+
+    public String getName()
+    {
         return name;
     }
- 
-    public void setName(String name) {
+
+    public void setName(String name)
+    {
         this.name = name;
     }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public void setStatus(Integer status)
+    {
+        this.status = status;
+    }
+
+    public Integer getStatus()
+    {
+        if (status == null)
+        {
+            return RequirementStatus.Unconfirmed.getValue();
+        }
+        else
+        {
+            return status;
+        }
+    }
+
+    public Long getProcessId()
+    {
+        if (processId == null)
+        {
+            return -1L;
+        }
+        else
+        {
+            return processId;
+        }
+    }
+
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
+
+    public String getTopic()
+    {
+        return "";
+    }
 }

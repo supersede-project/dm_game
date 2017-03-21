@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import eu.supersede.gr.model.Requirement;
+
 public class DMProblem {
 	
 	public static class Config {
@@ -17,7 +19,7 @@ public class DMProblem {
 		public List<DMMethod>				candidateTechniques = new ArrayList<>();
 		
 		// Input
-		List<DMRequirement>					requirements = new ArrayList<>();
+		List<Requirement>					requirements = new ArrayList<>();
 		
 		// Context
 		Set<DMUser>							candidateUsers = new HashSet<>();
@@ -45,7 +47,7 @@ public class DMProblem {
 			candidateUsers.add( dmUser );
 		}
 		
-		public void add(DMRequirement dmRequirement) {
+		public void add(Requirement dmRequirement) {
 			this.requirements.add( dmRequirement );
 		}
 		
@@ -69,7 +71,7 @@ public class DMProblem {
 			this.constraints.put( key, value );
 		}
 		
-		public List<DMRequirement> getRequirements() {
+		public List<Requirement> getRequirements() {
 			return this.requirements;
 		}
 
@@ -98,7 +100,7 @@ public class DMProblem {
 		return config.candidateUsers;
 	}
 
-	public List<DMRequirement> getRequirements() {
+	public List<Requirement> getRequirements() {
 		return this.config.requirements;
 	}
 

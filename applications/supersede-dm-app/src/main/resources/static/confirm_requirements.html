@@ -1,0 +1,27 @@
+<script src="supersede-dm-app/js/confirm_requirements.js"></script>
+
+<style>
+h1, h2, h3 {
+	text-align: center;
+}
+
+input, form {
+	margin: 0 auto;
+	width: 500px;
+}
+</style>
+
+<div ng-controller="confirm_requirements">
+
+	<h1>Mark the selected requirements as Confirmed?</h1>
+
+	<h3>Once confirmed, they will be freezed and it will not be possible anymore to modify them</h3>
+
+	<br>
+
+	<div align="center">
+		<jqx-button style="margin-right: 10px" ng-click="cancel()">Cancel</jqx-button>
+		<jqx-button ng-click="proceed()">Proceed</jqx-button>
+	</div>
+
+</div>

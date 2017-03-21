@@ -30,21 +30,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.gr.jpa.GamesJpa;
-import eu.supersede.gr.jpa.JudgeActsJpa;
-import eu.supersede.gr.jpa.PlayerMovesJpa;
-import eu.supersede.gr.jpa.RequirementsMatricesDataJpa;
+import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.jpa.AHPJudgeActsJpa;
+import eu.supersede.gr.jpa.AHPPlayerMovesJpa;
+import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.Game;
-import eu.supersede.gr.model.JudgeAct;
-import eu.supersede.gr.model.PlayerMove;
-import eu.supersede.gr.model.RequirementsMatrixData;
+import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPJudgeAct;
+import eu.supersede.gr.model.HAHPPlayerMove;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
 import eu.supersede.gr.utility.PointsLogic;
-import eu.supersede.fe.exception.NotFoundException;
-import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
 @RequestMapping("/ahprp/judgeact")
@@ -54,7 +54,7 @@ public class JudgeActRest {
 	private PointsLogic pointsLogic;
 	
 	@Autowired
-    private JudgeActsJpa judgeActs;
+    private AHPJudgeActsJpa judgeActs;
 	
 	@Autowired
     private UsersJpa users;
@@ -63,33 +63,33 @@ public class JudgeActRest {
     private ValutationCriteriaJpa criterias;
 
 	@Autowired
-    private GamesJpa games;
+    private AHPGamesJpa games;
 	
 	@Autowired
-    private RequirementsMatricesDataJpa requirementsMatricesData;
+    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 	
 	@Autowired
-    private PlayerMovesJpa playerMoves;
+    private AHPPlayerMovesJpa playerMoves;
 	
 	// get all the judgeActs if user is a judge
 	@PreAuthorize("hasRole('OPINION_NEGOTIATOR')")
 	@RequestMapping(value = "",  method = RequestMethod.GET)
-	public List<JudgeAct> getJudgeActs(@RequestParam(required=false) Long gameId,
+	public List<HAHPJudgeAct> getJudgeActs(@RequestParam(required=false) Long gameId,
 			@RequestParam(required=false) Long criteriaId,
 			@RequestParam(defaultValue="false") Boolean gameNotFinished) {
 
-		List<JudgeAct> acts;
+		List<HAHPJudgeAct> acts;
 		if(gameNotFinished)
 		{
 			if(gameId != null && criteriaId != null)
 			{
-				Game game = games.getOne(gameId);
+				HAHPGame game = games.getOne(gameId);
 				ValutationCriteria criteria = criterias.getOne(criteriaId);
 				acts = judgeActs.findByGameAndCriteriaAndGameNotFinished(game, criteria);
 			}
 			else if(gameId != null)
 			{
-				Game game = games.getOne(gameId);
+				HAHPGame game = games.getOne(gameId);
 				acts = judgeActs.findByGameAndGameNotFinished(game);
 			}
 			else if(criteriaId != null)
@@ -106,13 +106,13 @@ public class JudgeActRest {
 		{
 			if(gameId != null && criteriaId != null)
 			{
-				Game game = games.getOne(gameId);
+				HAHPGame game = games.getOne(gameId);
 				ValutationCriteria criteria = criterias.getOne(criteriaId);
 				acts = judgeActs.findByGameAndCriteria(game, criteria);
 			}
 			else if(gameId != null)
 			{
-				Game game = games.getOne(gameId);
+				HAHPGame game = games.getOne(gameId);
 				acts = judgeActs.findByGame(game);
 			}
 			else if(criteriaId != null)
@@ -131,9 +131,9 @@ public class JudgeActRest {
 	// get a specific judgeAct 
 	@PreAuthorize("hasRole('OPINION_NEGOTIATOR')")
 	@RequestMapping(value = "/{judgeActId}", method = RequestMethod.GET)
-	public JudgeAct getJudgeAct(@PathVariable Long judgeActId){	
+	public HAHPJudgeAct getJudgeAct(@PathVariable Long judgeActId){	
 				
-		JudgeAct ja = judgeActs.findOne(judgeActId);
+		HAHPJudgeAct ja = judgeActs.findOne(judgeActId);
 		
 		if(ja == null)
 		{
@@ -151,14 +151,14 @@ public class JudgeActRest {
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User judge = users.findOne(currentUser.getUserId());
 		
-		JudgeAct judgeAct = judgeActs.findOne(judgeActId);
+		HAHPJudgeAct judgeAct = judgeActs.findOne(judgeActId);
 		
 		judgeAct.setJudge(judge);
 		judgeAct.setVoted(true);
 		judgeAct.setVotedTime(new Date());
 		judgeActs.save(judgeAct);
 		
-		RequirementsMatrixData requirementsMatrixData = judgeAct.getRequirementsMatrixData();		
+		HAHPRequirementsMatrixData requirementsMatrixData = judgeAct.getRequirementsMatrixData();		
 		requirementsMatrixData.setValue(vote);
 		requirementsMatricesData.save(requirementsMatrixData);
 		
@@ -168,7 +168,7 @@ public class JudgeActRest {
 		pointsLogic.addPoint(judge, -2l, criteriaId);
 		
 		// set played true to all player_moves connected with the requirementsMatrixDataId		
-		List<PlayerMove> playerMovesList = playerMoves.findByRequirementsMatrixData(requirementsMatrixData);
+		List<HAHPPlayerMove> playerMovesList = playerMoves.findByRequirementsMatrixData(requirementsMatrixData);
 		for(int i=0; i< playerMovesList.size();i++){
 			playerMovesList.get(i).setPlayed(true);
 			playerMoves.save(playerMovesList.get(i));

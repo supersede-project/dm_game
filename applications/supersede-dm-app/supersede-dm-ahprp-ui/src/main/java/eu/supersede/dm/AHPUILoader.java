@@ -27,32 +27,24 @@ import org.springframework.stereotype.Component;
 import eu.supersede.fe.application.ApplicationUtil;
 
 @Component
-public class AHPUILoader {
-	
-	@Autowired
-	private ApplicationUtil au;
-	
-	@PostConstruct
-	public void load() {
-		
-		System.out.println( "Registering AHP app" );
-		
-		Map<String, String> labels = new HashMap<>();
-		List<String> roles;
-		
-		labels = new HashMap<>();
-		roles = new ArrayList<>();
-		labels.put( "", "AHP Home" );
-		roles.add( "DM_ADMIN" );
-		au.addApplicationPage( "supersede-dm-app", "ahprp/home", labels, roles );
-		
-		labels = new HashMap<>();
-		labels.put( "", "APP Home" );
-		roles = new ArrayList<>();
-		roles = new ArrayList<>();
-		roles.add( "DM_ADMIN" );
-		au.addApplicationPage( "supersede-dm-app", "ahprp/game_page", labels, roles );
-		
-	}
-	
+public class AHPUILoader
+{
+    @Autowired
+    private ApplicationUtil au;
+
+    @PostConstruct
+    public void load()
+    {
+        System.out.println("Registering AHP app");
+
+        Map<String, String> labels = new HashMap<>();
+        List<String> roles;
+
+        labels = new HashMap<>();
+        labels.put("", "Edit Queued Requirements");
+        roles = new ArrayList<>();
+        roles.add("DM_ADMIN");
+        roles.add("DECISION_SCOPE_PROVIDER");
+        au.addApplicationPage("supersede-dm-app", "ahprp/requirements_criterias_editing", labels, roles);
+    }
 }

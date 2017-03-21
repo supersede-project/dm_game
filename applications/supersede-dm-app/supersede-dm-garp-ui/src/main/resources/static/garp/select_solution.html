@@ -1,0 +1,101 @@
+<script src="supersede-dm-app/garp/js/select_solution.js"></script>
+
+<style>
+    h1, h2, h3 {
+        text-align: center;
+    }
+    .solutions > div > div, .rankings > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    .solutions div, .rankings div {
+        padding: 5px;
+    }
+    .solutions > div > div:hover, .rankings > div > div:hover {
+        border: 1px solid #356AA0;
+    }
+    p {
+        margin: 1em;
+    }
+</style>
+
+<div ng-controller="select_solution">
+    <div ng-show="canSelectSolution()">
+
+        <div id="page1" ng-show="currentPage == 'page1'">
+
+            <h1>Current Ranking</h1>
+
+            <div ng-repeat="(userId, criterionRanking) in ranking">
+                <h2>{{getOpinionProviderName(userId)}}</h2>
+
+                <div class="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
+                    <h3>Criterion {{criteriaNames[criterionId]}}</h3>
+
+                    <div ng-repeat="requirementId in requirements">
+                        <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                            <div>
+                                <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                            </div>
+                            <div style="background-color: #ffd11a">
+                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div align="center">
+                <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
+                <jqx-button ng-click="home()">Back</jqx-button>
+            </div>
+
+        </div>
+
+        <div id="page2" ng-show="currentPage == 'page2'">
+            <h1>Solutions</h1>
+
+            <div class="solutions" ng-repeat="solution in solutions">
+                <h2>Solution {{$index + 1}}</h2>
+
+                <div ng-repeat="requirementId in solution">
+                    <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                        <div>
+                            <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                        </div>
+                        <div style="background-color: #ffd11a">
+                            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div align="center">
+                <select id="select_solution">
+                    <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
+                </select>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
+                <jqx-button ng-click="home()">Back</jqx-button>
+
+                <p id="selected_solution"></p>
+                <p id="game_status"></p>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="!gameOpen()">
+        <div align="center">
+            <p><strong>You can not select a solution because the game has been closed!</strong></p>
+            <jqx-button ng-click="home()">Back</jqx-button>
+        </div>
+    </div>
+
+    <div ng-show="gameOpen && emptyRanking()">
+        <div align="center">
+            <p><strong>You can not select a solution because no ranking has been submitted yet!</strong></p>
+            <jqx-button ng-click="home()">Back</jqx-button>
+        </div>
+    </div>
+</div>

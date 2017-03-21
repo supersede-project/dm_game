@@ -28,43 +28,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.gr.jpa.CriteriasMatricesDataJpa;
-import eu.supersede.gr.jpa.GamesJpa;
-import eu.supersede.gr.model.CriteriasMatrixData;
-import eu.supersede.gr.model.Game;
-import eu.supersede.gr.model.PlayerMove;
-import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.RequirementsMatrixData;
-import eu.supersede.gr.model.ValutationCriteria;
-import eu.supersede.dm.algorithms.Ahp;
 import eu.supersede.dm.algorithms.AHPStructure;
+import eu.supersede.dm.algorithms.Ahp;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.gr.jpa.AHPCriteriasMatricesDataJpa;
+import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.model.HAHPCriteriasMatrixData;
+import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPPlayerMove;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
+import eu.supersede.gr.model.Requirement;
+import eu.supersede.gr.model.ValutationCriteria;
 
 @RestController
 @RequestMapping("/ahprp/ahp")
 public class AHPRest {
 
 	@Autowired
-    private GamesJpa games;
+    private AHPGamesJpa games;
 	@Autowired
-    private CriteriasMatricesDataJpa criteriasMatricesData;
+    private AHPCriteriasMatricesDataJpa criteriasMatricesData;
 
 	// AHP alghoritm for a specific game
 	@RequestMapping(value = "/{gameId}", method = RequestMethod.GET)
 	public Map<String,Double> getValuesFromAlgorithm(@PathVariable Long gameId) {
 		
-		Game g = games.findOne(gameId);
+		HAHPGame g = games.findOne(gameId);
 		
 		if(g == null){
 			throw new NotFoundException();
 		}
 		
-		List<CriteriasMatrixData> criteriasMatrixDataList = criteriasMatricesData.findByGame(g);
+		List<HAHPCriteriasMatrixData> criteriasMatrixDataList = criteriasMatricesData.findByGame(g);
 		
 		return CalculateAHP(g.getCriterias(), g.getRequirements(), criteriasMatrixDataList, g.getRequirementsMatrixData());
 	}
 	
-	public static Map<String,Double> CalculateAHP(List<ValutationCriteria> criterias, List<Requirement> requirements, List<CriteriasMatrixData> criteriasMatrixDataList, List<RequirementsMatrixData> requirementsMatrixDataList)
+	public static Map<String,Double> CalculateAHP(List<ValutationCriteria> criterias, List<Requirement> requirements, List<HAHPCriteriasMatrixData> criteriasMatrixDataList, List<HAHPRequirementsMatrixData> requirementsMatrixDataList)
 	{
 		AHPStructure input = new AHPStructure();
 		
@@ -129,7 +129,7 @@ public class AHPRest {
 						requirementsMatrixDataList.get(i).getValue().intValue());
 			}else{
 				// find the average
-				List<PlayerMove> playerMovesList = requirementsMatrixDataList.get(i).getPlayerMoves();
+				List<HAHPPlayerMove> playerMovesList = requirementsMatrixDataList.get(i).getPlayerMoves();
 				
 				int total = 0;
 				int times = 0;
@@ -161,7 +161,7 @@ public class AHPRest {
 		return map;
 	}
 	
-	public static Map<String,Double> CalculatePersonalAHP(Long userId, List<ValutationCriteria> criterias, List<Requirement> requirements, List<CriteriasMatrixData> criteriasMatrixDataList, List<RequirementsMatrixData> requirementsMatrixDataList)
+	public static Map<String,Double> CalculatePersonalAHP(Long userId, List<ValutationCriteria> criterias, List<Requirement> requirements, List<HAHPCriteriasMatrixData> criteriasMatrixDataList, List<HAHPRequirementsMatrixData> requirementsMatrixDataList)
 	{
 		AHPStructure input = new AHPStructure();
 		
@@ -204,7 +204,7 @@ public class AHPRest {
 			
 			//This part allows to find the requirements ranks for a specific player (you have to insert the user_id)
 			  
-			List<PlayerMove> playerMovesList = requirementsMatrixDataList.get(i).getPlayerMoves();
+			List<HAHPPlayerMove> playerMovesList = requirementsMatrixDataList.get(i).getPlayerMoves();
 			
 			for(int j=0; j<playerMovesList.size(); j++){
 			

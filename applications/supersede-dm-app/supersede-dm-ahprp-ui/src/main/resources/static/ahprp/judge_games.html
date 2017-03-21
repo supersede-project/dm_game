@@ -1,0 +1,9 @@
+<script src="supersede-dm-app/ahprp/js/judge_games.js"></script>
+<div ng-controller="judge_games" style="height: 500px;">
+    <div>Here there is the list of your decision making processes, click on the "Enter" button to see your actions.</div>
+    <br>
+    <div align="center" ng-show="!playerGames.length">You have no decision making processes.</div>
+    <div ng-show="playerGames.length">
+        <jqx-grid jqx-create="createWidget" jqx-settings="gridSettings"></jqx-grid>
+    </div>
+</div>

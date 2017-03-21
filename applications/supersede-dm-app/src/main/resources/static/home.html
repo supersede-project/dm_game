@@ -1,47 +1,42 @@
 <script src="supersede-dm-app/js/home.js"></script>
+
 <div class="container" ng-controller="home">
 
-Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
+    Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
 
-	<div class="row" ng-controller="home">
-		<div class="col-md-6">
-<!-- 			<h1>Profile details</h1> -->
-<!-- 			<p>Name: <b>{{user.name}}</b></p> -->
-<!-- 			<p>Email: <b>{{user.email}}</b></p> -->
+    <div>
 
-<!-- 			<div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row"> -->
-<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
-<!-- 					<a href="#/supersede-dm-app/games">Decision making processes</a> -->
-<!-- 				</jqx-link-button> -->
-<!-- 			</div> -->
-				
-<!-- 				<jqx-link-button jqx-width="200" jqx-height="30"> -->
-<!-- 					<a href="#/supersede-dm-ahprp-ui/games">Processes</a> -->
-<!-- 				</jqx-link-button> -->
-	
-	<h2>List of unscheduled requirements</h2>
-	
-		<div class="row">
-			<label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" 
-				ng-mouseenter="$parent.currentRequirement = requirement"
-				ng-mouseleave="$parent.currentRequirement = undefined">
-				<input
-				    type="checkbox"
-				    name="selectedRequirements"
-				    value="{{requirement}}"
-				    ng-checked="game.requirements.indexOf(requirement) > -1"
-				    ng-click="toggleSelection(game.requirements, requirement)"
-			  	/> {{requirement.name}}
-			</label>
-		</div>
-		<div ng-show="currentRequirement" class="selection-summary">
-			<div class="summary-row">{{currentRequirement.description}}</div>
-		</div>
-				
-		</div>
-		
-	</div>
-	
-	
-	
+        <div id='expAlerts' ng-show="hasRole('DECISION_SCOPE_PROVIDER')" style='margin-top:32px'>
+            <div><h2>Queued alerts: {{alertsNum}}</h2></div>
+            <div>
+                <div id="gridAlerts"></div>
+            </div>
+        </div>
+
+        <div id='expRequirements' ng-show="hasRole('DECISION_SCOPE_PROVIDER')" style='margin-top:32px'>
+            <div><h2>Queued requirements: {{reqNum}} (<a href="#/supersede-dm-app/ahprp/requirements_criterias_editing">Edit</a>)</h2></div>
+            <div>
+                <div style="border: none;" id="requirementslist"></div>
+            </div>
+        </div>
+
+        <div id='expProcesses' ng-show="hasRole('DECISION_SCOPE_PROVIDER')" style='margin-top:32px'>
+            <div>
+                <h2>Ongoing processes: {{procNum}}</h2>
+                <jqx-button ng-click="createNewProcess()">Create new</jqx-button>
+            </div>
+            <div>
+                <div style="border: none;" id="listbox"></div>
+            </div>
+        </div>
+
+        <div id='expActivities' ng-show="hasRole('OPINION_NEGOTIATOR') || hasRole('OPINION_PROVIDER')" style='margin-top:32px'>
+            <div><h2>Pending activities: {{actNum}}</h2></div>
+            <div>
+                <div style="border: none;" id="activities-listbox"></div>
+            </div>
+        </div>
+
+    </div>
+
 </div>

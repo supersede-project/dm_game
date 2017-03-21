@@ -1,35 +1,40 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "maven"
+apply plugin: "maven-publish"
 apply plugin: "com.jfrog.artifactory"
 
-version = '0.0.2-SNAPSHOT'
-group = 'eu.supersede'
+version = "0.0.2-SNAPSHOT"
+group = "eu.supersede"
 
 jar {
-    baseName = 'supersede-dm-datastore'
+    baseName = "supersede-dm-datastore"
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 buildscript {
+    ext {
+        springBootVersion = "1.4.3.RELEASE"
+    }
     repositories {
         mavenCentral()
-	maven {
-  //        url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
-            url 'http://62.14.219.13:10080/artifactory/libs-release'
-            name = 'maven-supersede-release'
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url "http://supersede.es.atos.net:10080/artifactory/libs-release"
+            name = "maven-supersede-release"
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
             }
         }
-	maven {
-            url 'http://62.14.219.13:10080/artifactory/libs-snapshot'
-            name = 'maven-supersede-snapshot'
+        maven {
+            url "http://supersede.es.atos.net:10080/artifactory/libs-snapshot"
+            name = "maven-supersede-snapshot"
             credentials {
                 username = "${artifactory_user}"
                 password = "${artifactory_password}"
@@ -37,9 +42,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE")
-	//Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
     }
 }
 
@@ -50,63 +55,26 @@ repositories {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-security:1.4.1.RELEASE')
-    compile('org.springframework.boot:spring-boot-starter-web:1.4.1.RELEASE')
-    
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+
     compile("org.springframework.session:spring-session:1.2.2.RELEASE")
-    
-    compile("org.springframework.boot:spring-boot-starter-jdbc:1.4.1.RELEASE")
-	compile("org.springframework.boot:spring-boot-starter-data-jpa:1.4.1.RELEASE")
-	
-    compile("org.springframework.boot:spring-boot-starter-redis:1.4.1.RELEASE")
 
-	compile("eu.supersede:supersede-frontend-core:0.2-SNAPSHOT")
+    compile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+
+    compile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
+
+    compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
 }
-
 
 eclipse {
     classpath {
-         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+         containers.remove("org.eclipse.jdt.launching.JRE_CONTAINER")
+         containers "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
-}
-
-// Artifactory configuration to publish built jars
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'libs-snapshot-local'
-	    username = "${artifactory_user}"
-	    password = "${artifactory_password}"
-            maven = true
-        }
-	defaults {
-   	    publications ('mavenJava')
-	}
-    }
-    resolve {
-        repository {
-            repoKey = 'libs-snapshot'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-    }
-}
-
-artifactoryPublish {
-  dependsOn jar
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
+    gradleVersion = "3.3"
 }

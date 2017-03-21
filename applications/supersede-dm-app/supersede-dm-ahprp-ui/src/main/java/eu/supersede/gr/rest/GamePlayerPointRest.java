@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.supersede.gr.jpa.GamesJpa;
+import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.AHPGamesJpa;
 import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
-import eu.supersede.gr.model.Game;
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.GamePlayerPoint;
 import eu.supersede.gr.model.User;
-import eu.supersede.fe.security.DatabaseUser;
 
 @RestController
 @RequestMapping("/ahprp/gameplayerpoint")
@@ -26,7 +26,7 @@ public class GamePlayerPointRest {
 	@Autowired
     private UsersJpa users;	
 	@Autowired
-    private GamesJpa games;
+    private AHPGamesJpa games;
 	
 	// get all the gamesPlayersPoints
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -51,7 +51,7 @@ public class GamePlayerPointRest {
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());
 		
-		Game game = games.findOne(gameId);
+		HAHPGame game = games.findOne(gameId);
 		
 		return gamesPlayersPoints.findByUserAndGame(user, game);
 	}	

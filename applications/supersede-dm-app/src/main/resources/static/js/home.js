@@ -10,108 +10,238 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 var app = angular.module('w5app');
 
-app.controllerProvider.register('home', function($scope, $http, $location) {
+var http;
+var loadProcesses;
 
-	$scope.now = function()
-	{
-		return new Date().toJSON().slice(0,19).replace("T", " ");
-	}
-	
-    $scope.players = [];
-    $scope.requirements = [];
-    $scope.criterias = [];
+app.controllerProvider.register('home', function ($scope, $rootScope, $http, $location) {
 
-    $scope.currentPlayer = undefined;
-    $scope.currentRequirement= undefined;
-    $scope.currentCriteria = undefined;
-    
-    $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-    
-    $scope.currentPage = 'page1';
-    
-    $scope.requirementsChoices = [];
-    
-    $scope.choices = {};
-    
-    $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.players.push(data[i]);
-		}
-	});
-    
-    $http.get('supersede-dm-app/ahprp/requirement')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirements.push(data[i]);
-		}
-	});
-    
-    $http.get('supersede-dm-app/ahprp/criteria')
-	.success(function(data) {
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.criterias.push(data[i]);
-		}
-	});
+    http = $http;
+    $scope.procNum = undefined;
 
-    $http.get('supersede-dm-app/ahprp/requirementchoice')
-	.success(function(data) {
-		$scope.requirementsChoices.length = 0;
-		for(var i = 0; i < data.length; i++)
-		{
-			$scope.requirementsChoices.push(data[i]);
-		}
-	});
-    
-    $scope.toggleSelection = function(array, item)
-	{
-	    var idx = array.indexOf(item);
-	    if (idx > -1) {
-	    	array.splice(idx, 1);
-	    }
-	    else {
-	    	array.push(item);
-	    }
-	};
-	
-	$scope.toPage = function(p)
-	{
-		if(p == 3)
-		{
-			if($scope.game.players.length > 0 &&
-					$scope.game.requirements.length > 1 &&
-					$scope.game.criterias.length > 1)
-			{
-				$scope.currentPage = 'page3';
-			}
-		}
-		else
-		{
-			$scope.currentPage = 'page' + p;
-		}
-	}
-	
-	$scope.createGame = function()
-	{
-		$http({
-			url: "supersede-dm-app/ahprp/game",
-	        data: $scope.game,
-	        method: 'POST',
-	        params: {criteriaValues : $scope.choices}
-	    }).success(function(data){
-	        $scope.game = {players : [], requirements: [], criterias: [], title: "Decision Making Process " + $scope.now()};
-	    	$scope.choices = {};
-	    	$scope.currentPage = 'page1';
-	    	$location.url('supersede-dm-app/ahprp/game_page').search('gameId', data);
-	    }).error(function(err){
-	    	console.log(err);
-	    });
-	};
+    $http.get('/supersede-dm-app/user/current')
+    .success(function (data) {
+        $scope.user = data;
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    $scope.hasRole = function (role) {
+        if ($rootScope.user && $rootScope.user.authorities) {
+            for (var i = 0; i < $rootScope.user.authorities.length; i++) {
+                if ($rootScope.user.authorities[i].authority == "ROLE_" + role) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    // Get alerts
+    $http.get('supersede-dm-app/alerts/biglist')
+    .success(function (data) {
+        $scope.alertsNum = data.length;
+
+        $http.get('supersede-dm-app/alerts/biglist')
+        .success(function (data) {
+            var source = {
+                datatype: "json",
+                localdata: data,
+                datafields: [
+                    { name: 'applicationId', map: 'applicationId' },
+                    { name: 'alertId' },
+                    { name: 'id' },
+                    { name: 'timestamp' },
+                    { name: 'description' },
+                    { name: 'classification' },
+                    { name: 'accuracy' },
+                    { name: 'pos' },
+                    { name: 'neg' },
+                    { name: 'overall' },
+                ],
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#gridAlerts").jqxGrid({
+                width: "100%",
+                source: dataAdapter,
+                groupable: true,
+                columns: [
+                  { text: 'App', dataField: 'applicationId', width: "15%" },
+                  { text: 'Alert', dataField: 'alertId', width: "10%" },
+                  { text: 'Id', dataField: 'id', width: "10%" },
+                  { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
+                  { text: 'Description', dataField: 'description', width: "20%" },
+                  { text: 'Classification', dataField: 'classification', width: "15%" },
+                  { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
+                  { text: 'Pos.', dataField: 'pos', width: "5%" },
+                  { text: 'Neg.', dataField: 'neg', width: "5%" },
+                  { text: 'Overall.', dataField: 'overall', width: "5%" }
+                ],
+            groups: ['applicationId', 'alertId']
+            });
+
+            $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    // Get requirements
+    $http.get('supersede-dm-app/requirement?procFx=Eq&processId=-1')
+    .success(function (data) {
+        $scope.reqNum = data.length;
+
+        var source = {
+            localdata: data,
+            datatype: "array"
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $('#requirementslist').jqxListBox({
+            source: dataAdapter,
+            width: '100%',
+            renderer: function (index, label, value) {
+                var datarecord = data[index];
+
+                if (datarecord === undefined) {
+                    return "";
+                }
+
+                return datarecord.name + " - " + datarecord.description;
+            }
+        });
+
+        $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    // Get activities
+    $http.get('supersede-dm-app/processes/activities/list')
+    .success(function (data) {
+        $scope.actNum = data.length;
+
+        var source = {
+            localdata: data,
+            datatype: "array"
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $('#activities-listbox').jqxListBox({ selectedIndex: 0,
+            source: dataAdapter,
+            displayMember: "name",
+            valueMember: "id",
+            itemHeight: 70, width: '100%',
+            renderer: function (index, label, value) {
+                var datarecord = data[index];
+                var action;
+                if( datarecord.state == "new" ) {
+                    action = "Start";
+                }
+                else {
+                    action = datarecord.state;
+                }
+                var table =
+                    '<table style="min-width: 100%;">' +
+                    '<tr><td style="width: 40px;">' + "img" + '</td><td>' +
+                    '<a href="#/supersede-dm-app/' + datarecord.url +
+                    '?processId=' + datarecord.processId +
+                    '&activityId=' + datarecord.activityId +
+                    '">' + datarecord.methodName + '</a>' +
+                    '</td></tr></table>';
+                return table;
+            }
+        });
+
+        $("#expActivities").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+
+    $scope.loadProcesses = function () {
+        $http.get('supersede-dm-app/processes/list')
+        .success(function (data) {
+            $scope.procNum = data.length;
+            var source = {
+                localdata: data,
+                datatype: "array"
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $('#listbox').jqxListBox({
+                selectedIndex: 0,
+                source: dataAdapter,
+                displayMember: "name",
+                valueMember: "id",
+                itemHeight: 70, width: '100%',
+                renderer: function (index, label, value) {
+                    var datarecord = data[index];
+
+                    if (datarecord === undefined) {
+                        return "";
+                    }
+
+                    var action;
+                    if (datarecord.state == "new") {
+                        action = "Start";
+                    }
+                    else {
+                        action = datarecord.state;
+                    }
+                    var table =
+                        '<table style="min-width: 100%;">' +
+                        '<tr><td style="width: 40px;">' + action + '</td><td>' +
+                        datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
+                        '<td style="width: 40px;">' +
+                        '<a href="#/supersede-dm-app/process?processId=' + datarecord.id + '">View</a>' +
+                        '<a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Close</a>' +
+                        '<a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Delete</a>' +
+                        '</td>' +
+                        '</tr><tr><td>' +
+                        "Created: " + datarecord.date +
+                        '</td></tr></table>';
+                    return table;
+                }
+            });
+
+            $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    };
+
+    loadProcesses = $scope.loadProcesses;
+
+    $scope.createNewProcess = function() {
+    	var name = prompt( "Enter process name", "");
+        if (name !== null) {
+    		$http.post('supersede-dm-app/processes/new?name=' + name).success(function(data) {
+    			loadProcesses();
+    		});
+    	}
+    };
+
+    loadProcesses();
 });
+
+function closeProcess(processId) {
+    http.post('supersede-dm-app/processes/close?processId=' + processId)
+    .success(function (data) {
+        loadProcesses();
+    }).error(function(err) {
+        alert(err.message);
+    });
+}
+
+function deleteProcess(processId) {
+    http.post('supersede-dm-app/processes/delete?processId=' + processId)
+    .success(function (data) {
+        loadProcesses();
+    }).error(function(err) {
+        alert(err.message);
+    });
+}

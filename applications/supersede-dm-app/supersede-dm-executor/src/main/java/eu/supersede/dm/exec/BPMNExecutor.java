@@ -30,7 +30,7 @@ public class BPMNExecutor {
 	
 	public void loadBPMN( String filename ) {
 		repositoryService.createDeployment()
-//		.addInputStream( filename, BPMNExecutor.class.getResourceAsStream( "supersedeAHPDM.bpmn20.xml" ) )
+		.addInputStream( filename, BPMNExecutor.class.getResourceAsStream( "supersedeAHPDM.bpmn20.xml" ) )
 				  .addClasspathResource( filename )
 				  .deploy();
 	}

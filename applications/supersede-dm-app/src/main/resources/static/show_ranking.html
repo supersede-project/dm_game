@@ -1,0 +1,45 @@
+<script src="supersede-dm-app/js/show_ranking.js"></script>
+
+<style>
+    h1, h2 {
+        text-align: center;
+    }
+    .rankings > div > div {
+        min-width: 500px;
+        border-radius: 5px;
+        margin: 5px auto;
+    }
+    .rankings div {
+        padding: 5px;
+    }
+    .rankings > div > div:hover {
+        border: 1px solid #356AA0;
+    }
+    p {
+        text-align: center;
+    }
+</style>
+
+<div ng-controller="show_ranking">
+
+    <h1>Rankings for Process {{processName}}</h1>
+
+    <div class="rankings" ng-show="!empty()" ng-repeat="ranking in rankings">
+        <h2>{{ranking.name}}</h2>
+
+        <div ng-repeat="score in ranking.scores">
+            <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                <div>
+                    <strong>{{score.requirementId + ': ' + getRequirement(score.requirementId).name}}</strong>
+                </div>
+                <div style="background-color: #ffd11a">
+                    <strong>Description</strong>: {{getRequirement(score.requirementId).description}}<br>
+                    <strong>Priority</strong>: {{score.priority}}<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p ng-show="empty()"><strong>No ranking has been saved yet for this process!</strong></p>
+
+</div>

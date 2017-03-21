@@ -7,3 +7,6 @@
 dist/
 **/gradle.properties
 **/*.class
+logs/
+catalina*
+*.log

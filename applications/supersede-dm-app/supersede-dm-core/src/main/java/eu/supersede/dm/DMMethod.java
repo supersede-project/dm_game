@@ -11,5 +11,13 @@ public interface DMMethod {
 	public List<DMRoleSpec>		getRoleList();
 	
 	public List<DMOption>		getOptions();
-
+	
+	public List<DMCondition>	preconditions();
+	
+	public String				getPage( ProcessManager mgr );
+	
+	public String				getLabel( ProcessManager mgr );
+	
+	public String				getDescription( ProcessManager mgr );
+	
 }

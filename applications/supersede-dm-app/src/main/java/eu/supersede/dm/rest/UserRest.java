@@ -30,127 +30,154 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.fe.exception.InternalServerErrorException;
+import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
+import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.UserCriteriaPointsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
-import eu.supersede.fe.exception.InternalServerErrorException;
-import eu.supersede.fe.exception.NotFoundException;
-import eu.supersede.fe.integration.ProxyWrapper;
-import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.integration.api.datastore.fe.types.Profile;
 
 @RestController
 @RequestMapping("/user")
-public class UserRest {
+public class UserRest
+{
+    @Autowired
+    private ProxyWrapper proxy;
 
-	@Autowired
-	private ProxyWrapper proxy;
-	
-	@Autowired
+    @Autowired
     private UsersJpa users;
-	
-	@Autowired
+
+    @Autowired
     private ValutationCriteriaJpa valutationCriterias;
-	
-	@Autowired
+
+    @Autowired
     private UserCriteriaPointsJpa userCriteriaPoints;
-	
-	// get a specific user by the Id
-	@RequestMapping("/current")
-	public User getUser(Authentication authentication)
-	{
-		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-		Long userId = currentUser.getUserId();
-		
-		eu.supersede.integration.api.datastore.fe.types.User proxyUser = 
-				proxy.getFEDataStoreProxy().getUser(currentUser.getTenantId(), userId.intValue(), true, currentUser.getToken());
-		
-		if(proxyUser == null)
-		{
-			throw new NotFoundException();
-		}
-		
-		User u = users.findOne(userId);
-		if(u == null)
-		{
-			u = new User(userId);
-			u.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
-			users.save(u);
-			u = users.findOne(userId);
-		}
-		
-		u.setEmail(proxyUser.getEmail());
-		
-		return u;
-	}
-	
-	// get all the users
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<User> getUsers(Authentication authentication,
-			@RequestParam(required = false) String profile) 
-	{
-		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
-		List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = null;
-		
-		try {
-			proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
-		} catch (URISyntaxException e) {
-			throw new InternalServerErrorException(e.getMessage());
-		}
-		
-		List<User> us = new ArrayList<>();
-		if(profile != null)
-		{
-			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
-			{
-				if(userIs(proxyUser, profile))
-				{
-					us.add(new User(new Long(proxyUser.getUser_id()),
-							proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
-							proxyUser.getEmail()));
-				}
-			}
-		}
-		else
-		{
-			for(eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
-			{
-				us.add(new User(new Long(proxyUser.getUser_id()),
-						proxyUser.getFirst_name() + " " + proxyUser.getLast_name(),
-						proxyUser.getEmail()));
-			}
-		}
-		
-		return us;
-	}
-	
-	private boolean userIs(eu.supersede.integration.api.datastore.fe.types.User proxyUser, String profile)
-	{
-		if(proxyUser.getProfiles() != null)
-		{
-			for(Profile p : proxyUser.getProfiles())
-			{
-				if(p.getName().equals(profile))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	// Get all users that have a specific ValutationCriteria
-	@RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
-	public List<User> getCriteriaUsers(@PathVariable Long criteriaId)
-	{
-		ValutationCriteria v = valutationCriterias.findOne(criteriaId);
-		if(v == null){
-			throw new NotFoundException();
-		}
-		
-		List<User> userList = userCriteriaPoints.findUsersByValutationCriteria(v);		
-		return userList;
-	}
+
+    /**
+     * Return the current user.
+     * @param authentication
+     */
+    @RequestMapping("/current")
+    public User getUser(Authentication authentication)
+    {
+        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        Long userId = currentUser.getUserId();
+
+        eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy()
+                .getUser(currentUser.getTenantId(), userId.intValue(), true, currentUser.getToken());
+
+        if (proxyUser == null)
+        {
+            throw new NotFoundException("Can't find user with id " + currentUser.getUserId());
+        }
+
+        User user = users.findOne(userId);
+
+        if (user == null)
+        {
+            // Save the user in the database if it is not already present
+            user = new User(userId);
+            user.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+            user.setEmail(proxyUser.getEmail());
+            return users.save(user);
+        }
+        else
+        {
+            return user;
+        }
+    }
+
+    /**
+     * Return all the users with the given profile.
+     * @param authentication
+     * @param profile
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<User> getUsers(Authentication authentication, @RequestParam(required = false) String profile)
+    {
+        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        List<eu.supersede.integration.api.datastore.fe.types.User> proxyUsers = null;
+
+        try
+        {
+            proxyUsers = proxy.getFEDataStoreProxy().getUsers(currentUser.getTenantId(), false, currentUser.getToken());
+        }
+        catch (URISyntaxException e)
+        {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+
+        List<User> us = new ArrayList<>();
+
+        if (profile != null)
+        {
+            for (eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+            {
+                if (hasProfile(proxyUser, profile))
+                {
+                    us.add(new User(new Long(proxyUser.getUser_id()),
+                            proxyUser.getFirst_name() + " " + proxyUser.getLast_name(), proxyUser.getEmail()));
+                }
+            }
+        }
+        else
+        {
+            for (eu.supersede.integration.api.datastore.fe.types.User proxyUser : proxyUsers)
+            {
+                us.add(new User(new Long(proxyUser.getUser_id()),
+                        proxyUser.getFirst_name() + " " + proxyUser.getLast_name(), proxyUser.getEmail()));
+            }
+        }
+
+        return us;
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User> getFrontendUsers()
+    {
+        return users.findAll();
+    }
+
+    /**
+     * Check whether the given user has the given profile.
+     * @param proxyUser
+     * @param profile
+     */
+    private boolean hasProfile(eu.supersede.integration.api.datastore.fe.types.User proxyUser, String profile)
+    {
+        if (proxyUser.getProfiles() != null)
+        {
+            for (Profile p : proxyUser.getProfiles())
+            {
+                if (p.getName().equals(profile))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the users with the given evaluation criterion.
+     * @param criteriaId
+     */
+    @RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
+    public List<User> getCriteriaUsers(@PathVariable Long criteriaId)
+    {
+        ValutationCriteria v = valutationCriterias.findOne(criteriaId);
+
+        if (v == null)
+        {
+            throw new NotFoundException("Criterion with id " + criteriaId + " does not exist");
+        }
+
+        List<User> userList = userCriteriaPoints.findUsersByValutationCriteria(v);
+        return userList;
+    }
 }
