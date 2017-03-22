@@ -93,7 +93,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     });
 
     // Get requirements
-    $http.get('supersede-dm-app/requirement?procFx=Eq&processId=-1')
+    $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3&procFx=Eq&processId=-1')
     .success(function (data) {
         $scope.reqNum = data.length;
 

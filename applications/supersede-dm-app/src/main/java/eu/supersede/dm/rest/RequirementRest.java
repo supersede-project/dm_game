@@ -88,6 +88,11 @@ public class RequirementRest
             filter += " processId != " + processId;
         }
 
+        if (procFx != null && statusFx != null)
+        {
+            filter += " AND ";
+        }
+
         if ("Eq".equals(statusFx))
         {
             filter += " status = " + status;
