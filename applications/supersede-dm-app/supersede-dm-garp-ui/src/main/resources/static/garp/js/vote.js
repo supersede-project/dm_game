@@ -174,7 +174,22 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
             }
     }).success(function(data) {
         gameId = data;
-        loadPage();
+        
+        
+        $http({
+            method: 'POST',
+            url: "supersede-dm-app/garp/game/log/gameaccess",
+            params: { processId: $scope.processId, activityId: $scope.activityId },
+            headers: {
+                'Content-Type': undefined
+                }
+        }).success(function(data) {
+            loadPage();
+        }).error(function (err) {
+            alert(err.message);
+        });
+        
+        
     }).error(function (err) {
         alert(err.message);
     });
