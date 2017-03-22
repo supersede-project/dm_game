@@ -42,10 +42,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for Game.
-*/
-
 @Entity
 @Table(name = "games")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -54,6 +50,7 @@ public class HAHPGame
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long gameId;
+
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTime;
@@ -87,6 +84,7 @@ public class HAHPGame
 
     public HAHPGame()
     {
+
     }
 
     public Long getGameId()
@@ -202,12 +200,14 @@ public class HAHPGame
             for (HAHPRequirementsMatrixData data : getRequirementsMatrixData())
             {
                 total++;
+
                 if (data.getValue() != null && !data.getValue().equals(-1l))
                 {
                     voted++;
                 }
             }
         }
+
         return total.equals(0) ? 0f : ((new Float(voted) / new Float(total)) * 100);
     }
 
@@ -223,6 +223,7 @@ public class HAHPGame
                 for (HAHPPlayerMove playerMove : data.getPlayerMoves())
                 {
                     total++;
+
                     if (playerMove.getValue() != null && !playerMove.getValue().equals(-1l))
                     {
                         voted++;
@@ -230,6 +231,7 @@ public class HAHPGame
                 }
             }
         }
+
         return total.equals(0) ? 0f : ((new Float(voted) / new Float(total)) * 100);
     }
 
@@ -259,6 +261,7 @@ public class HAHPGame
                         if (pm.getPlayer().getUserId().equals(currentPlayer.getUserId()))
                         {
                             total++;
+
                             if (pm.getPlayed() == true && pm.getValue() != null && !pm.getValue().equals(-1l))
                             {
                                 voted++;
@@ -267,6 +270,7 @@ public class HAHPGame
                     }
                 }
             }
+
             return total.equals(0) ? 0f : ((new Float(voted) / new Float(total)) * 100);
         }
         catch (Exception ex)
@@ -296,6 +300,7 @@ public class HAHPGame
                         if (pm.getPlayer().getUserId().equals(currentPlayer.getUserId()))
                         {
                             total++;
+
                             if (pm.getPlayed() == true && pm.getValue() != null && !pm.getValue().equals(-1l))
                             {
                                 voted++;
@@ -304,6 +309,7 @@ public class HAHPGame
                     }
                 }
             }
+
             return total.equals(0) ? 0f : new Float(voted);
         }
         catch (Exception ex)

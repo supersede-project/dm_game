@@ -30,10 +30,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for CriteriasMatrixData.
-*/
-
 @Entity
 @Table(name = "criterias_matrices_data")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -60,6 +56,7 @@ public class HAHPCriteriasMatrixData
 
     public HAHPCriteriasMatrixData()
     {
+
     }
 
     public Long getCriteriasMatrixDataId()

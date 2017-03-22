@@ -40,16 +40,17 @@ public class HGAGameCriterion
     private Double criterionWeight;
     private Boolean inverse = false;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
-    HGAGameCriterion()
+    public HGAGameCriterion()
     {
+
     }
 
     public HGAGameCriterion(Long gameid, Long criterionid, Double criterionWeight)
@@ -109,20 +110,23 @@ public class HGAGameCriterion
         this.inverse = inverse;
     }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
-
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

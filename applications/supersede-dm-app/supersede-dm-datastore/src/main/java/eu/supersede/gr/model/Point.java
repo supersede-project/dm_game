@@ -12,10 +12,6 @@
    limitations under the License.
 */
 
-/**
-* @author Andrea Sosi
-**/
-
 package eu.supersede.gr.model;
 
 import javax.persistence.Entity;
@@ -24,10 +20,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for Point.
-*/
-
 @Entity
 @Table(name = "points")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -35,12 +27,14 @@ public class Point
 {
     @Id
     private Long pointId;
+
     private String description;
     private Long globalPoints;
     private Long criteriaPoints;
 
     public Point()
     {
+
     }
 
     public Long getPointId()

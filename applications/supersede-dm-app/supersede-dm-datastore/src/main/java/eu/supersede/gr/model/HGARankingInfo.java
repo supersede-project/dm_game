@@ -43,13 +43,13 @@ public class HGARankingInfo
     @Column(columnDefinition = "varchar(5000)")
     private String jsonizedRanking;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
     public Long getGameId()
     {
@@ -81,20 +81,23 @@ public class HGARankingInfo
         this.jsonizedRanking = jsonizedRanking;
     }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
-
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

@@ -31,6 +31,7 @@ public class HReceivedUserRequest
 {
     @Id
     private String id;
+
     private String alertId;
     private String classification;
     private Double accuracy;
@@ -41,16 +42,17 @@ public class HReceivedUserRequest
     // private String[] feedbackIDs;
     // private String[] features;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
     public HReceivedUserRequest()
     {
+
     }
 
     public HReceivedUserRequest(String id)
@@ -138,20 +140,23 @@ public class HReceivedUserRequest
         this.overallSentiment = overallSentiment;
     }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
-
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

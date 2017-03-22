@@ -44,9 +44,9 @@ public class HProcess
     private ProcessStatus status;
     private String phaseName;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
     public HProcess()
     {
@@ -115,12 +115,13 @@ public class HProcess
         this.phaseName = phaseName;
     }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
-
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

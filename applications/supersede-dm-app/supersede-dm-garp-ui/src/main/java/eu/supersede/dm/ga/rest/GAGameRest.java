@@ -41,6 +41,7 @@ import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.GARequirementsRanking;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.dm.services.EnactmentService;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.GALogEntriesJpa;
@@ -91,8 +92,7 @@ public class GAGameRest
 
         if (!weights.containsKey(criteriaKey))
         {
-            log.error("Missing weights for criteria to create a new game");
-            return;
+            throw new InternalServerErrorException("Missing weights for criteria to create a new game");
         }
 
         if (weights.get(criteriaKey) instanceof Map<?, ?>)
@@ -101,15 +101,14 @@ public class GAGameRest
         }
         else
         {
-            log.error("Wrong type for criteria weights: expected Map<String, Double>, found "
-                    + weights.get(criteriaKey).getClass().getName());
-            return;
+            throw new InternalServerErrorException(
+                    "Wrong type for criteria weights: expected Map<String, Double>, found "
+                            + weights.get(criteriaKey).getClass().getName());
         }
 
         if (!weights.containsKey(playersKey))
         {
-            log.error("Missing weights for players to create a new game");
-            return;
+            throw new InternalServerErrorException("Missing weights for players to create a new game");
         }
 
         if (weights.get(playersKey) instanceof Map<?, ?>)
@@ -118,9 +117,9 @@ public class GAGameRest
         }
         else
         {
-            log.error("Wrong type for players weights: expected Map<String, Map<Long, Double>>, found "
-                    + weights.get(playersKey).getClass().getName());
-            return;
+            throw new InternalServerErrorException(
+                    "Wrong type for players weights: expected Map<String, Map<Long, Double>>, found "
+                            + weights.get(playersKey).getClass().getName());
         }
 
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
@@ -396,9 +395,7 @@ public class GAGameRest
         }
         catch (Exception e)
         {
-            log.error("Unable to compute prioritizations!");
-            e.printStackTrace();
-            solutions = new ArrayList<>();
+            throw new InternalServerErrorException("Unable to compute prioritizations!");
         }
 
         List<Map<String, Double>> solutionSubset = null;
@@ -511,9 +508,7 @@ public class GAGameRest
         }
         catch (Exception e)
         {
-            log.error("Unable to compute prioritizations!");
-            e.printStackTrace();
-            solutions = new ArrayList<>();
+            throw new InternalServerErrorException("Unable to compute prioritizations!");
         }
 
         List<GARequirementsRanking> solutionSubset = null;

@@ -1,42 +1,63 @@
+/*
+(C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package eu.supersede.gr.model;
 
-public class HUserSkill {
-	
-	public Long getUserId() {
-		return userId;
-	}
+public class HUserSkill
+{
+    private Long userId;
+    private Long topicId;
+    private Double skillLevel;
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public HUserSkill()
+    {
 
-	public Long getTopicId() {
-		return topicId;
-	}
+    }
 
-	public void setTopicId(Long topicId) {
-		this.topicId = topicId;
-	}
+    public HUserSkill(HTopic topic, Double level)
+    {
+        this.topicId = topic.getId();
+        this.skillLevel = level;
+    }
 
-	public Double getSkillLevel() {
-		return skillLevel;
-	}
+    public Long getUserId()
+    {
+        return userId;
+    }
 
-	public void setSkillLevel(Double skillLevel) {
-		this.skillLevel = skillLevel;
-	}
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
 
-	Long userId;
-	
-	Long topicId;
-	
-	Double skillLevel;
-	
-	public HUserSkill() {}
-	
-	public HUserSkill( HTopic topic, Double level ) {
-		this.topicId = topic.id;
-		this.skillLevel = level;
-	}
-	
+    public Long getTopicId()
+    {
+        return topicId;
+    }
+
+    public void setTopicId(Long topicId)
+    {
+        this.topicId = topicId;
+    }
+
+    public Double getSkillLevel()
+    {
+        return skillLevel;
+    }
+
+    public void setSkillLevel(Double skillLevel)
+    {
+        this.skillLevel = skillLevel;
+    }
 }

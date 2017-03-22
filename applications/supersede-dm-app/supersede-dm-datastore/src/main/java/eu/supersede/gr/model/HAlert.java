@@ -32,85 +32,90 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class HAlert
 {
-	@Id
-	private String id;
-	private String applicationId;
-	private Long processId;
-	private Long timestamp;
+    @Id
+    private String id;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
+    private String applicationId;
+    private Long processId;
+    private Long timestamp;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
-	public HAlert()
-	{
-	}
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
-	public HAlert(String id, String applicationId, long timestamp)
-	{
-		this.id = id;
-		this.applicationId = applicationId;
-		this.timestamp = timestamp;
-	}
+    public HAlert()
+    {
 
-	public String getId()
-	{
-		return id;
-	}
+    }
 
-	public void setId(String id)
-	{
-		this.id = id;
-	}
+    public HAlert(String id, String applicationId, long timestamp)
+    {
+        this.id = id;
+        this.applicationId = applicationId;
+        this.timestamp = timestamp;
+    }
 
-	public String getApplicationId()
-	{
-		return applicationId;
-	}
+    public String getId()
+    {
+        return id;
+    }
 
-	public void setApplicationId(String applicationId)
-	{
-		this.applicationId = applicationId;
-	}
+    public void setId(String id)
+    {
+        this.id = id;
+    }
 
-	public Long getProcessId()
-	{
-		return processId;
-	}
+    public String getApplicationId()
+    {
+        return applicationId;
+    }
 
-	public void setProcessId(Long processId)
-	{
-		this.processId = processId;
-	}
+    public void setApplicationId(String applicationId)
+    {
+        this.applicationId = applicationId;
+    }
 
-	public Long getTimestamp()
-	{
-		return timestamp;
-	}
+    public Long getProcessId()
+    {
+        return processId;
+    }
 
-	public void setTimestamp(Long timestamp)
-	{
-		this.timestamp = timestamp;
-	}
-	
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-	
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
-	
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
-	
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
+
+    public Long getTimestamp()
+    {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp)
+    {
+        this.timestamp = timestamp;
+    }
+
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

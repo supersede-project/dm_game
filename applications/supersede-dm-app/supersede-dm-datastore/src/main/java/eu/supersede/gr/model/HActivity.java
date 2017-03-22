@@ -31,7 +31,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "h_activity_instances")
 public class HActivity
 {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -97,21 +97,24 @@ public class HActivity
     {
         this.propertyBag = propertyBag;
     }
-    
-    public Date getCreationDate() {
-		return creationDate;
-	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }
