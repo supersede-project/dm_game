@@ -20,4 +20,5 @@ import eu.supersede.gr.model.HGALogEntry;
 
 public interface GALogEntriesJpa extends JpaRepository<HGALogEntry, Long>
 {
+
 }

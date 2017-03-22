@@ -68,8 +68,9 @@ public class GAGameRest
 
     @Autowired
     private UsersJpa usersJpa;
-    
-    @Autowired GALogEntriesJpa logEntries;
+
+    @Autowired
+    private GALogEntriesJpa logEntries;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long processId)
@@ -634,18 +635,17 @@ public class GAGameRest
             ex.printStackTrace();
         }
     }
-    
-    @RequestMapping(value = "/log/gameaccess", method = RequestMethod.POST)
-    public void registerAccess( Authentication authentication, @RequestParam Long procId, @RequestParam Long gameId )
-    {
-    	Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
-    	HGALogEntry log = new HGALogEntry();
-    	log.setAction( GALogAction.UserAccessToVotingPage.name() );
-    	log.setCreationDate( new Date() );
-    	log.setGameId( gameId );
-    	log.setProcessId( procId );
-    	log.setUserId( userId );
-    	this.logEntries.save( log );
-    }
 
+    @RequestMapping(value = "/log/gameaccess", method = RequestMethod.POST)
+    public void registerAccess(Authentication authentication, @RequestParam Long processId, @RequestParam Long gameId)
+    {
+        Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+        HGALogEntry log = new HGALogEntry();
+        log.setAction(GALogAction.UserAccessToVotingPage.name());
+        log.setCreationDate(new Date());
+        log.setGameId(gameId);
+        log.setProcessId(processId);
+        log.setUserId(userId);
+        this.logEntries.save(log);
+    }
 }

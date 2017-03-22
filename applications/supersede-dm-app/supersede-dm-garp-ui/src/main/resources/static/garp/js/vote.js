@@ -175,11 +175,10 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     }).success(function(data) {
         gameId = data;
         
-        
         $http({
             method: 'POST',
             url: "supersede-dm-app/garp/game/log/gameaccess",
-            params: { processId: $scope.processId, activityId: $scope.activityId },
+            params: { processId: $scope.processId, gameId: gameId },
             headers: {
                 'Content-Type': undefined
                 }
@@ -188,8 +187,6 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         }).error(function (err) {
             alert(err.message);
         });
-        
-        
     }).error(function (err) {
         alert(err.message);
     });
