@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @Table(name = "h_processes")
 public class HProcess
@@ -41,6 +43,10 @@ public class HProcess
     private String name;
     private ProcessStatus status;
     private String phaseName;
+
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastUpdateDate;
 
     public HProcess()
     {
@@ -108,4 +114,13 @@ public class HProcess
     {
         this.phaseName = phaseName;
     }
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
 }

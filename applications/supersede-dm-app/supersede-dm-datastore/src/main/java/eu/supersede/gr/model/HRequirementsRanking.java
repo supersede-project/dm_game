@@ -10,14 +10,21 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 package eu.supersede.gr.model;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import eu.supersede.gr.model.id.RequirementRankingId;
 
@@ -26,58 +33,83 @@ import eu.supersede.gr.model.id.RequirementRankingId;
 @Table(name = "h_requirements_rankings")
 public class HRequirementsRanking
 {
-    @Id
-    private Long processId;
+	@Id
+	private Long processId;
 
-    @Id
-    private String name;
+	@Id
+	private String name;
 
-    private Boolean selected;
-    private Boolean enacted;
+	private Boolean selected;
+	private Boolean enacted;
 
-    public HRequirementsRanking()
-    {
-        selected = false;
-        enacted = false;
-    }
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
 
-    public Long getProcessId()
-    {
-        return processId;
-    }
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastUpdateDate;
 
-    public void setProcessId(Long processId)
-    {
-        this.processId = processId;
-    }
+	public HRequirementsRanking()
+	{
+		selected = false;
+		enacted = false;
+	}
 
-    public String getName()
-    {
-        return name;
-    }
+	public Long getProcessId()
+	{
+		return processId;
+	}
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	public void setProcessId(Long processId)
+	{
+		this.processId = processId;
+	}
 
-    public Boolean isSelected()
-    {
-        return selected;
-    }
+	public String getName()
+	{
+		return name;
+	}
 
-    public void setSelected(Boolean selected)
-    {
-        this.selected = selected;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    public Boolean isEnacted()
-    {
-        return enacted;
-    }
+	public Boolean isSelected()
+	{
+		return selected;
+	}
 
-    public void setEnacted(Boolean enacted)
-    {
-        this.enacted = enacted;
-    }
+	public void setSelected(Boolean selected)
+	{
+		this.selected = selected;
+	}
+
+	public Boolean isEnacted()
+	{
+		return enacted;
+	}
+
+	public void setEnacted(Boolean enacted)
+	{
+		this.enacted = enacted;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
 }

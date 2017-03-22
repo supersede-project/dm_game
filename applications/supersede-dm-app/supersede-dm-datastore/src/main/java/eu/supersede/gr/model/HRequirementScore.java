@@ -1,9 +1,16 @@
 package eu.supersede.gr.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import eu.supersede.gr.model.id.RequirementScoreId;
 
@@ -12,54 +19,79 @@ import eu.supersede.gr.model.id.RequirementScoreId;
 @Table(name = "h_requirements_scores")
 public class HRequirementScore
 {
-    @Id
-    private Long processId;
+	@Id
+	private Long processId;
 
-    @Id
-    private String rankingName;
+	@Id
+	private String rankingName;
 
-    @Id
-    private Long requirementId;
+	@Id
+	private Long requirementId;
 
-    private Priority priority;
+	private Priority priority;
 
-    public Long getProcessId()
-    {
-        return processId;
-    }
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
 
-    public void setProcessId(Long processId)
-    {
-        this.processId = processId;
-    }
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastUpdateDate;
 
-    public String getRankingName()
-    {
-        return rankingName;
-    }
+	public Long getProcessId()
+	{
+		return processId;
+	}
 
-    public void setRankingName(String rankingName)
-    {
-        this.rankingName = rankingName;
-    }
+	public void setProcessId(Long processId)
+	{
+		this.processId = processId;
+	}
 
-    public Long getRequirementId()
-    {
-        return requirementId;
-    }
+	public String getRankingName()
+	{
+		return rankingName;
+	}
 
-    public void setRequirementId(Long requirementId)
-    {
-        this.requirementId = requirementId;
-    }
+	public void setRankingName(String rankingName)
+	{
+		this.rankingName = rankingName;
+	}
 
-    public Priority getPriority()
-    {
-        return priority;
-    }
+	public Long getRequirementId()
+	{
+		return requirementId;
+	}
 
-    public void setPriority(Priority priority)
-    {
-        this.priority = priority;
-    }
+	public void setRequirementId(Long requirementId)
+	{
+		this.requirementId = requirementId;
+	}
+
+	public Priority getPriority()
+	{
+		return priority;
+	}
+
+	public void setPriority(Priority priority)
+	{
+		this.priority = priority;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
 }

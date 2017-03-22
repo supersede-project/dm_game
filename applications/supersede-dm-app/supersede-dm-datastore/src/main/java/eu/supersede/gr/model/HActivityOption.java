@@ -8,6 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "h_activity_options")
+// FIXME: unused? to be removed?
 public class HActivityOption
 {
     @Id
