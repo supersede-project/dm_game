@@ -14,11 +14,18 @@
 
 package eu.supersede.gr.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -35,6 +42,14 @@ public class Requirement
     private String description;
     private Integer status;
     private Long processId;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
     public Requirement()
     {
@@ -98,14 +113,7 @@ public class Requirement
 
     public Long getProcessId()
     {
-        if (processId == null)
-        {
-            return -1L;
-        }
-        else
-        {
-            return processId;
-        }
+        return processId;
     }
 
     public void setProcessId(Long processId)
@@ -113,8 +121,13 @@ public class Requirement
         this.processId = processId;
     }
 
-    public String getTopic()
+    public Date getCreationDate()
     {
-        return "";
+        return creationDate;
+    }
+
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
     }
 }
