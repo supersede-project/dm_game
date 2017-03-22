@@ -346,7 +346,8 @@ public class GameRest
         {
             Feature feature = new Feature();
             feature.setName(r.getName());
-            feature.setPriority((int) (1 + ((rs.get("" + r.getRequirementId()) / max) * 5)));
+            feature.setPriority(
+            		6 - ((int) (1 + ((rs.get("" + r.getRequirementId()) / max) * 5))) );
             feature.setId("" + r.getRequirementId());
             System.out.println("Added feature with id: " + feature.getId());
             list.list().add(feature);
