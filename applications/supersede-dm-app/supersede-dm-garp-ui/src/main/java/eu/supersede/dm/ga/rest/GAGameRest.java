@@ -15,6 +15,7 @@
 package eu.supersede.dm.ga.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +36,17 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.datamodel.Feature;
 import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.ga.GAGameDetails;
+import eu.supersede.dm.ga.GALogAction;
 import eu.supersede.dm.ga.GAPersistentDB;
 import eu.supersede.dm.iga.GARequirementsRanking;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.dm.services.EnactmentService;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
+import eu.supersede.gr.jpa.GALogEntriesJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.model.HGAGameSummary;
+import eu.supersede.gr.model.HGALogEntry;
 import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.HRequirementScore;
 import eu.supersede.gr.model.HRequirementsRanking;
@@ -63,6 +67,8 @@ public class GAGameRest
 
     @Autowired
     private UsersJpa usersJpa;
+    
+    @Autowired GALogEntriesJpa logEntries;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long processId)
@@ -633,4 +639,18 @@ public class GAGameRest
             ex.printStackTrace();
         }
     }
+    
+    @RequestMapping(value = "/log/gameaccess", method = RequestMethod.POST)
+    public void registerAccess( Authentication authentication, @RequestParam Long procId, @RequestParam Long gameId )
+    {
+    	Long userId = ((DatabaseUser) authentication.getPrincipal()).getUserId();
+    	HGALogEntry log = new HGALogEntry();
+    	log.setAction( GALogAction.UserAccessToVotingPage.name() );
+    	log.setCreationDate( new Date() );
+    	log.setGameId( gameId );
+    	log.setProcessId( procId );
+    	log.setUserId( userId );
+    	this.logEntries.save( log );
+    }
+
 }
