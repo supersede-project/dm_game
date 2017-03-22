@@ -130,4 +130,9 @@ public class Requirement
     {
         return lastUpdateDate;
     }
+
+    public String getTopic()
+    {
+        return "";
+    }
 }
