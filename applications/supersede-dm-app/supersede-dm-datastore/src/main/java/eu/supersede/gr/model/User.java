@@ -30,10 +30,6 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for User.
-*/
-
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -42,6 +38,7 @@ public class User
     @Id
     private Long userId;
     private String name;
+
     @Transient
     private String email;
 
@@ -53,6 +50,7 @@ public class User
 
     public User()
     {
+
     }
 
     public User(Long userId)
@@ -113,6 +111,7 @@ public class User
         {
             tmpPoints += userGlobalPoints.getUserPoints();
         }
+
         return tmpPoints;
     }
 
@@ -135,5 +134,4 @@ public class User
     {
         this.userGlobalPoints = userGlobalPoints;
     }
-
 }

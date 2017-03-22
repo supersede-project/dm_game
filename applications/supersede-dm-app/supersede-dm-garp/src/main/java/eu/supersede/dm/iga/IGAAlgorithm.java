@@ -63,7 +63,6 @@ public class IGAAlgorithm
 
         for (String criterion : criteria)
         {
-            System.out.println("Adding criterion: " + criterion);
             String[] criterionDetail = { criterion, "min" };
             this.criteria.put(criterion, criterionDetail);
             criteriaWeights.put(criterion, 1.0);
@@ -72,13 +71,11 @@ public class IGAAlgorithm
 
     public void setCriterionWeight(String criterion, Double w)
     {
-        System.out.println("Setting weight for criterion " + criterion + ": " + w);
         criteriaWeights.put(criterion, w);
     }
 
     public void addRequirement(String req, List<String> deps)
     {
-        System.out.println("Adding requirement: " + req);
         requirements.put(req, req);
         Set<String> list = dependencies.get(req);
 
@@ -98,36 +95,40 @@ public class IGAAlgorithm
     public List<Map<String, Double>> calc()
     {
         ArrayList<Map<String, Double>> finalRanking = new ArrayList<>();
-        
+
         List<PermutationSolution<?>> solutions = runGA();
 
         for (PermutationSolution<?> s : solutions)
         {
             finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution) s).toRanks()));
         }
-        
+
         return finalRanking;
     }
-    
-    public List<GARequirementsRanking> calc2(){
-    	List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking> ();
-    	List<PermutationSolution<?>> solutions = runGA();
 
-        for (PermutationSolution<?> s : solutions){
+    public List<GARequirementsRanking> calc2()
+    {
+        List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking>();
+        List<PermutationSolution<?>> solutions = runGA();
+
+        for (PermutationSolution<?> s : solutions)
+        {
             PrioritizationSolution ps = (PrioritizationSolution) s;
             GARequirementsRanking r = new GARequirementsRanking();
             r.setRequirements(Arrays.asList(ps.getVariablesStringArray()));
-            for (int i = 0; i < ps.getNumberOfObjectives(); i++){
-            	r.addObjective(ps.getCriterionName(i), ps.getObjective(i));
+            for (int i = 0; i < ps.getNumberOfObjectives(); i++)
+            {
+                r.addObjective(ps.getCriterionName(i), ps.getObjective(i));
             }
             pareto.add(r);
         }
-    	return pareto;
+        return pareto;
     }
-    
-    private List<PermutationSolution<?>> runGA (){
-    	Set<PermutationSolution<?>> uniqueSolutions = new HashSet<PermutationSolution<?>> ();
-    	double crossoverProbability = 0.9;
+
+    private List<PermutationSolution<?>> runGA()
+    {
+        Set<PermutationSolution<?>> uniqueSolutions = new HashSet<PermutationSolution<?>>();
+        double crossoverProbability = 0.9;
         CrossoverOperator crossover = new PMXCrossover(crossoverProbability);
 
         int searchBudget = 10000;
@@ -165,8 +166,8 @@ public class IGAAlgorithm
                     selection, evaluator);
             algorithm.run();
             uniqueSolutions.addAll((List<PermutationSolution<?>>) algorithm.getResult());
-//            solutions.addAll(pareto);
-            
+            // solutions.addAll(pareto);
+
         }
         else
         {
@@ -176,11 +177,10 @@ public class IGAAlgorithm
             algorithm.run();
             PrioritizationSolution solution = (PrioritizationSolution) algorithm.getResult();
             uniqueSolutions.add(solution);
-            System.out.println(solution.toNamedStringWithObjectives());
-            //finalRanking.add(MapUtil.sortByValue(solution.toRanks()));
+            // finalRanking.add(MapUtil.sortByValue(solution.toRanks()));
         }
-        
-        List<PermutationSolution<?>> solutions = new ArrayList<PermutationSolution<?>> ();
+
+        List<PermutationSolution<?>> solutions = new ArrayList<PermutationSolution<?>>();
         solutions.addAll(uniqueSolutions);
         return solutions;
     }
@@ -191,12 +191,6 @@ public class IGAAlgorithm
      */
     public void addRanking(String player, Map<String, List<String>> playerRanking)
     {
-        for (String criterion : playerRanking.keySet())
-        {
-            System.out.println("Setting ranking for player " + player + " and criterion " + criterion + ": "
-                    + Arrays.toString(playerRanking.get(criterion).toArray()));
-        }
-
         this.rankings.put(player, playerRanking);
     }
 
@@ -207,12 +201,6 @@ public class IGAAlgorithm
     public void setPlayerWeights(String criterion, Map<String, Double> weights)
     {
         playerWeights.put(criterion, weights);
-
-        for (String userId : weights.keySet())
-        {
-            System.out.println(
-                    "Setting weight for player " + userId + " for criterion " + criterion + ": " + weights.get(userId));
-        }
     }
 
     public void setDefaultPlayerWeights(List<String> criteria, List<String> players)

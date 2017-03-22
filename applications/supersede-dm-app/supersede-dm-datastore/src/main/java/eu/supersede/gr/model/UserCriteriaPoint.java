@@ -30,10 +30,6 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for UserCriteriaPoint.
-*/
-
 @Entity
 @Table(name = "users_criteria_points")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -54,6 +50,7 @@ public class UserCriteriaPoint
 
     public UserCriteriaPoint()
     {
+
     }
 
     public UserCriteriaPoint(Long points, ValutationCriteria valutationCriteria, User user)

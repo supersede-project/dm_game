@@ -35,10 +35,6 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for PlayerMove.
-*/
-
 @Entity
 @Table(name = "player_moves")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -65,6 +61,7 @@ public class HAHPPlayerMove
 
     public HAHPPlayerMove()
     {
+
     }
 
     public Long getPlayerMoveId()

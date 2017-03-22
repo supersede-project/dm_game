@@ -33,95 +33,100 @@ import eu.supersede.gr.model.id.RequirementRankingId;
 @Table(name = "h_requirements_rankings")
 public class HRequirementsRanking
 {
-	@Id
-	private Long processId;
+    @Id
+    private Long processId;
 
-	@Id
-	private String name;
+    @Id
+    private String name;
 
-	private Boolean selected;
-	private Boolean enacted;
+    private Boolean selected;
+    private Boolean enacted;
 
-	@CreationTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastUpdateDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateDate;
 
-	@UpdateTimestamp
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date enactmentDate;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date enactmentDate;
 
-	public HRequirementsRanking()
-	{
-		selected = false;
-		enacted = false;
-	}
+    public HRequirementsRanking()
+    {
+        selected = false;
+        enacted = false;
+    }
 
-	public Long getProcessId()
-	{
-		return processId;
-	}
+    public Long getProcessId()
+    {
+        return processId;
+    }
 
-	public void setProcessId(Long processId)
-	{
-		this.processId = processId;
-	}
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
 
-	public String getName()
-	{
-		return name;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
-	public Boolean isSelected()
-	{
-		return selected;
-	}
+    public Boolean isSelected()
+    {
+        return selected;
+    }
 
-	public void setSelected(Boolean selected)
-	{
-		this.selected = selected;
-	}
+    public void setSelected(Boolean selected)
+    {
+        this.selected = selected;
+    }
 
-	public Boolean isEnacted()
-	{
-		return enacted;
-	}
+    public Boolean isEnacted()
+    {
+        return enacted;
+    }
 
-	public void setEnacted(Boolean enacted)
-	{
-		this.enacted = enacted;
-	}
+    public void setEnacted(Boolean enacted)
+    {
+        this.enacted = enacted;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public Date getLastUpdateDate()
+    {
+        return lastUpdateDate;
+    }
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
+    public void setLastUpdateDate(Date lastUpdateDate)
+    {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 
-	public Date getEnactmentDate() {
-		return enactmentDate;
-	}
+    public Date getEnactmentDate()
+    {
+        return enactmentDate;
+    }
 
-	public void setEnactmentDate(Date enactmentDate) {
-		this.enactmentDate = enactmentDate;
-	}
-
+    public void setEnactmentDate(Date enactmentDate)
+    {
+        this.enactmentDate = enactmentDate;
+    }
 }

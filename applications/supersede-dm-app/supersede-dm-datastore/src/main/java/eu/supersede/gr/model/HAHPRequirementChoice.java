@@ -24,10 +24,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/*
-	Model class for RequirementChoice.
-*/
-
 @Entity
 @Table(name = "requirements_choices")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -41,6 +37,7 @@ public class HAHPRequirementChoice
 
     public HAHPRequirementChoice()
     {
+
     }
 
     public Long getValue()
