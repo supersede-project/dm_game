@@ -50,6 +50,10 @@ public class HRequirementsRanking
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdateDate;
 
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date enactmentDate;
+
 	public HRequirementsRanking()
 	{
 		selected = false;
@@ -110,6 +114,14 @@ public class HRequirementsRanking
 
 	public void setLastUpdateDate(Date lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public Date getEnactmentDate() {
+		return enactmentDate;
+	}
+
+	public void setEnactmentDate(Date enactmentDate) {
+		this.enactmentDate = enactmentDate;
 	}
 
 }

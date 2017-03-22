@@ -15,6 +15,7 @@
 package eu.supersede.dm.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,6 +165,7 @@ public class ProcessRankingsRest
             HRequirementsRanking rankings = requirementsRankingsJpa.findRankingsByProcessIdAndName(rr.getProcessId(),
                     rr.getName());
             rankings.setEnacted(true);
+            rankings.setEnactmentDate( new Date() );
             requirementsRankingsJpa.save(rankings);
         }
     }
