@@ -241,6 +241,15 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         });
     };
 
+    $scope.deleteRequirement = function () {
+        var selectedRequirement = $('#requirements-listbox').jqxListBox('getSelectedItem');
+        console.log("selected requirement:");
+        console.log(selectedRequirement);
+        console.log(selectedRequirement.element);
+        console.log(selectedRequirement.element.originalItem);
+        console.log(selectedRequirement.element.originalItem.requirementId);
+    };
+
     function getCurrentRequirementIndex() {
         for (var i = 0; i < requirements.length; i++) {
             if (currentRequirementId === requirements[i].requirementId) {
