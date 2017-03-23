@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
@@ -74,11 +75,31 @@ public class ProcessRequirementsRest
                     "Can't delete requirement with id " + requirementId + " because it does not exist");
         }
 
-        // TODO: delete from requirements dependencies (h_requirements_dependencies)
+        // Do not delete the requirement if at least another requirement depend on it
+        List<HRequirementDependency> dependencies = requirementsDependenciesJpa.findByDependencyId(requirementId);
 
-        // TODO: delete properties of the requirement (h_requirements_properties)
+        if (dependencies == null || dependencies.size() == 0)
+        {
+            throw new InternalServerErrorException("Unable to delete requirement " + requirement.getName() + "("
+                    + requirement.getDescription() + "): at least another requirement depends on it");
+        }
 
-        System.out.println("Deleting requirement " + requirement.getRequirementId() + " - " + requirement.getName());
+        // Delete all the dependencies of the requirement
+        dependencies = requirementsDependenciesJpa.findByRequirementId(requirementId);
+
+        for (HRequirementDependency requirementDependency : dependencies)
+        {
+            requirementsDependenciesJpa.delete(requirementDependency);
+        }
+
+        // Delete all the properties of the requirement
+        for (HRequirementProperty requirementProperty : requirementsPropertiesJpa
+                .findPropertiesByRequirementId(requirementId))
+        {
+            requirementsPropertiesJpa.delete(requirementProperty);
+        }
+
+        requirementsJpa.delete(requirement);
     }
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
