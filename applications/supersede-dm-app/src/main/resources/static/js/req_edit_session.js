@@ -243,11 +243,14 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
 
     $scope.deleteRequirement = function () {
         var selectedRequirement = $('#requirements-listbox').jqxListBox('getSelectedItem');
-        console.log("selected requirement:");
-        console.log(selectedRequirement);
-        console.log(selectedRequirement.element);
-        console.log(selectedRequirement.element.originalItem);
-        console.log(selectedRequirement.element.originalItem.requirementId);
+        var requirementId = selectedRequirement.originalItem.requirementId;
+
+        $http.post('supersede-dm-app/processes/requirements/delete?requirementId=' + requirementId)
+        .success(function (data) {
+            loadRequirements();
+        }).error(function (err) {
+            alert(err.message);
+        });
     };
 
     function getCurrentRequirementIndex() {

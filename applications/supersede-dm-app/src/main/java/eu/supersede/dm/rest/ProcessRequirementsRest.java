@@ -31,6 +31,7 @@ import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcessMember;
@@ -44,10 +45,41 @@ import eu.supersede.gr.model.RequirementStatus;
 public class ProcessRequirementsRest
 {
     @Autowired
+    private RequirementsJpa requirementsJpa;
+
+    @Autowired
     private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
+    {
+        Requirement r = new Requirement();
+        r.setName(name);
+        r = DMGame.get().getJpa().requirements.save(r);
+        DMGame.get().getProcessManager(processId).addRequirement(r);
+        return r;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public void deleteRequirement(@RequestParam Long requirementId)
+    {
+        Requirement requirement = requirementsJpa.getOne(requirementId);
+
+        if (requirement == null)
+        {
+            throw new NotFoundException(
+                    "Can't delete requirement with id " + requirementId + " because it does not exist");
+        }
+
+        // TODO: delete from requirements dependencies (h_requirements_dependencies)
+
+        // TODO: delete properties of the requirement (h_requirements_properties)
+
+        System.out.println("Deleting requirement " + requirement.getRequirementId() + " - " + requirement.getName());
+    }
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public void importRequirements(@RequestParam Long processId,
@@ -276,16 +308,6 @@ public class ProcessRequirementsRest
         }
 
         return dependencies;
-    }
-
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
-    {
-        Requirement r = new Requirement();
-        r.setName(name);
-        r = DMGame.get().getJpa().requirements.save(r);
-        DMGame.get().getProcessManager(processId).addRequirement(r);
-        return r;
     }
 
     @RequestMapping(value = "/property/submit", method = RequestMethod.POST)
