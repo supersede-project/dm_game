@@ -131,4 +131,45 @@ public class ProcessAlertsRest
         // Discard alert
         alertsJpa.delete(alert);
     }
+
+    @RequestMapping(value = "/userrequests/import", method = RequestMethod.POST)
+    public void importUserRequests(@RequestParam Long processId,
+            @RequestParam(required = false) List<String> userRequests)
+    {
+        ProcessManager proc = DMGame.get().getProcessManager(processId);
+
+        if (userRequests == null)
+        {
+            // nothing to do
+            return;
+        }
+
+        for (String userRequestId : userRequests)
+        {
+            HReceivedUserRequest userRequest = DMGame.get().getJpa().receivedUserRequests.findOne(userRequestId);
+
+            if (userRequest == null)
+            {
+                throw new NotFoundException("Can't add user request with id " + userRequestId
+                        + " to the process because it does not exist");
+            }
+
+            Requirement requirement = new Requirement();
+            requirement.setName(userRequest.getDescription());
+            requirement.setDescription("Features:");
+            Requirement savedRequirement = requirementsJpa.save(requirement);
+            proc.addRequirement(savedRequirement);
+
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.CLASSIFICATION, userRequest.getClassification()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.ACCURACY, "" + userRequest.getAccuracy()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.POSITIVE_SENTIMENT, "" + userRequest.getPositiveSentiment()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.NEGATIVE_SENTIMENT, "" + userRequest.getNegativeSentiment()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    RequirementProperties.OVERALL_SENTIMENT, "" + userRequest.getOverallSentiment()));
+        }
+    }
 }

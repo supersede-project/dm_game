@@ -459,18 +459,21 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         for (var i = 0; i < selectedAlerts.length; i++) {
             var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
             $scope.alerts.localdata.push(selectedAlert);
-            $scope.alertsId.push(selectedAlert.alertId);
+            $scope.alertsId.push(selectedAlert.id);
         }
     }
 
-    $scope.import = function () {
+    $scope.importAlerts = function () {
         defineProcessData();
         $http({
             method: 'POST',
-            url: "supersede-dm-app/processes/alerts/import",
-            params: { processId: $scope.processId, alertsId: $scope.alertsId }
+            url: "supersede-dm-app/processes/alerts/userrequests/import",
+            params: { processId: $scope.processId, userRequests: $scope.alertsId }
         })
         .success(function (data) {
+            for (var i = 0; i < $scope.alertsId.length; i++) {
+                discardAlert($scope.alertsId[i]);
+            }
             $scope.home();
         }).error(function (err) {
             $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
