@@ -169,4 +169,17 @@ public class AlertsRest
     {
         return receivedUserRequestsJpa.findRequestsForAlert(alertId);
     }
+
+    @RequestMapping(value = "/userrequests/discard", method = RequestMethod.PUT)
+    public void discardUserRequest(@RequestParam String id)
+    {
+        HReceivedUserRequest userRequest = receivedUserRequestsJpa.findOne(id);
+
+        if (userRequest == null)
+        {
+            throw new NotFoundException("Can't delete user request with id " + id + " because it does not exist");
+        }
+
+        receivedUserRequestsJpa.delete(userRequest);
+    }
 }
