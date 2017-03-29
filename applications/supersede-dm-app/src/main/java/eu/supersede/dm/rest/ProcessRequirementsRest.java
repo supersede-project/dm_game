@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -283,52 +282,44 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
-    public void setDependencies(@RequestParam Long processId, @RequestBody Map<Long, List<Long>> dependencies)
+    public void setDependencies(@RequestParam Long processId, @RequestParam Long requirementId,
+            @RequestParam List<Long> dependencies)
     {
-        for (Long requirementId : dependencies.keySet())
+        // Delete previously stored dependencies
+        for (HRequirementDependency storedDependency : requirementsDependenciesJpa.findByRequirementId(requirementId))
         {
-            // Delete previously stored dependencies
-            for (HRequirementDependency storedDependency : requirementsDependenciesJpa
-                    .findByRequirementId(requirementId))
-            {
-                requirementsDependenciesJpa.delete(storedDependency);
-            }
+            requirementsDependenciesJpa.delete(storedDependency);
+        }
 
-            // Store new dependencies
-            for (Long dependencyId : dependencies.get(requirementId))
-            {
-                HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
-                requirementsDependenciesJpa.save(requirementDependency);
-            }
+        // Store new dependencies
+        for (Long dependencyId : dependencies)
+        {
+            HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
+            requirementsDependenciesJpa.save(requirementDependency);
         }
     }
 
     @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
-    public Map<Long, List<Long>> getDependencies(@RequestParam Long processId)
+    public List<Long> getDependencies(@RequestParam Long processId, @RequestParam Long requirementId)
     {
-        List<Requirement> requirements = DMGame.get().getProcessManager(processId).getRequirements();
+        Requirement requirement = requirementsJpa.findOne(requirementId);
 
-        Map<Long, List<Long>> dependencies = new HashMap<>();
-
-        for (Requirement requirement : requirements)
+        if (requirement == null)
         {
-            Long requirementId = requirement.getRequirementId();
-            List<Long> requirementDependencies = new ArrayList<>();
-            List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
-                    .findByRequirementId(requirementId);
-
-            for (HRequirementDependency dependency : storedDependencies)
-            {
-                requirementDependencies.add(dependency.getDependencyId());
-            }
-
-            if (requirementDependencies.size() > 0)
-            {
-                dependencies.put(requirementId, requirementDependencies);
-            }
+            throw new NotFoundException("Unable to find dependencies of requirement with id " + requirementId
+                    + " because it does not exist");
         }
 
-        return dependencies;
+        List<Long> requirementDependencies = new ArrayList<>();
+        List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
+                .findByRequirementId(requirementId);
+
+        for (HRequirementDependency dependency : storedDependencies)
+        {
+            requirementDependencies.add(dependency.getDependencyId());
+        }
+
+        return requirementDependencies;
     }
 
     @RequestMapping(value = "/property/submit", method = RequestMethod.POST)

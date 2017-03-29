@@ -25,12 +25,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import eu.supersede.gr.model.Requirement;
 
-public interface RequirementsJpa extends JpaRepository<Requirement, Long> {
-	
-    @Query("SELECT r FROM Requirement r WHERE processId = ?1")
-    List<Requirement> findRequirementsByProcessId( Long processId );
+public interface RequirementsJpa extends JpaRepository<Requirement, Long>
+{
+    @Query("SELECT r FROM Requirement r WHERE processId = ?1 ORDER BY r.requirementId DESC")
+    List<Requirement> findRequirementsByProcessId(Long processId);
 
     @Query("SELECT r FROM Requirement r WHERE processId = ?1 AND status = ?2")
-    List<Requirement> findRequirementsByProcessIdAndStatus( Long processId, Integer status );
-
+    List<Requirement> findRequirementsByProcessIdAndStatus(Long processId, Integer status);
 }
