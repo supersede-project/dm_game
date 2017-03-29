@@ -75,10 +75,10 @@ public class ProcessRequirementsRest
                     "Can't delete requirement with id " + requirementId + " because it does not exist");
         }
 
-        // Do not delete the requirement if at least another requirement depend on it
+        // Do not delete the requirement if at least another requirement depends on it
         List<HRequirementDependency> dependencies = requirementsDependenciesJpa.findByDependencyId(requirementId);
 
-        if (dependencies == null || dependencies.size() == 0)
+        if (dependencies != null && dependencies.size() > 0)
         {
             throw new InternalServerErrorException("Unable to delete requirement " + requirement.getName() + "("
                     + requirement.getDescription() + "): at least another requirement depends on it");
