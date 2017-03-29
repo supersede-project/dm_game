@@ -278,21 +278,5 @@ public class ModuleLoader
             hrur.setOverallSentiment(request.getOverallSentiment());
             multijpaReceivedUserRequests.save(hrur);
         }
-
-        List<Requirement> requirements = getRequirements(alert);
-
-        for (Requirement r : requirements)
-        {
-            r.setRequirementId(null);
-
-            if (multijpaRequirements != null)
-            {
-                multijpaRequirements.save(r);
-            }
-            else
-            {
-                System.out.println("requirementsTable is NULL");
-            }
-        }
     }
 }
