@@ -52,4 +52,8 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
 	$scope.empty = function () {
 	    return $scope.rankings.length === 0;
 	};
+
+	$scope.back = function () {
+	    $location.url('supersede-dm-app/process?processId=' + processId);
+	};
 });
