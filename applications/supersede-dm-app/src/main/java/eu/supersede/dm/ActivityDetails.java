@@ -1,73 +1,109 @@
+/*
+(C) Copyright 2015-2018 The SUPERSEDE Project Consortium
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package eu.supersede.dm;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActivityDetails {
+public class ActivityDetails
+{
+    private Long activityId;
+    private Long processId;
+    private String methodName;
+    private Long userId;
+    private String url;
+    private String description;
+    private Map<String, String> properties;
 
-	private Long		activityId;
+    public ActivityDetails()
+    {
+        properties = new HashMap<>();
+    }
 
-	private Long		processId;
+    public Long getActivityId()
+    {
+        return activityId;
+    }
 
-	private String		methodName;
+    public void setActivityId(Long activityId)
+    {
+        this.activityId = activityId;
+    }
 
-	private Long		userId;
+    public Long getProcessId()
+    {
+        return processId;
+    }
 
-	private String		url;
-	
-	private Map<String,String> properties = new HashMap<>();
-	
-	
-	public Long getActivityId() {
-		return activityId;
-	}
+    public void setProcessId(Long processId)
+    {
+        this.processId = processId;
+    }
 
-	public void setActivityId(Long activityId) {
-		this.activityId = activityId;
-	}
+    public String getMethodName()
+    {
+        return methodName;
+    }
 
-	public Long getProcessId() {
-		return processId;
-	}
+    public void setMethodName(String methodName)
+    {
+        this.methodName = methodName;
+    }
 
-	public void setProcessId(Long processId) {
-		this.processId = processId;
-	}
+    public Long getUserId()
+    {
+        return userId;
+    }
 
-	public String getMethodName() {
-		return methodName;
-	}
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
 
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
-	}
+    public String getUrl()
+    {
+        return url;
+    }
 
-	public Long getUserId() {
-		return userId;
-	}
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setProperty(String key, String value)
+    {
+        this.getProperties().put(key, value);
+    }
 
-	public void setProperty( String key, String value ) {
-		this.getProperties().put( key, value );
-	}
+    public Map<String, String> getProperties()
+    {
+        return properties;
+    }
 
-	public Map<String,String> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Map<String,String> properties) {
-		this.properties = properties;
-	}
-
+    public void setProperties(Map<String, String> properties)
+    {
+        this.properties = properties;
+    }
 }

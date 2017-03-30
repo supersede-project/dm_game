@@ -27,6 +27,7 @@ import eu.supersede.dm.ProcessManager;
 public class GAPlayerVotingMethod implements DMMethod
 {
     public static final String NAME = "Vote in a prioritization task";
+    private static final String PAGE = "garp/vote";
 
     static List<DMRoleSpec> roles = new ArrayList<>();
 
@@ -78,16 +79,18 @@ public class GAPlayerVotingMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "garp/vote";
+        return PAGE;
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Vote in a prioritization task";
-	}
+    @Override
+    public String getDescription(ProcessManager mgr)
+    {
+        return NAME + " in process " + mgr.getProcess().getName();
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Vote in a prioritization task";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return NAME;
+    }
 }

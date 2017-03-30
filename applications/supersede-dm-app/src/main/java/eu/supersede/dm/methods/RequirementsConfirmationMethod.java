@@ -88,8 +88,8 @@ public class RequirementsConfirmationMethod implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	return false;
-            	
+                return false;
+
             }
         });
 
@@ -102,13 +102,15 @@ public class RequirementsConfirmationMethod implements DMMethod
         return PAGE;
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Confirm Requirements";
-	}
+    @Override
+    public String getDescription(ProcessManager mgr)
+    {
+        return NAME + " in process " + mgr.getProcess().getName();
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Confirm Requirements";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return NAME;
+    }
 }

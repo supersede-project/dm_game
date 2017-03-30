@@ -104,14 +104,14 @@ public class AlertsToRequirementsMethod implements DMMethod
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Convert Alerts To Requirements";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Convert Alerts To Requirements";
+        return NAME;
     }
 }

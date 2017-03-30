@@ -29,6 +29,7 @@ import eu.supersede.dm.ProcessManager;
 public class GAMethod implements DMMethod
 {
     public static final String NAME = "Genetic Algorithm based prioritization";
+    private static final String PAGE = "garp/home";
 
     static List<DMRoleSpec> roles = new ArrayList<>();
 
@@ -83,18 +84,18 @@ public class GAMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "garp/home";
+        return PAGE;
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Genetic Algorithm based prioritization";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Genetic Algorithm based prioritization";
+        return NAME;
     }
 }
