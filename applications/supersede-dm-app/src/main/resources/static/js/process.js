@@ -132,9 +132,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
                     var table =
                         '<table style="min-width: 130px">' +
                         '<tr><td style="width: 40px">' +
-                        img + '</td><td>' +
-                        '<a href="#/supersede-dm-app/' + datarecord.entryUrl + '?processId=' + processId + '">' + datarecord.methodName +
-                        '</a></td></tr></table>';
+                        img + '</td><td>' + datarecord.methodName +
+                        '</td></tr></table>';
                     return table;
                 }
             });
@@ -171,5 +170,14 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         }).error(function (error) {
             alert(error.message);
         });
+    });
+
+    $('#procList').on('select', function (event) {
+        var args = event.args;
+        var item = $('#procList').jqxListBox('getItem', args.index);
+        if (item !== null) {
+            $location.url("supersede-dm-app/" + item.originalItem.entryUrl + "?processId=" + processId);
+            $scope.$apply();
+        }
     });
 });
