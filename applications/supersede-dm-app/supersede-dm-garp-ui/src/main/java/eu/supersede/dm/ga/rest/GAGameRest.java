@@ -613,7 +613,8 @@ public class GAGameRest
 
             if (max > 5)
             {
-                score.setPriority(Priority.fromNumber(6 - (1 + ((pos / max) * 5))));
+                int priority = (int) (6 - (1 + (((double) pos / max) * 5)));
+                score.setPriority(Priority.fromNumber(priority));
             }
             else
             {
@@ -644,7 +645,7 @@ public class GAGameRest
     {
         String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         GAGameDetails game = persistentDB.getGameInfo(gameId);
-        double max = game.getRequirements().size();
+        int max = game.getRequirements().size();
         FeatureList list = new FeatureList();
         int pos = 0;
 
@@ -653,7 +654,18 @@ public class GAGameRest
             Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
             Feature feature = new Feature();
             feature.setName(r.getName());
-            feature.setPriority(6 - ((int) (1 + (pos / max) * 5)));
+
+            if (max > 5)
+            {
+                int priority = (int) (6 - (1 + (((double) pos / max) * 5)));
+                feature.setPriority(priority);
+            }
+            else
+            {
+                feature.setPriority((max + 1) - (pos + 1));
+            }
+
+            feature.setPriority(6 - (1 + (pos / max) * 5));
             feature.setId("" + r.getRequirementId());
             list.list().add(feature);
             pos++;
