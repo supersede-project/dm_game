@@ -27,7 +27,7 @@ import eu.supersede.dm.ProcessManager;
 
 public class EnactmentRequirementsMethod implements DMMethod
 {
-    public static final String NAME = "enact-requirements-method";
+    public static final String NAME = "Enact Requirements";
     public static final String PAGE = "enact_requirements";
 
     private String name;
