@@ -161,8 +161,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		GA_VARIANT = gaVariant;
 		
 		this.criteria = criteria2;
-		this.criteriaWeights = criteriaWeights2;
-		this.playerWeights = playerWeights2;
+		this.criteriaWeights = Utils.criteriaWeightsToProbabilities(criteriaWeights2);
+		this.playerWeights = Utils.playerWeightsToProbabilities(playerWeights2);
 		this.requirements = requirements2;
 		this.dependencies = dependencies2;
 		this.playerRankings = rankings;
@@ -205,7 +205,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		criteria = Utils.readCriteria(criteriaFile);
 		criteriaWeights = Utils.readCriteriaWeights(criteriaWeightFile);
 		playerWeights = Utils.playerWeightsToProbabilities(Utils.readPlayerWeights(playerWeightFile));
-		numberOfPlayers = playerWeights.get("c1").keySet().size();
+		numberOfPlayers = playerWeights.get("4230").keySet().size();
 		String rankingsFile = inputDir + "/ranking_p__NUM__.csv";
 		playerRankings = new HashMap<String, Map<String, List<String>>> ();
 		for (int i = 0; i < numberOfPlayers; i++){

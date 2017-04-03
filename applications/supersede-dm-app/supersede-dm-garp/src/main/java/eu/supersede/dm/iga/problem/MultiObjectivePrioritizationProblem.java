@@ -86,11 +86,28 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 		double d = 0.0;
 		int idx = 0;
 		for (String criterion : getCriteria().keySet()){
-			double cw = getCriteriaWeights().get(criterion);
+			double cw = 0d;
+			// if this criterion has associated weight, get it
+			if (getCriteriaWeights().containsKey(criterion)){
+				cw = getCriteriaWeights().get(criterion);
+			}
 			for (String player : getPlayerRankings().keySet()){
-				double pw = getPlayerWeights().get(criterion).get(player);
-				List<String> pr = getPlayerRankings().get(player).get(criterion);
-				double dist = computeDistance(solution, pr);
+				double pw = 0d;
+				// if the player has a weight associated with this criterion, get it
+				if (getPlayerWeights().containsKey(criterion)){
+					if (getPlayerWeights().get(criterion).containsKey(player)){
+						pw = getPlayerWeights().get(criterion).get(player);;
+					}
+				}
+				
+				double dist = 0d;
+				// if the player has expressed preferences with respect to this criterion, get it
+				if (getPlayerRankings().containsKey(player)){
+					if (getPlayerRankings().get(player).containsKey(criterion)){
+						List<String> pr = getPlayerRankings().get(player).get(criterion);
+						dist = computeDistance(solution, pr);
+					}
+				}
 				d += pw * dist;
 			}
 			d *= cw;
