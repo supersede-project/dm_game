@@ -22,7 +22,13 @@
 
 <div ng-controller="game_details">
 
-    <h1>Game Details</h1>
+    <h1>{{game.name}}</h1>
+
+    <h2>Negotiators</h2>
+    <div id="negotiators"></div>
+
+    <h2>Opinion Providers</h2>
+    <div id="opinion_providers"></div>
 
     <div id="solution" ng-show="solutionSelected()">
         <h2>Selected Solution</h2>
@@ -45,7 +51,7 @@
     <div align="center">
         <jqx-button ng-show="gameOpen()" style="margin-right: 10px" ng-click="closeGame()">Close Game</jqx-button>
         <jqx-button ng-show="gameClosed()" style="margin-right: 10px" ng-click="openGame()">Open Game</jqx-button>
-        <jqx-button ng-click="home()">GA Home</jqx-button>
+        <jqx-button ng-click="home()">Back</jqx-button>
         <p id="game_status"></p>
     </div>
     

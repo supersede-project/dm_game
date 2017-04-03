@@ -170,6 +170,8 @@ public class ProcessAlertsRest
                     RequirementProperties.NEGATIVE_SENTIMENT, "" + userRequest.getNegativeSentiment()));
             requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
                     RequirementProperties.OVERALL_SENTIMENT, "" + userRequest.getOverallSentiment()));
+
+            receivedUserRequestsJpa.delete(userRequest);
         }
     }
 }

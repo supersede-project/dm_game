@@ -123,6 +123,11 @@ public class GAGameRest
                             + weights.get(playersKey).getClass().getName());
         }
 
+        if (gameRequirements.length < 2)
+        {
+            throw new InternalServerErrorException("You must add at least two requirements to the game");
+        }
+
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
                 gameOpinionProviders, gameNegotiators, processId);
     }
@@ -224,6 +229,29 @@ public class GAGameRest
         }
 
         return requirements;
+    }
+
+    @RequestMapping(value = "/negotiators", method = RequestMethod.GET)
+    public List<User> getNegotiators(Authentication authentication, Long gameId)
+    {
+        List<Long> negotiatorsId = persistentDB.getGameInfo(gameId).getNegotiators();
+        List<User> negotiators = new ArrayList<>();
+
+        for (Long userId : negotiatorsId)
+        {
+            User negotiator = usersJpa.findOne(userId);
+
+            if (negotiator != null)
+            {
+                negotiators.add(negotiator);
+            }
+            else
+            {
+                throw new NotFoundException("Unable to find user with id " + userId);
+            }
+        }
+
+        return negotiators;
     }
 
     @RequestMapping(value = "/opinionproviders", method = RequestMethod.GET)
