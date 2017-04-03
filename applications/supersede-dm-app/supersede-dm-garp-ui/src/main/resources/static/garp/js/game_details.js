@@ -129,7 +129,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     };
 
     $scope.home = function () {
-        $location.url('supersede-dm-app/garp/home');
+        $location.url('supersede-dm-app/garp/home?processId=' + processId);
     };
 
     function getGameInfo() {
