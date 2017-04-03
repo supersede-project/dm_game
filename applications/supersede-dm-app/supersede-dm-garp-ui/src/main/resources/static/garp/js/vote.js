@@ -36,7 +36,8 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     var loadPage = function() {
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
-            gameStatus = data.status;
+            $scope.game = data;
+            gameStatus = $scope.game.gameStatus;
 
             $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
             .success(function(data) {
@@ -166,24 +167,12 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         $location.url('supersede-dm-app/home');
     };
 
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/garp/game/id",
-        params: { processId: $scope.processId, activityId: $scope.activityId },
-        headers: {
-            'Content-Type': undefined
-            }
-    }).success(function(data) {
+    $http.get('supersede-dm-app/garp/game/id?processId=' + $scope.processId + '&activityId=' + $scope.activityId)
+    .success(function(data) {
         gameId = data;
         
-        $http({
-            method: 'POST',
-            url: "supersede-dm-app/garp/game/log/gameaccess",
-            params: { processId: $scope.processId, gameId: gameId },
-            headers: {
-                'Content-Type': undefined
-                }
-        }).success(function(data) {
+        $http.post('supersede-dm-app/garp/game/log/gameaccess?processId=' + $scope.processId + '&gameId=' + gameId)
+        .success(function(data) {
             loadPage();
         }).error(function (err) {
             alert(err.message);

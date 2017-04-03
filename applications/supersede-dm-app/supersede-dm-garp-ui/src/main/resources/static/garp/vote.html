@@ -1,6 +1,6 @@
 <script src="supersede-dm-app/garp/js/vote.js"></script>
 <style>
-    h1, h2 {
+    h1, h2, h3 {
         text-align: center;
     }
     #sortable, #global_ranking {
@@ -24,11 +24,13 @@
     }
 </style>
 <div ng-controller="vote">
+    <h1>{{game.name}}</h1>
+
     <div ng-show="canVote()">
-        <h1>Criterion: {{currentCriterion.name}}</h1>
+        <h2>Vote for Criterion: {{currentCriterion.name}}</h2>
 
         <div ng-show="gameOpen() && solutionSelected()">
-            <h2>Current Global Ranking</h2>
+            <h3>Current Global Ranking</h3>
 
             <div id="global_ranking">
                 <div ng-repeat="requirementId in solution">
@@ -44,7 +46,7 @@
             </div>
         </div>
 
-        <h2>Define Your Ranking</h2>
+        <h3>Define Your Ranking</h3>
         <div id="sortable">
             <div ng-repeat="x in requirements" id="{{x.requirementId}}">
                 <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
