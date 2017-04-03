@@ -205,7 +205,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		criteria = Utils.readCriteria(criteriaFile);
 		criteriaWeights = Utils.readCriteriaWeights(criteriaWeightFile);
 		playerWeights = Utils.playerWeightsToProbabilities(Utils.readPlayerWeights(playerWeightFile));
-		numberOfPlayers = playerWeights.get("4230").keySet().size();
+		numberOfPlayers = playerWeights.get("c1").keySet().size();
 		String rankingsFile = inputDir + "/ranking_p__NUM__.csv";
 		playerRankings = new HashMap<String, Map<String, List<String>>> ();
 		for (int i = 0; i < numberOfPlayers; i++){
