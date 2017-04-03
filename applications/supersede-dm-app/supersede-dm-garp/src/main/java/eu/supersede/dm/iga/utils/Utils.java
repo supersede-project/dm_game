@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.NumberFormat;
@@ -23,6 +24,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -345,10 +348,10 @@ public class Utils {
 		return priorities;
 	}
 
-	public static void writeStringToFile(String content, String fileName) {
+	public static void writeStringToFile(String content, String fileName, boolean append) {
 		FileWriter out;
 		try {
-			out = new FileWriter(fileName);
+			out = new FileWriter(fileName, append);
 			BufferedWriter writer = new BufferedWriter(out);
 			writer.write(content);
 			writer.close();
@@ -356,6 +359,10 @@ public class Utils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void writeStringToFile(String content, String fileName) {
+		writeStringToFile(content, fileName, false);
 	}
 
 	public static List<Integer> arrayToList(int[] arr) {
@@ -467,4 +474,21 @@ public class Utils {
 		
 	}
 
+	/**
+	 * returns list of files in a directory patching a pattern
+	 */
+	public static List<String> getFiles (String hostDir, String namePattern){
+		List<String> matchingFiles = new ArrayList<String>();
+		File dir = new File(hostDir);
+		File[] files = dir.listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.toLowerCase().startsWith(namePattern);
+		    }
+		});
+		for (File file : files){
+			matchingFiles.add(file.getName());
+		}
+		return matchingFiles;
+	}
+	
 }
