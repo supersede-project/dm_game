@@ -97,6 +97,6 @@ public class CreateRequirementsEditingSession implements DMMethod
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return NAME;
+        return "Manage Collaborative Requirements Editing Session";
     }
 }
