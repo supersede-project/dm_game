@@ -24,10 +24,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     var gameRequirements = {};
     var gameStatus;
     var open = 'Open';
-    var opinionProviders = {};
+    var opinionProviders = [];
+    var rankings = {};
 
     $scope.currentPage = "page1";
-    $scope.ranking = {};
     $scope.solutions = [];
 
     function loadPage() {
@@ -43,9 +43,25 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadOpinionProviders() {
         $http.get('supersede-dm-app/garp/game/opinionproviders?gameId=' + gameId)
         .success(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                opinionProviders[data[i].userId] = data[i];
-            }
+            opinionProviders = data;
+
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'userId' },
+                    { name: 'name' }
+                ],
+                localdata: data
+            };
+            console.log(source);
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#opinion_providers").jqxComboBox({
+                selectedIndex: 0,
+                source: dataAdapter,
+                displayMember: 'name',
+                width: 200,
+            });
+
             loadCriteria();
         }).error(function (err) {
             alert(err.message);
@@ -67,7 +83,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadRankings() {
         $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
         .success(function (data) {
-            $scope.ranking = data;
+            rankings = data;
+            console.log("rankings:");
+            console.log(rankings);
 
             if (!$scope.emptyRanking()) {
                 loadRequirements();
@@ -102,10 +120,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             alert(err.message);
         });
     }
-
-    $scope.getOpinionProviderName = function (userId) {
-        return opinionProviders[userId].name;
-    };
 
     $scope.getRequirement = function(requirementId) {
         return gameRequirements[requirementId];
@@ -144,7 +158,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.emptyRanking = function() {
-        return Object.keys($scope.ranking).length === 0;
+        return Object.keys(rankings).length === 0;
     };
 
     $scope.gameOpen = function () {
@@ -165,5 +179,16 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         loadPage();
     }).error(function (err) {
         alert(err.message);
+    });
+
+    $("#opinion_providers").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+                console.log("selected item:");
+                console.log(item);
+                $scope.currentOpinionProvider = item.originalItem;
+            }
+        }
     });
 });

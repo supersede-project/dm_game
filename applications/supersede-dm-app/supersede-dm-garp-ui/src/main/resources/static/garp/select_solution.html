@@ -1,7 +1,7 @@
 <script src="supersede-dm-app/garp/js/select_solution.js"></script>
 
 <style>
-    h1, h2, h3 {
+    h1, h2, h3, #opinion_providers {
         text-align: center;
     }
     .solutions > div > div, .rankings > div > div {
@@ -25,27 +25,25 @@
 
         <div id="page1" ng-show="currentPage == 'page1'">
 
-            <h1>Current Ranking</h1>
+            <h1>Current Rankings</h1>
 
-            <div ng-repeat="(userId, criterionRanking) in ranking">
-                <h2>{{getOpinionProviderName(userId)}}</h2>
+            <div id="opinion_providers"></div>
+            <!--
+            <div class="rankings" ng-repeat="(criterionId, requirements) in currentRanking">
+                <h3>Criterion {{criteriaNames[criterionId]}}</h3>
 
-                <div class="rankings" ng-repeat="(criterionId, requirements) in criterionRanking">
-                    <h3>Criterion {{criteriaNames[criterionId]}}</h3>
-
-                    <div ng-repeat="requirementId in requirements">
-                        <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
-                            <div>
-                                <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
-                            </div>
-                            <div style="background-color: #ffd11a">
-                                <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
-                            </div>
+                <div ng-repeat="requirementId in requirements">
+                    <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
+                        <div>
+                            <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
+                        </div>
+                        <div style="background-color: #ffd11a">
+                            <strong>Description</strong>: {{getRequirement(requirementId).description}}<br>
                         </div>
                     </div>
                 </div>
             </div>
-
+                -->
             <div align="center">
                 <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
                 <jqx-button ng-click="home()">Back</jqx-button>
