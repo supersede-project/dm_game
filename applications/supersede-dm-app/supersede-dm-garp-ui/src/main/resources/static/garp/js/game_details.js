@@ -25,6 +25,66 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.gameRequirements = {};
     $scope.solution = [];
 
+    function getNegotiators() {
+        $http.get('supersede-dm-app/garp/game/negotiators?gameId=' + gameId)
+        .success(function (data) {
+            var negotiators = {
+                datatype: "json",
+                datafields: [
+                    { name: 'userId' },
+                    { name: 'name' },
+                    { name: 'email' }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(negotiators);
+            $("#negotiators").jqxGrid({
+                width: '100%',
+                altrows: true,
+                autoheight: true,
+                pageable: true,
+                source: dataAdapter,
+                columns: [
+                    { text: 'Id', datafield: 'userId', width: '20%' },
+                    { text: 'Name', datafield: 'name', width: '40%' },
+                    { text: 'Email', datafield: 'email' }
+                ]
+            });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    function getOpinionProviders() {
+        $http.get('supersede-dm-app/garp/game/opinionproviders?gameId=' + gameId)
+        .success(function (data) {
+            var opinionProviders = {
+                datatype: "json",
+                datafields: [
+                    { name: 'userId' },
+                    { name: 'name' },
+                    { name: 'email' }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(opinionProviders);
+            $("#opinion_providers").jqxGrid({
+                width: '100%',
+                altrows: true,
+                autoheight: true,
+                pageable: true,
+                source: dataAdapter,
+                columns: [
+                    { text: 'Id', datafield: 'userId', width: '20%' },
+                    { text: 'Name', datafield: 'name', width: '40%' },
+                    { text: 'Email', datafield: 'email' }
+                ]
+            });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
     $scope.saveRankings = function () {
         $http.put('supersede-dm-app/garp/game/rankings/save?processId=' + processId + "&gameId=" + gameId + "&name=GA-Default")
         .success(function (data) {
@@ -34,41 +94,15 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         });
     };
 
-    $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
-    .success(function(data) {
-        requirements = data;
-
-        for (var i = 0; i < requirements.length; i++) {
-            var currentRequirement = requirements[i];
-            $scope.gameRequirements[currentRequirement.requirementId] = currentRequirement;
-        }
-    }).error(function(err) {
-        alert(err.message);
-    });
-
-    $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
-    .success(function(data) {
-        $scope.solution = data;
-    }).error(function(err) {
-        alert(err.message);
-    });
-
-    $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
-    .success(function (data) {
-        gameStatus = data.status;
-    }).error(function (err) {
-        alert(err.message);
-    });
-
-    $scope.getRequirement = function(requirementId) {
+    $scope.getRequirement = function (requirementId) {
         return $scope.gameRequirements[requirementId];
     };
 
-    $scope.closeGame = function() {
+    $scope.closeGame = function () {
         $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + processId)
-        .success(function(data) {
+        .success(function (data) {
             $("#game_status").html("<strong>Game successfully closed!</strong>");
-        }).error(function(err){
+        }).error(function (err) {
             $("#game_status").html("<strong>Unable to close the game: " + err.message + "</strong>");
         });
     };
@@ -82,19 +116,58 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
         });
     };
 
-    $scope.solutionSelected = function() {
+    $scope.solutionSelected = function () {
         return $scope.solution.length !== 0;
     };
 
-    $scope.gameOpen = function() {
+    $scope.gameOpen = function () {
         return gameStatus == open;
     };
 
-    $scope.gameClosed = function() {
+    $scope.gameClosed = function () {
         return gameStatus != open;
     };
 
-    $scope.home = function() {
+    $scope.home = function () {
         $location.url('supersede-dm-app/garp/home');
     };
+
+    function getGameInfo() {
+        $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
+        .success(function (data) {
+            $scope.game = data;
+            gameStatus = data.status;
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    function getGameRequirements() {
+        $http.get('supersede-dm-app/garp/game/gamerequirements?gameId=' + gameId)
+        .success(function (data) {
+            requirements = data;
+
+            for (var i = 0; i < requirements.length; i++) {
+                var currentRequirement = requirements[i];
+                $scope.gameRequirements[currentRequirement.requirementId] = currentRequirement;
+            }
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    function getSolution() {
+        $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
+        .success(function (data) {
+            $scope.solution = data;
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    getGameInfo();
+    getNegotiators();
+    getOpinionProviders();
+    getGameRequirements();
+    getSolution();
 });
