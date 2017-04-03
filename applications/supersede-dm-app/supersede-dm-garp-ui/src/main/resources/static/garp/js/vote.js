@@ -38,17 +38,24 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
         .success(function (data) {
             gameStatus = data.status;
 
-            $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
-            .success(function (data) {
-                $scope.solution = data;
+            $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
+            .success(function(data) {
+                criteria = data;
 
-                $http.get('supersede-dm-app/garp/game/userranking?gameId=' + gameId)
+                $http.get('supersede-dm-app/garp/game/solution?gameId=' + gameId)
                 .success(function (data) {
-                    userRanking = data;
+                    $scope.solution = data;
 
-                    if ($scope.canVote()) {
-                        getCurrentCriterion();
-                    }
+                    $http.get('supersede-dm-app/garp/game/userranking?gameId=' + gameId)
+                    .success(function (data) {
+                        userRanking = data;
+
+                        if ($scope.canVote()) {
+                            getCurrentCriterion();
+                        }
+                    }).error(function (err) {
+                        alert(err.message);
+                    });
                 }).error(function (err) {
                     alert(err.message);
                 });
@@ -61,19 +68,13 @@ app.controllerProvider.register('vote', function($scope, $location, $http) {
     };
 
     var getCurrentCriterion = function() {
-        $http.get("supersede-dm-app/garp/game/gamecriteria?gameId=" + gameId)
-        .success(function(data) {
-            criteria = data;
-            $scope.currentCriterion = criteria[currentCriterionIndex];
+        $scope.currentCriterion = criteria[currentCriterionIndex];
 
-            if (criteria.length == 1) {
-                $scope.lastCriterion = true;
-            }
+        if (criteria.length == 1) {
+            $scope.lastCriterion = true;
+        }
 
-            getRequirements();
-        }).error(function(err) {
-            alert(err.message);
-        });
+        getRequirements();
     };
 
     var getRequirements = function() {

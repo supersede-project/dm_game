@@ -396,6 +396,57 @@ public class GAGameRest
         }
         catch (Exception e)
         {
+            System.err.println("Unable to compute prioritizations!");
+
+            System.err.println("Players weights:");
+
+            for (Long criterionId : playerWeights.keySet())
+            {
+                System.err.println("Criterion id: " + criterionId);
+
+                for (Long userId : playerWeights.get(criterionId).keySet())
+                {
+                    System.err.println("User id " + userId + ": " + playerWeights.get(criterionId).get(userId));
+                }
+            }
+
+            System.err.println("Criteria weights:");
+
+            for (Long criterionId : criteriaWeights.keySet())
+            {
+                System.err.println("Criterion id " + criterionId + ": " + criteriaWeights.get(criterionId));
+            }
+
+            System.err.println("Requirements:");
+
+            for (Long requirementId : persistentDB.getRequirements(gameId))
+            {
+                System.err.println(requirementId);
+            }
+
+            System.err.println("Rankings:");
+
+            for (Long userId : participantIds)
+            {
+                System.err.println("User id: " + userId);
+                Map<Long, List<Long>> tmp = persistentDB.getRanking(gameId, userId);
+
+                for (Long criterionId : tmp.keySet())
+                {
+                    System.err.println("Criterion: " + criterionId);
+                    System.err.print("[");
+                    List<Long> tmp1 = tmp.get(criterionId);
+
+                    for (int i = 0; i < tmp1.size() - 1; i++)
+                    {
+                        System.err.print(tmp1.get(i) + ",");
+                    }
+
+                    System.err.println(tmp1.get(tmp1.size() - 1) + "]");
+                }
+            }
+
+            e.printStackTrace();
             throw new InternalServerErrorException("Unable to compute prioritizations!");
         }
 
@@ -562,13 +613,12 @@ public class GAGameRest
 
             if (max > 5)
             {
-                score.setPriority(Priority.fromNumber(
-                		6 - (1 + ((pos / max) * 5))));
+                int priority = (int) (6 - (1 + (((double) pos / max) * 5)));
+                score.setPriority(Priority.fromNumber(priority));
             }
             else
             {
-                score.setPriority(Priority.fromNumber(
-                		(max +1) - (pos + 1)));
+                score.setPriority(Priority.fromNumber((max + 1) - (pos + 1)));
             }
 
             score = DMGame.get().getJpa().scoresJpa.save(score);
@@ -595,7 +645,7 @@ public class GAGameRest
     {
         String tenant = ((DatabaseUser) authentication.getPrincipal()).getTenantId();
         GAGameDetails game = persistentDB.getGameInfo(gameId);
-        double max = game.getRequirements().size();
+        int max = game.getRequirements().size();
         FeatureList list = new FeatureList();
         int pos = 0;
 
@@ -604,8 +654,18 @@ public class GAGameRest
             Requirement r = DMGame.get().getJpa().requirements.findOne(reqId);
             Feature feature = new Feature();
             feature.setName(r.getName());
-            feature.setPriority(
-            		6 - ((int) (1 + (pos / max) * 5)) );
+
+            if (max > 5)
+            {
+                int priority = (int) (6 - (1 + (((double) pos / max) * 5)));
+                feature.setPriority(priority);
+            }
+            else
+            {
+                feature.setPriority((max + 1) - (pos + 1));
+            }
+
+            feature.setPriority(6 - (1 + (pos / max) * 5));
             feature.setId("" + r.getRequirementId());
             list.list().add(feature);
             pos++;
