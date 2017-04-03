@@ -28,6 +28,7 @@ import eu.supersede.dm.ProcessManager;
 public class ShowRankingMethod implements DMMethod
 {
     public static final String NAME = "Show Ranking";
+    public static final String PAGE = "show_ranking";
 
     private String name;
     private List<DMRoleSpec> list;
@@ -92,18 +93,18 @@ public class ShowRankingMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "show_ranking";
+        return PAGE;
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Show current ranking";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Show current ranking";
+        return NAME;
     }
 }

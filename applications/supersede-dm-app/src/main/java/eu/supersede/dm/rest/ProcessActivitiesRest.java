@@ -59,6 +59,7 @@ public class ProcessActivitiesRest
             if (m != null)
             {
                 d.setUrl(m.getPage(mgr));
+                d.setDescription(m.getDescription(mgr));
                 list.add(d);
             }
 

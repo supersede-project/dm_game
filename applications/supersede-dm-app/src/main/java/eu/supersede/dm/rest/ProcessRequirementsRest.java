@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import eu.supersede.dm.DMGame;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.methods.AccessRequirementsEditingSession;
+import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
+import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.RequirementsPropertiesJpa;
 import eu.supersede.gr.model.HActivity;
 import eu.supersede.gr.model.HProcessMember;
@@ -44,10 +45,61 @@ import eu.supersede.gr.model.RequirementStatus;
 public class ProcessRequirementsRest
 {
     @Autowired
+    private RequirementsJpa requirementsJpa;
+
+    @Autowired
     private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
     @Autowired
     private RequirementsPropertiesJpa requirementsPropertiesJpa;
+
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
+    {
+        Requirement r = new Requirement();
+        r.setName(name);
+        r = DMGame.get().getJpa().requirements.save(r);
+        DMGame.get().getProcessManager(processId).addRequirement(r);
+        return r;
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public void deleteRequirement(@RequestParam Long requirementId)
+    {
+        Requirement requirement = requirementsJpa.getOne(requirementId);
+
+        if (requirement == null)
+        {
+            throw new NotFoundException(
+                    "Can't delete requirement with id " + requirementId + " because it does not exist");
+        }
+
+        // Do not delete the requirement if at least another requirement depends on it
+        List<HRequirementDependency> dependencies = requirementsDependenciesJpa.findByDependencyId(requirementId);
+
+        if (dependencies != null && dependencies.size() > 0)
+        {
+            throw new InternalServerErrorException("Unable to delete requirement " + requirement.getName() + "("
+                    + requirement.getDescription() + "): at least another requirement depends on it");
+        }
+
+        // Delete all the dependencies of the requirement
+        dependencies = requirementsDependenciesJpa.findByRequirementId(requirementId);
+
+        for (HRequirementDependency requirementDependency : dependencies)
+        {
+            requirementsDependenciesJpa.delete(requirementDependency);
+        }
+
+        // Delete all the properties of the requirement
+        for (HRequirementProperty requirementProperty : requirementsPropertiesJpa
+                .findPropertiesByRequirementId(requirementId))
+        {
+            requirementsPropertiesJpa.delete(requirementProperty);
+        }
+
+        requirementsJpa.delete(requirement);
+    }
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public void importRequirements(@RequestParam Long processId,
@@ -230,62 +282,44 @@ public class ProcessRequirementsRest
     }
 
     @RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
-    public void setDependencies(@RequestParam Long processId, @RequestBody Map<Long, List<Long>> dependencies)
+    public void setDependencies(@RequestParam Long processId, @RequestParam Long requirementId,
+            @RequestParam List<Long> dependencies)
     {
-        for (Long requirementId : dependencies.keySet())
+        // Delete previously stored dependencies
+        for (HRequirementDependency storedDependency : requirementsDependenciesJpa.findByRequirementId(requirementId))
         {
-            // Delete previously stored dependencies
-            for (HRequirementDependency storedDependency : requirementsDependenciesJpa
-                    .findByRequirementId(requirementId))
-            {
-                requirementsDependenciesJpa.delete(storedDependency);
-            }
+            requirementsDependenciesJpa.delete(storedDependency);
+        }
 
-            // Store new dependencies
-            for (Long dependencyId : dependencies.get(requirementId))
-            {
-                HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
-                requirementsDependenciesJpa.save(requirementDependency);
-            }
+        // Store new dependencies
+        for (Long dependencyId : dependencies)
+        {
+            HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
+            requirementsDependenciesJpa.save(requirementDependency);
         }
     }
 
     @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
-    public Map<Long, List<Long>> getDependencies(@RequestParam Long processId)
+    public List<Long> getDependencies(@RequestParam Long processId, @RequestParam Long requirementId)
     {
-        List<Requirement> requirements = DMGame.get().getProcessManager(processId).getRequirements();
+        Requirement requirement = requirementsJpa.findOne(requirementId);
 
-        Map<Long, List<Long>> dependencies = new HashMap<>();
-
-        for (Requirement requirement : requirements)
+        if (requirement == null)
         {
-            Long requirementId = requirement.getRequirementId();
-            List<Long> requirementDependencies = new ArrayList<>();
-            List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
-                    .findByRequirementId(requirementId);
-
-            for (HRequirementDependency dependency : storedDependencies)
-            {
-                requirementDependencies.add(dependency.getDependencyId());
-            }
-
-            if (requirementDependencies.size() > 0)
-            {
-                dependencies.put(requirementId, requirementDependencies);
-            }
+            throw new NotFoundException("Unable to find dependencies of requirement with id " + requirementId
+                    + " because it does not exist");
         }
 
-        return dependencies;
-    }
+        List<Long> requirementDependencies = new ArrayList<>();
+        List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
+                .findByRequirementId(requirementId);
 
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
-    {
-        Requirement r = new Requirement();
-        r.setName(name);
-        r = DMGame.get().getJpa().requirements.save(r);
-        DMGame.get().getProcessManager(processId).addRequirement(r);
-        return r;
+        for (HRequirementDependency dependency : storedDependencies)
+        {
+            requirementDependencies.add(dependency.getDependencyId());
+        }
+
+        return requirementDependencies;
     }
 
     @RequestMapping(value = "/property/submit", method = RequestMethod.POST)

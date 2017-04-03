@@ -3,10 +3,14 @@
  */
 package eu.supersede.dm.iga;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.h2.store.fs.FileUtils;
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
 import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GenerationalGeneticAlgorithm;
@@ -26,12 +30,14 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.WeightType;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.DistanceType;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 import eu.supersede.dm.iga.utils.GAUtils;
+import eu.supersede.dm.iga.utils.Utils;
 
 /**
  * @author fitsum
@@ -59,7 +65,10 @@ public class GAMain {
 		}
 		
 		String inputDirectory = args[0];
-		String outputDirectory = args[1];
+		String outputDirectory = args[1] + "/";
+		if (!FileUtils.exists(outputDirectory)){
+			FileUtils.createDirectory(outputDirectory);
+		}
 		if (args.length == 3){
 			gaVariant = GAVariant.valueOf(args[2]);
 		}
@@ -76,7 +85,7 @@ public class GAMain {
 		DistanceType distanceType = DistanceType.KENDALL;
 		WeightType weightType = WeightType.INPUT;
 				
-	    double crossoverProbability = 0.9 ;
+	    double crossoverProbability = 0.9;
 	    CrossoverOperator crossover = new PMXCrossover(crossoverProbability) ;
 
 	    int searchBudget = 10000;
@@ -104,6 +113,8 @@ public class GAMain {
 			System.out.println(solution.toNamedStringWithObjectives());
 			GAUtils.printSolutionWithLabels(solution,outputDirectory + "/solution.csv");
 		}else if (gaVariant == GAVariant.MO){
+			long startTime = System.currentTimeMillis();
+			
 			problem = new MultiObjectivePrioritizationProblem(inputDirectory, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, gaVariant, distanceType, weightType);
 			
 			double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
@@ -113,11 +124,55 @@ public class GAMain {
 			
 		    algorithm = new NSGAII<PermutationSolution<?>>(problem, searchBudget, populationSize, crossover, mutation, selection, evaluator);
 		    algorithm.run();
-		    List<PermutationSolution<?>> pareto = (List<PermutationSolution<?>>) algorithm.getResult();
 		    
-//		    GAUtils.printNamedSolutions(pareto, "pareto_solutions.csv");
-//			GAUtils.printFinalSolutionSet(pareto, "pareto");
-			GAUtils.printParetoFrontWithLabels(pareto, outputDirectory + "/pareto.csv");
+		    long moRuntime = System.currentTimeMillis() - startTime;
+			
+			List<PermutationSolution<?>> pareto = (List<PermutationSolution<?>>) algorithm.getResult();
+		    GAUtils.printParetoFrontWithLabels(pareto, outputDirectory + distanceType.toString() + "_" + weightType.toString() + "_pareto.csv");
+		    
+//		    List<PermutationSolution<?>> ahpPareto = new ArrayList<PermutationSolution<?>>();
+//		    String ahpRankingFileAverage = inputDirectory + "/Prioritization_ahp_average.csv";
+//		    PrioritizationSolution ahpSolutionAverage = (PrioritizationSolution) problem.createSolution();
+//		    Utils.readFinalAhpRanking(ahpRankingFileAverage, ahpSolutionAverage);
+//		    problem.evaluate(ahpSolutionAverage);
+//		    ahpPareto.add(ahpSolutionAverage);
+//		    GAUtils.printParetoFrontWithLabels(ahpPareto, outputDirectory + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_average.csv");
+//		    
+//		    String ahpRankingFileNegotiator = inputDirectory + "/Prioritization_ahp_negotiator.csv";
+//		    PrioritizationSolution ahpSolutionNegotiator = (PrioritizationSolution) problem.createSolution();
+//		    Utils.readFinalAhpRanking(ahpRankingFileNegotiator, ahpSolutionNegotiator);
+//		    problem.evaluate(ahpSolutionNegotiator);
+//		    ahpPareto.clear();
+//		    ahpPareto.add(ahpSolutionNegotiator);
+//		    GAUtils.printParetoFrontWithLabels(ahpPareto, outputDirectory + distanceType.toString() + "_" + weightType.toString() + "_ahp_pareto_negotiator.csv");
+//		    
+//		    // Get a solution using the single-objective ga
+//		    startTime = System.currentTimeMillis();
+//		    Problem<PermutationSolution<?>> soProblem = new SingleObjectivePrioritizationProblem(inputDirectory, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile, of, GAVariant.SO, distanceType, weightType);
+//			
+//		    selection = new BinaryTournamentSelection<PermutationSolution<?>>(new ObjectiveComparator<PermutationSolution<?>>(0)) ;
+//			
+//		    algorithm = new GenerationalGeneticAlgorithm(soProblem, searchBudget, populationSize, crossover, mutation, selection, evaluator);
+//			algorithm.run();
+//			
+//			long soRuntime = System.currentTimeMillis() - startTime;
+//			
+//			PrioritizationSolution sogaSolution = (PrioritizationSolution)algorithm.getResult();
+//		    
+//		    PrioritizationSolution mogaSolution = (PrioritizationSolution) problem.createSolution();
+//		    for (int i = 0; i < sogaSolution.getNumberOfVariables(); i++){
+//		    	mogaSolution.setVariableValue(i, sogaSolution.getVariableValue(i));
+//		    }
+//		    problem.evaluate(mogaSolution);
+//		    ahpPareto.clear();
+//		    ahpPareto.add(mogaSolution);
+//		    GAUtils.printParetoFrontWithLabels(ahpPareto, outputDirectory + distanceType.toString() + "_" + weightType.toString() + "_soga_pareto.csv");
+//			
+//			System.out.println("mo,so");
+//			System.out.println(moRuntime + "," + soRuntime);
+//			boolean append = true;
+//			Utils.writeStringToFile("mo,so\n" + moRuntime + "," + soRuntime + "\n", outputDirectory + distanceType.toString() + "_" + weightType.toString() + "_runtime.csv", append);
+//			
 		}else{
 			throw new RuntimeException("Unrecognized algorithm mariant: " + gaVariant + ". Only SO or MO allowed.");
 		}

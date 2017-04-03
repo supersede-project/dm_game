@@ -151,7 +151,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                     '<a href="#/supersede-dm-app/' + datarecord.url +
                     '?processId=' + datarecord.processId +
                     '&activityId=' + datarecord.activityId +
-                    '">' + datarecord.methodName + '</a>' +
+                    '">' + datarecord.description + '</a>' +
                     '</td></tr></table>';
                 return table;
             }

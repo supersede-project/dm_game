@@ -37,19 +37,15 @@ import eu.supersede.gr.model.Requirement;
 public class AHPRequirementsPrioritizationMethod implements DMMethod
 {
     public static final String NAME = "AHP session";
+    private static final String PAGE = "ahprp/home";
 
-    String name;
-
-    // BPMNExecutor executor = new BPMNExecutor();
-
-    List<DMRoleSpec> list = new ArrayList<>();
-
-    List<DMOption> options = new ArrayList<>();
+    private List<DMRoleSpec> list;
+    private List<DMOption> options;
 
     public AHPRequirementsPrioritizationMethod()
     {
-
-        this.name = NAME;
+        list = new ArrayList<>();
+        options = new ArrayList<>();
 
         list.add(new DMRoleSpec(new DMRole("Game Master"), 1, 1));
         list.add(new DMRoleSpec(new DMRole("Negotiator"), 0, 1));
@@ -57,14 +53,12 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
 
         options.add(new DMOption("gamification", new String[] { "on", "off" }));
         options.add(new DMOption("negotiator", new String[] { "active", "not active" }));
-
-        // executor.loadBPMN( "supersedeAHPDM.bpmn20.xml" );
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -238,19 +232,18 @@ public class AHPRequirementsPrioritizationMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "ahprp/home";
+        return PAGE;
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "AHP session";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "AHP session";
+        return NAME;
     }
-
 }

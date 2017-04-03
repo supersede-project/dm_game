@@ -44,7 +44,7 @@ public class AccessRequirementsEditingSession implements DMMethod
     {
         return this.name;
     }
-    
+
     @Override
     public DMObjective getObjective()
     {
@@ -84,7 +84,7 @@ public class AccessRequirementsEditingSession implements DMMethod
             @Override
             public boolean isTrue(ProcessManager mgr)
             {
-            	return false;
+                return false;
             }
         });
 
@@ -97,13 +97,15 @@ public class AccessRequirementsEditingSession implements DMMethod
         return "req_edit_session";
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Edit Requirements Collaboratively";
-	}
+    @Override
+    public String getDescription(ProcessManager mgr)
+    {
+        return NAME + " in process " + mgr.getProcess().getName();
+    }
 
-	@Override
-	public String getLabel(ProcessManager arg0) {
-		return "Edit Requirements Collaboratively";
-	}
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return NAME;
+    }
 }

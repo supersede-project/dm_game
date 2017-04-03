@@ -27,7 +27,8 @@ import eu.supersede.dm.ProcessManager;
 
 public class EnactmentRequirementsMethod implements DMMethod
 {
-    public static final String NAME = "enact-requirements-method";
+    public static final String NAME = "Enact Requirements";
+    public static final String PAGE = "enact_requirements";
 
     private String name;
     private List<DMRoleSpec> list;
@@ -84,18 +85,18 @@ public class EnactmentRequirementsMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "enact_requirements";
+        return PAGE;
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Enact prioritized requirements";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Enact prioritized requirements";
+        return NAME;
     }
 }

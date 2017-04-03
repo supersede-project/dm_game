@@ -11,4 +11,7 @@ public interface RequirementsDependenciesJpa extends JpaRepository<HRequirementD
 {
     @Query("SELECT d FROM HRequirementDependency d WHERE requirementId = ?1")
     List<HRequirementDependency> findByRequirementId(Long requirementId);
+
+    @Query("SELECT d FROM HRequirementDependency d WHERE dependencyId = ?1")
+    List<HRequirementDependency> findByDependencyId(Long dependencyId);
 }

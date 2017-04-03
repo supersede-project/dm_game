@@ -118,11 +118,6 @@ public class DMGame
                     throw new Exception("At least one criterion must exist in the process");
                 }
 
-                if (mgr.getRequirementsCount() == 0)
-                {
-                    throw new Exception("At least one requirement must exist in the process");
-                }
-
                 DuplicateMap<Integer, Requirement> map = new DuplicateMap<>();
 
                 for (Requirement r : mgr.getRequirements())
@@ -130,21 +125,9 @@ public class DMGame
                     map.put(r.getStatus(), r);
                 }
 
-                if (map.count(RequirementStatus.Discarded.getValue()) == map.size())
-                {
-                    throw new Exception("No requirements can be edited (all of them are discarded)");
-                }
-
                 if (map.count(RequirementStatus.Enacted.getValue()) > 0)
                 {
                     throw new Exception("There are already enacted requirements");
-                }
-
-                if ((map.count(RequirementStatus.Unconfirmed.getValue()) > 0)
-                        & (map.count(RequirementStatus.Confirmed.getValue()) > 0))
-                {
-                    throw new Exception(
-                            "Not a valid state: there are both unconfirmed and already confirmed requirements");
                 }
             }
 

@@ -28,6 +28,7 @@ import eu.supersede.dm.ProcessManager;
 public class CreateRequirementsEditingSession implements DMMethod
 {
     public static final String NAME = "Open Collaborative Requirements Editing Session";
+    public static final String PAGE = "create_req_edit_session";
 
     private String name;
     private List<DMRoleSpec> list;
@@ -84,18 +85,18 @@ public class CreateRequirementsEditingSession implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "create_req_edit_session";
+        return PAGE;
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Manage Collaborative Requirements Editing Session";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Manage Collaborative Requirements Editing Session";
+        return NAME;
     }
 }

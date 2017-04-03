@@ -27,24 +27,22 @@ import eu.supersede.dm.ProcessManager;
 
 public class AHPPlayerMethod implements DMMethod
 {
-
     public static final String NAME = "Play AHP game session";
+    private static final String PAGE = "ahprp/player_moves";
 
-    String name;
-
-    List<DMRoleSpec> list = new ArrayList<>();
-
-    List<DMOption> options = new ArrayList<>();
+    private List<DMRoleSpec> list;
+    private List<DMOption> options;
 
     public AHPPlayerMethod()
     {
-        this.name = NAME;
+        list = new ArrayList<>();
+        options = new ArrayList<>();
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return NAME;
     }
 
     @Override
@@ -121,17 +119,18 @@ public class AHPPlayerMethod implements DMMethod
     @Override
     public String getPage(ProcessManager mgr)
     {
-        return "ahprp/player_moves";
+        return PAGE;
     }
 
-	@Override
-	public String getDescription(ProcessManager arg0) {
-		return "Play AHP game session";
-	}
+    @Override
+    public String getDescription(ProcessManager mgr)
+    {
+        return NAME + " in process " + mgr.getProcess().getName();
+    }
 
-	@Override
-	public String getLabel( ProcessManager mgr ) {
-		return "Play AHP game session";
-	}
-
+    @Override
+    public String getLabel(ProcessManager arg0)
+    {
+        return NAME;
+    }
 }

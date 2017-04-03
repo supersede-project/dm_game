@@ -116,14 +116,14 @@ public class AlertsImportMethod implements DMMethod
     }
 
     @Override
-    public String getDescription(ProcessManager arg0)
+    public String getDescription(ProcessManager mgr)
     {
-        return "Import Alerts";
+        return NAME + " in process " + mgr.getProcess().getName();
     }
 
     @Override
     public String getLabel(ProcessManager arg0)
     {
-        return "Import Alerts";
+        return NAME;
     }
 }

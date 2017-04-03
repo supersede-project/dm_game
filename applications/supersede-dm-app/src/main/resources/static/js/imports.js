@@ -17,7 +17,6 @@ var app = angular.module('w5app');
 app.controllerProvider.register('import_requirements', function($scope, $http, $location) {
 
     $scope.processId = $location.search().processId;
-
     $scope.gameRequirementsId = [];
 
     var availableRequirements = {};
@@ -364,7 +363,6 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 datafields: [
                     { name: 'applicationId', map: 'applicationId' },
                     { name: 'alertId' },
-                    { name: 'id' },
                     { name: 'timestamp' },
                     { name: 'description' },
                     { name: 'classification' },
@@ -372,25 +370,32 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                     { name: 'pos' },
                     { name: 'neg' },
                     { name: 'overall' },
+                    { name: 'id' }
                 ],
+            };
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                return '<div class="jqx-grid-cell-left-align"><jqx-button ng-click="deleteAlert(' + "'" + value + "'" +
+                    ')">Delete</jqx-button></div>';
             };
             var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
             $("#alerts").jqxGrid({
                 width: "100%",
                 source: dataAdapter,
                 selectionmode: 'checkbox',
+                editable: true,
+                editmode: 'dblclick',
                 groupable: true,
                 columns: [
                     { text: 'App', dataField: 'applicationId', width: "15%" },
                     { text: 'Alert', dataField: 'alertId', width: "10%" },
-                    { text: 'Id', dataField: 'id', width: "10%" },
                     { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
                     { text: 'Description', dataField: 'description', width: "20%" },
                     { text: 'Classification', dataField: 'classification', width: "15%" },
                     { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
                     { text: 'Pos.', dataField: 'pos', width: "5%" },
                     { text: 'Neg.', dataField: 'neg', width: "5%" },
-                    { text: 'Overall.', dataField: 'overall', width: "5%" }
+                    { text: 'Overall.', dataField: 'overall', width: "5%" },
+                    { text: '', dataField: 'id', width: "10%", cellsrenderer: cellsrenderer }
                 ],
                 groups: ['applicationId', 'alertId']
             });
@@ -428,6 +433,23 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         });
     }
 
+    $scope.deleteAlert = function(id) {
+        for (var i = 0; i < availableAlerts.localdata.length; i++) {
+            if (availableAlerts.localdata[i].id === id) {
+                discardAlert(id);
+            }
+        }
+    };
+
+    function discardAlert(id) {
+        $http.put('supersede-dm-app/alerts/userrequests/discard?id=' + id)
+        .success(function () {
+            getAvailableAlerts();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
     function defineProcessData() {
         // TODO: check how to avoid having the same alert added multiple times if alerts are grouped by columns
         var selectedAlerts = $("#alerts").jqxGrid("selectedrowindexes");
@@ -437,20 +459,21 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         for (var i = 0; i < selectedAlerts.length; i++) {
             var selectedAlert = $("#alerts").jqxGrid('getrowdata', selectedAlerts[i]);
             $scope.alerts.localdata.push(selectedAlert);
-            $scope.alertsId.push(selectedAlert.alertId);
+            $scope.alertsId.push(selectedAlert.id);
         }
     }
 
-    $scope.import = function () {
+    $scope.importAlerts = function () {
         defineProcessData();
-        console.log("importing alerts:");
-        console.log($scope.alertsId);
         $http({
             method: 'POST',
-            url: "supersede-dm-app/processes/alerts/import",
-            params: { processId: $scope.processId, alertsId: $scope.alertsId }
+            url: "supersede-dm-app/processes/alerts/userrequests/import",
+            params: { processId: $scope.processId, userRequests: $scope.alertsId }
         })
         .success(function (data) {
+            for (var i = 0; i < $scope.alertsId.length; i++) {
+                discardAlert($scope.alertsId[i]);
+            }
             $scope.home();
         }).error(function (err) {
             $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
