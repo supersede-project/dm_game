@@ -471,9 +471,6 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             params: { processId: $scope.processId, userRequests: $scope.alertsId }
         })
         .success(function (data) {
-            for (var i = 0; i < $scope.alertsId.length; i++) {
-                discardAlert($scope.alertsId[i]);
-            }
             $scope.home();
         }).error(function (err) {
             $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
