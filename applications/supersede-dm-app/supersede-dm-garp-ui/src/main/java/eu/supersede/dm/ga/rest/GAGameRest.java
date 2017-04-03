@@ -123,6 +123,11 @@ public class GAGameRest
                             + weights.get(playersKey).getClass().getName());
         }
 
+        if (gameRequirements.length < 2)
+        {
+            throw new InternalServerErrorException("You must add at least two requirements to the game");
+        }
+
         persistentDB.create(authentication, name, gameRequirements, playersWeights, criteriaWeights,
                 gameOpinionProviders, gameNegotiators, processId);
     }
