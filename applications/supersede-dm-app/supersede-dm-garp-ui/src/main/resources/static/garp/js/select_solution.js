@@ -54,7 +54,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
                 ],
                 localdata: data
             };
-            console.log(source);
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#opinion_providers").jqxComboBox({
                 selectedIndex: 0,
@@ -62,8 +61,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
                 displayMember: 'name',
                 width: 400,
             });
-            console.log("selected item:");
-            console.log($("#opinion_providers").jqxComboBox('getSelectedItem').originalItem);
             $scope.currentOpinionProvider = $("#opinion_providers").jqxComboBox('getSelectedItem').originalItem;
 
             loadCriteria();
@@ -88,8 +85,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
         .success(function (data) {
             $scope.rankings = data;
-            console.log("rankings:");
-            console.log($scope.rankings);
 
             if (!$scope.emptyRanking()) {
                 loadRequirements();
@@ -164,6 +159,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         return Object.keys($scope.rankings).length === 0;
     };
 
+    $scope.emptyRankingForOpinionProvider = function () {
+            return $scope.rankings[$scope.currentOpinionProvider.userId] === undefined;
+    };
+
     $scope.gameOpen = function () {
         return gameStatus == open;
     };
@@ -188,8 +187,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         if (event.args) {
             var item = event.args.item;
             if (item) {
-                console.log("selected item:");
-                console.log(item);
                 $scope.currentOpinionProvider = item.originalItem;
                 $scope.$apply();
             }
