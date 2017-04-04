@@ -379,7 +379,9 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             };
             var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
             $("#alerts").jqxGrid({
-                width: "1200px",
+                width: "100%",
+                autorowheight: true,
+                autoheight: true,
                 source: dataAdapter,
                 columnsautoresize: false,
                 columnsmenu: false,
@@ -390,9 +392,9 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 groupable: true,
                 columns: [
                     { text: 'App', dataField: 'applicationId', width: "5%" },
-                    { text: 'Alert', dataField: 'alertId', width: "5%" },
-                    { text: 'Timestamp', dataField: 'timestamp', width: "5%" },
-                    { text: 'Description', dataField: 'description', width: "50%" },
+                    { text: 'Alert', dataField: 'alertId', width: "8%" },
+                    { text: 'Timestamp', dataField: 'timestamp', width: "8%" },
+                    { text: 'Description', dataField: 'description', width: "42%" },
                     { text: 'Classification', dataField: 'classification', width: "10%" },
                     { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
                     { text: 'Pos.', dataField: 'pos', width: "5%" },
@@ -402,6 +404,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 ],
                 groups: ['applicationId', 'alertId']
             });
+            $("#alerts").jqxGrid('expandallgroups');
 
             getAddedAlerts();
         }).error(function (err) {
