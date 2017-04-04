@@ -58,6 +58,7 @@ public class ProcessRequirementsRest
     {
         Requirement r = new Requirement();
         r.setName(name);
+        r.setStatus( RequirementStatus.Editable.getValue() );
         r = DMGame.get().getJpa().requirements.save(r);
         DMGame.get().getProcessManager(processId).addRequirement(r);
         return r;

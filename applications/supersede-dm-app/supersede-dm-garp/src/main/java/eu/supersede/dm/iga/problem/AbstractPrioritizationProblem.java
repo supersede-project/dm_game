@@ -161,8 +161,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		GA_VARIANT = gaVariant;
 		
 		this.criteria = criteria2;
-		this.criteriaWeights = criteriaWeights2;
-		this.playerWeights = playerWeights2;
+		this.criteriaWeights = Utils.criteriaWeightsToProbabilities(criteriaWeights2);
+		this.playerWeights = Utils.playerWeightsToProbabilities(playerWeights2);
 		this.requirements = requirements2;
 		this.dependencies = dependencies2;
 		this.playerRankings = rankings;

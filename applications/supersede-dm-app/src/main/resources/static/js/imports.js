@@ -380,25 +380,31 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             var dataAdapter = new $.jqx.dataAdapter(availableAlerts);
             $("#alerts").jqxGrid({
                 width: "100%",
+                autorowheight: true,
+                autoheight: true,
                 source: dataAdapter,
+                columnsautoresize: false,
+                columnsmenu: false,
+                enabletooltips: true,
                 selectionmode: 'checkbox',
                 editable: true,
                 editmode: 'dblclick',
                 groupable: true,
                 columns: [
-                    { text: 'App', dataField: 'applicationId', width: "15%" },
-                    { text: 'Alert', dataField: 'alertId', width: "10%" },
-                    { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
-                    { text: 'Description', dataField: 'description', width: "20%" },
-                    { text: 'Classification', dataField: 'classification', width: "15%" },
+                    { text: 'App', dataField: 'applicationId', width: "5%" },
+                    { text: 'Alert', dataField: 'alertId', width: "8%" },
+                    { text: 'Timestamp', dataField: 'timestamp', width: "8%" },
+                    { text: 'Description', dataField: 'description', width: "42%" },
+                    { text: 'Classification', dataField: 'classification', width: "10%" },
                     { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
                     { text: 'Pos.', dataField: 'pos', width: "5%" },
                     { text: 'Neg.', dataField: 'neg', width: "5%" },
                     { text: 'Overall.', dataField: 'overall', width: "5%" },
-                    { text: '', dataField: 'id', width: "10%", cellsrenderer: cellsrenderer }
+                    { text: '', dataField: 'id', width: "5%", cellsrenderer: cellsrenderer }
                 ],
                 groups: ['applicationId', 'alertId']
             });
+            $("#alerts").jqxGrid('expandallgroups');
 
             getAddedAlerts();
         }).error(function (err) {
@@ -471,9 +477,6 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
             params: { processId: $scope.processId, userRequests: $scope.alertsId }
         })
         .success(function (data) {
-            for (var i = 0; i < $scope.alertsId.length; i++) {
-                discardAlert($scope.alertsId[i]);
-            }
             $scope.home();
         }).error(function (err) {
             $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
