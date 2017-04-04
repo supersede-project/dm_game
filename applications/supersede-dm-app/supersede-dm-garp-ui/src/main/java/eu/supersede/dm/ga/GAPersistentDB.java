@@ -103,13 +103,12 @@ public class GAPersistentDB
 
     public void create(Authentication authentication, String name, Long[] gameRequirements,
             Map<String, Map<String, Double>> playersWeights, Map<String, Double> criteriaWeights,
-            Long[] gameOpinionProviders, Long[] gameNegotiators, Long processId)
+            Long[] gameOpinionProviders, Long gameNegotiator, Long processId)
     {
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         ProcessManager mgr = DMGame.get().getProcessManager(processId);
         List<Long> requirements = new ArrayList<>();
         List<Long> opinionProviders = new ArrayList<>();
-        List<Long> negotiators = new ArrayList<>();
 
         for (Long requirementId : gameRequirements)
         {
@@ -119,11 +118,6 @@ public class GAPersistentDB
         for (Long userId : gameOpinionProviders)
         {
             opinionProviders.add(userId);
-        }
-
-        for (Long userId : gameNegotiators)
-        {
-            negotiators.add(userId);
         }
 
         HGAGameSummary gameSummary = new HGAGameSummary();
@@ -191,17 +185,15 @@ public class GAPersistentDB
             participationJpa.save(p);
         }
 
-        for (Long userId : negotiators)
-        {
-            HGAGameParticipation gameParticipation = new HGAGameParticipation();
-            gameParticipation.setGameId(gameId);
-            gameParticipation.setUserId(userId);
-            gameParticipation.setRole(GARole.Negotiator.name());
-            participationJpa.save(gameParticipation);
-        }
+        // Save negotiator
+        HGAGameParticipation gameParticipation = new HGAGameParticipation();
+        gameParticipation.setGameId(gameId);
+        gameParticipation.setUserId(gameNegotiator);
+        gameParticipation.setRole(GARole.Negotiator.name());
+        participationJpa.save(gameParticipation);
 
         // Save owner
-        HGAGameParticipation gameParticipation = new HGAGameParticipation();
+        gameParticipation = new HGAGameParticipation();
         gameParticipation.setGameId(gameId);
         gameParticipation.setUserId(gameSummary.getOwner());
         gameParticipation.setRole(GARole.Supervisor.name());
@@ -211,10 +203,6 @@ public class GAPersistentDB
         {
             createActivities(processId, gameId);
         }
-
-        log.info("Created game: " + gameId + ", requirements: " + requirements.size() + ", criteria: "
-                + criteriaWeights.size() + ", opinion providers: " + opinionProviders.size() + ", negotiators: "
-                + negotiators.size());
     }
 
     private void createActivities(Long processId, Long gameId)
