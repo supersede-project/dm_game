@@ -123,21 +123,24 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     $scope.goToNextRequirement = function () {
         saveDependencies();
-        currentRequirementIndex++;
-        loadCurrentRequirement();
     };
 
     $scope.submitDependencies = function () {
         saveDependencies();
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
-            data: dependencies,
-            params: {processId: processId},
+            params: { processId: processId, requirementId: currentRequirementId, dependencies: dependencies[currentRequirementId] },
             method: 'POST'
         }).success(function () {
-            $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
+            if (lastRequirement()) {
+                $location.url('supersede-dm-app/process?processId=' + processId);
+            }
+            else {
+                currentRequirementIndex++;
+                loadCurrentRequirement();
+            }
         }).error(function (err) {
-            $("#submitted").html("<strong>Unable to save the dependencies: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
@@ -145,7 +148,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         return $scope.requirements.length === 0;
     };
 
-    $scope.lastRequirement = function () {
+    function lastRequirement() {
         if (currentRequirementIndex == $scope.requirements.length - 1) {
             return true;
         }
@@ -155,7 +158,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         else {
             return false;
         }
-    };
+    }
 
     $scope.addProperty = function () {
         var propertyName = $("#property_name").val();
