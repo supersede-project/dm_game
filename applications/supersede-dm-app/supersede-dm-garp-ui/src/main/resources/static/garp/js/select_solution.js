@@ -19,13 +19,14 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.processId = $location.search().processId;
     $scope.activityId = $location.search().activityId;
     $scope.criteriaNames = {};
+    $scope.currentOpinionProvider = {};
+    $scope.rankings = {};
 
     var gameId;
     var gameRequirements = {};
     var gameStatus;
     var open = 'Open';
     var opinionProviders = [];
-    var rankings = {};
 
     $scope.currentPage = "page1";
     $scope.solutions = [];
@@ -59,8 +60,11 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
                 selectedIndex: 0,
                 source: dataAdapter,
                 displayMember: 'name',
-                width: 200,
+                width: 400,
             });
+            console.log("selected item:");
+            console.log($("#opinion_providers").jqxComboBox('getSelectedItem').originalItem);
+            $scope.currentOpinionProvider = $("#opinion_providers").jqxComboBox('getSelectedItem').originalItem;
 
             loadCriteria();
         }).error(function (err) {
@@ -83,9 +87,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadRankings() {
         $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
         .success(function (data) {
-            rankings = data;
+            $scope.rankings = data;
             console.log("rankings:");
-            console.log(rankings);
+            console.log($scope.rankings);
 
             if (!$scope.emptyRanking()) {
                 loadRequirements();
@@ -98,7 +102,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadRequirements() {
         $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
         .success(function (data) {
-
             for (var i = 0; i < data.length; i++) {
                 var requirementId = data[i].requirementId;
                 gameRequirements[requirementId] = data[i];
@@ -158,7 +161,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     };
 
     $scope.emptyRanking = function() {
-        return Object.keys(rankings).length === 0;
+        return Object.keys($scope.rankings).length === 0;
     };
 
     $scope.gameOpen = function () {
@@ -188,6 +191,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
                 console.log("selected item:");
                 console.log(item);
                 $scope.currentOpinionProvider = item.originalItem;
+                $scope.$apply();
             }
         }
     });

@@ -1,7 +1,7 @@
 <script src="supersede-dm-app/garp/js/select_solution.js"></script>
 
 <style>
-    h1, h2, h3, #opinion_providers {
+    h1, h2, h3 {
         text-align: center;
     }
     .solutions > div > div, .rankings > div > div {
@@ -18,6 +18,9 @@
     #content p {
         margin: 1em;
     }
+    #opinion_providers {
+        margin: 2em auto;
+    }
 </style>
 
 <div ng-controller="select_solution">
@@ -27,9 +30,10 @@
 
             <h1>Current Rankings</h1>
 
+            <h2>Opinion Provider</h2>
             <div id="opinion_providers"></div>
-            <!--
-            <div class="rankings" ng-repeat="(criterionId, requirements) in currentRanking">
+
+            <div class="rankings" ng-repeat="(criterionId, requirements) in rankings[currentOpinionProvider.userId]">
                 <h3>Criterion {{criteriaNames[criterionId]}}</h3>
 
                 <div ng-repeat="requirementId in requirements">
@@ -43,7 +47,7 @@
                     </div>
                 </div>
             </div>
-                -->
+
             <div align="center">
                 <jqx-button style="margin-right: 10px" ng-click="showSolutions()">Show Solutions</jqx-button>
                 <jqx-button ng-click="home()">Back</jqx-button>
