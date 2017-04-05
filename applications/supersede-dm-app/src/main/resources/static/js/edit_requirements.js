@@ -132,7 +132,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             params: { processId: processId, requirementId: currentRequirementId, dependencies: dependencies[currentRequirementId] },
             method: 'POST'
         }).success(function () {
-            if (lastRequirement()) {
+            if ($scope.lastRequirement()) {
                 $location.url('supersede-dm-app/process?processId=' + processId);
             }
             else {
