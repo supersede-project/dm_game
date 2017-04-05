@@ -65,6 +65,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             }
         }).error(function (err) {
             alert(err.message);
+            loadRequirements();
         });
     }
 
@@ -213,6 +214,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             $("#property_status").html("");
         }).error(function (err) {
             alert(err.message);
+            loadRequirements();
         });
     }
 
@@ -243,10 +245,10 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             url: "supersede-dm-app/processes/requirements/new?processId=" + processId + "&name=" + reqName,
             method: 'POST'
         }).success(function (data) {
-            requirements.push(data);
             loadRequirements();
         }).error(function (err) {
             alert(err.message);
+            loadRequirements();
         });
     };
 
@@ -259,6 +261,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             loadRequirements();
         }).error(function (err) {
             alert(err.message);
+            loadRequirements();
         });
     };
 
@@ -289,27 +292,28 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
                 valueMember: "id",
                 width: '100%',
                 renderer: function (index, label, value) {
-                    return data[index].name;
-                }
-            });
-            $('#requirements-listbox').on('select', function (event) {
-                var args = event.args;
-                var item = $('#requirements-listbox').jqxListBox('getItem', args.index);
-
-                if (item !== null) {
-                    currentRequirementId = item.originalItem.requirementId;
-                    currentRequirementIndex = getCurrentRequirementIndex();
-                    $scope.$apply();
-                    loadCurrentRequirement();
+                    return requirements[index].name;
                 }
             });
 
-            currentRequirementId = requirements[currentRequirementIndex].requirementId;
+            currentRequirementIndex = 0;
+            currentRequirementId = requirements[0].requirementId;
             loadCurrentRequirement();
         }).error(function (err) {
             alert(err.message);
         });
     }
+
+    $('#requirements-listbox').on('select', function (event) {
+        var args = event.args;
+        var item = $('#requirements-listbox').jqxListBox('getItem', args.index);
+
+        if (item !== null) {
+            currentRequirementId = item.originalItem.requirementId;
+            currentRequirementIndex = getCurrentRequirementIndex();
+            loadCurrentRequirement();
+        }
+    });
 
     // Process
 
