@@ -404,7 +404,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 ],
                 groups: ['applicationId', 'alertId']
             });
-            $("#alerts").jqxGrid('expandallgroups');
+//            $("#alerts").jqxGrid('expandallgroups');
 
             getAddedAlerts();
         }).error(function (err) {
