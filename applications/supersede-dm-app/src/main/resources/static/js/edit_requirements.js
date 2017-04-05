@@ -148,7 +148,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         return $scope.requirements.length === 0;
     };
 
-    function lastRequirement() {
+    $scope.lastRequirement = function () {
         if (currentRequirementIndex == $scope.requirements.length - 1) {
             return true;
         }
@@ -158,7 +158,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         else {
             return false;
         }
-    }
+    };
 
     $scope.addProperty = function () {
         var propertyName = $("#property_name").val();

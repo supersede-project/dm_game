@@ -55,7 +55,8 @@
         <br>
 
         <div align="center">
-            <jqx-button ng-click="submitDependencies()">Submit Dependencies</jqx-button>
+            <jqx-button ng-show="lastRequirement()" ng-click="submitDependencies()">Finish</jqx-button>
+            <jqx-button ng-show="!lastRequirement()" ng-click="submitDependencies()">Next Requirement</jqx-button>
             <br>
             <p id="submitted"></p>
         </div>
