@@ -111,7 +111,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     }
 
     function getSolutions() {
-        $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
+        $http.get("supersede-dm-app/garp/game/calc2?gameId=" + gameId)
         .success(function(data) {
             $scope.solutions = data;
         }).error(function(err){
