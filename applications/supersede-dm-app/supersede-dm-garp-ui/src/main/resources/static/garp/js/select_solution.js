@@ -132,7 +132,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
     $scope.selectSolution = function() {
         var solutionIndex = $("#select_solution").val();
-        var selectedSolution = $scope.solutions[solutionIndex - 1];
+        var selectedSolution = $scope.solutions[solutionIndex - 1].requirements;
 
         $http({
             url: "supersede-dm-app/garp/game/solution",
@@ -140,9 +140,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             method: 'POST',
             params: {gameId : gameId}
         }).success(function() {
-            $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
+            $scope.home();
         }).error(function(err) {
-            $("#selected_solution").html("<strong>Unable to save the solution: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
@@ -151,9 +151,9 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
         $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + $scope.processId)
         .success(function (data) {
-            $("#game_status").html("<strong>Game successfully closed!</strong>");
+            $scope.home();
         }).error(function (err) {
-            $("#game_status").html("<strong>Unable to close the game: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
