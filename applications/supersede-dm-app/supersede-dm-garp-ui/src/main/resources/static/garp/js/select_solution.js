@@ -111,8 +111,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     }
 
     function getSolutions() {
+        $scope.solutionReceived = false;
         $http.get("supersede-dm-app/garp/game/calc2?gameId=" + gameId)
-        .success(function(data) {
+        .success(function (data) {
+            $scope.solutionReceived = true;
             $scope.solutions = data;
         }).error(function(err){
             alert(err.message);
@@ -192,4 +194,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             }
         }
     });
+
+    $("#jqx-loader").jqxLoader({ imagePosition: 'center', autoOpen: 'true', text: 'Computing solutions...'});
 });

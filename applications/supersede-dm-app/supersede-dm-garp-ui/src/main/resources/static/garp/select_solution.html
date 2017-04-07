@@ -62,7 +62,9 @@
         <div id="page2" ng-show="currentPage == 'page2'">
             <h1>Solutions</h1>
 
-            <div class="solutions" ng-repeat="solution in solutions">
+            <div id="jqx-loader" ng-show="!solutionReceived"></div>
+
+            <div ng-show="solutionReceived" class="solutions" ng-repeat="solution in solutions">
                 <h2>Solution {{$index + 1}}</h2>
 
                 <h3 ng-repeat="(criterionId, objectiveValue) in solution.objectiveValues">
@@ -79,18 +81,18 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div align="center">
-                <select id="select_solution">
-                    <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
-                </select>
-                <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
-                <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
-                <jqx-button ng-click="home()">Back</jqx-button>
+                <div align="center">
+                    <select id="select_solution">
+                        <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
+                    </select>
+                    <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
+                    <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
+                    <jqx-button ng-click="home()">Back</jqx-button>
 
-                <p id="selected_solution"></p>
-                <p id="game_status"></p>
+                    <p id="selected_solution"></p>
+                    <p id="game_status"></p>
+                </div>
             </div>
         </div>
     </div>
