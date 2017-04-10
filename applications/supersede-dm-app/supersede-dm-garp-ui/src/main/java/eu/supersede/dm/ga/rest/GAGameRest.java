@@ -45,9 +45,11 @@ import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.GALogEntriesJpa;
+import eu.supersede.gr.jpa.RequirementsDependenciesJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.model.HGAGameSummary;
 import eu.supersede.gr.model.HGALogEntry;
+import eu.supersede.gr.model.HRequirementDependency;
 import eu.supersede.gr.model.HRequirementProperty;
 import eu.supersede.gr.model.HRequirementScore;
 import eu.supersede.gr.model.HRequirementsRanking;
@@ -71,6 +73,9 @@ public class GAGameRest
 
     @Autowired
     private GALogEntriesJpa logEntries;
+
+    @Autowired
+    private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public List<HGAGameSummary> getGames(Authentication authentication, String roleName, Long processId)
@@ -350,6 +355,7 @@ public class GAGameRest
         Map<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
         List<String> gameCriteria = new ArrayList<>();
 
+        // Add criteria
         for (Long criterionId : criteriaWeights.keySet())
         {
             gameCriteria.add("" + criterionId);
@@ -358,9 +364,19 @@ public class GAGameRest
 
         algo.setCriteria(gameCriteria);
 
+        // Add requirements
         for (Long requirementId : persistentDB.getRequirements(gameId))
         {
-            algo.addRequirement("" + requirementId, new ArrayList<>());
+            List<HRequirementDependency> requirementDependencies = requirementsDependenciesJpa
+                    .findByRequirementId(requirementId);
+            List<String> dependencies = new ArrayList<>();
+
+            for (HRequirementDependency dependency : requirementDependencies)
+            {
+                dependencies.add("" + dependency.getDependencyId());
+            }
+
+            algo.addRequirement("" + requirementId, dependencies);
         }
 
         // get all the players in this game
