@@ -100,9 +100,9 @@ public class IGAAlgorithmTest
     }
 
     @Test
-    public void testCalc2()
+    public void testCalc()
     {
-        List<GARequirementsRanking> rankings = igaAlgorithm.calc2();
+        List<GARequirementsRanking> rankings = igaAlgorithm.calc();
 
         for (GARequirementsRanking ranking : rankings)
         {

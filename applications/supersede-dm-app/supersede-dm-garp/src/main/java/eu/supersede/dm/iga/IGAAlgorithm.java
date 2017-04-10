@@ -91,7 +91,7 @@ public class IGAAlgorithm
         list.addAll(deps);
     }
 
-    public List<GARequirementsRanking> calc2()
+    public List<GARequirementsRanking> calc()
     {
         List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking>();
         List<PermutationSolution<?>> solutions = runGA();

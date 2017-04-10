@@ -342,8 +342,8 @@ public class GAGameRest
         return requirements;
     }
 
-    @RequestMapping(value = "/calc2", method = RequestMethod.GET)
-    public List<GARequirementsRanking> calcRanking2(Authentication authentication, Long gameId)
+    @RequestMapping(value = "/calc", method = RequestMethod.GET)
+    public List<GARequirementsRanking> calcRanking(Authentication authentication, Long gameId)
     {
         IGAAlgorithm algo = new IGAAlgorithm();
         Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
@@ -420,7 +420,7 @@ public class GAGameRest
 
         try
         {
-            solutions = algo.calc2();
+            solutions = algo.calc();
         }
         catch (Exception e)
         {
