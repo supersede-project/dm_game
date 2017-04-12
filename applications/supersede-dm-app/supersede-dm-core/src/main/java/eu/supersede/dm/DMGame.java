@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.AlertsJpa;
 import eu.supersede.gr.jpa.AppsJpa;
@@ -45,6 +46,7 @@ import eu.supersede.gr.model.Requirement;
 import eu.supersede.gr.model.RequirementStatus;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.ValutationCriteria;
+import eu.supersede.integration.api.security.types.AuthorizationToken;
 
 @Component
 public class DMGame
@@ -83,6 +85,7 @@ public class DMGame
         public PropertyBagsJpa propertyBags;
         public RequirementsRankingsJpa requirementsRankings;
         public RequirementsScoresJpa scoresJpa;
+        public ProxyWrapper proxy;
     }
 
     JpaProvider jpa;
@@ -326,5 +329,43 @@ public class DMGame
     public List<HActivity> getPendingActivities(Long userId)
     {
         return jpa.activities.findByUser(userId);
+    }
+
+    public User getUser(Long userId, String tenantId, AuthorizationToken token)
+    {
+        if (jpa == null)
+        {
+            System.out.println("jpa null");
+            return null;
+        }
+
+        if (jpa.proxy == null)
+        {
+            System.out.println("jpa proxy null");
+            return null;
+        }
+
+        eu.supersede.integration.api.datastore.fe.types.User proxyUser = jpa.proxy.getFEDataStoreProxy()
+                .getUser(tenantId, userId.intValue(), true, token);
+
+        if (proxyUser == null)
+        {
+            throw new NotFoundException("Can't find user with id " + userId);
+        }
+
+        User user = jpa.users.findOne(userId);
+
+        if (user == null)
+        {
+            // Save the user in the database if it is not already present
+            user = new User(userId);
+            user.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
+            user.setEmail(proxyUser.getEmail());
+            return jpa.users.save(user);
+        }
+        else
+        {
+            return user;
+        }
     }
 }

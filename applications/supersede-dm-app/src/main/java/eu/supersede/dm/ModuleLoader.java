@@ -24,6 +24,7 @@ import javax.naming.NamingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.multitenant.MultiJpaProvider;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.AlertsJpa;
@@ -105,6 +106,9 @@ public class ModuleLoader
     @Autowired
     private RequirementsScoresJpa scores;
 
+    @Autowired
+    private ProxyWrapper proxy;
+
     public ModuleLoader()
     {
 
@@ -130,6 +134,7 @@ public class ModuleLoader
         jpa.propertyBags = jpaPropertyBags;
         jpa.requirementsRankings = requirementsRankings;
         jpa.scoresJpa = scores;
+        jpa.proxy = proxy;
 
         DMGame.init(jpa);
 
