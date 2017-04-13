@@ -14,12 +14,8 @@
 
 var app = angular.module('w5app');
 
-var http;
-var loadProcesses;
-
 app.controllerProvider.register('home', function ($scope, $rootScope, $http, $location) {
 
-    http = $http;
     $scope.procNum = undefined;
 
     $http.get('/supersede-dm-app/user/current')
@@ -163,58 +159,51 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     });
 
 
-    $scope.loadProcesses = function () {
+    function loadProcesses() {
         $http.get('supersede-dm-app/processes/list')
         .success(function (data) {
             $scope.procNum = data.length;
+            console.log(data);
             var source = {
-                localdata: data,
-                datatype: "array"
+                datatype: "json",
+                datafields: [
+                    { name: 'name' },
+                    { name: 'objective' },
+                    { name: 'state' },
+                    { name: 'date' },
+                    { name: 'id' }
+                ],
+                localdata: data
+            };
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-button jqx-height="25" ng-click="viewProcess(' + value + ')" style="margin-left: 10px">View</jqx-button>');
+                r = r.concat('<jqx-button jqx-height="25" ng-click="closeProcess(' + value + ')" style="margin-left: 10px">Close</jqx-button>');
+                r = r.concat('<jqx-button jqx-height="25" ng-click="deleteProcess(' + value + ')" style="margin-left: 10px">Delete</jqx-button></div>');
+                return r;
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $('#listbox').jqxListBox({
-                selectedIndex: 0,
+            $('#processes').jqxGrid({
+                width: '100%',
+                autoheight: true,
+                pageable: true,
+                altrows: true,
                 source: dataAdapter,
-                displayMember: "name",
-                valueMember: "id",
-                itemHeight: 70, width: '100%',
-                renderer: function (index, label, value) {
-                    var datarecord = data[index];
-
-                    if (datarecord === undefined) {
-                        return "";
-                    }
-
-                    var action;
-                    if (datarecord.state == "new") {
-                        action = "Start";
-                    }
-                    else {
-                        action = datarecord.state;
-                    }
-                    var table =
-                        '<table style="min-width: 100%;">' +
-                        '<tr><td style="width: 40px;">' + action + '</td><td>' +
-                        datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
-                        '<td style="width: 40px;">' +
-                        '<a href="#/supersede-dm-app/process?processId=' + datarecord.id + '">View</a>' +
-                        '<a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Close</a>' +
-                        '<a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Delete</a>' +
-                        '</td>' +
-                        '</tr><tr><td>' +
-                        "Created: " + datarecord.date +
-                        '</td></tr></table>';
-                    return table;
-                }
+                rowsheight: 32,
+                columns: [
+                    { text: 'Name', datafield: 'name', width: '20%' },
+                    { text: 'Objective', datafield: 'objective', width: '20%' },
+                    { text: 'State', datafield: 'state', width: '20%' },
+                    { text: 'Date', datafield: 'date', width: '20%' },
+                    { text: '', datafield: 'id', cellsrenderer: cellsrenderer, width: '20%' }
+                ]
             });
 
             $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
         }).error(function (err) {
             alert(err.message);
         });
-    };
-
-    loadProcesses = $scope.loadProcesses;
+    }
 
     $scope.createNewProcess = function() {
     	var name = prompt( "Enter process name", "");
@@ -225,23 +214,29 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     	}
     };
 
+    $scope.viewProcess = function (processId) {
+        $location.url('supersede-dm-app/process?processId=' + processId);
+    };
+
+    $scope.closeProcess = function (processId) {
+        console.log("Closing process");
+        console.log(processId);
+        $http.post('supersede-dm-app/processes/close?processId=' + processId)
+        .success(function (data) {
+            loadProcesses();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    };
+
+    $scope.deleteProcess = function (processId) {
+        $http.post('supersede-dm-app/processes/delete?processId=' + processId)
+        .success(function (data) {
+            loadProcesses();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    };
+
     loadProcesses();
 });
-
-function closeProcess(processId) {
-    http.post('supersede-dm-app/processes/close?processId=' + processId)
-    .success(function (data) {
-        loadProcesses();
-    }).error(function(err) {
-        alert(err.message);
-    });
-}
-
-function deleteProcess(processId) {
-    http.post('supersede-dm-app/processes/delete?processId=' + processId)
-    .success(function (data) {
-        loadProcesses();
-    }).error(function(err) {
-        alert(err.message);
-    });
-}

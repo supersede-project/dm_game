@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -38,6 +39,8 @@ public class User
     private Long userId;
 
     private String name;
+
+    @Transient
     private String email;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

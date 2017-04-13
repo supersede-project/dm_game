@@ -1,8 +1,14 @@
 <script src="supersede-dm-app/js/home.js"></script>
 
+<style>
+    h1 {
+        text-align: center;
+    }
+</style>
+
 <div class="container" ng-controller="home">
 
-    Welcome <b>{{user.name}}</b> to the SUPERSEDE DMGame app
+    <h1>Decision Making Game</h1>
 
     <div>
 
@@ -26,7 +32,7 @@
                 <jqx-button ng-click="createNewProcess()">Create new</jqx-button>
             </div>
             <div>
-                <div style="border: none;" id="listbox"></div>
+                <div style="border: none;" id="processes"></div>
             </div>
         </div>
 
