@@ -45,7 +45,6 @@ import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
-import eu.supersede.dm.iga.utils.MapUtil;
 
 public class IGAAlgorithm
 {
@@ -92,21 +91,7 @@ public class IGAAlgorithm
         list.addAll(deps);
     }
 
-    public List<Map<String, Double>> calc()
-    {
-        ArrayList<Map<String, Double>> finalRanking = new ArrayList<>();
-
-        List<PermutationSolution<?>> solutions = runGA();
-
-        for (PermutationSolution<?> s : solutions)
-        {
-            finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution) s).toRanks()));
-        }
-
-        return finalRanking;
-    }
-
-    public List<GARequirementsRanking> calc2()
+    public List<GARequirementsRanking> calc()
     {
         List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking>();
         List<PermutationSolution<?>> solutions = runGA();
@@ -116,12 +101,15 @@ public class IGAAlgorithm
             PrioritizationSolution ps = (PrioritizationSolution) s;
             GARequirementsRanking r = new GARequirementsRanking();
             r.setRequirements(Arrays.asList(ps.getVariablesStringArray()));
+
             for (int i = 0; i < ps.getNumberOfObjectives(); i++)
             {
                 r.addObjective(ps.getCriterionName(i), ps.getObjective(i));
             }
+
             pareto.add(r);
         }
+
         return pareto;
     }
 
