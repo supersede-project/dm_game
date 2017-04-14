@@ -20,6 +20,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     var availableCriteria = {};
     var processId = $location.search().processId;
 
+    // Get the details of the process
     $http.get("supersede-dm-app/processes/details?processId=" + processId)
     .success(function (data) {
         var processes = [];
@@ -50,6 +51,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         alert(err.message);
     });
 
+    // Get the criteria that can be imported to the process
     function getAvailableCriteria() {
         $http.get('supersede-dm-app/criteria')
         .success(function(data) {
@@ -83,18 +85,25 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         });
     }
 
+    // Automatically select criteria already added to the process
     function getAddedCriteria() {
+        // Get the criteria already added to the process
         $http.get('supersede-dm-app/processes/criteria/list?processId=' + processId)
         .success(function (data) {
             var addedCriteria = data;
+
+            // Get the number of already added criteria
             var criteriaRows = $("#criteria").jqxGrid("getrows").length;
 
             for (var i = 0; i < criteriaRows; i++) {
                 var added = false;
+
+                // Get the criterion at the given index
                 var currentCriterion = $("#criteria").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedCriteria.length; j++) {
                     if (addedCriteria[j] === currentCriterion.criteriaId) {
+                        // Select the criterion if it has already been added to the process
                         $("#criteria").jqxGrid("selectrow", i);
                         added = true;
                         break;
@@ -102,6 +111,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
                 }
 
                 if (!added) {
+                    // Deselect the criterion if it has not been added yet to the process
                     $("#criteria").jqxGrid("unselectrow", i);
                 }
             }
@@ -110,6 +120,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         });
     }
 
+    // Save the selected criterion in local variables
     function defineProcessData() {
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
         for (var i = 0; i < selectedCriteria.length; i++) {
@@ -118,8 +129,12 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         }
     }
 
+    // Add the selected criteria to the process
     $scope.importCriteria = function () {
+        // Save the selected criteria
         defineProcessData();
+
+        // Perform a request to add the selected criteria to the process
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/criteria/import",
@@ -132,9 +147,11 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         });
     };
 
+    // Go back to the process details page
     $scope.home = function() {
         $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
+    // Automatically select the criteria already added to the process
     getAvailableCriteria();
 });

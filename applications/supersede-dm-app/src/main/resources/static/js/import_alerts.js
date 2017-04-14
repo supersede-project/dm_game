@@ -20,6 +20,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     var availableAlerts = {};
     var processId = $location.search().processId;
 
+    // Get the details of the process
     $http.get("supersede-dm-app/processes/details?processId=" + processId)
     .success(function (data) {
         var processes = [];
@@ -50,6 +51,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         alert(err.message);
     });
 
+    // Get the alerts that can be imported to the process
     function getAvailableAlerts() {
         $http.get('supersede-dm-app/alerts/biglist')
         .success(function (data) {
@@ -69,6 +71,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                     { name: 'id' }
                 ],
             };
+            // Add a button to delete the alert
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 return '<div class="jqx-grid-cell-left-align"><jqx-button ng-click="deleteAlert(' + "'" + value + "'" +
                     ')">Delete</jqx-button></div>';
@@ -107,18 +110,25 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         });
     }
 
+    // Automatically select alerts already added to the process
     function getAddedAlerts() {
+        // Get the alerts already added to the process
         $http.get('supersede-dm-app/processes/alerts/list?processId=' + processId)
         .success(function (data) {
             var addedAlerts = data;
+
+            // Get the number of already added alerts
             var alertsRows = $("#alerts").jqxGrid("getrows").length;
 
             for (var i = 0; i < alertsRows; i++) {
                 var added = false;
+
+                // Get the alert at the given index
                 var currentAlert = $("#alerts").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedAlerts.length; j++) {
                     if (addedAlerts[j].id === currentAlert.alertId) {
+                        // Select the alert if it has already been added to the process
                         $("#alerts").jqxGrid("selectrow", i);
                         added = true;
                         break;
@@ -126,6 +136,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 }
 
                 if (!added) {
+                    // Deselect the alert if it has not been added yet to the process
                     $("#alerts").jqxGrid("unselectrow", i);
                 }
             }
@@ -134,6 +145,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         });
     }
 
+    // Delete the alert with the given id
     $scope.deleteAlert = function(id) {
         for (var i = 0; i < alertsId.length; i++) {
             if (alertsId[i].id === id) {
@@ -142,6 +154,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         }
     };
 
+    // Discard the alert with the given id
     function discardAlert(id) {
         $http.put('supersede-dm-app/alerts/userrequests/discard?id=' + id)
         .success(function () {
@@ -151,6 +164,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         });
     }
 
+    // Save the selected alerts in local variables
     function defineProcessData() {
         // TODO: check how to avoid having the same alert added multiple times if alerts are grouped by columns
         var selectedAlerts = $("#alerts").jqxGrid("selectedrowindexes");
@@ -162,8 +176,12 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         }
     }
 
+    // Add the selected alerts to the process
     $scope.importAlerts = function () {
+        // Save the selected alert
         defineProcessData();
+
+        // Perform a request to add the selected alert to the process
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/alerts/userrequests/import",
@@ -176,9 +194,11 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         });
     };
 
+    // Go back to the process details page
     $scope.home = function () {
         $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
+    // Automatically select the requirements already added to the process
     getAvailableAlerts();
 });

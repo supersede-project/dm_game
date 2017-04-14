@@ -20,6 +20,7 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
     var availablePlayers = {};
     var processId = $location.search().processId;
 
+    // Get the details of the process
     $http.get("supersede-dm-app/processes/details?processId=" + processId)
     .success(function (data) {
         var processes = [];
@@ -50,6 +51,7 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
         alert(err.message);
     });
 
+    // Get the users that can be imported to the process
     function getAvailablePlayers() {
         $http.get('supersede-dm-app/user?profile=OPINION_PROVIDER')
         .success(function (data) {
@@ -83,18 +85,25 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
         });
     }
 
+    // Automatically select users already added to the process
     function getAddedUsers() {
+        // Get the users already added to the process
         $http.get('supersede-dm-app/processes/users/list?processId=' + processId)
         .success(function (data) {
             var addedUsers = data;
+
+            // Get the number of already added users
             var usersRows = $("#users").jqxGrid("getrows").length;
 
             for (var i = 0; i < usersRows; i++) {
                 var added = false;
+
+                // Get the user at the given index
                 var currentUser = $("#users").jqxGrid("getrowdatabyid", i);
 
                 for (var j = 0; j < addedUsers.length; j++) {
                     if (addedUsers[j] === currentUser.userId) {
+                        // Select the user if it has been already added to the process
                         $("#users").jqxGrid("selectrow", i);
                         added = true;
                         break;
@@ -102,6 +111,7 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
                 }
 
                 if (!added) {
+                    // Deselect the user if it has not been added yet to the process
                     $("#users").jqxGrid("unselectrow", i);
                 }
             }
@@ -110,6 +120,7 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
         });
     }
 
+    // Save the selected user in local variables
     function defineProcessData() {
         var selectedOpinionProviders = $("#users").jqxGrid("selectedrowindexes");
         for (var i = 0; i < selectedOpinionProviders.length; i++) {
@@ -118,8 +129,12 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
         }
     }
 
+    // Add the selected users to the process
     $scope.importUsers = function () {
+        // Save the selected users
         defineProcessData();
+
+        // Perform a request to add the selected users to the process
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/users/import",
@@ -132,9 +147,11 @@ app.controllerProvider.register('import_users', function ($scope, $http, $locati
         });
     };
 
+    // Go back to the process details page
     $scope.home = function () {
         $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
+    // Automatically select the users already added to the process
     getAvailablePlayers();
 });
