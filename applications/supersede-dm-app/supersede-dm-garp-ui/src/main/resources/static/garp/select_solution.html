@@ -81,15 +81,15 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div align="center">
-                    <select id="select_solution">
-                        <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
-                    </select>
-                    <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
-                    <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
-                    <jqx-button ng-click="home()">Back</jqx-button>
-                </div>
+            <div align="center">
+                <select id="select_solution">
+                    <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
+                </select>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
+                <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
+                <jqx-button ng-click="home()">Back</jqx-button>
             </div>
         </div>
     </div>
