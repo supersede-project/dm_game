@@ -18,8 +18,6 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     var processId = $location.search().processId;
 
-    $scope.process = {};
-
     $http({
         method: 'GET',
         url: "supersede-dm-app/processes/users/list/detailed",
@@ -142,9 +140,36 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         });
     }
 
+    function updateProcessDetails(process) {
+        processes = [];
+        processes.push(process);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }
+
     $http.get('supersede-dm-app/processes/details?processId=' + processId)
     .success(function (data) {
-        $scope.process = data;
+        updateProcessDetails(data);
     }).error(function (err) {
         alert(err.message);
     });
@@ -155,7 +180,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $("#btnPrevPhase").on('click', function () {
         $http.get('supersede-dm-app/processes/prev?processId=' + processId)
         .success(function (data) {
-            $scope.process = data;
+            updateProcessDetails(data);
             loadActivities();
         }).error(function (error) {
             alert(error.message);
@@ -165,7 +190,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     $("#btnNextPhase").on('click', function() {
         $http.get('supersede-dm-app/processes/next?processId=' + processId)
         .success(function (data) {
-            $scope.process = data;
+            updateProcessDetails(data);
             loadActivities();
         }).error(function (error) {
             alert(error.message);

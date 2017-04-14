@@ -1,7 +1,7 @@
 <script src="supersede-dm-app/js/process.js"></script>
 
 <style>
-    h1, h2, #content p {
+    h1, h2 {
         text-align: center;
     }
     #actions {
@@ -13,10 +13,7 @@
 
     <h1>Process Details</h1>
 
-    <p><strong>Name: </strong>{{process.name}}</p>
-    <p><strong>Objective: </strong>{{process.objective}}</p>
-    <p><strong>Current Status: </strong>{{process.status}}</p>
-    <p><strong>Current Phase: </strong>{{process.phaseName}}</p>
+    <div id="process_details"></div>
 
     <h2>Available Actions</h2>
     <table id="actions">

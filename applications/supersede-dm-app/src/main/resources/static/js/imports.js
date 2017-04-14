@@ -16,10 +16,40 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('import_requirements', function($scope, $http, $location) {
 
-    $scope.processId = $location.search().processId;
     $scope.gameRequirementsId = [];
 
     var availableRequirements = {};
+    var processId = $location.search().processId;
+
+    $http.get("supersede-dm-app/processes/details?processId=" + processId)
+    .success(function (data) {
+        processes = [];
+        processes.push(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     var gameRequirements = {
         datatype: "json",
@@ -66,7 +96,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     }
 
     function getAddedRequirements() {
-        $http.get('supersede-dm-app/processes/requirements/list?processId=' + $scope.processId)
+        $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
         .success(function (data) {
             var addedRequirements = data;
             var requirementsRows = $("#requirements").jqxGrid("getrows").length;
@@ -107,7 +137,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/requirements/import",
-            params: { processId: $scope.processId, requirementsId: $scope.gameRequirementsId }
+            params: { processId: processId, requirementsId: $scope.gameRequirementsId }
         })
         .success(function(data) {
             $scope.home();
@@ -117,7 +147,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
+        $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
     getAvailableRequirements();
@@ -125,10 +155,40 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
 
 app.controllerProvider.register('import_users', function($scope, $http, $location) {
 
-    $scope.processId = $location.search().processId;
     $scope.gameOpinionProvidersId = [];
 
     var availablePlayers = {};
+    var processId = $location.search().processId;
+
+    $http.get("supersede-dm-app/processes/details?processId=" + processId)
+    .success(function (data) {
+        processes = [];
+        processes.push(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     $scope.gameOpinionProviders = {
         datatype: "json",
@@ -174,7 +234,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
     }
 
     function getAddedUsers() {
-        $http.get('supersede-dm-app/processes/users/list?processId=' + $scope.processId)
+        $http.get('supersede-dm-app/processes/users/list?processId=' + processId)
         .success(function (data) {
             var addedUsers = data;
             var usersRows = $("#users").jqxGrid("getrows").length;
@@ -214,7 +274,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/users/import",
-            params: { processId: $scope.processId, idlist: $scope.gameOpinionProvidersId }
+            params: { processId: processId, idlist: $scope.gameOpinionProvidersId }
         })
         .success(function (data) {
             $scope.home();
@@ -224,7 +284,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
+        $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
     getAvailablePlayers();
@@ -232,10 +292,40 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
 
 app.controllerProvider.register('import_criteria', function($scope, $http, $location) {
 
-    $scope.processId = $location.search().processId;
     $scope.gameCriteriaId = [];
 
     var availableCriteria = {};
+    var processId = $location.search().processId;
+
+    $http.get("supersede-dm-app/processes/details?processId=" + processId)
+    .success(function (data) {
+        processes = [];
+        processes.push(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     $scope.gameCriteria = {
         datatype: "json",
@@ -281,7 +371,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     }
 
     function getAddedCriteria() {
-        $http.get('supersede-dm-app/processes/criteria/list?processId=' + $scope.processId)
+        $http.get('supersede-dm-app/processes/criteria/list?processId=' + processId)
         .success(function (data) {
             var addedCriteria = data;
             var criteriaRows = $("#criteria").jqxGrid("getrows").length;
@@ -321,7 +411,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/criteria/import",
-            params: { processId: $scope.processId, idlist: $scope.gameCriteriaId }
+            params: { processId: processId, idlist: $scope.gameCriteriaId }
         })
         .success(function (data) {
             $scope.home();
@@ -331,7 +421,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
     };
 
     $scope.home = function() {
-        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
+        $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
     getAvailableCriteria();
@@ -339,10 +429,40 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
 
 app.controllerProvider.register('import_alerts', function ($scope, $http, $location) {
 
-    $scope.processId = $location.search().processId;
     $scope.alertsId = [];
 
     var availableAlerts = {};
+    var processId = $location.search().processId;
+
+    $http.get("supersede-dm-app/processes/details?processId=" + processId)
+    .success(function (data) {
+        processes = [];
+        processes.push(data);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }).error(function (err) {
+        alert(err.message);
+    });
 
     $scope.alerts = {
         datatype: "json",
@@ -404,7 +524,6 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
                 ],
                 groups: ['applicationId', 'alertId']
             });
-//            $("#alerts").jqxGrid('expandallgroups');
 
             getAddedAlerts();
         }).error(function (err) {
@@ -413,7 +532,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     }
 
     function getAddedAlerts() {
-        $http.get('supersede-dm-app/processes/alerts/list?processId=' + $scope.processId)
+        $http.get('supersede-dm-app/processes/alerts/list?processId=' + processId)
         .success(function (data) {
             var addedAlerts = data;
             var alertsRows = $("#alerts").jqxGrid("getrows").length;
@@ -474,7 +593,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         $http({
             method: 'POST',
             url: "supersede-dm-app/processes/alerts/userrequests/import",
-            params: { processId: $scope.processId, userRequests: $scope.alertsId }
+            params: { processId: processId, userRequests: $scope.alertsId }
         })
         .success(function (data) {
             $scope.home();
@@ -484,7 +603,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
     };
 
     $scope.home = function () {
-        $location.url('supersede-dm-app/process?processId=' + $scope.processId);
+        $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
     getAvailableAlerts();
