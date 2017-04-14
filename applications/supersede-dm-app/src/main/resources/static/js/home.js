@@ -160,12 +160,10 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         alert(err.message);
     });
 
-
     function loadProcesses() {
         $http.get('supersede-dm-app/processes/list')
         .success(function (data) {
             $scope.procNum = data.length;
-            console.log(data);
             var source = {
                 datatype: "json",
                 datafields: [
@@ -207,7 +205,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
     }
 
-    $scope.createNewProcess = function() {
+    $scope.createNewProcess = function () {
     	var name = prompt( "Enter process name", "");
         if (name !== null) {
     		$http.post('supersede-dm-app/processes/new?name=' + name).success(function(data) {
@@ -221,8 +219,6 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     };
 
     $scope.closeProcess = function (processId) {
-        console.log("Closing process");
-        console.log(processId);
         $http.post('supersede-dm-app/processes/close?processId=' + processId)
         .success(function (data) {
             loadProcesses();
@@ -238,6 +234,10 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         }).error(function (err) {
             alert(err.message);
         });
+    };
+
+    $scope.editRequirements = function () {
+        $location.url("supersede-dm-app/ahprp/requirements_criterias_editing");
     };
 
     loadProcesses();
