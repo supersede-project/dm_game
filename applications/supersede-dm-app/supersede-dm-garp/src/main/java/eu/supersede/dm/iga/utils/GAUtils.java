@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.math3.ode.AbstractParameterizable;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
@@ -21,6 +22,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import eu.supersede.dm.iga.encoding.PrioritizationSolution;
+import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem;
 
 /**
  * @author fitsum
@@ -68,7 +70,11 @@ public class GAUtils {
 	public static void printParetoFrontWithLabels(List<PermutationSolution<?>> population, String path) {
 		FileOutputContext outputContext = new DefaultFileOutputContext(path);
 		BufferedWriter bufferedWriter = outputContext.getFileWriter();
-		String header = "c1,c2,ranking";
+		String header = "";
+		for (String criterion : AbstractPrioritizationProblem.CRITERIA_IDS){
+			header += criterion + ",";
+		}
+		header += "ranking";
 		try {
 			bufferedWriter.write(header);
 			bufferedWriter.newLine();
