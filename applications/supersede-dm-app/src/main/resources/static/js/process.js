@@ -180,4 +180,8 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             $scope.$apply();
         }
     });
+
+    $scope.home = function () {
+        $location.url("supersede-dm-app/home");
+    }
 });
