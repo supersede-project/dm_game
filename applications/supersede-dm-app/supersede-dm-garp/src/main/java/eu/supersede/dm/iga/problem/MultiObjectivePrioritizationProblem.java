@@ -6,6 +6,7 @@ package eu.supersede.dm.iga.problem;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -85,7 +86,8 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 
 		double d = 0.0;
 		int idx = 0;
-		for (String criterion : getCriteria().keySet()){
+		for (Entry<String, String[]> entry : getCriteria().entrySet()){
+			String criterion = entry.getKey();
 			double cw = 0d;
 			// if this criterion has associated weight, get it
 			if (getCriteriaWeights().containsKey(criterion)){
@@ -155,8 +157,12 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 	 */
 	public void evaluate(PermutationSolution<?> solution) {
 		if (violatesDependencyConstraints(solution)){
-			for (int i = 0; i < getCriteria().keySet().size(); i++){
-				solution.setObjective(i, Double.MAX_VALUE);
+			int idx = 0;
+			for (Entry<String, String[]> entry : getCriteria().entrySet()){
+				String criterion = entry.getKey();
+				((PrioritizationSolution)solution).addCriterionName(criterion, idx);
+				((PrioritizationSolution)solution).setObjective(idx++, Double.MAX_VALUE);
+				
 			}
 		}else{
 			if (OBJECTIVE_FUNCTION == ObjectiveFunction.CRITERIA){
