@@ -85,7 +85,8 @@ public class MultiObjectivePrioritizationProblem extends AbstractPrioritizationP
 
 		double d = 0.0;
 		int idx = 0;
-		for (String criterion : getCriteria().keySet()){
+//		for (String criterion : getCriteria().keySet()){
+		for (String criterion : AbstractPrioritizationProblem.CRITERIA_IDS){
 			double cw = 0d;
 			// if this criterion has associated weight, get it
 			if (getCriteriaWeights().containsKey(criterion)){
