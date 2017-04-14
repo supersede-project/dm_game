@@ -112,7 +112,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         .success(function(data) {
             $scope.home();
         }).error(function (err) {
-            $("#imported").html("<strong>Unable to add the selected requirements to the process: " + err.message + "</strong>");
+            alert("Unable to add the selected requirements to the process: " + err.message);
         });
     };
 
@@ -219,7 +219,7 @@ app.controllerProvider.register('import_users', function($scope, $http, $locatio
         .success(function (data) {
             $scope.home();
         }).error(function (err) {
-            $("#imported").html("<strong>Unable to add the selected users to the process: " + err.message + "</strong>");
+            alert("Unable to add the selected users to the process: " + err.message);
         });
     };
 
@@ -326,7 +326,7 @@ app.controllerProvider.register('import_criteria', function($scope, $http, $loca
         .success(function (data) {
             $scope.home();
         }).error(function (err) {
-            $("#imported").html("<strong>Unable to add the selected criteria to the process: " + err.message + "</strong>");
+            alert("Unable to add the selected criteria to the process: " + err.message);
         });
     };
 
@@ -479,7 +479,7 @@ app.controllerProvider.register('import_alerts', function ($scope, $http, $locat
         .success(function (data) {
             $scope.home();
         }).error(function (err) {
-            $("#imported").html("<strong>Unable to add the selected alerts to the process: " + err.message + "</strong>");
+            alert("Unable to add the selected alerts to the process: " + err.message);
         });
     };
 
