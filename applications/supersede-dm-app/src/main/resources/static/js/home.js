@@ -92,24 +92,26 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3&procFx=Eq&processId=-1')
     .success(function (data) {
         $scope.reqNum = data.length;
-
         var source = {
-            localdata: data,
-            datatype: "array"
+            datatype: "json",
+            datafields: [
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
-        $('#requirementslist').jqxListBox({
+        $('#requirements').jqxGrid({
             source: dataAdapter,
             width: '100%',
-            renderer: function (index, label, value) {
-                var datarecord = data[index];
-
-                if (datarecord === undefined) {
-                    return "";
-                }
-
-                return datarecord.name + " - " + datarecord.description;
-            }
+            autoheight: true,
+            autorowheight: true,
+            pageable: true,
+            altrows: true,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '30%' },
+                { text: 'Description', datafield: 'description', width: '70%' }
+            ]
         });
 
         $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
