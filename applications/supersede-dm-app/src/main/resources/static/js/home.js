@@ -16,28 +16,7 @@ var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function ($scope, $rootScope, $http, $location) {
 
-    $scope.procNum = undefined;
-
-    $http.get('/supersede-dm-app/user/current')
-    .success(function (data) {
-        $scope.user = data;
-    }).error(function (err) {
-        alert(err.message);
-    });
-
-    $scope.hasRole = function (role) {
-        if ($rootScope.user && $rootScope.user.authorities) {
-            for (var i = 0; i < $rootScope.user.authorities.length; i++) {
-                if ($rootScope.user.authorities[i].authority == "ROLE_" + role) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    };
-
-    // Get alerts
+    // Get the alerts received from WP2
     $http.get('supersede-dm-app/alerts/biglist')
     .success(function (data) {
         $scope.alertsNum = data.length;
@@ -61,7 +40,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 ],
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#gridAlerts").jqxGrid({
+            $("#alerts").jqxGrid({
                 width: "100%",
                 source: dataAdapter,
                 groupable: true,
@@ -88,7 +67,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         alert(err.message);
     });
 
-    // Get requirements
+    // Get requirements that are not enacted a not assigned to any process
     $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3&procFx=Eq&processId=-1')
     .success(function (data) {
         $scope.reqNum = data.length;
@@ -119,40 +98,40 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         alert(err.message);
     });
 
-    // Get activities
+    // Get the available activities
     $http.get('supersede-dm-app/processes/activities/list')
     .success(function (data) {
         $scope.actNum = data.length;
 
         var source = {
+            datatype: "json",
+            datafields: [
+                { name: "description" },
+                { name: "url" },
+                { name: "processId" },
+                { name: "activityId"}
+            ],
             localdata: data,
-            datatype: "array"
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
-        $('#activities-listbox').jqxListBox({ selectedIndex: 0,
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            var activity = dataAdapter.records[row];
+            var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+            r = r.concat('<jqx-button jqx-height="25" ng-click="openActivity(\'' + activity.url + '\', ' +
+                activity.processId + ', ' + activity.activityId + ')" style="margin-left: 10px">Open Activity</jqx-button></div>');
+            return r;
+        };
+        $('#activities').jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            rowsheight: 32,
+            pageable: true,
             source: dataAdapter,
-            displayMember: "name",
-            valueMember: "id",
-            itemHeight: 70, width: '100%',
-            renderer: function (index, label, value) {
-                var datarecord = data[index];
-                var action;
-                if( datarecord.state == "new" ) {
-                    action = "Start";
-                }
-                else {
-                    action = datarecord.state;
-                }
-                var table =
-                    '<table style="min-width: 100%;">' +
-                    '<tr><td style="width: 40px;">' + "img" + '</td><td>' +
-                    '<a href="#/supersede-dm-app/' + datarecord.url +
-                    '?processId=' + datarecord.processId +
-                    '&activityId=' + datarecord.activityId +
-                    '">' + datarecord.description + '</a>' +
-                    '</td></tr></table>';
-                return table;
-            }
+            columns: [
+                { text: 'Description', datafield: 'description', width: '80%' },
+                { text: '', datafield: 'url', width: '20%', cellsrenderer: cellsrenderer }
+            ]
         });
 
         $("#expActivities").jqxExpander({ width: '100%', expanded: false });
@@ -205,6 +184,18 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
     }
 
+    $scope.hasRole = function (role) {
+        if ($rootScope.user && $rootScope.user.authorities) {
+            for (var i = 0; i < $rootScope.user.authorities.length; i++) {
+                if ($rootScope.user.authorities[i].authority == "ROLE_" + role) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
     $scope.createNewProcess = function () {
     	var name = prompt( "Enter process name", "");
         if (name !== null) {
@@ -238,6 +229,10 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
 
     $scope.editRequirements = function () {
         $location.url("supersede-dm-app/ahprp/requirements_criterias_editing");
+    };
+
+    $scope.openActivity = function (url, processId, activityId) {
+        $location.url("supersede-dm-app/" + url).search('processId', processId).search('activityId', activityId);
     };
 
     loadProcesses();

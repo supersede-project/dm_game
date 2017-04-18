@@ -37,7 +37,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     }
 
     function fillDependenciesGrid() {
-        var availableRequirements = {
+        var source = {
             datatype: "json",
             datafields: [
                 { name: 'requirementId' },
@@ -47,7 +47,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             localdata: getAvailableDependencies(currentRequirementIndex)
         };
 
-        var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
+        var dataAdapter = new $.jqx.dataAdapter(source);
 
         $("#dependencies").jqxGrid('clearselection');
         $("#dependencies").jqxGrid('refresh');
