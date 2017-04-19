@@ -28,9 +28,10 @@
 
         <div id="page1" ng-show="currentPage == 'page1'">
 
-            <h1>Current Rankings</h1>
+            <h1>Current Rankings in {{game.name}}</h1>
 
             <h2>Opinion Provider</h2>
+
             <div id="opinion_providers"></div>
 
             <div class="rankings" ng-repeat="(criterionId, requirements) in rankings[currentOpinionProvider.userId]">

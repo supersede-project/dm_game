@@ -34,6 +34,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadPage() {
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
+            $scope.game = data;
             gameStatus = data.status;
             loadOpinionProviders();
         }).error(function (err) {
