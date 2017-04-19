@@ -353,16 +353,12 @@ public class GAGameRest
         IGAAlgorithm algo = new IGAAlgorithm();
         Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
         Map<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
-        List<String> gameCriteria = new ArrayList<>();
 
-        // Add criteria
+        // Add criteria and their weights
         for (Long criterionId : criteriaWeights.keySet())
         {
-            gameCriteria.add("" + criterionId);
             algo.setCriterionWeight("" + criterionId, criteriaWeights.get(criterionId));
         }
-
-        algo.setCriteria(gameCriteria);
 
         // Add requirements
         for (Long requirementId : persistentDB.getRequirements(gameId))

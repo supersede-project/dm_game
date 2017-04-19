@@ -36,7 +36,6 @@ public class IGAAlgorithmTest
         String c2 = "c2";
         criteria.add(c1);
         criteria.add(c2);
-        igaAlgorithm.setCriteria(criteria);
 
         // set criteria weight
         igaAlgorithm.setCriterionWeight(c1, 1.0);

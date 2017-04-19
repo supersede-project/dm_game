@@ -55,22 +55,11 @@ public class IGAAlgorithm
     Map<String, Map<String, Double>> playerWeights = new HashMap<>();
     Map<String, Map<String, List<String>>> rankings = new HashMap<>();
 
-    public void setCriteria(List<String> criteria)
-    {
-        this.criteria.clear();
-        criteriaWeights.clear();
-
-        for (String criterion : criteria)
-        {
-            String[] criterionDetail = { criterion, "min" };
-            this.criteria.put(criterion, criterionDetail);
-            criteriaWeights.put(criterion, 1.0);
-        }
-    }
-
     public void setCriterionWeight(String criterion, Double w)
     {
         criteriaWeights.put(criterion, w);
+        String[] criterionDetail = { criterion, "min" };
+        criteria.put(criterion, criterionDetail);
     }
 
     public void addRequirement(String req, List<String> deps)
