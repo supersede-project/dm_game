@@ -21,10 +21,7 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
 
     $scope.rankings = {};
 
-    $scope.getRequirement = function (requirementId) {
-        return requirements[requirementId];
-    };
-
+    // Get the name of the process with the given id
     $http.get('supersede-dm-app/processes/details?processId=' + processId)
     .success(function (data) {
         $scope.processName = data.name;
@@ -32,6 +29,7 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
         alert(err.message);
     });
 
+    // Get the rankings saved in the process with the given id
     $http.get('supersede-dm-app/processes/rankings/list?processId=' + processId)
     .success(function (data) {
         $scope.rankings = data;
@@ -39,6 +37,7 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
         alert(err.message);
     });
 
+    // Get the list of requirements added to the process with the given id
     $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
     .success(function (data) {
         for (var i = 0; i < data.length; i++) {
@@ -49,10 +48,17 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
         alert(err.message);
     });
 
+    // Get the requirement with the given id
+    $scope.getRequirement = function (requirementId) {
+        return requirements[requirementId];
+    };
+
+    // Check if the rankings have been saved for the current process
     $scope.empty = function () {
         return $scope.rankings.length === 0;
     };
 
+    // Enact the rankings saved in the current process
 	$scope.proceed = function() {
 	    $http.put('supersede-dm-app/processes/rankings/enact?processId=' + processId)
         .success(function (data) {
@@ -62,6 +68,7 @@ app.controllerProvider.register('enact_requirements', function($scope, $http, $l
         });
 	};
 
+    // Go back to the page containing the details of the process
 	$scope.cancel = function() {
 		$location.url('supersede-dm-app/process?processId=' + processId);
 	};

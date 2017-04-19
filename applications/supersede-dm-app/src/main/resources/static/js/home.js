@@ -114,7 +114,9 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
             localdata: data,
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
+        // Show button to open the activity
         var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            // Get the activity corresponding to the given row
             var activity = dataAdapter.records[row];
             var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
             r = r.concat('<jqx-button jqx-height="25" ng-click="openActivity(\'' + activity.url + '\', ' +
@@ -139,6 +141,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         alert(err.message);
     });
 
+    // Get the list of all the processes
     function loadProcesses() {
         $http.get('supersede-dm-app/processes/list')
         .success(function (data) {
@@ -154,6 +157,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
                 ],
                 localdata: data
             };
+            // Show three buttons to view, close and delete the processes
             var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                 r = r.concat('<jqx-button jqx-height="25" ng-click="viewProcess(' + value + ')" style="margin-left: 10px">View</jqx-button>');
@@ -184,6 +188,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
     }
 
+    // Check if the current user has the given role
     $scope.hasRole = function (role) {
         if ($rootScope.user && $rootScope.user.authorities) {
             for (var i = 0; i < $rootScope.user.authorities.length; i++) {
@@ -196,6 +201,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         return false;
     };
 
+    // Create a new process and for a name for it
     $scope.createNewProcess = function () {
     	var name = prompt( "Enter process name", "");
         if (name !== null) {
@@ -205,10 +211,12 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     	}
     };
 
+    // Open the page with the process details
     $scope.viewProcess = function (processId) {
         $location.url('supersede-dm-app/process?processId=' + processId);
     };
 
+    // Close the process with the given id
     $scope.closeProcess = function (processId) {
         $http.post('supersede-dm-app/processes/close?processId=' + processId)
         .success(function (data) {
@@ -218,6 +226,7 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
     };
 
+    // Delete the process with the given id
     $scope.deleteProcess = function (processId) {
         $http.post('supersede-dm-app/processes/delete?processId=' + processId)
         .success(function (data) {
@@ -227,13 +236,16 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         });
     };
 
+    // Open the page that allows to edit both requirements and criteria
     $scope.editRequirements = function () {
         $location.url("supersede-dm-app/ahprp/requirements_criterias_editing");
     };
 
+    // Open the page of the activity with the given id
     $scope.openActivity = function (url, processId, activityId) {
         $location.url("supersede-dm-app/" + url).search('processId', processId).search('activityId', activityId);
     };
 
+    // Get the list of processes when the page is loaded
     loadProcesses();
 });
