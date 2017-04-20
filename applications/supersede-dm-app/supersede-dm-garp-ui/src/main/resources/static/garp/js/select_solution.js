@@ -116,7 +116,35 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
         .success(function (data) {
             $scope.solutionReceived = true;
-            $scope.solutions = data;
+
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: "requirements" },
+                    { name: "objectiveValues" },
+                    { name: "name" }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                autoBind: true,
+                beforeLoadComplete: function(records) {
+                    var data = [];
+                    for (var i = 0; i < records.length; i++) {
+                        var solution = records[i];
+                        solution.name = "Solution " + (i + 1);
+                        data.push(solution);
+                    }
+                    return data;
+                }
+            });
+            $("#solutions").jqxComboBox({
+                selectedIndex: 0,
+                source: dataAdapter,
+                displayMember: 'name',
+                width: 400,
+            });
+            $scope.currentSolution = $("#solutions").jqxComboBox('getSelectedItem').originalItem;
         }).error(function(err){
             alert(err.message);
         });
@@ -131,13 +159,10 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         setCurrentPage(2);
     };
 
-    $scope.selectSolution = function() {
-        var solutionIndex = $("#select_solution").val();
-        var selectedSolution = $scope.solutions[solutionIndex - 1].requirements;
-
+    $scope.selectSolution = function () {
         $http({
             url: "supersede-dm-app/garp/game/solution",
-            data: selectedSolution,
+            data: $scope.currentSolution.requirements,
             method: 'POST',
             params: {gameId : gameId}
         }).success(function() {
@@ -191,6 +216,16 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
             var item = event.args.item;
             if (item) {
                 $scope.currentOpinionProvider = item.originalItem;
+                $scope.$apply();
+            }
+        }
+    });
+
+    $("#solutions").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+                $scope.currentSolution = item.originalItem;
                 $scope.$apply();
             }
         }

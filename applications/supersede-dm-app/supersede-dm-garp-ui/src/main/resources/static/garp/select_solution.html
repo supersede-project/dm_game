@@ -4,21 +4,21 @@
     h1, h2, h3 {
         text-align: center;
     }
-    .solutions > div > div, .rankings > div > div {
+    #solution_container > div > div, .rankings > div > div {
         min-width: 500px;
         border-radius: 5px;
         margin: 5px auto;
     }
-    .solutions div, .rankings div {
+    #solution_container div, .rankings div {
         padding: 5px;
     }
-    .solutions > div > div:hover, .rankings > div > div:hover {
+    #solution_container > div > div:hover, .rankings > div > div:hover {
         border: 1px solid #356AA0;
     }
     #content p {
         margin: 1em;
     }
-    #opinion_providers {
+    #opinion_providers, #solutions {
         margin: 2em auto;
     }
 </style>
@@ -66,14 +66,16 @@
             <div id="jqx-loader" ng-show="!solutionReceived"></div>
 
             <div ng-show="solutionReceived">
-                <div class="solutions" ng-repeat="solution in solutions">
-                    <h2>Solution {{$index + 1}}</h2>
 
-                    <h3 ng-repeat="(criterionId, objectiveValue) in solution.objectiveValues">
+                <div id="solutions"></div>
+
+                <div id="solution_container">
+
+                    <h3 ng-repeat="(criterionId, objectiveValue) in currentSolution.objectiveValues">
                         Objective Value for Criterion {{criteriaNames[criterionId]}}: {{objectiveValue}}
                     </h3>
 
-                    <div ng-repeat="requirementId in solution.requirements">
+                    <div ng-repeat="requirementId in currentSolution.requirements">
                         <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
                             <div>
                                 <strong>{{requirementId + ': ' + getRequirement(requirementId).name}}</strong>
@@ -86,9 +88,6 @@
                 </div>
 
                 <div align="center">
-                    <select id="select_solution">
-                        <option ng-repeat="solution in solutions" value="{{$index + 1}}">{{$index + 1}}</option>
-                    </select>
                     <jqx-button style="margin-right: 10px" ng-click="selectSolutionAndStop()">Select Solution and Stop</jqx-button>
                     <jqx-button style="margin-right: 10px" ng-click="selectSolution()">Select Solution and Continue</jqx-button>
                     <jqx-button ng-click="home()">Back</jqx-button>
