@@ -116,6 +116,11 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
     function loadCurrentRequirement() {
         $scope.currentRequirement = $scope.requirements[currentRequirementIndex];
         currentRequirementId = $scope.currentRequirement.requirementId;
+
+        // Force the content change of the textarea containing the requirement description
+        // TODO: check why it is not automatically updated
+        $("#current_requirement_description").val($scope.currentRequirement.description);
+
         fillDependenciesGrid();
         getRequirementProperties();
         $("#requirement_status").html("");
