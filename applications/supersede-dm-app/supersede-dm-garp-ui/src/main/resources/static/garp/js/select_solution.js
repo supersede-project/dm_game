@@ -116,37 +116,80 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
         .success(function (data) {
             $scope.solutionReceived = true;
-
-            var source = {
-                datatype: "json",
-                datafields: [
-                    { name: "requirements" },
-                    { name: "objectiveValues" },
-                    { name: "name" }
-                ],
-                localdata: data
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source, {
-                autoBind: true,
-                beforeLoadComplete: function(records) {
-                    var data = [];
-                    for (var i = 0; i < records.length; i++) {
-                        var solution = records[i];
-                        solution.name = "Solution " + (i + 1);
-                        data.push(solution);
-                    }
-                    return data;
-                }
-            });
-            $("#solutions").jqxComboBox({
-                selectedIndex: 0,
-                source: dataAdapter,
-                displayMember: 'name',
-                width: 400,
-            });
-            $scope.currentSolution = $("#solutions").jqxComboBox('getSelectedItem').originalItem;
+            showSolutions(data);
         }).error(function(err){
             alert(err.message);
+        });
+    }
+
+    function showSolutions(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "requirements" },
+                { name: "objectiveValues" },
+                { name: "name" }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source, {
+            autoBind: true,
+            beforeLoadComplete: function (records) {
+                var data = [];
+                for (var i = 0; i < records.length; i++) {
+                    var solution = records[i];
+                    solution.name = "Solution " + (i + 1);
+                    data.push(solution);
+                }
+                return data;
+            }
+        });
+        $("#solutions").jqxComboBox({
+            selectedIndex: 0,
+            source: dataAdapter,
+            displayMember: 'name',
+            width: 400,
+        });
+
+        $scope.currentSolution = $("#solutions").jqxComboBox('getSelectedItem').originalItem;
+        console.log("current solution:");
+        console.log($scope.currentSolution);
+        showObjectiveValues();
+    }
+
+    function showObjectiveValues() {
+        var objectiveValues = [];
+
+        for (var criterion in $scope.currentSolution.objectiveValues) {
+            if ($scope.currentSolution.objectiveValues.hasOwnProperty(criterion)) {
+                var record = {};
+                record.criterion = $scope.criteriaNames[criterion];
+                record.objectiveValue = $scope.currentSolution.objectiveValues[criterion];
+                objectiveValues.push(record);
+            }
+        }
+
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "criterion" },
+                { name: "objectiveValue" }
+            ],
+            localdata: objectiveValues
+        };
+        console.log("source:");
+        console.log(source);
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#objective_values").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Criterion', datafield: 'criterion' },
+                { text: 'Objective Value', datafield: 'objectiveValue'}
+            ]
         });
     }
 

@@ -35,7 +35,7 @@
             <div id="opinion_providers"></div>
 
             <div class="rankings" ng-repeat="(criterionId, requirements) in rankings[currentOpinionProvider.userId]">
-                <h3>Criterion {{criteriaNames[criterionId]}}</h3>
+                <h3>Criterion: {{criteriaNames[criterionId]}}</h3>
 
                 <div ng-repeat="requirementId in requirements">
                     <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
@@ -69,12 +69,11 @@
 
                 <div id="solutions"></div>
 
+                <h2>Objective Values</h2>
+                <div id="objective_values"></div>
+
+                <h2>Requirements Ranking</h2>
                 <div id="solution_container">
-
-                    <h3 ng-repeat="(criterionId, objectiveValue) in currentSolution.objectiveValues">
-                        Objective Value for Criterion {{criteriaNames[criterionId]}}: {{objectiveValue}}
-                    </h3>
-
                     <div ng-repeat="requirementId in currentSolution.requirements">
                         <div jqx-expander jqx-theme="summer" jqx-expanded="false" jqx-width="500">
                             <div>
