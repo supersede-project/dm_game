@@ -98,6 +98,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             selectionmode: 'checkbox',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [

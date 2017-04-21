@@ -57,6 +57,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             selectionmode: 'checkbox',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
