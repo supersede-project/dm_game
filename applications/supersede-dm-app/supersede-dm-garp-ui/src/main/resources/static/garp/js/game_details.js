@@ -25,10 +25,10 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     $scope.gameRequirements = {};
     $scope.solution = [];
 
-    function getNegotiators() {
+    function getNegotiator() {
         $http.get('supersede-dm-app/garp/game/negotiators?gameId=' + gameId)
         .success(function (data) {
-            var negotiators = {
+            var negotiator = {
                 datatype: "json",
                 datafields: [
                     { name: 'userId' },
@@ -37,8 +37,8 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
                 ],
                 localdata: data
             };
-            var dataAdapter = new $.jqx.dataAdapter(negotiators);
-            $("#negotiators").jqxGrid({
+            var dataAdapter = new $.jqx.dataAdapter(negotiator);
+            $("#negotiator").jqxGrid({
                 width: '100%',
                 altrows: true,
                 autoheight: true,
@@ -166,7 +166,7 @@ app.controllerProvider.register('game_details', function($scope, $http, $locatio
     }
 
     getGameInfo();
-    getNegotiators();
+    getNegotiator();
     getOpinionProviders();
     getGameRequirements();
     getSolution();

@@ -126,6 +126,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                autorowheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
@@ -155,6 +156,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                autorowheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
@@ -323,6 +325,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -339,6 +342,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -356,7 +360,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: '100%',
             altrows: true,
             autoheight: true,
-            pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'userId', width: '20%' },

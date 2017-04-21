@@ -64,6 +64,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -93,6 +94,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [

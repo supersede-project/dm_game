@@ -39,6 +39,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
         $("#process_details").jqxGrid({
             width: '100%',
             autoheight: true,
+            autorowheight: true,
             source: dataAdapter,
             columns: [
                 { text: 'Name', datafield: 'name', width: '25%' },
@@ -72,6 +73,7 @@ app.controllerProvider.register('import_requirements', function($scope, $http, $
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                autorowheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
