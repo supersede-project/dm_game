@@ -8,7 +8,9 @@
             <p>Email: <b>{{user.email}}</b></p>
 
             <div ng-show="hasRole('DECISION_SCOPE_PROVIDER')" class="row">
-                    <a ng-href="#/supersede-dm-app/ahprp/games?processId={{processId}}">Decision making processes</a>
+                <jqx-button jqx-width="200" jqx-height="30" ng-click="openGames()">
+                    Decision making processes
+                </jqx-button>
             </div>
 
             <div ng-show="hasRole('OPINION_NEGOTIATOR')" class="row">

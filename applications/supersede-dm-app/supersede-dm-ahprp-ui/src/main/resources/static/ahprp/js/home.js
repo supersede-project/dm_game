@@ -15,13 +15,9 @@
 var app = angular.module('w5app');
 
 app.controllerProvider.register('home', function($scope, $http, $rootScope, $location) {
-	
-	$scope.processId = $location.search().processId;
-	
-	$scope.dmactions = function(gameId) {
-        $location.url('#/supersede-dm-app/ahprp/games').search('processId', processId);
-    };
-    
+
+    var processId = $location.search().processId;
+
     $http.get('/supersede-dm-app/user/current')
     .success(function(data) {
         $scope.user = data;
@@ -39,5 +35,9 @@ app.controllerProvider.register('home', function($scope, $http, $rootScope, $loc
             }
         }
         return false;
+    };
+
+    $scope.openGames = function() {
+        $location.url("supersede-dm-app/ahprp/games").search('processId', processId);
     };
 });
