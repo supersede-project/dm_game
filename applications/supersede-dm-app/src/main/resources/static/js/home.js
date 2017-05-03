@@ -21,48 +21,44 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     .success(function (data) {
         $scope.alertsNum = data.length;
 
-        $http.get('supersede-dm-app/alerts/biglist')
-        .success(function (data) {
-            var source = {
-                datatype: "json",
-                localdata: data,
-                datafields: [
-                    { name: 'applicationId', map: 'applicationId' },
-                    { name: 'alertId' },
-                    { name: 'id' },
-                    { name: 'timestamp' },
-                    { name: 'description' },
-                    { name: 'classification' },
-                    { name: 'accuracy' },
-                    { name: 'pos' },
-                    { name: 'neg' },
-                    { name: 'overall' },
-                ],
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#alerts").jqxGrid({
-                width: "100%",
-                source: dataAdapter,
-                groupable: true,
-                columns: [
-                  { text: 'App', dataField: 'applicationId', width: "15%" },
-                  { text: 'Alert', dataField: 'alertId', width: "10%" },
-                  { text: 'Id', dataField: 'id', width: "10%" },
-                  { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
-                  { text: 'Description', dataField: 'description', width: "20%" },
-                  { text: 'Classification', dataField: 'classification', width: "15%" },
-                  { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
-                  { text: 'Pos.', dataField: 'pos', width: "5%" },
-                  { text: 'Neg.', dataField: 'neg', width: "5%" },
-                  { text: 'Overall.', dataField: 'overall', width: "5%" }
-                ],
-            groups: ['applicationId', 'alertId']
-            });
-
-            $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
-        }).error(function (err) {
-            alert(err.message);
+        var source = {
+            datatype: "json",
+            localdata: data,
+            datafields: [
+                { name: 'applicationId', map: 'applicationId' },
+                { name: 'alertId' },
+                { name: 'id' },
+                { name: 'timestamp' },
+                { name: 'description' },
+                { name: 'classification' },
+                { name: 'accuracy' },
+                { name: 'pos' },
+                { name: 'neg' },
+                { name: 'overall' },
+            ],
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#alerts").jqxGrid({
+            width: "100%",
+            source: dataAdapter,
+            groupable: true,
+            columns: [
+                { text: 'App', dataField: 'applicationId', width: "15%" },
+                { text: 'Alert', dataField: 'alertId', width: "10%" },
+                { text: 'Id', dataField: 'id', width: "10%" },
+                { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
+                { text: 'Description', dataField: 'description', width: "20%" },
+                { text: 'Classification', dataField: 'classification', width: "15%" },
+                { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
+                { text: 'Pos.', dataField: 'pos', width: "5%" },
+                { text: 'Neg.', dataField: 'neg', width: "5%" },
+                { text: 'Overall.', dataField: 'overall', width: "5%" }
+            ],
+        groups: ['applicationId', 'alertId']
         });
+
+        $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
+
     }).error(function (err) {
         alert(err.message);
     });

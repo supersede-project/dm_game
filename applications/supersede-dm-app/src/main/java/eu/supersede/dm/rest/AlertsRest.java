@@ -130,7 +130,7 @@ public class AlertsRest
 
         for (HApp app : apps)
         {
-            List<HAlert> alerts = alertsJpa.findAll();
+            List<HAlert> alerts = alertsJpa.findAlertsForApp(app.getId());
 
             for (HAlert alert : alerts)
             {
