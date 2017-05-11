@@ -20,11 +20,11 @@
     <div ng-show="!emptyRequirements()">
         <h1>Edit Requirements for Process {{processName}}</h1>
 
-        <h2>Current Requirement</h2>
+        <h2>Current Requirement:</h2>
         <div style="font-size: 13px; font-family: Verdana">
             <form>
                 <strong>Name:</strong><br>
-                <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
+                <input id="current_requirement_name" type="text" ng-model="currentRequirement.name"><br><br>
                 <strong>Description:</strong><br>
                 <textarea id="current_requirement_description" value="{{currentRequirement.description}}"></textarea><br><br><br>
             </form>

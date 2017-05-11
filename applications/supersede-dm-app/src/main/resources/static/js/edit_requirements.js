@@ -131,8 +131,9 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         currentRequirementId = $scope.currentRequirement.requirementId;
 
         // Force the content change of the textarea containing the requirement description
-        // TODO: check why it is not automatically updated
         $("#current_requirement_description").val($scope.currentRequirement.description);
+        // XXX: introducing ng-model binding makes the following code useless
+        //$("#current_requirement_name".val($scope.currentRequirement.name));
 
         fillDependenciesGrid();
         getRequirementProperties();
@@ -218,14 +219,15 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     // Submit updates to the current requirement
     $scope.updateRequirement = function () {
-        var requirement = {};
-        requirement.requirementId = currentRequirementId;
-        requirement.name = $("#current_requirement_name").val();
-        requirement.description = $("#current_requirement_description").val();
+        
+        //update local requirement before submitting it
+    	//XXX: no need to update name thanks to ng-model
+    	//$scope.currentRequirement.name = $("#current_requirement_name").val();
+		$scope.currentRequirement.description = $("#current_requirement_description").val();
 
         $http({
             url: "supersede-dm-app/requirement",
-            data: requirement,
+            data: $scope.currentRequirement,
             method: 'PUT'
         }).success(function () {
             $("#requirement_status").html("<strong>Requirement successfully updated!</strong>");
