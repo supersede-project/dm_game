@@ -32,18 +32,18 @@ import org.springframework.stereotype.Component;
 import eu.supersede.gr.jpa.AHPCriteriasMatricesDataJpa;
 import eu.supersede.gr.jpa.AHPGamesJpa;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
-import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
+import eu.supersede.gr.jpa.AHPGamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.PointsJpa;
 import eu.supersede.gr.jpa.UserCriteriaPointsJpa;
 import eu.supersede.gr.jpa.UserPointsJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HAHPCriteriasMatrixData;
 import eu.supersede.gr.model.HAHPGame;
-import eu.supersede.gr.model.GamePlayerPoint;
+import eu.supersede.gr.model.HAHPGamePlayerPoint;
 import eu.supersede.gr.model.HAHPPlayerMove;
+import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.Point;
 import eu.supersede.gr.model.Requirement;
-import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.User;
 import eu.supersede.gr.model.UserCriteriaPoint;
 import eu.supersede.gr.model.UserPoint;
@@ -66,7 +66,7 @@ public class PointsLogic
     private UserCriteriaPointsJpa userCriteriaPoints;
 
     @Autowired
-    private GamesPlayersPointsJpa gamesPlayersPointsRepository;
+    private AHPGamesPlayersPointsJpa gamesPlayersPointsRepository;
 
     @Autowired
     private AHPCriteriasMatricesDataJpa criteriaMatricesRepository;
@@ -125,7 +125,7 @@ public class PointsLogic
 
     private void computePoints()
     {
-        List<GamePlayerPoint> gamesPlayersPoints = gamesPlayersPointsRepository.findAll();
+        List<HAHPGamePlayerPoint> gamesPlayersPoints = gamesPlayersPointsRepository.findAll();
 
         // cycle on every gamesPlayersPoints
         for (int i = 0; i < gamesPlayersPoints.size(); i++)
@@ -200,9 +200,9 @@ public class PointsLogic
 
             // calculate the virtualPosition of a user base on his/her points in a particular game
 
-            GamePlayerPoint gpp = gamesPlayersPointsRepository.findByUserAndGame(gamesPlayersPoints.get(i).getUser(),
+            HAHPGamePlayerPoint gpp = gamesPlayersPointsRepository.findByUserAndGame(gamesPlayersPoints.get(i).getUser(),
                     g);
-            List<GamePlayerPoint> specificGamePlayersPoints = gamesPlayersPointsRepository.findByGame(g);
+            List<HAHPGamePlayerPoint> specificGamePlayersPoints = gamesPlayersPointsRepository.findByGame(g);
 
             Collections.sort(specificGamePlayersPoints, new CustomComparator());
 

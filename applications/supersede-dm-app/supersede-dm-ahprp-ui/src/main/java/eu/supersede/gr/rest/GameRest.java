@@ -56,16 +56,16 @@ import eu.supersede.fe.notification.NotificationUtil;
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.AHPCriteriasMatricesDataJpa;
 import eu.supersede.gr.jpa.AHPGamesJpa;
+import eu.supersede.gr.jpa.AHPGamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.AHPJudgeActsJpa;
 import eu.supersede.gr.jpa.AHPPlayerMovesJpa;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
-import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.RequirementsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.jpa.ValutationCriteriaJpa;
-import eu.supersede.gr.model.GamePlayerPoint;
 import eu.supersede.gr.model.HAHPCriteriasMatrixData;
 import eu.supersede.gr.model.HAHPGame;
+import eu.supersede.gr.model.HAHPGamePlayerPoint;
 import eu.supersede.gr.model.HAHPJudgeAct;
 import eu.supersede.gr.model.HAHPPlayerMove;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
@@ -89,7 +89,7 @@ public class GameRest
     private SupersedeMailSender supersedeMailSender;
 
     @Autowired
-    private GamesPlayersPointsJpa gamesPlayersPoints;
+    private AHPGamesPlayersPointsJpa gamesPlayersPoints;
 
     @Autowired
     private PointsLogic pointsLogic;
@@ -369,7 +369,10 @@ public class GameRest
         game.setStartTime(new Date());
         // re-attach detached requirements
         List<Requirement> rs = game.getRequirements();
-
+        
+//        if( System.currentTimeMillis() > 0 )
+//        	throw new RuntimeException("");
+        
         for (int i = 0; i < rs.size(); i++)
         {
             rs.set(i, requirements.findOne(rs.get(i).getRequirementId()));
@@ -400,15 +403,28 @@ public class GameRest
             // add points for the creation of a game
             pointsLogic.addPoint(u, -3l, -1l);
         }
-
+        
+        if( cs.size() < 2 ) {
+        	throw new RuntimeException( "Not enough criteria" );
+        }
+        if( us.size() < 1 ) {
+        	throw new RuntimeException( "Not enough players" );
+        }
+        if( rs.size() < 2 ) {
+        	throw new RuntimeException( "Not enough requirements" );
+        }
+        
         game.setFinished(false);
         game = games.save(game);
 
         ProcessManager mgr = DMGame.get().getProcessManager(processId);
-        HActivity a = mgr.createActivity(AHPPlayerMethod.NAME, ((DatabaseUser) auth.getPrincipal()).getUserId());
-        PropertyBag bag = mgr.getProperties(a);
-        bag.set("gameId", "" + game.getGameId());
-
+        {
+        	HActivity a = mgr.createActivity(AHPPlayerMethod.NAME, ((DatabaseUser) auth.getPrincipal()).getUserId());
+        	a.setUserId( null ); // do this to avoid showing it in the supervisor pending activities list
+        	PropertyBag bag = mgr.getProperties(a);
+        	bag.set("gameId", "" + game.getGameId());
+        }
+        
         for (int i = 0; i < cs.size() - 1; i++)
         {
             for (int j = i + 1; j < cs.size(); j++)
@@ -474,10 +490,7 @@ public class GameRest
             supersedeMailSender.sendEmail("New Decision Making Process",
                     "Hi " + proxyUser.getFirst_name() + " " + proxyUser.getLast_name()
                             + ", this is an automatically generated mail. You have just been invited to "
-                            + "participate in a prioritization process. To access the propritization process, "
-                            + "connect to the URL 213.21.147.91:8081 and log in with your userid and password. "
-                            + "Then click on Decision Making Process; then on Opinion Provider Actions and "
-                            + "finally click Enter on the displayed process.",
+                            + "participate in a prioritization process.",
                     proxyUser.getEmail());
 
             notificationUtil.createNotificationForUser(proxyUser.getEmail(),
@@ -485,20 +498,26 @@ public class GameRest
                     "supersede-dm-app/ahprp/player_games");
 
             // create a GamePlayerPoint for this game and for all the players in the game
-            GamePlayerPoint gpp = new GamePlayerPoint();
+            HAHPGamePlayerPoint gpp = new HAHPGamePlayerPoint();
             gpp.setGame(game);
             gpp.setUser(u);
             gpp.setPoints(0l);
             gamesPlayersPoints.save(gpp);
+            
+            HActivity a = mgr.createActivity( AHPPlayerMethod.NAME, u.getUserId() );
+            PropertyBag bag = mgr.getProperties(a);
+            bag.set( "gameId", "" + game.getGameId() );
         }
-
-        notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR",
-                "A new decision making process has been created, you are in charge to take decisions",
-                "supersede-dm-app/ahprp/judge_games");
+        
+        // FIXME
+//        notificationUtil.createNotificationsForProfile("OPINION_NEGOTIATOR",
+//                "A new decision making process has been created, you are in charge to take decisions",
+//                "supersede-dm-app/ahprp/judge_games");
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(game.getGameId()).toUri());
         return new ResponseEntity<>(game.getGameId(), httpHeaders, HttpStatus.CREATED);
     }
+
 }

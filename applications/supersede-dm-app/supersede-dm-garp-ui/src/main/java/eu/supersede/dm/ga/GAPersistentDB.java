@@ -40,7 +40,6 @@ import eu.supersede.dm.methods.GANegotiatorVotingMethod;
 import eu.supersede.dm.methods.GAPlayerVotingMethod;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.security.DatabaseUser;
-import eu.supersede.gr.data.GAGameStatus;
 import eu.supersede.gr.jpa.ActivitiesJpa;
 import eu.supersede.gr.jpa.GAGameCriteriaJpa;
 import eu.supersede.gr.jpa.GAGameParticipationJpa;

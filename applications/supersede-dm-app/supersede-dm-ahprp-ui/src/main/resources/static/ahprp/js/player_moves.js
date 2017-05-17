@@ -122,7 +122,7 @@ app.controllerProvider.register('player_moves', function($scope, $http, $locatio
                         { text: '', width: '7%', datafield: 'playerMoveId2', cellsRenderer: function (row, columnDataField, value) {
                             var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                             r = r.concat("<jqx-link-button jqx-width='55' jqx-height='25'><a href='#/supersede-dm-app/ahprp/vote_view?playerMoveId=" +
-                            value + "'>Vote</a></jqx-link-button>");
+                            value + "&processId=" + $scope.processId + "'>Details</a></jqx-link-button>");
                             return r.concat("</div>");
                             }
                         }

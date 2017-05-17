@@ -129,6 +129,7 @@ public class AHPRest {
 						requirementsMatrixDataList.get(i).getValue().intValue());
 			}else{
 				// find the average
+				// TODO: passare alla media geometrica
 				List<HAHPPlayerMove> playerMovesList = requirementsMatrixDataList.get(i).getPlayerMoves();
 				
 				int total = 0;

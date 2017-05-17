@@ -17,6 +17,7 @@ var app = angular.module('w5app');
 app.controllerProvider.register('vote_view', function($scope, $http, $location) {
 
     $scope.playerMoveId = $location.search().playerMoveId;
+    $scope.processId = $location.search().processId;
     $scope.playerMove = undefined;
     $scope.requirementsChoices = [];
     $scope.selectedRequirementsChoice = {selected:4};
@@ -39,7 +40,7 @@ app.controllerProvider.register('vote_view', function($scope, $http, $location) 
      $scope.insertPlayerVote = function(){
          $http.put('supersede-dm-app/ahprp/playermove/' + $scope.playerMoveId + '/vote/' + $scope.selectedRequirementsChoice.selected)
             .success(function(data) {
-                $location.url('/supersede-dm-app/ahprp/player_moves?gameId=' + data);
+                $location.url( '/supersede-dm-app/ahprp/player_moves?gameId=' + data +  '&processId=' + $scope.processId );
         });
      };
 });

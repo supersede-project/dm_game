@@ -37,7 +37,7 @@ import eu.supersede.gr.model.Requirement;
 public class AHPRequirementsPrioritizationMethod implements DMMethod
 {
     public static final String NAME = "AHP session";
-    private static final String PAGE = "ahprp/home";
+    private static final String PAGE = "ahprp/games";
 
     private List<DMRoleSpec> list;
     private List<DMOption> options;

@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.jpa.AHPGamesJpa;
-import eu.supersede.gr.jpa.GamesPlayersPointsJpa;
+import eu.supersede.gr.jpa.AHPGamesPlayersPointsJpa;
 import eu.supersede.gr.jpa.UsersJpa;
 import eu.supersede.gr.model.HAHPGame;
-import eu.supersede.gr.model.GamePlayerPoint;
+import eu.supersede.gr.model.HAHPGamePlayerPoint;
 import eu.supersede.gr.model.User;
 
 @RestController
@@ -22,7 +22,7 @@ import eu.supersede.gr.model.User;
 public class GamePlayerPointRest {
 	
 	@Autowired
-    private GamesPlayersPointsJpa gamesPlayersPoints;
+    private AHPGamesPlayersPointsJpa gamesPlayersPoints;
 	@Autowired
     private UsersJpa users;	
 	@Autowired
@@ -30,13 +30,13 @@ public class GamePlayerPointRest {
 	
 	// get all the gamesPlayersPoints
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<GamePlayerPoint> getGamesPlayersPoints() {
+	public List<HAHPGamePlayerPoint> getGamesPlayersPoints() {
 		return gamesPlayersPoints.findAll();
 	}
 	
 	// get all the gamesPlayersPoints for logged user
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public List<GamePlayerPoint> getUserGamesPlayersPoints(Authentication authentication) {
+	public List<HAHPGamePlayerPoint> getUserGamesPlayersPoints(Authentication authentication) {
 		
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());
@@ -46,7 +46,7 @@ public class GamePlayerPointRest {
 	
 	// get the gamesPlayersPoints of a specific user and game
 	@RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET)
-	public GamePlayerPoint getSpecificGameGamesPlayersPoints(Authentication authentication, @PathVariable Long gameId) {
+	public HAHPGamePlayerPoint getSpecificGameGamesPlayersPoints(Authentication authentication, @PathVariable Long gameId) {
 		
 		DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
 		User user = users.findOne(currentUser.getUserId());

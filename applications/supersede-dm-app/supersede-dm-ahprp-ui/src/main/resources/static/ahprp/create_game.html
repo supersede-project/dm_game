@@ -21,68 +21,91 @@
     </div>
 
     <div id="page2" ng-show="currentPage == 'page2'">
-        <p>Select the requirements to prioritize (at least two):</p>
-        <div class="selection">
-            <label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice"
-                ng-mouseenter="$parent.currentRequirement = requirement"
-                ng-mouseleave="$parent.currentRequirement = undefined">
-                <input
-                    type="checkbox"
-                    name="selectedRequirements"
-                    value="{{requirement}}"
-                    ng-checked="game.requirements.indexOf(requirement) > -1"
-                    ng-click="toggleSelection(game.requirements, requirement)"
-                  /> {{requirement.name}}
-            </label>
+<!--         <p>Select the requirements to prioritize (at least two):</p> -->
+<!--         <div class="selection"> -->
+<!--             <label ng-repeat="requirement in requirements | orderBy: 'name'" class="selection-choice" -->
+<!--                 ng-mouseenter="$parent.currentRequirement = requirement" -->
+<!--                 ng-mouseleave="$parent.currentRequirement = undefined"> -->
+<!--                 <input -->
+<!--                     type="checkbox" -->
+<!--                     name="selectedRequirements" -->
+<!--                     value="{{requirement}}" -->
+<!--                     ng-checked="game.requirements.indexOf(requirement) > -1" -->
+<!--                     ng-click="toggleSelection(game.requirements, requirement)" -->
+<!--                   /> {{requirement.name}} -->
+<!--             </label> -->
+<!--         </div> -->
+<!--         <div ng-show="currentRequirement" class="selection-summary"> -->
+<!--             <div class="summary-row">{{currentRequirement.description}}</div> -->
+<!--         </div> -->
+<!--         <div class="clear-div"></div> -->
+
+<!--         <p>Select the criterias to prioritize (at least two):</p> -->
+<!--         <div class="selection"> -->
+<!--             <label ng-repeat="criteria in criterias | orderBy: 'name'"  class="selection-choice" -->
+<!--                 ng-mouseenter="$parent.currentCriteria = criteria" -->
+<!--                 ng-mouseleave="$parent.currentCriteria = undefined"> -->
+<!--                 <input -->
+<!--                     type="checkbox" -->
+<!--                     name="selectedCriterias" -->
+<!--                     value="{{criteria}}" -->
+<!--                     ng-checked="game.criterias.indexOf(criteria) > -1" -->
+<!--                     ng-click="toggleSelection(game.criterias, criteria)" -->
+<!--                   /> {{criteria.name}} -->
+<!--             </label> -->
+<!--         </div> -->
+<!--         <div ng-show="currentCriteria" class="selection-summary"> -->
+<!--             <div class="summary-row">{{currentCriteria.description}}</div> -->
+<!--         </div> -->
+<!--         <div class="clear-div"></div> -->
+
+
+<!--         <p>Select the players to prioritize (at least one):</p> -->
+<!--         <div class="selection"> -->
+<!--             <label ng-repeat="player in players | orderBy: 'name'"  class="selection-choice" -->
+<!--                 ng-mouseenter="$parent.currentPlayer = player" -->
+<!--                 ng-mouseleave="$parent.currentPlayer = undefined"> -->
+<!--                 <input -->
+<!--                     type="checkbox" -->
+<!--                     name="selectedPlayers" -->
+<!--                     value="{{player}}" -->
+<!--                     ng-checked="game.players.indexOf(player) > -1" -->
+<!--                     ng-click="toggleSelection(game.players, player)" -->
+<!--                   /> {{player.name}} -->
+<!--             </label> -->
+<!--         </div> -->
+<!--         <div ng-show="currentPlayer"  class="selection-summary"> -->
+<!--             <div class="summary-row">{{currentPlayer.name}}</div> -->
+<!--         </div> -->
+<!--         <div class="clear-div"></div> -->
+		
+        <h2>Requirements</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="requirements"></div>
         </div>
-        <div ng-show="currentRequirement" class="selection-summary">
-            <div class="summary-row">{{currentRequirement.description}}</div>
+
+        <h2>Criteria</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="criteria"></div>
         </div>
+
+        <h2>Negotiator</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="negotiator"></div>
+        </div>
+
+        <h2>Opinion Providers</h2>
+        <div style="font-size: 13px; font-family: Verdana">
+            <div id="opinion_providers"></div>
+        </div>
+		
         <div class="clear-div"></div>
-
-        <p>Select the criterias to prioritize (at least two):</p>
-        <div class="selection">
-            <label ng-repeat="criteria in criterias | orderBy: 'name'"  class="selection-choice"
-                ng-mouseenter="$parent.currentCriteria = criteria"
-                ng-mouseleave="$parent.currentCriteria = undefined">
-                <input
-                    type="checkbox"
-                    name="selectedCriterias"
-                    value="{{criteria}}"
-                    ng-checked="game.criterias.indexOf(criteria) > -1"
-                    ng-click="toggleSelection(game.criterias, criteria)"
-                  /> {{criteria.name}}
-            </label>
-        </div>
-        <div ng-show="currentCriteria" class="selection-summary">
-            <div class="summary-row">{{currentCriteria.description}}</div>
-        </div>
-        <div class="clear-div"></div>
-
-
-        <p>Select the players to prioritize (at least one):</p>
-        <div class="selection">
-            <label ng-repeat="player in players | orderBy: 'name'"  class="selection-choice"
-                ng-mouseenter="$parent.currentPlayer = player"
-                ng-mouseleave="$parent.currentPlayer = undefined">
-                <input
-                    type="checkbox"
-                    name="selectedPlayers"
-                    value="{{player}}"
-                    ng-checked="game.players.indexOf(player) > -1"
-                    ng-click="toggleSelection(game.players, player)"
-                  /> {{player.name}}
-            </label>
-        </div>
-        <div ng-show="currentPlayer"  class="selection-summary">
-            <div class="summary-row">{{currentPlayer.name}}</div>
-        </div>
-        <div class="clear-div"></div>
-
+        
         <div style="width: 100%; text-align: center;">
             <jqx-button ng-click="toPage(1)">Back</jqx-button>
             <jqx-button ng-click="toPage(3)">Continue</jqx-button>
         </div>
+        
     </div>
 
     <div id="page3" ng-show="currentPage == 'page3'">
@@ -92,8 +115,16 @@
                 <div>
                     <div style="float: left; width: 15%">{{criteria.name}}</div>
                     <div style="float: left; width: 70%; text-align: center;">
-                        <label ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" class="radio-inline" ng-repeat="requirementsChoice in requirementsChoices">
-                            <input type="radio" ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" ng-value="{{requirementsChoice.value}}" name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
+                        <label 
+                        	class="radio-inline" 
+                        	ng-init="choices[criteria.criteriaId][other_criteria.criteriaId]=4" 
+                        	ng-repeat="requirementsChoice in requirementsChoices">
+                        	
+                        	<input type="radio" 
+                          		ng-model="choices[criteria.criteriaId][other_criteria.criteriaId]" 
+                           		ng-value="{{requirementsChoice.value}}" 
+                           		name="radioRequirementsChoices{{criteria.criteriaId}}{{other_criteria.criteriaId}}">{{requirementsChoice.value}}
+                           		</input>
                         </label>
                     </div>
                     <div style="float: right; width: 15%; text-align: right;">{{other_criteria.name}}</div>

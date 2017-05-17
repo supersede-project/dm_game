@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import eu.supersede.dm.DMGame;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.gr.jpa.AHPRequirementsMatricesDataJpa;
-import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HAHPRequirementsMatrixData;
 import eu.supersede.gr.model.ValutationCriteria;
 
@@ -37,8 +37,8 @@ import eu.supersede.gr.model.ValutationCriteria;
 @RequestMapping("/criteria")
 public class CriteriaRest
 {
-    @Autowired
-    private ValutationCriteriaJpa valutationCriterias;
+//    @Autowired
+//    private ValutationCriteriaJpa valutationCriterias;
 
     @Autowired
     private AHPRequirementsMatricesDataJpa requirementsMatricesData;
@@ -50,7 +50,9 @@ public class CriteriaRest
     @RequestMapping("/{criteriaId}")
     public ValutationCriteria getCriteria(@PathVariable Long criteriaId)
     {
-        ValutationCriteria criterion = valutationCriterias.findOne(criteriaId);
+        ValutationCriteria criterion = DMGame.get().getCriterion( criteriaId );
+        //valutationCriterias.findOne(criteriaId);
+
 
         if (criterion == null)
         {
@@ -66,7 +68,7 @@ public class CriteriaRest
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ValutationCriteria> getCriterias()
     {
-        return valutationCriterias.findAll();
+        return DMGame.get().getCriteria(); // valutationCriterias.findAll();
     }
 
     /**
@@ -75,7 +77,7 @@ public class CriteriaRest
     @RequestMapping("/count")
     public Long count()
     {
-        return valutationCriterias.count();
+        return DMGame.get().getJpa().criteria.count(); // valutationCriterias.count();
     }
 
     /**
@@ -86,7 +88,8 @@ public class CriteriaRest
     public ResponseEntity<?> createCriteria(@RequestBody ValutationCriteria vc)
     {
         vc.setCriteriaId(null);
-        valutationCriterias.save(vc);
+        DMGame.get().getJpa().criteria.save( vc );
+//        valutationCriterias.save(vc);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -99,16 +102,21 @@ public class CriteriaRest
      * the criterion in the corresponding table.
      * @param criteriaId
      */
+    // FIXME: this is inherited from old AHP code:
+    // there could be requirements associated to a given criterion, so when the criterion is deleted
+    // the requirements have to be deleted as well
+    // This will change once AHP will use the process criteria
     @RequestMapping(value = "/{criteriaId}", method = RequestMethod.DELETE)
     public boolean deleteCriteria(@PathVariable Long criteriaId)
     {
-        ValutationCriteria criteria = valutationCriterias.findOne(criteriaId);
+        ValutationCriteria criteria = DMGame.get().getCriterion( criteriaId ); //valutationCriterias.findOne(criteriaId);
 
         List<HAHPRequirementsMatrixData> list = requirementsMatricesData.findByCriteria(criteria);
 
         if (list.isEmpty())
         {
-            valutationCriterias.delete(criteriaId);
+        	DMGame.get().getJpa().criteria.delete( criteriaId );
+//            valutationCriterias.delete(criteriaId);
             return true;
         }
 
@@ -122,7 +130,7 @@ public class CriteriaRest
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public void editCriteria(@RequestBody ValutationCriteria vc)
     {
-        ValutationCriteria criterion = valutationCriterias.findOne(vc.getCriteriaId());
+        ValutationCriteria criterion = DMGame.get().getCriterion( vc.getCriteriaId() ); //valutationCriterias.findOne(vc.getCriteriaId());
 
         if (criterion == null)
         {
@@ -131,6 +139,7 @@ public class CriteriaRest
 
         criterion.setName(vc.getName());
         criterion.setDescription(vc.getDescription());
-        valutationCriterias.save(criterion);
+        DMGame.get().getJpa().criteria.save( criterion );
+//        valutationCriterias.save(criterion);
     }
 }

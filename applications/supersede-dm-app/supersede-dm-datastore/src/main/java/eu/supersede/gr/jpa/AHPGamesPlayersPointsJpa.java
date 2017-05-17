@@ -12,15 +12,21 @@
    limitations under the License.
 */
 
-package eu.supersede.gr.utility;
+package eu.supersede.gr.jpa;
 
-import java.util.Comparator;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import eu.supersede.gr.model.HAHPGame;
 import eu.supersede.gr.model.HAHPGamePlayerPoint;
+import eu.supersede.gr.model.User;
 
-public class CustomComparator implements Comparator<HAHPGamePlayerPoint> {
-    @Override
-    public int compare(HAHPGamePlayerPoint o1, HAHPGamePlayerPoint o2) {
-        return o2.getPoints().compareTo(o1.getPoints());
-    }
+public interface AHPGamesPlayersPointsJpa extends JpaRepository<HAHPGamePlayerPoint, Long>
+{
+    List<HAHPGamePlayerPoint> findByUser(User user);
+
+    HAHPGamePlayerPoint findByUserAndGame(User user, HAHPGame game);
+
+    List<HAHPGamePlayerPoint> findByGame(HAHPGame g);
 }

@@ -72,7 +72,7 @@ app.controllerProvider.register('games', function($scope, $http, $location) {
                     var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
                     r = r.concat("<jqx-link-button jqx-width='75' jqx-height='25'><a href='#/supersede-dm-app/ahprp/game_page?gameId=" +
                     value + "&processId=" + $scope.processId +
-                    "'>Detail</a></jqx-link-button>");
+                    "'>Details</a></jqx-link-button>");
                     return r.concat("</div>");
                     }
                 }

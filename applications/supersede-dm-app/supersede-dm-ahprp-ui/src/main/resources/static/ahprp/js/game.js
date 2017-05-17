@@ -19,6 +19,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
     $scope.Math = window.Math;
 
     $scope.gameId = $location.search().gameId;
+    $scope.processId = $location.search().processId;
     $scope.game = undefined;
     $scope.ahpResult = [];
 
@@ -94,6 +95,7 @@ app.controllerProvider.register('game', function($scope, $http, $location) {
     $scope.gameEnd = function(gameId){
         $http.put('supersede-dm-app/ahprp/game/end/' + gameId).success(function(data) {
             $scope.game.finished = true;
+            $location.url('supersede-dm-app/ahprp/games').search('processId',$scope.processId);
         });
     };
 

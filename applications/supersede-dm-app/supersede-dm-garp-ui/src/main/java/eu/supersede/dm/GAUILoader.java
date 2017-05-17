@@ -42,6 +42,6 @@ public class GAUILoader
         roles.add("DM_ADMIN");
         roles.add("OPINION_PROVIDER");
         roles.add("DECISION_SCOPE_PROVIDER");
-        roles.add("OPINION_NEGOTIATOR");
+//        roles.add("OPINION_NEGOTIATOR");
     }
 }
