@@ -45,7 +45,6 @@ import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.GAVariant;
 import eu.supersede.dm.iga.problem.AbstractPrioritizationProblem.ObjectiveFunction;
 import eu.supersede.dm.iga.problem.MultiObjectivePrioritizationProblem;
 import eu.supersede.dm.iga.problem.SingleObjectivePrioritizationProblem;
-import eu.supersede.dm.iga.utils.MapUtil;
 
 public class IGAAlgorithm
 {
@@ -56,22 +55,11 @@ public class IGAAlgorithm
     Map<String, Map<String, Double>> playerWeights = new HashMap<>();
     Map<String, Map<String, List<String>>> rankings = new HashMap<>();
 
-    public void setCriteria(List<String> criteria)
-    {
-        this.criteria.clear();
-        criteriaWeights.clear();
-
-        for (String criterion : criteria)
-        {
-            String[] criterionDetail = { criterion, "min" };
-            this.criteria.put(criterion, criterionDetail);
-            criteriaWeights.put(criterion, 1.0);
-        }
-    }
-
     public void setCriterionWeight(String criterion, Double w)
     {
         criteriaWeights.put(criterion, w);
+        String[] criterionDetail = { criterion, "min" };
+        criteria.put(criterion, criterionDetail);
     }
 
     public void addRequirement(String req, List<String> deps)
@@ -92,21 +80,7 @@ public class IGAAlgorithm
         list.addAll(deps);
     }
 
-    public List<Map<String, Double>> calc()
-    {
-        ArrayList<Map<String, Double>> finalRanking = new ArrayList<>();
-
-        List<PermutationSolution<?>> solutions = runGA();
-
-        for (PermutationSolution<?> s : solutions)
-        {
-            finalRanking.add(MapUtil.sortByValue(((PrioritizationSolution) s).toRanks()));
-        }
-
-        return finalRanking;
-    }
-
-    public List<GARequirementsRanking> calc2()
+    public List<GARequirementsRanking> calc()
     {
         List<GARequirementsRanking> pareto = new ArrayList<GARequirementsRanking>();
         List<PermutationSolution<?>> solutions = runGA();
@@ -116,12 +90,15 @@ public class IGAAlgorithm
             PrioritizationSolution ps = (PrioritizationSolution) s;
             GARequirementsRanking r = new GARequirementsRanking();
             r.setRequirements(Arrays.asList(ps.getVariablesStringArray()));
+
             for (int i = 0; i < ps.getNumberOfObjectives(); i++)
             {
                 r.addObjective(ps.getCriterionName(i), ps.getObjective(i));
             }
+
             pareto.add(r);
         }
+
         return pareto;
     }
 

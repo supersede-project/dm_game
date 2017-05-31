@@ -17,6 +17,7 @@ package eu.supersede.dm.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +27,7 @@ import eu.supersede.dm.DMGame;
 import eu.supersede.dm.ProcessManager;
 import eu.supersede.dm.ProcessRole;
 import eu.supersede.fe.exception.NotFoundException;
+import eu.supersede.fe.security.DatabaseUser;
 import eu.supersede.gr.model.HProcessMember;
 import eu.supersede.gr.model.User;
 
@@ -71,22 +73,25 @@ public class ProcessUsersRest
     }
 
     @RequestMapping(value = "/list/detailed", method = RequestMethod.GET)
-    public List<User> getUserObjectList(@RequestParam Long processId)
+    public List<User> getUserObjectList(Authentication authentication, @RequestParam Long processId)
     {
+        DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
+        Long userId = currentUser.getUserId();
+
         ProcessManager proc = DMGame.get().getProcessManager(processId);
         List<User> list = new ArrayList<>();
 
         for (HProcessMember member : proc.getProcessMembers())
         {
-            User u = DMGame.get().getJpa().users.findOne(member.getUserId());
+            User user = DMGame.get().getUser(member.getUserId(), currentUser.getTenantId(), currentUser.getToken());
 
-            if (u == null)
+            if (user == null)
             {
                 throw new NotFoundException("Can't get details of process member with id " + member.getUserId()
                         + " because it does not exist");
             }
 
-            list.add(u);
+            list.add(user);
         }
 
         return list;

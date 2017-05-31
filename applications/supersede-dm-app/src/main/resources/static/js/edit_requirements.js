@@ -24,10 +24,12 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
 
     $scope.requirements = [];
 
+    // Get all the requirements that can be set as dependencies of the current requirement
     function getAvailableDependencies() {
         var availableDependencies = [];
 
         for (var i = 0; i < $scope.requirements.length; i++) {
+            // A requirement can't depend on itself
             if (i != currentRequirementIndex) {
                 availableDependencies.push($scope.requirements[i]);
             }
@@ -36,8 +38,10 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         return availableDependencies;
     }
 
+    // Fill the jqxGrid containing the requirements that can be set as dependencies of
+    // the current requirement
     function fillDependenciesGrid() {
-        var availableRequirements = {
+        var source = {
             datatype: "json",
             datafields: [
                 { name: 'requirementId' },
@@ -47,8 +51,10 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             localdata: getAvailableDependencies(currentRequirementIndex)
         };
 
-        var dataAdapter = new $.jqx.dataAdapter(availableRequirements);
+        var dataAdapter = new $.jqx.dataAdapter(source);
 
+        // Deselect requirements set as dependencies of the previous requirement, because
+        // the same jqxGrid is used for all requirements.
         $("#dependencies").jqxGrid('clearselection');
         $("#dependencies").jqxGrid('refresh');
 
@@ -57,6 +63,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
             selectionmode: 'checkbox',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -67,6 +74,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     }
 
+    // Get the properties of the current requirement
     function fillPropertiesGrid() {
         var requirementProperties = {
             datatype: "json",
@@ -92,6 +100,9 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     }
 
+    // Save the dependencies of the current requirement in a local variable.
+    // The dependencies for all requirements will be sent to the server only when the
+    // dependencies for all the requirements have been specified.
     function saveDependencies() {
         var selectedRequirements = $("#dependencies").jqxGrid("selectedrowindexes");
         dependencies[currentRequirementId] = [];
@@ -102,53 +113,73 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     }
 
+    // Get the properties of the current requirement
     function getRequirementProperties() {
         $http.get('supersede-dm-app/processes/requirements/properties?processId=' + processId + '&requirementId=' + currentRequirementId)
         .success(function (data) {
             properties = data;
+            // Fill the corresponding jqxGrid
             fillPropertiesGrid();
         }).error(function (err) {
             alert(err.message);
         });
     }
 
+    // Load information about the current requirement
     function loadCurrentRequirement() {
         $scope.currentRequirement = $scope.requirements[currentRequirementIndex];
         currentRequirementId = $scope.currentRequirement.requirementId;
+
+        // Force the content change of the textarea containing the requirement description
+        // TODO: check why it is not automatically updated
+        $("#current_requirement_description").val($scope.currentRequirement.description);
+
         fillDependenciesGrid();
         getRequirementProperties();
         $("#requirement_status").html("");
         $("#property_status").html("");
     }
 
+    // Go to the page for the next requirement
     $scope.goToNextRequirement = function () {
         saveDependencies();
-        currentRequirementIndex++;
-        loadCurrentRequirement();
     };
 
+    // Submit the dependencies for all the requirements
     $scope.submitDependencies = function () {
+        // Save the dependencies of the last requirement
         saveDependencies();
+        // Submit the dependencies
         $http({
             url: "supersede-dm-app/processes/requirements/dependencies/submit",
-            data: dependencies,
-            params: {processId: processId},
+            params: { processId: processId, requirementId: currentRequirementId, dependencies: dependencies[currentRequirementId] },
             method: 'POST'
         }).success(function () {
-            $("#submitted").html("<strong>Dependencies successfully saved!</strong>");
+            if ($scope.lastRequirement()) {
+                // Go back to the home page of the process after the last requirement
+                $location.url('supersede-dm-app/process?processId=' + processId);
+            }
+            else {
+                // Go to the next requirement
+                currentRequirementIndex++;
+                loadCurrentRequirement();
+            }
         }).error(function (err) {
-            $("#submitted").html("<strong>Unable to save the dependencies: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
+    // Tell if there are no requirements in the current process
     $scope.emptyRequirements = function () {
         return $scope.requirements.length === 0;
     };
 
+    // Tell if the current requirement is the last one
     $scope.lastRequirement = function () {
         if (currentRequirementIndex == $scope.requirements.length - 1) {
             return true;
         }
+        // TODO: why is this needed?
         else if ($scope.requirements.length == 1 && currentRequirementIndex === 0) {
             return true;
         }
@@ -157,6 +188,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     };
 
+    // Add a property to the current requirement
     $scope.addProperty = function () {
         var propertyName = $("#property_name").val();
         var propertyValue = $("#property_value").val();
@@ -184,6 +216,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         }
     };
 
+    // Submit updates to the current requirement
     $scope.updateRequirement = function () {
         var requirement = {};
         requirement.requirementId = currentRequirementId;
@@ -201,6 +234,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         });
     };
 
+    // Get details about the current process
     $http.get('supersede-dm-app/processes/details?processId=' + processId)
     .success(function (data) {
         $scope.processName = data.name;
@@ -208,6 +242,7 @@ app.controllerProvider.register('edit_requirements', function($scope, $http, $lo
         alert(err.message);
     });
 
+    // Get the list of requirements of the current process
     $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
     .success(function (data) {
         $scope.requirements = data;

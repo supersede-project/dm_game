@@ -1,14 +1,19 @@
-<script src="supersede-dm-app/js/imports.js"></script>
+<script src="supersede-dm-app/js/import_users.js"></script>
 
 <style>
-    h1 {
+    h1, h2 {
         text-align: center;
     }
 </style>
 
 <div ng-controller="import_users">
 
-    <h1>Add Users to the Current Process</h1>
+    <h1>Add Users to the Process</h1>
+
+    <h2>Process Details</h2>
+    <div id="process_details"></div>
+
+    <h2>Users</h2>
 
     <div style="font-size: 13px; font-family: Verdana">
         <div id="requirements"></div>
@@ -23,7 +28,6 @@
     <div align="center">
         <jqx-button style="margin-right: 10px" ng-click="importUsers()">Import</jqx-button>
         <jqx-button ng-click="home()">Back</jqx-button>
-        <p id="imported"></p>
     </div>
 
 </div>

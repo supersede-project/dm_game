@@ -18,13 +18,9 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
 
     var processId = $location.search().processId;
 
-    $scope.process = {};
-
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/processes/users/list/detailed",
-        params: { processId: processId }
-    }).success(function(data) {
+    // Get the users of the process
+    $http.get('supersede-dm-app/processes/users/list/detailed?processId=' + processId)
+    .success(function(data) {
         var source = {
             datatype: "json",
             datafields: [
@@ -51,11 +47,9 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         alert(err.message);
     });
 
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/processes/criteria/list/detailed",
-        params: { processId: processId }
-    }).success(function(data) {
+    // Get the criteria of the process
+    $http.get("supersede-dm-app/processes/criteria/list/detailed?processId=" + processId)
+    .success(function(data) {
         var source = {
             datatype: "json",
             datafields: [
@@ -70,6 +64,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -82,11 +77,9 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         alert(err.message);
     });
 
-    $http({
-        method: 'GET',
-        url: "supersede-dm-app/processes/requirements/list",
-        params: { processId: processId }
-    }).success(function(data){
+    // Get the requirements of the process
+    $http.get("supersede-dm-app/processes/requirements/list?processId=" + processId)
+    .success(function(data){
         var source = {
             datatype: "json",
             datafields: [
@@ -101,6 +94,7 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -113,11 +107,12 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         alert(err.message);
     });
 
+    // Get the activities of the process
     function loadActivities() {
         $http.get('supersede-dm-app/processes/available_activities?processId=' + processId)
         .success(function (data) {
-            $("#procList").jqxListBox('clear');
-            $("#procList").jqxListBox({
+            $("#actionsList").jqxListBox('clear');
+            $("#actionsList").jqxListBox({
                 source: data,
                 width: 700,
                 height: 250,
@@ -142,9 +137,39 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         });
     }
 
+    // Update the details of the process
+    function updateProcessDetails(process) {
+        // The jqxGrid requires an array: create one and add the process to it
+        processes = [];
+        processes.push(process);
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "name" },
+                { name: "objective" },
+                { name: "status" },
+                { name: "phaseName" }
+            ],
+            localdata: processes
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#process_details").jqxGrid({
+            width: '100%',
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '25%' },
+                { text: 'Objective', datafield: 'objective', width: '25%' },
+                { text: 'Status', datafield: 'status', width: '25%' },
+                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+            ]
+        });
+    }
+
+    // Get the details of the process
     $http.get('supersede-dm-app/processes/details?processId=' + processId)
     .success(function (data) {
-        $scope.process = data;
+        updateProcessDetails(data);
     }).error(function (err) {
         alert(err.message);
     });
@@ -152,32 +177,43 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
     loadActivities();
 
     $("#btnPrevPhase").jqxButton({ width: 60, height: 250 });
+
+    // Go to the previous phase of the process
     $("#btnPrevPhase").on('click', function () {
         $http.get('supersede-dm-app/processes/prev?processId=' + processId)
         .success(function (data) {
-            $scope.process = data;
-            loadActivities();
-        }).error(function (error) {
-            alert(error.message);
-        });
-    } );
-    $("#btnNextPhase").jqxButton({ width: 60, height: 250  });
-    $("#btnNextPhase").on('click', function() {
-        $http.get('supersede-dm-app/processes/next?processId=' + processId)
-        .success(function (data) {
-            $scope.process = data;
+            updateProcessDetails(data);
             loadActivities();
         }).error(function (error) {
             alert(error.message);
         });
     });
 
-    $('#procList').on('select', function (event) {
+    $("#btnNextPhase").jqxButton({ width: 60, height: 250 });
+
+    // Go to the next phase of the process
+    $("#btnNextPhase").on('click', function() {
+        $http.get('supersede-dm-app/processes/next?processId=' + processId)
+        .success(function (data) {
+            updateProcessDetails(data);
+            loadActivities();
+        }).error(function (error) {
+            alert(error.message);
+        });
+    });
+
+    // When an action is selected, go to the corresponding page
+    $('#actionsList').on('select', function (event) {
         var args = event.args;
-        var item = $('#procList').jqxListBox('getItem', args.index);
+        var item = $('#actionsList').jqxListBox('getItem', args.index);
         if (item !== null) {
             $location.url("supersede-dm-app/" + item.originalItem.entryUrl + "?processId=" + processId);
             $scope.$apply();
         }
     });
+
+    // Go back to the DM game home
+    $scope.home = function () {
+        $location.url("supersede-dm-app/home");
+    }
 });

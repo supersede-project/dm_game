@@ -37,6 +37,7 @@ public class User
 {
     @Id
     private Long userId;
+
     private String name;
 
     @Transient

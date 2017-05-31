@@ -21,10 +21,12 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
 
     $scope.rankings = {};
 
+    // Get the requirement with the given id
     $scope.getRequirement = function (requirementId) {
         return requirements[requirementId];
     };
 
+    // Get the details of the selected process
     $http.get('supersede-dm-app/processes/details?processId=' + processId)
     .success(function (data) {
         $scope.processName = data.name;
@@ -32,6 +34,7 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
         alert(err.message);
     });
 	
+    // Get the rankings that have been selected by the supervisor
     $http.get('supersede-dm-app/processes/rankings/list?processId=' + processId)
     .success(function (data) {
         $scope.rankings = data;
@@ -39,6 +42,7 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
         alert(err.message);
     });
 
+    // Get the requirements of the selected process
     $http.get('supersede-dm-app/processes/requirements/list?processId=' + processId)
     .success(function (data) {
         for (var i = 0; i < data.length; i++) {
@@ -49,10 +53,12 @@ app.controllerProvider.register('show_ranking', function($scope, $http, $locatio
         alert(err.message);
     });
 
+    // Tell whether rankings have already been selected by the supervisor
 	$scope.empty = function () {
 	    return $scope.rankings.length === 0;
 	};
 
+    // Go back to the process details page
 	$scope.back = function () {
 	    $location.url('supersede-dm-app/process?processId=' + processId);
 	};

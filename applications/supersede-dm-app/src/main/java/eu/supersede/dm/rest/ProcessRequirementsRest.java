@@ -58,7 +58,7 @@ public class ProcessRequirementsRest
     {
         Requirement r = new Requirement();
         r.setName(name);
-        r.setStatus( RequirementStatus.Editable.getValue() );
+        r.setStatus(RequirementStatus.Editable.getValue());
         r = DMGame.get().getJpa().requirements.save(r);
         DMGame.get().getProcessManager(processId).addRequirement(r);
         return r;
@@ -284,12 +284,18 @@ public class ProcessRequirementsRest
 
     @RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
     public void setDependencies(@RequestParam Long processId, @RequestParam Long requirementId,
-            @RequestParam List<Long> dependencies)
+            @RequestParam(required = false) List<Long> dependencies)
     {
         // Delete previously stored dependencies
         for (HRequirementDependency storedDependency : requirementsDependenciesJpa.findByRequirementId(requirementId))
         {
             requirementsDependenciesJpa.delete(storedDependency);
+        }
+
+        if (dependencies == null || dependencies.size() == 0)
+        {
+            // No dependencies to add
+            return;
         }
 
         // Store new dependencies

@@ -19,20 +19,22 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     $scope.processId = $location.search().processId;
     $scope.activityId = $location.search().activityId;
     $scope.criteriaNames = {};
+    $scope.currentOpinionProvider = {};
+    $scope.rankings = {};
 
     var gameId;
     var gameRequirements = {};
     var gameStatus;
     var open = 'Open';
-    var opinionProviders = {};
+    var opinionProviders = [];
 
     $scope.currentPage = "page1";
-    $scope.ranking = {};
     $scope.solutions = [];
 
     function loadPage() {
         $http.get('supersede-dm-app/garp/game/game?gameId=' + gameId)
         .success(function (data) {
+            $scope.game = data;
             gameStatus = data.status;
             loadOpinionProviders();
         }).error(function (err) {
@@ -43,9 +45,25 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadOpinionProviders() {
         $http.get('supersede-dm-app/garp/game/opinionproviders?gameId=' + gameId)
         .success(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                opinionProviders[data[i].userId] = data[i];
-            }
+            opinionProviders = data;
+
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'userId' },
+                    { name: 'name' }
+                ],
+                localdata: data
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#opinion_providers").jqxComboBox({
+                selectedIndex: 0,
+                source: dataAdapter,
+                displayMember: 'name',
+                width: 400,
+            });
+            $scope.currentOpinionProvider = $("#opinion_providers").jqxComboBox('getSelectedItem').originalItem;
+
             loadCriteria();
         }).error(function (err) {
             alert(err.message);
@@ -67,7 +85,7 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadRankings() {
         $http.get("supersede-dm-app/garp/game/ranking?gameId=" + gameId)
         .success(function (data) {
-            $scope.ranking = data;
+            $scope.rankings = data;
 
             if (!$scope.emptyRanking()) {
                 loadRequirements();
@@ -80,7 +98,6 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     function loadRequirements() {
         $http.get("supersede-dm-app/garp/game/gamerequirements?gameId=" + gameId)
         .success(function (data) {
-
             for (var i = 0; i < data.length; i++) {
                 var requirementId = data[i].requirementId;
                 gameRequirements[requirementId] = data[i];
@@ -95,17 +112,86 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     }
 
     function getSolutions() {
+        $scope.solutionReceived = false;
         $http.get("supersede-dm-app/garp/game/calc?gameId=" + gameId)
-        .success(function(data) {
-            $scope.solutions = data;
+        .success(function (data) {
+            $scope.solutionReceived = true;
+            showSolutions(data);
         }).error(function(err){
             alert(err.message);
         });
     }
 
-    $scope.getOpinionProviderName = function (userId) {
-        return opinionProviders[userId].name;
-    };
+    function showSolutions(data) {
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "requirements" },
+                { name: "objectiveValues" },
+                { name: "name" }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source, {
+            autoBind: true,
+            beforeLoadComplete: function (records) {
+                var data = [];
+                for (var i = 0; i < records.length; i++) {
+                    var solution = records[i];
+                    solution.name = "Solution " + (i + 1);
+                    data.push(solution);
+                }
+                return data;
+            }
+        });
+        $("#solutions").jqxComboBox({
+            selectedIndex: 0,
+            source: dataAdapter,
+            displayMember: 'name',
+            width: 400,
+        });
+
+        $scope.currentSolution = $("#solutions").jqxComboBox('getSelectedItem').originalItem;
+        console.log("current solution:");
+        console.log($scope.currentSolution);
+        showObjectiveValues();
+    }
+
+    function showObjectiveValues() {
+        var objectiveValues = [];
+
+        for (var criterion in $scope.currentSolution.objectiveValues) {
+            if ($scope.currentSolution.objectiveValues.hasOwnProperty(criterion)) {
+                var record = {};
+                record.criterion = $scope.criteriaNames[criterion];
+                record.objectiveValue = $scope.currentSolution.objectiveValues[criterion];
+                objectiveValues.push(record);
+            }
+        }
+
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "criterion" },
+                { name: "objectiveValue" }
+            ],
+            localdata: objectiveValues
+        };
+        console.log("source:");
+        console.log(source);
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#objective_values").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Criterion', datafield: 'criterion' },
+                { text: 'Objective Value', datafield: 'objectiveValue'}
+            ]
+        });
+    }
 
     $scope.getRequirement = function(requirementId) {
         return gameRequirements[requirementId];
@@ -116,19 +202,16 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
         setCurrentPage(2);
     };
 
-    $scope.selectSolution = function() {
-        var solutionIndex = $("#select_solution").val();
-        var selectedSolution = $scope.solutions[solutionIndex - 1];
-
+    $scope.selectSolution = function () {
         $http({
             url: "supersede-dm-app/garp/game/solution",
-            data: selectedSolution,
+            data: $scope.currentSolution.requirements,
             method: 'POST',
             params: {gameId : gameId}
         }).success(function() {
-            $("#selected_solution").html("<strong>Solution successfully saved!</strong>");
+            $scope.home();
         }).error(function(err) {
-            $("#selected_solution").html("<strong>Unable to save the solution: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
@@ -137,14 +220,18 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
 
         $http.post('supersede-dm-app/garp/game/closegame?gameId=' + gameId + "&processId=" + $scope.processId)
         .success(function (data) {
-            $("#game_status").html("<strong>Game successfully closed!</strong>");
+            $scope.home();
         }).error(function (err) {
-            $("#game_status").html("<strong>Unable to close the game: " + err.message + "</strong>");
+            alert(err.message);
         });
     };
 
     $scope.emptyRanking = function() {
-        return Object.keys($scope.ranking).length === 0;
+        return Object.keys($scope.rankings).length === 0;
+    };
+
+    $scope.emptyRankingForOpinionProvider = function () {
+            return $scope.rankings[$scope.currentOpinionProvider.userId] === undefined;
     };
 
     $scope.gameOpen = function () {
@@ -166,4 +253,26 @@ app.controllerProvider.register("select_solution", function($scope, $http, $loca
     }).error(function (err) {
         alert(err.message);
     });
+
+    $("#opinion_providers").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+                $scope.currentOpinionProvider = item.originalItem;
+                $scope.$apply();
+            }
+        }
+    });
+
+    $("#solutions").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+                $scope.currentSolution = item.originalItem;
+                $scope.$apply();
+            }
+        }
+    });
+
+    $("#jqx-loader").jqxLoader({ imagePosition: 'center', autoOpen: 'true', text: 'Computing solutions...'});
 });

@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.dm.DMGame;
 import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.fe.exception.NotFoundException;
 import eu.supersede.fe.integration.ProxyWrapper;
@@ -67,28 +68,7 @@ public class UserRest
         DatabaseUser currentUser = (DatabaseUser) authentication.getPrincipal();
         Long userId = currentUser.getUserId();
 
-        eu.supersede.integration.api.datastore.fe.types.User proxyUser = proxy.getFEDataStoreProxy()
-                .getUser(currentUser.getTenantId(), userId.intValue(), true, currentUser.getToken());
-
-        if (proxyUser == null)
-        {
-            throw new NotFoundException("Can't find user with id " + currentUser.getUserId());
-        }
-
-        User user = users.findOne(userId);
-
-        if (user == null)
-        {
-            // Save the user in the database if it is not already present
-            user = new User(userId);
-            user.setName(proxyUser.getFirst_name() + " " + proxyUser.getLast_name());
-            user.setEmail(proxyUser.getEmail());
-            return users.save(user);
-        }
-        else
-        {
-            return user;
-        }
+        return DMGame.get().getUser(userId, currentUser.getTenantId(), currentUser.getToken());
     }
 
     /**

@@ -55,6 +55,8 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 	
 	public static List<String> REQUIREMENT_IDS = new ArrayList<String>();
 	
+	public static List<String> CRITERIA_IDS = new ArrayList<String>();
+	
 	public enum ObjectiveFunction{
 		PLAYERS, CRITERIA
 	}
@@ -133,6 +135,11 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		GA_VARIANT = gaVariant;
 //		numberOfPlayers = numPlayers;
 		readProblem(inputDir, criteriaFile, dependenciesFile, criteriaWeightFile, playerWeightFile, requirementsFile);
+		
+		CRITERIA_IDS.clear();
+		CRITERIA_IDS.addAll(criteria.keySet());
+		Collections.sort(CRITERIA_IDS);
+		
 		REQUIREMENT_IDS.clear();
 		REQUIREMENT_IDS.addAll(requirements.keySet());
 		Collections.sort(REQUIREMENT_IDS);
@@ -168,6 +175,10 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 		this.playerRankings = rankings;
 		
 		numberOfPlayers = playerRankings.keySet().size(); // playerWeights.get("c1").keySet().size();
+		
+		CRITERIA_IDS.clear();
+		CRITERIA_IDS.addAll(criteria.keySet());
+		Collections.sort(CRITERIA_IDS);
 		
 		REQUIREMENT_IDS.clear();
 		REQUIREMENT_IDS.addAll(requirements.keySet());
@@ -215,6 +226,7 @@ public abstract class AbstractPrioritizationProblem implements PermutationProble
 			playerRankings.put("p"+i, rankings);
 			i++;
 		}
+		numberOfPlayers = playerRankings.size();
 		dependencies = Utils.readDependencies(dependenciesFile);
 		requirements = Utils.readRequirements(requirementsFile);
 //		REQUIREMENT_IDS.addAll(requirements.keySet());

@@ -22,7 +22,6 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     $scope.gameRequirementsId = [];
     $scope.gameCriteriaId = [];
     $scope.gameOpinionProvidersId = [];
-    $scope.gameNegotiatorsId = [];
 
     $scope.now = function()
     {
@@ -35,6 +34,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     var weights = {};
     var weightsId = {};
     var gameName;
+    var gameNegotiator;
 
     $scope.game = {title: "Decision Making Process " + $scope.now()};
     
@@ -126,6 +126,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                autorowheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
@@ -155,6 +156,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                autorowheight: true,
                 pageable: true,
                 source: dataAdapter,
                 columns: [
@@ -195,7 +197,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 ]
             });
             var dataAdapter2 = new $.jqx.dataAdapter(availablePlayers);
-            $("#negotiators").jqxGrid({
+            $("#negotiator").jqxGrid({
                 width: '100%',
                 selectionmode: 'checkbox',
                 altrows: true,
@@ -216,9 +218,19 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
     function defineGameData() {
 
         gameName = $("#game_name").val();
-
         var i;
+
+        // clear requirements
+        gameRequirements.localdata = [];
+        $scope.gameRequirementsId = [];
+
+        // fill requirements
         var selectedRequirements = $("#requirements").jqxGrid("selectedrowindexes");
+
+        if (selectedRequirements.length < 2) {
+            alert('You must select at least two requirements');
+            return false;
+        }
 
         for (i = 0; i < selectedRequirements.length; i++) {
             var selectedRequirement = $("#requirements").jqxGrid('getrowdata', selectedRequirements[i]);
@@ -226,26 +238,59 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             $scope.gameRequirementsId.push(selectedRequirement.requirementId);
         }
 
+        // clear criteria
+        $scope.gameCriteria.localdata = [];
+        $scope.gameCriteriaId = [];
+
+        // fill criteria
         var selectedCriteria = $("#criteria").jqxGrid("selectedrowindexes");
+
+        if (selectedCriteria.length === 0) {
+            alert('You must select at least one criterion');
+            return false;
+        }
+
         for (i = 0; i < selectedCriteria.length; i++) {
             var selectedCriterion = $("#criteria").jqxGrid('getrowdata', selectedCriteria[i]);
             $scope.gameCriteria.localdata.push(selectedCriterion);
             $scope.gameCriteriaId.push(selectedCriterion.sourceId);
         }
 
+        // clear negotiator
+        gameNegotiators.localdata = [];
+        gameNegotiator = undefined;
+
+        // fill negotiator
+        var selectedNegotiators = $("#negotiator").jqxGrid("selectedrowindexes");
+
+        if (selectedNegotiators.length !== 1) {
+            alert("You must select exactly one negotiator");
+            return false;
+        }
+        else {
+            gameNegotiator = $("#negotiator").jqxGrid('getrowdata', selectedNegotiators[0]);
+            gameNegotiators.localdata.push(gameNegotiator);
+        }
+
+        // clear opinion providers
+        $scope.gameOpinionProviders.localdata = [];
+        $scope.gameOpinionProvidersId = [];
+
+        // fill opinion providers
         var selectedOpinionProviders = $("#opinion_providers").jqxGrid("selectedrowindexes");
+
+        if (selectedOpinionProviders.length === 0) {
+            alert('You must select at least one opinion provider');
+            return false;
+        }
+
         for (i = 0; i < selectedOpinionProviders.length; i++) {
             var selectedOpinionProvider = $("#opinion_providers").jqxGrid('getrowdata', selectedOpinionProviders[i]);
             $scope.gameOpinionProviders.localdata.push(selectedOpinionProvider);
             $scope.gameOpinionProvidersId.push(selectedOpinionProvider.userId);
         }
 
-        var selectedNegotiators = $("#negotiators").jqxGrid("selectedrowindexes");
-        for (i = 0; i < selectedNegotiators.length; i++) {
-            var selectedNegotiator = $("#negotiators").jqxGrid('getrowdata', selectedNegotiators[i]);
-            gameNegotiators.localdata.push(selectedNegotiator);
-            $scope.gameNegotiatorsId.push(selectedNegotiator.userId);
-        }
+        return true;
     }
 
     function setPlayersWeights() {
@@ -280,6 +325,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -296,6 +342,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             width: '100%',
             altrows: true,
             autoheight: true,
+            autorowheight: true,
             pageable: true,
             source: dataAdapter,
             columns: [
@@ -303,6 +350,21 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
                 { text: 'Name', datafield: 'name', width: '20%' },
                 { text: 'Description', datafield: 'description', widht: '55%' },
                 { text: 'Weight', datafield: 'weight', width: '20%' }
+            ]
+        });
+    }
+
+    function showGameNegotiator() {
+        var dataAdapter = new $.jqx.dataAdapter(gameNegotiators);
+        $("#game_negotiator").jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Id', datafield: 'userId', width: '20%' },
+                { text: 'Name', datafield: 'name', width: '40%' },
+                { text: 'Email', datafield: 'email', width: '40%' }
             ]
         });
     }
@@ -323,25 +385,10 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         });
     }
 
-    function showGameNegotiators() {
-        var dataAdapter = new $.jqx.dataAdapter(gameNegotiators);
-        $("#game_negotiators").jqxGrid({
-            width: '100%',
-            altrows: true,
-            autoheight: true,
-            pageable: true,
-            source: dataAdapter,
-            columns: [
-                { text: 'Id', datafield: 'userId', width: '20%' },
-                { text: 'Name', datafield: 'name', width: '40%' },
-                { text: 'Email', datafield: 'email', width: '40%' }
-            ]
-        });
-    }
-
     $scope.definePlayersWeights = function() {
-        defineGameData();
-        setCurrentPage(2);
+        if (defineGameData()) {
+            setCurrentPage(2);
+        }
     };
 
     $scope.defineCriteriaWeights = function () {
@@ -355,7 +402,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
         showGameRequirements();
         showGameCriteria();
         showGameOpinionProviders();
-        showGameNegotiators();
+        showGameNegotiator();
     };
 
     $scope.create_game = function () {
@@ -367,7 +414,7 @@ app.controllerProvider.register('create_game', function($scope, $http, $location
             	name: gameName, 
             	gameRequirements: $scope.gameRequirementsId, 
             	gameOpinionProviders: $scope.gameOpinionProvidersId,
-                gameNegotiators: $scope.gameNegotiatorsId,
+                gameNegotiator: gameNegotiator.userId,
                 processId: $scope.processId }
         })
         .success(function(data) {

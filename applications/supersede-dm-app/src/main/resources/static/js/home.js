@@ -14,21 +14,177 @@
 
 var app = angular.module('w5app');
 
-var http;
-var loadProcesses;
-
 app.controllerProvider.register('home', function ($scope, $rootScope, $http, $location) {
 
-    http = $http;
-    $scope.procNum = undefined;
-
-    $http.get('/supersede-dm-app/user/current')
+    // Get the alerts received from WP2
+    $http.get('supersede-dm-app/alerts/biglist')
     .success(function (data) {
-        $scope.user = data;
+        $scope.alertsNum = data.length;
+
+        var source = {
+            datatype: "json",
+            localdata: data,
+            datafields: [
+                { name: 'applicationId', map: 'applicationId' },
+                { name: 'alertId' },
+                { name: 'id' },
+                { name: 'timestamp' },
+                { name: 'description' },
+                { name: 'classification' },
+                { name: 'accuracy' },
+                { name: 'pos' },
+                { name: 'neg' },
+                { name: 'overall' },
+            ],
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#alerts").jqxGrid({
+            width: "100%",
+            source: dataAdapter,
+            groupable: true,
+            columns: [
+                { text: 'App', dataField: 'applicationId', width: "15%" },
+                { text: 'Alert', dataField: 'alertId', width: "10%" },
+                { text: 'Id', dataField: 'id', width: "10%" },
+                { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
+                { text: 'Description', dataField: 'description', width: "20%" },
+                { text: 'Classification', dataField: 'classification', width: "15%" },
+                { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
+                { text: 'Pos.', dataField: 'pos', width: "5%" },
+                { text: 'Neg.', dataField: 'neg', width: "5%" },
+                { text: 'Overall.', dataField: 'overall', width: "5%" }
+            ],
+        groups: ['applicationId', 'alertId']
+        });
+
+        $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
+
     }).error(function (err) {
         alert(err.message);
     });
 
+    // Get requirements that are not enacted a not assigned to any process
+    $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3&procFx=Eq&processId=-1')
+    .success(function (data) {
+        $scope.reqNum = data.length;
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: 'name' },
+                { name: 'description' }
+            ],
+            localdata: data
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $('#requirements').jqxGrid({
+            source: dataAdapter,
+            width: '100%',
+            autoheight: true,
+            autorowheight: true,
+            pageable: true,
+            altrows: true,
+            columns: [
+                { text: 'Name', datafield: 'name', width: '30%' },
+                { text: 'Description', datafield: 'description', width: '70%' }
+            ]
+        });
+
+        $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    // Get the available activities
+    $http.get('supersede-dm-app/processes/activities/list')
+    .success(function (data) {
+        $scope.actNum = data.length;
+
+        var source = {
+            datatype: "json",
+            datafields: [
+                { name: "description" },
+                { name: "url" },
+                { name: "processId" },
+                { name: "activityId"}
+            ],
+            localdata: data,
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        // Show button to open the activity
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            // Get the activity corresponding to the given row
+            var activity = dataAdapter.records[row];
+            var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+            r = r.concat('<jqx-button jqx-height="25" ng-click="openActivity(\'' + activity.url + '\', ' +
+                activity.processId + ', ' + activity.activityId + ')" style="margin-left: 10px">Open Activity</jqx-button></div>');
+            return r;
+        };
+        $('#activities').jqxGrid({
+            width: '100%',
+            altrows: true,
+            autoheight: true,
+            rowsheight: 32,
+            pageable: true,
+            source: dataAdapter,
+            columns: [
+                { text: 'Description', datafield: 'description', width: '80%' },
+                { text: '', datafield: 'url', width: '20%', cellsrenderer: cellsrenderer }
+            ]
+        });
+
+        $("#expActivities").jqxExpander({ width: '100%', expanded: false });
+    }).error(function (err) {
+        alert(err.message);
+    });
+
+    // Get the list of all the processes
+    function loadProcesses() {
+        $http.get('supersede-dm-app/processes/list')
+        .success(function (data) {
+            $scope.procNum = data.length;
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'name' },
+                    { name: 'objective' },
+                    { name: 'state' },
+                    { name: 'date' },
+                    { name: 'id' }
+                ],
+                localdata: data
+            };
+            // Show three buttons to view, close and delete the processes
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+                r = r.concat('<jqx-button jqx-height="25" ng-click="viewProcess(' + value + ')" style="margin-left: 10px">View</jqx-button>');
+                r = r.concat('<jqx-button jqx-height="25" ng-click="closeProcess(' + value + ')" style="margin-left: 10px">Close</jqx-button>');
+                r = r.concat('<jqx-button jqx-height="25" ng-click="deleteProcess(' + value + ')" style="margin-left: 10px">Delete</jqx-button></div>');
+                return r;
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $('#processes').jqxGrid({
+                width: '100%',
+                autoheight: true,
+                pageable: true,
+                altrows: true,
+                source: dataAdapter,
+                rowsheight: 32,
+                columns: [
+                    { text: 'Name', datafield: 'name', width: '20%' },
+                    { text: 'Objective', datafield: 'objective', width: '20%' },
+                    { text: 'State', datafield: 'state', width: '20%' },
+                    { text: 'Date', datafield: 'date', width: '20%' },
+                    { text: '', datafield: 'id', cellsrenderer: cellsrenderer, width: '20%' }
+                ]
+            });
+
+            $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
+        }).error(function (err) {
+            alert(err.message);
+        });
+    }
+
+    // Check if the current user has the given role
     $scope.hasRole = function (role) {
         if ($rootScope.user && $rootScope.user.authorities) {
             for (var i = 0; i < $rootScope.user.authorities.length; i++) {
@@ -41,182 +197,8 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
         return false;
     };
 
-    // Get alerts
-    $http.get('supersede-dm-app/alerts/biglist')
-    .success(function (data) {
-        $scope.alertsNum = data.length;
-
-        $http.get('supersede-dm-app/alerts/biglist')
-        .success(function (data) {
-            var source = {
-                datatype: "json",
-                localdata: data,
-                datafields: [
-                    { name: 'applicationId', map: 'applicationId' },
-                    { name: 'alertId' },
-                    { name: 'id' },
-                    { name: 'timestamp' },
-                    { name: 'description' },
-                    { name: 'classification' },
-                    { name: 'accuracy' },
-                    { name: 'pos' },
-                    { name: 'neg' },
-                    { name: 'overall' },
-                ],
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#gridAlerts").jqxGrid({
-                width: "100%",
-                source: dataAdapter,
-                groupable: true,
-                columns: [
-                  { text: 'App', dataField: 'applicationId', width: "15%" },
-                  { text: 'Alert', dataField: 'alertId', width: "10%" },
-                  { text: 'Id', dataField: 'id', width: "10%" },
-                  { text: 'Timestamp', dataField: 'timestamp', width: "10%" },
-                  { text: 'Description', dataField: 'description', width: "20%" },
-                  { text: 'Classification', dataField: 'classification', width: "15%" },
-                  { text: 'Accuracy', dataField: 'accuracy', width: "5%" },
-                  { text: 'Pos.', dataField: 'pos', width: "5%" },
-                  { text: 'Neg.', dataField: 'neg', width: "5%" },
-                  { text: 'Overall.', dataField: 'overall', width: "5%" }
-                ],
-            groups: ['applicationId', 'alertId']
-            });
-
-            $("#expAlerts").jqxExpander({ width: '100%', expanded: false });
-        }).error(function (err) {
-            alert(err.message);
-        });
-    }).error(function (err) {
-        alert(err.message);
-    });
-
-    // Get requirements
-    $http.get('supersede-dm-app/requirement?statusFx=Neq&status=3&procFx=Eq&processId=-1')
-    .success(function (data) {
-        $scope.reqNum = data.length;
-
-        var source = {
-            localdata: data,
-            datatype: "array"
-        };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $('#requirementslist').jqxListBox({
-            source: dataAdapter,
-            width: '100%',
-            renderer: function (index, label, value) {
-                var datarecord = data[index];
-
-                if (datarecord === undefined) {
-                    return "";
-                }
-
-                return datarecord.name + " - " + datarecord.description;
-            }
-        });
-
-        $("#expRequirements").jqxExpander({ width: '100%', expanded: false });
-    }).error(function (err) {
-        alert(err.message);
-    });
-
-    // Get activities
-    $http.get('supersede-dm-app/processes/activities/list')
-    .success(function (data) {
-        $scope.actNum = data.length;
-
-        var source = {
-            localdata: data,
-            datatype: "array"
-        };
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $('#activities-listbox').jqxListBox({ selectedIndex: 0,
-            source: dataAdapter,
-            displayMember: "name",
-            valueMember: "id",
-            itemHeight: 70, width: '100%',
-            renderer: function (index, label, value) {
-                var datarecord = data[index];
-                var action;
-                if( datarecord.state == "new" ) {
-                    action = "Start";
-                }
-                else {
-                    action = datarecord.state;
-                }
-                var table =
-                    '<table style="min-width: 100%;">' +
-                    '<tr><td style="width: 40px;">' + "img" + '</td><td>' +
-                    '<a href="#/supersede-dm-app/' + datarecord.url +
-                    '?processId=' + datarecord.processId +
-                    '&activityId=' + datarecord.activityId +
-                    '">' + datarecord.description + '</a>' +
-                    '</td></tr></table>';
-                return table;
-            }
-        });
-
-        $("#expActivities").jqxExpander({ width: '100%', expanded: false });
-    }).error(function (err) {
-        alert(err.message);
-    });
-
-
-    $scope.loadProcesses = function () {
-        $http.get('supersede-dm-app/processes/list')
-        .success(function (data) {
-            $scope.procNum = data.length;
-            var source = {
-                localdata: data,
-                datatype: "array"
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            $('#listbox').jqxListBox({
-                selectedIndex: 0,
-                source: dataAdapter,
-                displayMember: "name",
-                valueMember: "id",
-                itemHeight: 70, width: '100%',
-                renderer: function (index, label, value) {
-                    var datarecord = data[index];
-
-                    if (datarecord === undefined) {
-                        return "";
-                    }
-
-                    var action;
-                    if (datarecord.state == "new") {
-                        action = "Start";
-                    }
-                    else {
-                        action = datarecord.state;
-                    }
-                    var table =
-                        '<table style="min-width: 100%;">' +
-                        '<tr><td style="width: 40px;">' + action + '</td><td>' +
-                        datarecord.name + " (" + datarecord.objective + ")" + '</td>' +
-                        '<td style="width: 40px;">' +
-                        '<a href="#/supersede-dm-app/process?processId=' + datarecord.id + '">View</a>' +
-                        '<a href="javascript:" onclick="closeProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Close</a>' +
-                        '<a href="javascript:" onclick="deleteProcess(\'' + datarecord.id + '\');" style="margin-left: 10px">Delete</a>' +
-                        '</td>' +
-                        '</tr><tr><td>' +
-                        "Created: " + datarecord.date +
-                        '</td></tr></table>';
-                    return table;
-                }
-            });
-
-            $("#expProcesses").jqxExpander({ width: '100%', expanded: false });
-        }).error(function (err) {
-            alert(err.message);
-        });
-    };
-
-    loadProcesses = $scope.loadProcesses;
-
-    $scope.createNewProcess = function() {
+    // Create a new process and for a name for it
+    $scope.createNewProcess = function () {
     	var name = prompt( "Enter process name", "");
         if (name !== null) {
     		$http.post('supersede-dm-app/processes/new?name=' + name).success(function(data) {
@@ -225,23 +207,41 @@ app.controllerProvider.register('home', function ($scope, $rootScope, $http, $lo
     	}
     };
 
+    // Open the page with the process details
+    $scope.viewProcess = function (processId) {
+        $location.url('supersede-dm-app/process?processId=' + processId);
+    };
+
+    // Close the process with the given id
+    $scope.closeProcess = function (processId) {
+        $http.post('supersede-dm-app/processes/close?processId=' + processId)
+        .success(function (data) {
+            loadProcesses();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    };
+
+    // Delete the process with the given id
+    $scope.deleteProcess = function (processId) {
+        $http.post('supersede-dm-app/processes/delete?processId=' + processId)
+        .success(function (data) {
+            loadProcesses();
+        }).error(function (err) {
+            alert(err.message);
+        });
+    };
+
+    // Open the page that allows to edit both requirements and criteria
+    $scope.editRequirements = function () {
+        $location.url("supersede-dm-app/ahprp/requirements_criterias_editing");
+    };
+
+    // Open the page of the activity with the given id
+    $scope.openActivity = function (url, processId, activityId) {
+        $location.url("supersede-dm-app/" + url).search('processId', processId).search('activityId', activityId);
+    };
+
+    // Get the list of processes when the page is loaded
     loadProcesses();
 });
-
-function closeProcess(processId) {
-    http.post('supersede-dm-app/processes/close?processId=' + processId)
-    .success(function (data) {
-        loadProcesses();
-    }).error(function(err) {
-        alert(err.message);
-    });
-}
-
-function deleteProcess(processId) {
-    http.post('supersede-dm-app/processes/delete?processId=' + processId)
-    .success(function (data) {
-        loadProcesses();
-    }).error(function(err) {
-        alert(err.message);
-    });
-}
