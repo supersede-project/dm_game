@@ -1,4 +1,4 @@
-<script src="supersede-dm-app/js/edit_requirements.js"></script>
+<script src="supersede-dm-app/js/req_edit_session.js"></script>
 
 <style>
     h1, h2, h3 {
@@ -10,55 +10,64 @@
     textarea {
         height: 10em;
     }
+    #current_requirement {
+        padding: 2%;
+    }
 </style>
 
-<div ng-controller="edit_requirements">
-    <div ng-show="emptyRequirements()">
-        <p>No requirements found!</p>
-    </div>
+<div ng-controller="req_edit_session">
 
-    <div ng-show="!emptyRequirements()">
-        <h1>Edit Requirements for Process {{processName}}</h1>
+	<h1>Edit Requirements for Process {{processName}}</h1>
 
-        <h2>Current Requirement</h2>
-        <div style="font-size: 13px; font-family: Verdana">
-            <form>
-                <strong>Name:</strong><br>
-                <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
-                <strong>Description:</strong><br>
-                <textarea id="current_requirement_description" value="{{currentRequirement.description}}"></textarea><br><br><br>
-            </form>
-            <jqx-button ng-click="updateRequirement()">Update requirement</jqx-button>
-            <p id="requirement_status"></p>
+	<div id="mainSplitter">
+
+		<div id="left_splitter">
+			<jqx-button ng-click="newRequirement()">New</jqx-button>
+            <jqx-button ng-click="deleteRequirement()">Delete</jqx-button>
+			<div style="border: none;" id="requirements-listbox"></div>
+		</div>
+
+		<div id="right_splitter">
+            <div id="current_requirement">
+                <div style="font-size: 13px; font-family: Verdana">
+                    <form>
+                        <strong>Name:</strong><br>
+                        <input id="current_requirement_name" type="text" value="{{currentRequirement.name}}"><br><br>
+                        <strong>Description:</strong><br>
+                        <textarea id="current_requirement_description">{{currentRequirement.description}}</textarea><br><br><br>
+                    </form>
+                    <jqx-button ng-click="updateRequirement()">Update requirement</jqx-button>
+                    <p id="requirement_status"></p>
+                </div>
+
+                <h2>Dependencies</h2>
+                <div style="font-size: 13px; font-family: Verdana">
+                    <div id="dependencies"></div>
+                </div>
+
+                <div align="center">
+                    <br>
+                    <jqx-button ng-click="submitDependencies()">Submit Dependencies</jqx-button>
+                    <br>
+                    <p id="submitted"></p>
+                </div>
+
+                <h2>Properties</h2>
+                <div style="font-size: 13px; font-family: Verdana">
+                    <div id="properties"></div>
+
+                    <h3>Add a new property</h3>
+                    <form>
+                        <strong>Property Name:</strong>
+                        <input id="property_name" type="text"><br><br>
+                        <strong>Property Value:</strong>
+                        <input id="property_value" type="text"><br><br><br>
+                    </form>
+                    <jqx-button ng-click="addProperty()">Add property</jqx-button>
+                    <p id="property_status"></p>
+                </div>
+            </div>
         </div>
+	</div>
 
-        <h2>Dependencies</h2>
-        <div style="font-size: 13px; font-family: Verdana">
-            <div id="dependencies"></div>
-        </div>
-
-        <h2>Properties</h2>
-        <div style="font-size: 13px; font-family: Verdana">
-            <div id="properties"></div>
-
-            <h3>Add a new property</h3>
-            <form>
-                <strong>Property Name:</strong>
-                <input id="property_name" type="text"><br><br>
-                <strong>Property Value:</strong>
-                <input id="property_value" type="text"><br><br><br>
-            </form>
-            <jqx-button ng-click="addProperty()">Add property</jqx-button>
-            <p id="property_status"></p>
-        </div>
-
-        <br>
-
-        <div align="center">
-            <jqx-button ng-show="!lastRequirement()" ng-click="goToNextRequirement()">Go to the next requirement</jqx-button>
-            <jqx-button ng-show="lastRequirement()" ng-click="submitDependencies()">Submit Dependencies</jqx-button>
-            <br>
-            <p id="submitted"></p>
-        </div>
-    </div>
 </div>
