@@ -15,7 +15,9 @@
 package eu.supersede.dm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
@@ -24,6 +26,7 @@ import javax.naming.NamingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.supersede.fe.application.ApplicationUtil;
 import eu.supersede.fe.integration.ProxyWrapper;
 import eu.supersede.fe.multitenant.MultiJpaProvider;
 import eu.supersede.gr.jpa.ActivitiesJpa;
@@ -45,7 +48,6 @@ import eu.supersede.gr.jpa.ValutationCriteriaJpa;
 import eu.supersede.gr.model.HAlert;
 import eu.supersede.gr.model.HApp;
 import eu.supersede.gr.model.HReceivedUserRequest;
-import eu.supersede.gr.model.Requirement;
 import eu.supersede.integration.api.dm.types.Alert;
 import eu.supersede.integration.api.dm.types.UserRequest;
 import eu.supersede.integration.api.pubsub.evolution.EvolutionAlertMessageListener;
@@ -55,6 +57,9 @@ import eu.supersede.integration.api.pubsub.evolution.iEvolutionSubscriber;
 @Component
 public class ModuleLoader
 {
+	
+	@Autowired private ApplicationUtil au;
+	
     @Autowired
     private UsersJpa jpaUsers;
 
@@ -137,7 +142,9 @@ public class ModuleLoader
         jpa.proxy = proxy;
 
         DMGame.init(jpa);
-
+        
+        registerUIEntries();
+        
         new Thread(new Runnable()
         {
             @Override
@@ -200,19 +207,32 @@ public class ModuleLoader
         }).start();
     }
 
-    private List<Requirement> getRequirements(Alert alert)
-    {
-        // Either extract from the alert, or make a backward request to WP2
+    private void registerUIEntries() {
+    	
+        Map<String, String> labels = new HashMap<>();
+        List<String> roles;
 
-        List<Requirement> reqs = new ArrayList<>();
+        labels = new HashMap<>();
+        labels.put("", "Plan");
+        roles = new ArrayList<>();
+        roles.add("DM_ADMIN");
+        au.addApplicationPage( "supersede-dm-app", "plan", labels, roles);
 
-        for (UserRequest request : alert.getRequests())
-        {
-            reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
-        }
+	}
 
-        return reqs;
-    }
+//	private List<Requirement> getRequirements(Alert alert)
+//    {
+//        // Either extract from the alert, or make a backward request to WP2
+//
+//        List<Requirement> reqs = new ArrayList<>();
+//
+//        for (UserRequest request : alert.getRequests())
+//        {
+//            reqs.add(new Requirement(request.getId() + ": " + request.getDescription(), ""));
+//        }
+//
+//        return reqs;
+//    }
 
     public void handleAlert(Alert alert)
     {
@@ -224,7 +244,7 @@ public class ModuleLoader
         AlertsJpa multijpaAlerts = multiJpaProvider.getRepository(AlertsJpa.class, alert.getTenant());
         ReceivedUserRequestsJpa multijpaReceivedUserRequests = multiJpaProvider
                 .getRepository(ReceivedUserRequestsJpa.class, alert.getTenant());
-        RequirementsJpa multijpaRequirements = multiJpaProvider.getRepository(RequirementsJpa.class, alert.getTenant());
+//        RequirementsJpa multijpaRequirements = multiJpaProvider.getRepository(RequirementsJpa.class, alert.getTenant());
 
         if (multijpaApps == null)
         {

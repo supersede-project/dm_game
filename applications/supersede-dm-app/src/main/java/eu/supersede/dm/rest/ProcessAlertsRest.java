@@ -112,7 +112,7 @@ public class ProcessAlertsRest
         {
             Requirement requirement = new Requirement();
             requirement.setName(request.getDescription());
-            requirement.setDescription("Features:");
+            requirement.setDescription("");
             Requirement savedRequirement = requirementsJpa.save(requirement);
             proc.addRequirement(savedRequirement);
 
@@ -126,6 +126,8 @@ public class ProcessAlertsRest
                     RequirementProperties.NEGATIVE_SENTIMENT, "" + request.getNegativeSentiment()));
             requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
                     RequirementProperties.OVERALL_SENTIMENT, "" + request.getOverallSentiment()));
+            requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
+                    "Original feedback", "" + request.getDescription()));
         }
 
         // Discard alert

@@ -5,14 +5,24 @@ public class DMFitness {
 	int			value = 0;
 	
 	double		factor = 1.0;
+
+	String		aspect = "";
 	
-	public DMFitness() {}
+	public DMFitness() {
+		this( "", 0, 1.0 );
+	}
 	
 	public DMFitness( int value ) {
-		this.value = value;
+		this( "", value, 1.0 );
 	}
 	
 	public DMFitness( double factor ) {
+		this( "", 0, factor );
+	}
+	
+	public DMFitness( String aspect, int value, double factor ) {
+		this.aspect = aspect;
+		this.value = value;
 		this.factor = factor;
 	}
 	

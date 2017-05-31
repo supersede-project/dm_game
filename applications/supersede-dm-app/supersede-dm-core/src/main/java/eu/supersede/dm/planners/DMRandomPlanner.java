@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import eu.supersede.dm.DMActivity;
+import eu.supersede.dm.DMActivityConfiguration;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMProblem;
@@ -34,7 +34,7 @@ public class DMRandomPlanner implements IDMPlanner {
 				
 			}
 			
-			DMActivity activity = new DMActivity( method.getName(), options );
+			DMActivityConfiguration activity = new DMActivityConfiguration( method.getName(), options );
 			
 			solution.addActivity( activity );
 			

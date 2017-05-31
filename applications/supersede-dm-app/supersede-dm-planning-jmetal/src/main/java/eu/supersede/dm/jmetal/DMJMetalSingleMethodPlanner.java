@@ -14,7 +14,7 @@ import org.uma.jmetal.solution.IntegerSolution;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
-import eu.supersede.dm.DMActivity;
+import eu.supersede.dm.DMActivityConfiguration;
 import eu.supersede.dm.DMOption;
 import eu.supersede.dm.DMProblem;
 import eu.supersede.dm.DMRuleset;
@@ -55,9 +55,9 @@ public class DMJMetalSingleMethodPlanner implements IDMPlanner {
 			}
 		}
 		
-		for( DMOption option : problem.options() ) {
-			table.setValues( option.getName(), option.getValues() );
-		}
+//		for( DMOption option : problem.options() ) {
+//			table.setValues( option.getName(), option.getValues() );
+//		}
 		
 		{
 			List<String> list = new ArrayList<>();
@@ -67,7 +67,7 @@ public class DMJMetalSingleMethodPlanner implements IDMPlanner {
 			table.setValues( "players", list );
 		}
 		
-		DMActivity activity = findSolution( table, problem );
+		DMActivityConfiguration activity = findSolution( table, problem );
 		
 //		Permutation<String,String> p = findSolution( table, problem );
 		
@@ -78,7 +78,7 @@ public class DMJMetalSingleMethodPlanner implements IDMPlanner {
 		return solution;
 	}
 	
-	DMActivity findSolution( PermutationTable<String,String> table, DMProblem dmproblem ) {
+	DMActivityConfiguration findSolution( PermutationTable<String,String> table, DMProblem dmproblem ) {
 
 		CrossoverOperator<IntegerSolution>		crossover					= new IntegerSBXCrossover( 0.1, 0.1 ); // BLXAlphaCrossover( 0.5 );
 		MutationOperator<IntegerSolution>		mutation					= new IntegerPolynomialMutation(); // SimpleRandomMutation( 0.5 );
@@ -104,7 +104,7 @@ public class DMJMetalSingleMethodPlanner implements IDMPlanner {
 //			System.out.println( s );
 //		}
 		
-		DMActivity activity = new DMActivity( problem.getSelectedMethod().getName(), problem.extract( result.get( 0 ) ) );
+		DMActivityConfiguration activity = new DMActivityConfiguration( problem.getSelectedMethod().getName(), problem.extract( result.get( 0 ) ) );
 		
 		return activity;
 

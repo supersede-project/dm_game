@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class DMActivity {
+public class DMActivityConfiguration {
 	
 	String				methodName;
 	
@@ -13,7 +13,7 @@ public class DMActivity {
 	
 	Map<String,String>	options;
 	
-	public DMActivity( String methodName, Map<String,String> options ) {
+	public DMActivityConfiguration( String methodName, Map<String,String> options ) {
 		this.methodName = methodName;
 		this.options = options;
 	}
@@ -34,4 +34,5 @@ public class DMActivity {
 		return this.methodName;
 	}
 	
+
 }

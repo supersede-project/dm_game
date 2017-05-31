@@ -7,24 +7,24 @@ import eu.supersede.gr.model.Requirement;
 
 public class DMStep {
 
-	List<DMActivity>				activities = new ArrayList<>();
+	List<DMActivityConfiguration>				activities = new ArrayList<>();
 	
 	public List<Requirement>		requirements = new ArrayList<>();
 	
-	public DMStep( DMActivity activity ) {
+	public DMStep( DMActivityConfiguration activity ) {
 		this.activities.add( activity );
 	}
 	
 	public String toString() {
 		String ret = "{";
-		for( DMActivity activity : activities ) {
+		for( DMActivityConfiguration activity : activities ) {
 			ret += "[" + activity + "]";
 		}
 		ret += "}";
 		return ret;
 	}
 
-	public List<DMActivity> getActivities() {
+	public List<DMActivityConfiguration> getActivities() {
 		return this.activities;
 	}
 	

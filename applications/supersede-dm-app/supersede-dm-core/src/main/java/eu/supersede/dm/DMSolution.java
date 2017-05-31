@@ -3,6 +3,7 @@ package eu.supersede.dm;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: rename DMPlan
 public class DMSolution {
 	
 	List<DMStep>					steps = new ArrayList<>();
@@ -10,7 +11,7 @@ public class DMSolution {
 	public DMSolution() {
 	}
 
-	public void addActivity( DMActivity activity ) {
+	public void addActivity( DMActivityConfiguration activity ) {
 		steps.add( new DMStep( activity ) );
 	}
 	

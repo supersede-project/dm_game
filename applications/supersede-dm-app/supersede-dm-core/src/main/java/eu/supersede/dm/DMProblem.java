@@ -15,8 +15,18 @@ public class DMProblem {
 	
 	public static class Config {
 		
+		static class DMCandidateMethod {
+			String							name;
+			DMObjective						objective;
+			Map<String,DMOption>			options = new HashMap<>();
+		    List<DMRoleSpec>				roleList;
+		    List<DMCondition>				preconditions;
+		}
+		
 		// Resources
 		public List<DMMethod>				candidateTechniques = new ArrayList<>();
+		
+		public List<DMCandidateMethod>		candidateMethods = new ArrayList<>();
 		
 		// Input
 		List<Requirement>					requirements = new ArrayList<>();
@@ -27,7 +37,7 @@ public class DMProblem {
 		public int							max = 1;
 		private Duration					duration;
 		
-		Map<String,DMOption>				options = new HashMap<>();
+//		Map<String,DMOption>				options = new HashMap<>();
 		
 		Map<String,String>					constraints = new HashMap<>();
 		
@@ -55,17 +65,17 @@ public class DMProblem {
 			this.duration = d;
 		}
 		
-		public void addOption( DMOption opt ) {
-			this.options.put( opt.name, opt );
-		}
-		
-		public Collection<DMOption> options() {
-			return options.values();
-		}
-		
-		public DMOption getOption( String name ) {
-			return options.get( name );
-		}
+//		public void addOption( DMOption opt ) {
+//			this.options.put( opt.name, opt );
+//		}
+//		
+//		public Collection<DMOption> options() {
+//			return options.values();
+//		}
+//		
+//		public DMOption getOption( String name ) {
+//			return options.get( name );
+//		}
 		
 		public void setConstraint( String key, String value ) {
 			this.constraints.put( key, value );
@@ -108,17 +118,17 @@ public class DMProblem {
 		return this.config.duration;
 	}
 	
-	public void addOption( DMOption opt ) {
-		this.config.addOption( opt );
-	}
-	
-	public Collection<DMOption> options() {
-		return this.config.options();
-	}
-	
-	public DMOption getOption( String name ) {
-		return this.config.getOption( name );
-	}
+//	public void addOption( DMOption opt ) {
+//		this.config.addOption( opt );
+//	}
+//	
+//	public Collection<DMOption> options() {
+//		return this.config.options();
+//	}
+//	
+//	public DMOption getOption( String name ) {
+//		return this.config.getOption( name );
+//	}
 	
 	public final List<DMMethod> getAvailableMethods() {
 		return this.config.getAvailableMethods();

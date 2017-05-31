@@ -8,14 +8,11 @@ import java.util.Map;
 import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.IntegerSolution;
 
-import eu.supersede.dm.DMActivity;
+import eu.supersede.dm.DMActivityConfiguration;
 import eu.supersede.dm.DMFitness;
-import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMProblem;
 import eu.supersede.dm.DMRuleset;
 import eu.supersede.dm.IDMFitnessCalculator;
-import eu.supersede.dm.jmetal.permutator.Permutation;
-import eu.supersede.dm.jmetal.permutator.PermutationTable;
 
 public class MultiMethodPlanningProblem extends AbstractIntegerProblem {
 	
@@ -84,7 +81,7 @@ public class MultiMethodPlanningProblem extends AbstractIntegerProblem {
 		
 		DMFitness fitness = new DMFitness();
 		
-		DMActivity activity = new DMActivity( mv.methodName, mv.options );
+		DMActivityConfiguration activity = new DMActivityConfiguration( mv.methodName, mv.options );
 		
 //		System.out.print( "Evaluating Activity configuration: " + activity );
 		

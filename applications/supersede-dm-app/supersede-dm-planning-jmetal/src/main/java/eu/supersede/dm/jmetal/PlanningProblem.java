@@ -6,7 +6,7 @@ import java.util.Map;
 import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.IntegerSolution;
 
-import eu.supersede.dm.DMActivity;
+import eu.supersede.dm.DMActivityConfiguration;
 import eu.supersede.dm.DMFitness;
 import eu.supersede.dm.DMMethod;
 import eu.supersede.dm.DMProblem;
@@ -76,7 +76,7 @@ public class PlanningProblem extends AbstractIntegerProblem {
 		
 		DMFitness fitness = new DMFitness();
 		
-		DMActivity activity = new DMActivity( this.selectedMethod.getName(), p.asMap() );
+		DMActivityConfiguration activity = new DMActivityConfiguration( this.selectedMethod.getName(), p.asMap() );
 		
 //		System.out.print( "Evaluating Activity configuration: " + activity );
 		
