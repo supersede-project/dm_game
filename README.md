@@ -6,6 +6,6 @@ To do this, DMGame uses a combination of AI techniques (e.g., genetic algorithms
 
 DMGame is licensed under the Apache License, Version 2.0
 
-Main contact: David Ameller susi@fbk.eu
+Main contact: Angelo Susi susi@fbk.eu
 
 Project funded by the European Union
