@@ -140,6 +140,10 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
         });
     };
 
+    $scope.doneEditing = function () {
+    	history.back();
+    };
+
     //////// Properties
 
     // Fill the jqxGrid containing the properties of the selected requirement
@@ -309,7 +313,7 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
             // Clear the list of requirements
             $("#requirements-listbox").jqxListBox('clear');
             requirements = data;
-            $('#mainSplitter').jqxSplitter({ width: '100%', height: '1500px', panels: [{ size: 300 }] });
+            $('#mainSplitter').jqxSplitter({ width: '100%', height: '800px', panels: [{ size: 300 }] });
 
             var source = {
                 localdata: data,
@@ -361,6 +365,8 @@ app.controllerProvider.register('req_edit_session', function($scope, $http, $loc
     }).error(function (err) {
         alert(err.message);
     });
-
+    
+    $('#requirements-listbox').jqxListBox({height: '1005'});
+    
     loadRequirements();
 });

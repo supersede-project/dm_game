@@ -142,10 +142,11 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         // The jqxGrid requires an array: create one and add the process to it
         processes = [];
         processes.push(process);
+        $scope.processName = process.name;
         var source = {
             datatype: "json",
             datafields: [
-                { name: "name" },
+//                { name: "name" },
                 { name: "objective" },
                 { name: "status" },
                 { name: "phaseName" }
@@ -154,14 +155,14 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#process_details").jqxGrid({
-            width: '100%',
+            width: '75%',
             autoheight: true,
             source: dataAdapter,
             columns: [
-                { text: 'Name', datafield: 'name', width: '25%' },
+//                { text: 'Name', datafield: 'name', width: '25%' },
                 { text: 'Objective', datafield: 'objective', width: '25%' },
                 { text: 'Status', datafield: 'status', width: '25%' },
-                { text: 'Phase', datafield: 'phaseName', width: '25%' }
+                { text: 'Phase', datafield: 'phaseName', width: '50%' }
             ]
         });
     }

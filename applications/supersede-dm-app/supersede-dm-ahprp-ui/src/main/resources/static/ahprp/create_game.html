@@ -109,7 +109,7 @@
     </div>
 
     <div id="page3" ng-show="currentPage == 'page3'">
-        <p>Here you can set the priority between the choosen criteria:</p>
+        <p>Here you can set the priority between the chosen criteria:</p>
         <div ng-repeat="criteria in game.criterias" ng-if="$index < (game.criterias.length - 1)">
             <div ng-repeat="other_criteria in game.criterias" ng-if="$index > $parent.$index">
                 <div>
