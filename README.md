@@ -1,4 +1,6 @@
-# DMGame is part pf the of SUPERSEDE(https://www.supersede.eu/) project
+# DMGame
+
+DMGame is part pf the of SUPERSEDE(https://www.supersede.eu/) project
 
 The DMGame has the puspose of supporting the decision maker in elaborating the feedback received from the system users, transform it 
 into new requirements for teh system, and prioritize them.
