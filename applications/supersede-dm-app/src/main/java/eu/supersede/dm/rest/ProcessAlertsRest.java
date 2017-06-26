@@ -128,7 +128,8 @@ public class ProcessAlertsRest
                     RequirementProperties.OVERALL_SENTIMENT, "" + request.getOverallSentiment()));
             requirementsPropertiesJpa.save(new HRequirementProperty(savedRequirement.getRequirementId(),
                     "Original feedback", "" + request.getDescription()));
-
+        }
+        
         // Discard alert
         alertsJpa.delete(alert);
     }
