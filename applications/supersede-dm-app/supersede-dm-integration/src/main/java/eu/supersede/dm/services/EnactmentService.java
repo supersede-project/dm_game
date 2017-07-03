@@ -29,6 +29,8 @@ import eu.supersede.integration.api.replan.controller.proxies.ReplanControllerPr
 import eu.supersede.integration.api.replan.controller.types.AddFeaturesForProjectPayload;
 import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 import eu.supersede.integration.api.replan.controller.types.Priority;
+import eu.supersede.integration.api.replan.controller.types.SoftDependency;
+import eu.supersede.integration.api.replan.controller.types.SoftDependencyType;
 
 public class EnactmentService
 {
@@ -54,12 +56,22 @@ public class EnactmentService
                 fwp3.setArguments("");
                 fwp3.setDescription("");
                 fwp3.setEffort(1.0);
-                fwp3.setHardDependencies(new ArrayList<>());
                 fwp3.setId(Integer.parseInt(f.getId()));
                 fwp3.setName(f.getName());
                 fwp3.setPriority(getPriorityEnum(f.getPriority()));
                 fwp3.setRequiredSkills(new ArrayList<>());
-                fwp3.setSoftDependencies(new ArrayList<>());
+//                fwp3.setHardDependencies(new ArrayList<>());
+//                fwp3.setSoftDependencies(new ArrayList<>());
+                for( eu.supersede.dm.datamodel.SoftDependency d : f.getSdeps() ) {
+                	SoftDependency wp3dep = new SoftDependency();
+                	wp3dep.setType( SoftDependencyType.FUNCTIONAL );
+                	wp3dep.setValue( 1.0 );
+                	wp3dep.setId( Integer.parseInt( d.getRefId() ) );
+                	fwp3.getSoftDependencies().add( wp3dep );
+                }
+                for( String ref : f.getHdeps() ) {
+                	fwp3.getHardDependencies().add( Integer.parseInt( ref ) );
+                }
                 list.add(fwp3);
             }
             catch (Exception ex)
