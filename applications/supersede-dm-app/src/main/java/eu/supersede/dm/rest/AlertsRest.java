@@ -51,8 +51,9 @@ public class AlertsRest
      * Return all the requirements.
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Alert> getAlerts()
+    public List<Alert> getAlerts(@RequestParam(required = false) String id)
     {
+    	
         List<Alert> list = new ArrayList<>();
         List<HApp> apps = appsJpa.findAll();
 
@@ -62,7 +63,13 @@ public class AlertsRest
 
             for (HAlert alert : alerts)
             {
-                List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alert.getId());
+            	//Use optional parameter in order to filter alert list, retrieving the provided ID only
+            	if( id != null && !"".equals(id) && !(alert.getId().equals(id))) {
+            		//If ID is not the selected one, ignore it
+            		continue;
+            	}
+            	
+            	List<HReceivedUserRequest> requests = receivedUserRequestsJpa.findRequestsForAlert(alert.getId());
 
                 if (requests.size() < 1)
                 {
