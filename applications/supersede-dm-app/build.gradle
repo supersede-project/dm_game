@@ -131,7 +131,6 @@ dependencies {
     compile project(":supersede-dm-ahprp-ui")
     compile project(":supersede-dm-garp")
     compile project(":supersede-dm-garp-ui")
-    compile project(":supersede-dm-depcheck")
     compile project(":supersede-dm-depcheck-ui")
     compile project(":supersede-dm-planning-jmetal")
 //    compile project(":supersede-dm-orchestrator")
