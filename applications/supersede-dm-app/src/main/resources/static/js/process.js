@@ -89,18 +89,31 @@ app.controllerProvider.register('process', function($scope, $http, $location) {
             ],
             localdata: data
         };
+        
+        var linkrenderer = function (row, column, value) {
+        	var httpIndex = value.indexOf('http://');
+        	if (httpIndex != -1) {
+                var text = value.substring(0, httpIndex);
+                var link = value.substring(httpIndex);
+                return "<div style='overflow-y:auto; word-wrap:break-word; white-space:normal; scroll:auto;'>" + text + " - <a href='" + link + "'> Link to JIRA </a></div>";
+            }
+        	
+        	return value;
+        }
+        
         var dataAdapter = new $.jqx.dataAdapter(source);
         $("#requirements").jqxGrid({
             width: '100%',
             altrows: true,
             autoheight: true,
-            autorowheight: true,
+            autorowheight:true,
+            sortable:true,
             pageable: true,
             source: dataAdapter,
             columns: [
                 { text: 'Id', datafield: 'requirementId', width: '15%' },
                 { text: 'Name', datafield: 'name', width: '25%' },
-                { text: 'Description', datafield: 'description', width: '60%' }
+                { text: 'Description', datafield: 'description', width: '60%', cellsrenderer:linkrenderer},
             ]
         });
     }).error(function (err) {
