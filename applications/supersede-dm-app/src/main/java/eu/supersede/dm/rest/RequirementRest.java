@@ -42,171 +42,172 @@ import eu.supersede.gr.model.Requirement;
 
 @RestController
 @RequestMapping("requirement")
-public class RequirementRest
-{
-    @Autowired
-    private AHPRequirementsMatricesDataJpa requirementsMatricesData;
+public class RequirementRest {
+	@Autowired
+	private AHPRequirementsMatricesDataJpa requirementsMatricesData;
 
-    @Autowired
-    private EntityManager entityManager;
+	@Autowired
+	private EntityManager entityManager;
 
-    /**
-     * Return the requirement with the given id.
-     * @param requirementId
-     */
-    @RequestMapping("/{requirementId}")
-    public Requirement getRequirement(@PathVariable Long requirementId)
-    {
-        Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
+	/**
+	 * Return the requirement with the given id.
+	 * 
+	 * @param requirementId
+	 */
+	@RequestMapping("/{requirementId}")
+	public Requirement getRequirement(@PathVariable Long requirementId) {
+		Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
-        if (requirement == null)
-        {
-            throw new NotFoundException("Requirement with id " + requirementId + " does not exist");
-        }
+		if (requirement == null) {
+			throw new NotFoundException("Requirement with id " + requirementId + " does not exist");
+		}
 
-        return requirement;
-    }
+		return requirement;
+	}
 
-    /**
-     * Return all the requirements.
-     */
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Requirement> getRequirements(@RequestParam(required = false) String procFx,
-            @RequestParam(required = false) Long processId, @RequestParam(required = false) String statusFx,
-            @RequestParam(required = false) Integer status)
-    {
+	/**
+	 * Return all the requirements.
+	 */
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public List<Requirement> getRequirements(@RequestParam(required = false) String procFx,
+			@RequestParam(required = false) Long processId, @RequestParam(required = false) String statusFx,
+			@RequestParam(required = false) Integer status) {
 
-        String root = "SELECT r FROM Requirement r";
-        String filter = "";
+		String root = "SELECT r FROM Requirement r";
+		String filter = "";
 
-        if ("Eq".equals(procFx))
-        {
-            filter += " processId = " + processId;
-        }
-        else if ("Neq".equals(procFx))
-        {
-            filter += " processId != " + processId;
-        }
+		if ("Eq".equals(procFx)) {
+			filter += " processId = " + processId;
+		} else if ("Neq".equals(procFx)) {
+			filter += " processId != " + processId;
+		}
 
-        if (procFx != null && statusFx != null)
-        {
-            filter += " AND ";
-        }
+		if (procFx != null && statusFx != null) {
+			filter += " AND ";
+		}
 
-        if ("Eq".equals(statusFx))
-        {
-            filter += " status = " + status;
-        }
-        else if ("Neq".equals(statusFx))
-        {
-            filter += " status != " + status;
-        }
+		if ("Eq".equals(statusFx)) {
+			filter += " status = " + status;
+		} else if ("Neq".equals(statusFx)) {
+			filter += " status != " + status;
+		}
 
-        String query = root;
+		String query = root;
 
-        if (!filter.equals(""))
-        {
-            query = query + " WHERE" + filter;
-        }
+		if (!filter.equals("")) {
+			query = query + " WHERE" + filter;
+		}
 
-        return entityManager.createQuery(query, Requirement.class).getResultList();
-    }
+		return entityManager.createQuery(query, Requirement.class).getResultList();
+	}
 
-    @RequestMapping(value = "details/list", method = RequestMethod.GET)
-    public List<RequirementDetails> getDetailedRequirements()
-    {
-        List<RequirementDetails> list = new ArrayList<>();
-        List<Requirement> reqlist = DMGame.get().getJpa().requirements.findAll();
+	@RequestMapping(value = "details/list", method = RequestMethod.GET)
+	public List<RequirementDetails> getDetailedRequirements() {
+		List<RequirementDetails> list = new ArrayList<>();
+		List<Requirement> reqlist = DMGame.get().getJpa().requirements.findAll();
 
-        for (Requirement r : reqlist)
-        {
-            RequirementDetails details = new RequirementDetails(r);
-            List<HRequirementDependency> deps = DMGame.get().getJpa().requirementDependencies
-                    .findByRequirementId(r.getRequirementId());
+		for (Requirement r : reqlist) {
+			RequirementDetails details = new RequirementDetails(r);
+			List<HRequirementDependency> deps = DMGame.get().getJpa().requirementDependencies
+					.findByRequirementId(r.getRequirementId());
 
-            for (HRequirementDependency d : deps)
-            {
-                details.addDependency(d);
-            }
+			for (HRequirementDependency d : deps) {
+				details.addDependency(d);
+			}
 
-            List<HRequirementProperty> props = DMGame.get().getJpa().requirementProperties
-                    .findPropertiesByRequirementId(r.getRequirementId());
+			List<HRequirementProperty> props = DMGame.get().getJpa().requirementProperties
+					.findPropertiesByRequirementId(r.getRequirementId());
 
-            for (HRequirementProperty p : props)
-            {
-                details.setProperty(p);
-            }
+			for (HRequirementProperty p : props) {
+				details.setProperty(p);
+			}
 
-            list.add(details);
-        }
+			list.add(details);
+		}
 
-        return list;
-    }
+		return list;
+	}
 
-    /**
-     * Return the number of requirements.
-     */
-    @RequestMapping("/count")
-    public Long count()
-    {
-        return DMGame.get().getJpa().requirements.count();
-    }
+	/**
+	 * Return the number of requirements.
+	 */
+	@RequestMapping("/count")
+	public Long count() {
+		return DMGame.get().getJpa().requirements.count();
+	}
 
-    /**
-     * Create a new requirement.
-     * @param r
-     */
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createRequirement(@RequestBody Requirement r)
-    {
-        r.setRequirementId(null);
-        DMGame.get().getJpa().requirements.save(r);
+	/**
+	 * Create a new requirement.
+	 * 
+	 * @param r
+	 */
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public ResponseEntity<?> createRequirement(@RequestBody Requirement r) {
+		r.setRequirementId(null);
+		DMGame.get().getJpa().requirements.save(r);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(r.getRequirementId()).toUri());
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
-    }
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(r.getRequirementId()).toUri());
+		return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
+	}
 
-    /**
-     * Delete the requirement with the given id. TODO: check that it is correct.
-     * @param requirementId
-     */
-    @RequestMapping(value = "/{requirementId}", method = RequestMethod.DELETE)
-    public boolean deleteRequirement(@PathVariable Long requirementId)
-    {
-        Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
+	/**
+	 * Delete the requirement with the given id. TODO: check that it is correct.
+	 * 
+	 * @param requirementId
+	 */
+	@RequestMapping(value = "/{requirementId}", method = RequestMethod.DELETE)
+	public boolean deleteRequirement(@PathVariable Long requirementId) {
+		Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
-        // FIXME: this is obsolete code
-        List<HAHPRequirementsMatrixData> listRow = requirementsMatricesData.findByRowRequirement(requirement);
-        List<HAHPRequirementsMatrixData> listColumn = requirementsMatricesData.findByColumnRequirement(requirement);
+		// FIXME: this is obsolete code
+		List<HAHPRequirementsMatrixData> listRow = requirementsMatricesData.findByRowRequirement(requirement);
+		List<HAHPRequirementsMatrixData> listColumn = requirementsMatricesData.findByColumnRequirement(requirement);
 
-        if (listRow.isEmpty() && listColumn.isEmpty())
-        {
-            DMGame.get().getJpa().requirements.delete(requirementId);
-            return true;
-        }
+		if (listRow.isEmpty() && listColumn.isEmpty()) {
+			DMGame.get().getJpa().requirements.delete(requirementId);
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Edit the given requirement.
-     * @param r
-     */
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void editRequirement(@RequestBody Requirement r)
-    {
-        Requirement requirement = DMGame.get().getJpa().requirements.findOne(r.getRequirementId());
+	/**
+	 * Edit the given requirement changing name and description.
+	 * 
+	 * @param r
+	 */
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	public void editRequirement(@RequestParam(required = true) Long id, @RequestParam(required = true) String name,
+			@RequestParam(required = true) String description) {
+		Requirement requirement = DMGame.get().getJpa().requirements.findOne(id);
 
-        if (requirement == null)
-        {
-            throw new NotFoundException(
-                    "Can't edit requirement with id " + r.getRequirementId() + " because it does not exist");
-        }
+		if (requirement == null) {
+			throw new NotFoundException("Can't edit requirement with id " + id + " because it does not exist");
+		}
 
-        requirement.setName(r.getName());
-        requirement.setDescription(r.getDescription());
-        DMGame.get().getJpa().requirements.save(requirement);
-    }
+		requirement.setName(name);
+		requirement.setDescription(description);
+		DMGame.get().getJpa().requirements.save(requirement);
+	}
+
+	/**
+	 * Edit the given requirement.
+	 * 
+	 * @param r
+	 */
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	public void editRequirement(@RequestBody Requirement r) {
+		Requirement requirement = DMGame.get().getJpa().requirements.findOne(r.getRequirementId());
+
+		if (requirement == null) {
+			throw new NotFoundException(
+					"Can't edit requirement with id " + r.getRequirementId() + " because it does not exist");
+		}
+
+		requirement.setName(r.getName());
+		requirement.setDescription(r.getDescription());
+		DMGame.get().getJpa().requirements.save(requirement);
+	}
 }
