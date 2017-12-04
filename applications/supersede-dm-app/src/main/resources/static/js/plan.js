@@ -88,7 +88,8 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
         optString += "</ul>";
         $('#jqxNavigationBar').jqxNavigationBar('add', 'Options', optString);
     };
-
+    
+    
     $scope.doPlan = function () {
         var accuracy = $("#accuracyLevel").jqxSlider('value');
 
@@ -96,13 +97,24 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
 
         $http.get('supersede-dm-app/orchestration/plan?accuracy=' + accuracy).success(
                 function (data) {
-
+                	
+                	var mkbox = function( x1, y2, x2, y2 ) {
+                		var box = {};
+                    	box.top = x1;
+                    	box.left = y1;
+                    	box.right = x2;
+                    	box.bottom = y2;
+                    	return box;
+                	}
+                	
                     var dock = $("#jqxDockPanel").jqxDockPanel('getInstance');
                     $('#container').jqxDraw();
                     var renderer = $('#container').jqxDraw('getInstance');
 
                     renderer.clear();
 
+                    var boxes = [];
+                    
                     var top = 50;
                     var hgap = (dock.height - top) / (data.steps.length + 3);
                     var maxx = dock.width;
@@ -114,24 +126,43 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                     var size = renderer.getSize();
                     var centerx = size.width / 2;
 
-                    var circleElement = renderer.circle(centerx, top + 25, 25, {});
+                	var box = {};
+                	
+                	box.top = top;
+                	box.left = centerx - 35;
+                	box.right = centerx + 35;
+                	box.bottom = top + 50;
+                	boxes.push( box );
+                	
+//                    var circleElement = renderer.circle(centerx, top + 25, 25, {});
+                    var circleElement = renderer.circle( box.left + 35, box.top + 25, 25, {});
                     renderer.attr(circleElement, { fill: 'white', stroke: 'black' });
                     cury = top + 50;
 
                     var lastElement = circleElement;
 
                     var elemh = 50;
-
+                    
                     for (var i = 0; i < data.steps.length; i++) {
-                        var ofsy = top + hgap + (i * hgap);
+                    	
+                    	var ofsy = top + hgap + (i * hgap);
+                    	
+                    	var box = {};
+                    	
+                    	box.left = centerx - 60;
+                    	box.top = ofsy;
+                    	box.right = centerx + 60;
+                    	box.bottom = ofsy + elemh;
+                    	boxes.push( box );
+                    	
                         var shapeTask = renderer.path(
-                                "M " + (centerx - 40) + " " + ofsy + " " +
-                                "L " + (centerx + 40) + " " + ofsy + " " +
-                                "L " + (centerx + 40) + " " + (ofsy + elemh) + " " +
-                                "L " + (centerx - 40) + " " + (ofsy + elemh) + " " +
+                                "M " + box.left + " " + box.top + " " +
+                                "L " + box.right + " " + box.top + " " +
+                                "L " + box.right + " " + box.bottom + " " +
+                                "L " + box.left + " " + box.bottom + " " +
                                 "Z");
                         renderer.attr(shapeTask, { fill: 'white', stroke: 'black' });
-                        renderer.text("Step " + (i + 1), centerx, ofsy,
+                        renderer.text("Step " + (i + 1), box.left, box.top,
                                 undefined, 50, 0, { 'class': 'largeText', fill: 'black', stroke: 'grey' }, false, 'center', 'center', 'centermiddle');
                         for (var j = 0; j < data.steps[i].activities.length; j++) {
                             renderer.text(data.steps[i].activities[j].methodName, centerx, ofsy + 15,
@@ -139,7 +170,14 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                                     { 'class': 'largeText', fill: 'black', stroke: 'grey' },
                                     false, 'center', 'center', 'centermiddle');
                         }
-
+                        
+//                        console.log( boxes[boxes.length-2] );
+                        
+                        renderer.path(
+                                "M " + (boxes[boxes.length-2].left + ((boxes[boxes.length-2].right - boxes[boxes.length-2].left) /2)) + "," + boxes[boxes.length-2].bottom + " " +
+                                "L " + (boxes[boxes.length-1].left + ((boxes[boxes.length-1].right - boxes[boxes.length-1].left) /2)) + ", " + boxes[boxes.length-1].top + " "
+                                , { stroke: '#777777' });
+                        
                         var step = data.steps[i];
 
                         renderer.on(shapeTask, 'click', function () {
@@ -150,12 +188,26 @@ app.controllerProvider.register('plan', function($scope, $http, $location) {
                         lastElement = shapeTask;
                     }
 
-                    circleElement = renderer.circle(centerx, ((top + ((1 + data.steps.length) * hgap)) + 25), 25, {});
+                	var box = {};
+                	
+                	box.left = centerx - 25;
+                	box.top = top + ((1 + data.steps.length) * hgap);
+                	box.right = centerx + 25;
+                	box.bottom = box.top + 50;
+                	boxes.push( box );
+                	
+//                    circleElement = renderer.circle(centerx, ((top + ((1 + data.steps.length) * hgap)) + 25), 25, {});
+                    circleElement = renderer.circle( 
+                    		box.left + 25, 
+                    		box.top +25, 
+                    		25, {});
+                    
                     renderer.attr(circleElement, { fill: 'white', stroke: 'black', 'stroke-width': '5' });
 
                     renderer.path(
-                            "M " + centerx + "," + cury + " " +
-                            "L " + centerx + ", " + (top + ((1 + data.steps.length) * hgap)) + " ", { stroke: '#777777' });
+                            "M " + (boxes[boxes.length-2].left + ((boxes[boxes.length-2].right - boxes[boxes.length-2].left) /2)) + "," + boxes[boxes.length-2].bottom + " " +
+                            "L " + (boxes[boxes.length-1].left + ((boxes[boxes.length-1].right - boxes[boxes.length-1].left) /2)) + ", " + boxes[boxes.length-1].top + " "
+                            , { stroke: '#777777' });
 
                     renderer.refresh();
 

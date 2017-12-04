@@ -121,7 +121,7 @@ dependencies {
     
     compile("com.google.code.gson:gson:2.8.0")
 	
-    compile("org.reflections:reflections:0.9.9-RC1")
+    compile("org.reflections:reflections:0.9.9")
 
     compile project(":supersede-dm-core")
     compile project(":supersede-dm-datastore")
@@ -134,6 +134,7 @@ dependencies {
     compile project(":supersede-dm-depcheck")
     compile project(":supersede-dm-depcheck-ui")
     compile project(":supersede-dm-planning-jmetal")
+    compile project(":supersede-dm-planning-optaplanner")
 //    compile project(":supersede-dm-orchestrator")
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")

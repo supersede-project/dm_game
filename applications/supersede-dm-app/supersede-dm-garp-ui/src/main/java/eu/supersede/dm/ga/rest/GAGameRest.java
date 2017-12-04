@@ -38,6 +38,8 @@ import eu.supersede.dm.datamodel.FeatureList;
 import eu.supersede.dm.ga.GAGameDetails;
 import eu.supersede.dm.ga.GALogAction;
 import eu.supersede.dm.ga.GAPersistentDB;
+import eu.supersede.dm.ga.RankingAssistant;
+import eu.supersede.dm.ga.RankingAssistantFactory;
 import eu.supersede.dm.iga.GARequirementsRanking;
 import eu.supersede.dm.iga.IGAAlgorithm;
 import eu.supersede.dm.services.EnactmentService;
@@ -350,6 +352,8 @@ public class GAGameRest
     @RequestMapping(value = "/calc", method = RequestMethod.GET)
     public List<GARequirementsRanking> calcRanking(Authentication authentication, Long gameId)
     {
+    	RankingAssistant assistant = RankingAssistantFactory.get().createRankingAssistant( persistentDB, gameId );
+    	
         IGAAlgorithm algo = new IGAAlgorithm();
         Map<Long, Map<Long, Double>> playerWeights = persistentDB.getPlayerWeights(gameId);
         Map<Long, Double> criteriaWeights = persistentDB.getCriteriaWeights(gameId);
@@ -377,7 +381,14 @@ public class GAGameRest
 
         // get all the players in this game
         List<Long> participantIds = persistentDB.getOpinionProviders(gameId);
-
+        
+        // AI
+        for( Long aiParticipant : assistant.getAIParticipants() ) {
+        	participantIds.add( aiParticipant );
+        }
+        
+        System.out.println( "Number of participants: " + participantIds.size() );
+        
         // get the rankings of each player for each criterion
         List<String> players = new ArrayList<>();
 
@@ -389,7 +400,13 @@ public class GAGameRest
             String player = "" + userId;
             players.add(player);
             Map<Long, List<Long>> userRanking = persistentDB.getRanking(gameId, userId);
-
+            
+            // AI
+            if (userRanking.keySet().size() == 0)
+            {
+            	userRanking = assistant.getAIRanking( userId );
+            }
+            
             if (userRanking.keySet().size() > 0)
             {
                 votedPlayers.add(userId);
@@ -406,7 +423,8 @@ public class GAGameRest
 
                     userRankingStr.put("" + criterionId, requirements);
                 }
-
+                
+                System.out.println( "Ranking of user " + player + " = " + userRankingStr );
                 algo.addRanking(player, userRankingStr);
             }
         }
@@ -416,15 +434,26 @@ public class GAGameRest
             Map<Long, Double> criterionPlayerWeights = playerWeights.get(criterionId);
             Map<String, Double> algorithmPlayerWeights = new HashMap<>();
 
-            for (Long userId : criterionPlayerWeights.keySet())
+//            for (Long userId : criterionPlayerWeights.keySet())
+            for (Long userId : participantIds )
             {
                 // Add the player weight only if he submitted the rankings
                 if (votedPlayers.contains(userId))
                 {
-                    algorithmPlayerWeights.put("" + userId, criterionPlayerWeights.get(userId));
+                	Double w = criterionPlayerWeights.get(userId);
+                	if( w != null ) {
+                		algorithmPlayerWeights.put("" + userId, w);
+                	}
+                	else {
+                		w = assistant.getWeight( userId );
+                		if( w != -1 ) {
+                			algorithmPlayerWeights.put( "" + userId, w );
+                		}
+                	}
                 }
             }
-
+            
+            System.out.println( "Weight of criterion " + criterionId + " = " + algorithmPlayerWeights );
             algo.setPlayerWeights("" + criterionId, algorithmPlayerWeights);
         }
 

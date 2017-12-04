@@ -26,6 +26,10 @@ public class DMFitness {
 		this.factor = factor;
 	}
 	
+	public String getAspect() {
+		return this.aspect;
+	}
+	
 	public double cost() {
 		return this.value;
 	}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+
+  <!-- Domain model configuration -->
+  <scanAnnotatedClasses>
+    <packageInclude>eu.supersede.dm.op</packageInclude>
+  </scanAnnotatedClasses>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>eu.supersede.dm.op.ProcessPlanEasyScoreCalculator</easyScoreCalculatorClass>
+    <!--<easyScoreCalculatorClass>eu.supersede.ot.optional.score.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
+    <!--<incrementalScoreCalculatorClass>eu.supersede.ot.optional.score.CloudBalancingIncrementalScoreCalculator</incrementalScoreCalculatorClass>-->
+<!--     <scoreDrl>eu/supersede/ot/cloudBalancingScoreRules.drl</scoreDrl> -->
+    <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
+    <!--<assertionScoreDirectorFactory>-->
+      <!--<easyScoreCalculatorClass>eu.supersede.ot.optional.score.CloudBalancingMapBasedEasyScoreCalculator</easyScoreCalculatorClass>-->
+    <!--</assertionScoreDirectorFactory>-->
+  </scoreDirectorFactory>
+
+  <!-- Optimization algorithms configuration -->
+  <termination>
+	  <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+<!--     <secondsSpentLimit>5</secondsSpentLimit> -->
+  </termination>
+
+  <!-- Power tweaked optimization algorithms configuration -->
+  <!--<constructionHeuristic>-->
+    <!--<constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>-->
+  <!--</constructionHeuristic>-->
+  <!--<localSearch>-->
+    <!--<unionMoveSelector>-->
+      <!--<changeMoveSelector/>-->
+      <!--<swapMoveSelector/>-->
+      <!--<pillarChangeMoveSelector/>-->
+      <!--<pillarSwapMoveSelector/>-->
+    <!--</unionMoveSelector>-->
+    <!--<acceptor>-->
+      <!--<entityTabuSize>7</entityTabuSize>-->
+    <!--</acceptor>-->
+    <!--<forager>-->
+      <!--<acceptedCountLimit>1000</acceptedCountLimit>-->
+    <!--</forager>-->
+  <!--</localSearch>-->
+
+  <!-- Alternative power tweaked optimization algorithms configuration -->
+  <!--<partitionedSearch>-->
+    <!--<solutionPartitionerClass>eu.supersede.ot.optional.partitioner.CloudBalancePartitioner</solutionPartitionerClass>-->
+    <!--<solutionPartitionerCustomProperties>-->
+      <!--<partCount>4</partCount>-->
+      <!--<minimumProcessListSize>300</minimumProcessListSize>-->
+    <!--</solutionPartitionerCustomProperties>-->
+  <!--</partitionedSearch>-->
+  
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+  </constructionHeuristic>
+  <localSearch>
+    <unionMoveSelector>
+      <changeMoveSelector>
+<!--       	<entityClass>ExecutionActivity</entityClass> -->
+<!--       	<variableSelection>activity</variableSelection> -->
+      </changeMoveSelector>
+      <swapMoveSelector/>
+<!--       <subChainChangeMoveSelector> -->
+<!--         <selectReversingMoveToo>true</selectReversingMoveToo> -->
+<!--         <subChainSelector> -->
+<!-- 	        <valueSelector> -->
+<!-- 	          <variableName>next</variableName> -->
+<!-- 	        </valueSelector> -->
+<!--         </subChainSelector> -->
+<!--       </subChainChangeMoveSelector> -->
+<!--       <subChainSwapMoveSelector> -->
+<!--         <subChainSelector> -->
+<!-- 	        <valueSelector> -->
+<!-- 	          <variableName>next</variableName> -->
+<!-- 	        </valueSelector> -->
+<!--         </subChainSelector> -->
+<!--       </subChainSwapMoveSelector> -->
+    </unionMoveSelector>
+    <acceptor>
+      <lateAcceptanceSize>200</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+      <acceptedCountLimit>1</acceptedCountLimit>
+    </forager>
+  </localSearch>
+</solver>

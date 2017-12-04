@@ -17,7 +17,7 @@ public class RulesetGenerator {
 			@Override
 			public DMFitness evaluate(DMActivityConfiguration act, DMProblem problem)
 			{
-				System.out.println( act );
+//				System.out.println( act );
 				switch( value ) {
 				case 0: // No precision; maximum speed
 				{
@@ -63,7 +63,7 @@ public class RulesetGenerator {
 			@Override
 			public DMFitness evaluate(DMActivityConfiguration cfg, DMProblem problem)
 			{
-				System.out.println( cfg );
+//				System.out.println( cfg );
 				Duration d = problem.getDeadline();
 				if (d != null)
 				{
@@ -88,7 +88,7 @@ public class RulesetGenerator {
 			@Override
 			public DMFitness evaluate(DMActivityConfiguration cfg, DMProblem problem)
 			{
-				System.out.println( cfg );
+//				System.out.println( cfg );
 				for (DMMethod m : problem.getAvailableMethods())
 				{
 					if (cfg.getMethodName().equals(m.getName()))
