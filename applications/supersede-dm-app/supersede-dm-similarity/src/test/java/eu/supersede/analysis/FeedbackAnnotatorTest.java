@@ -37,9 +37,6 @@ public class FeedbackAnnotatorTest {
 		String feedback4 = "Hello my engergy savings account heating diagram do shows oil level input from 01.12.2015 What should I do Best wishes ";
 		String feedback5 = "I wonder about my consumption my current provider classifies me to monthly 130 euros since january how the consumptions/costs in your app arise?";
 		
-//		String csvPath = "/data/SUPERSEDE/WP2/SENERCON-data/SENERCON_translated_300_feedback_3_scale.csv";
-//		feedbackMessages = feedbackAnnotator.getFeedbackMessages(csvPath);
-		
 		feedbackMessages = new ArrayList<FeedbackMessage>();
 		feedbackMessages.add(new FeedbackMessage(feedback1));
 		feedbackMessages.add(new FeedbackMessage(feedback2));
@@ -72,8 +69,8 @@ public class FeedbackAnnotatorTest {
 	
 	@Test
 	public void testGetFeedbackMessages () {
-		String csvPath = "SUPERSEDE_feedbacks_translated_ALL.csv";
-		int numMessages = 576;
+		String csvPath = "feedback_messages.csv";
+		int numMessages = 3;
 		List<FeedbackMessage> feedbackMessages = feedbackAnnotator.getFeedbackMessages(csvPath);
 		assertEquals(numMessages, feedbackMessages.size());
 		for (FeedbackMessage message : feedbackMessages) {
