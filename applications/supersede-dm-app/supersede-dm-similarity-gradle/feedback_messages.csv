@@ -1,0 +1,4 @@
+feedback_id,user_statement_translated,creation_time,Type,Type2,sentiment,category
+1,The calculations are incorrect. For electricity and heating the total consumption does not appear.,06/05/16,bug report,,0,calculations
+2,feedback message 2,06/01/16,support question,,0,
+3,another feedback message about electricity consumption,05/31/16,bug report,,-1,calculations
