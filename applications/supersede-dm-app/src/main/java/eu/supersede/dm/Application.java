@@ -42,7 +42,8 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 		"eu.supersede.dm.ga.jpa",
 		"eu.supersede.gr.logics",
 		"eu.supersede.dm",
-		"eu.supersede.dm.depcheck"
+		"eu.supersede.dm.depcheck", 
+		"eu.supersede.analysis"
 		})
 @EnableGlobalMethodSecurity( 
 		securedEnabled = true, prePostEnabled = true )
