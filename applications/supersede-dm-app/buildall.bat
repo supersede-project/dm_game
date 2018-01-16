@@ -23,7 +23,10 @@ cd supersede-dm-planning-jmetal
 gradle build --refresh-dependencies
 cd ..
 cd supersede-dm-similarity-gradle
-gradle build --refresh-dependencies -x test
+gradle build --refresh-dependencies
+cd ..
+cd supersede-dm-similarity-gradle
+gradle build --refresh-dependencies
 cd ..
 #cd supersede-dm-orchestrator
 #gradle build --refresh-dependencies

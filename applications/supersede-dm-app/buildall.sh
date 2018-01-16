@@ -43,8 +43,8 @@ echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 ./gradlew build
 
 cd ../supersede-dm-similarity-gradle
-echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
-./gradlew build -x test
+echo -e "\nBuilding supersede-dm-similarity-gradle...\n"
+./gradlew build 
 
 #cd ../supersede-dm-orchestrator
 #echo -e "\nBuilding supersede-dm-orchestrator...\n"
