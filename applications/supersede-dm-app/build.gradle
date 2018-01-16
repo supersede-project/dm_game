@@ -65,6 +65,9 @@ buildscript {
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spring.io/libs-release" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+     maven { url "https://jitpack.io" }
     add buildscript.repositories.getByName ("maven-supersede-snapshot")
     add buildscript.repositories.getByName ("maven-supersede-release")
 }
@@ -134,6 +137,8 @@ dependencies {
     compile project(":supersede-dm-depcheck-ui")
     compile project(":supersede-dm-planning-jmetal")
 //    compile project(":supersede-dm-orchestrator")
+compile project(":supersede-dm-similarity-gradle")
+
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
 }

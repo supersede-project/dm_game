@@ -47,7 +47,7 @@ echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 
 cd ../supersede-dm-similarity-gradle
 echo -e "\nBuilding supersede-dm-similarity-gradle...\n"
-./gradlew build --refresh-dependencies
+./gradlew build -x test --refresh-dependencies
 
 #cd ../supersede-dm-orchestrator
 #echo -e "\nBuilding supersede-dm-orchestrator...\n"
