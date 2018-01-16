@@ -31,5 +31,11 @@ public class SimilarityController {
 		List<SimilarityResult> similarRequirements = feedbackSimilarity.getSimilarRequirements(request);
 		return similarRequirements;
 	}	
+	
+
+	@RequestMapping(value="/similarity", method=RequestMethod.GET)
+	public String similarityGet(){
+		return "Similarity app works! This is a test!";
+	}	
 
 }
