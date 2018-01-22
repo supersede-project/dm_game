@@ -2,7 +2,9 @@ package eu.supersede.analysis;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +45,7 @@ public class WordNetWrapper {
 
 	private WordNetDatabase database;
 	private OntologyWrapper ontologyWrapper;
-	private String WORDNET_DB_PATH = "WordNet-3.0-dict/";
+	private String WORDNET_DB_PATH; // = "WordNet-3.0-dict/";
 
 	private WnStemmer stemmer;
 //	private String modelFile = "stanford-postagger-2017-06-09/models/english-left3words-distsim.tagger";
@@ -53,9 +55,16 @@ public class WordNetWrapper {
 	private AnalysisType analysisType;
 
 	private String stopWordsFile = "stopwords.txt";
-	private Set<String> stopWords = Utils.readStopWords(stopWordsFile);
+	private Set<String> stopWords;
 
 	public WordNetWrapper(OntologyWrapper ow) {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URL url = classLoader.getResource(stopWordsFile);
+		stopWords = Utils.readStopWords(url.getFile());
+		
+		// set WordNet db path
+		WORDNET_DB_PATH = classLoader.getResource("WordNet-3.0-dict").getFile();
+		
 		ontologyWrapper = ow;
 		System.setProperty("wordnet.database.dir", WORDNET_DB_PATH);
 

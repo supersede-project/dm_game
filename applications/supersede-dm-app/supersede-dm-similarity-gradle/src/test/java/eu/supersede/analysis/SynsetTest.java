@@ -37,7 +37,8 @@ public class SynsetTest {
 	
 	@Before
 	public void setUp (){
-		String wordnetDbPath = "WordNet-3.0-dict/";
+		ClassLoader classLoader = getClass().getClassLoader();
+		String wordnetDbPath = classLoader.getResource("WordNet-3.0-dict").getFile();
 		System.setProperty("wordnet.database.dir", wordnetDbPath);
 	}
 	

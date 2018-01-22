@@ -2,6 +2,7 @@ package eu.supersede.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,7 +50,9 @@ public class OntologyWrapper {
 	public OntologyWrapper(String ontology) {
 		rdfFileName = ontology;
 
-		InputStream in = FileManager.get().open(rdfFileName);
+		ClassLoader classLoader = getClass().getClassLoader();
+		InputStream in = classLoader.getResourceAsStream(rdfFileName);
+//		InputStream in = FileManager.get().open(rdfFileName);
 		if (in == null) {
 			throw new IllegalArgumentException("File: " + rdfFileName + " not found");
 		}
@@ -69,7 +72,7 @@ public class OntologyWrapper {
 		
 		// TODO this is added to handle classes with owl:Classs, rather than rdf:Class. Is there a better way?
 		if (classes.isEmpty()) {
-			in = FileManager.get().open(rdfFileName);
+			in = classLoader.getResourceAsStream(rdfFileName);
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 			ontModel.read(in, null, "TTL");
 			classes = getAllClasses();
