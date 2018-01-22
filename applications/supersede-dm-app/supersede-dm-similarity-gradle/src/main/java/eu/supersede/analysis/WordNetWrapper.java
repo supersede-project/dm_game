@@ -43,7 +43,7 @@ public class WordNetWrapper {
 
 	private WordNetDatabase database;
 	private OntologyWrapper ontologyWrapper;
-	private String WORDNET_DB_PATH = "/WordNet-3.0-dict/";
+	private String WORDNET_DB_PATH = "WordNet-3.0-dict/";
 
 	private WnStemmer stemmer;
 //	private String modelFile = "stanford-postagger-2017-06-09/models/english-left3words-distsim.tagger";
