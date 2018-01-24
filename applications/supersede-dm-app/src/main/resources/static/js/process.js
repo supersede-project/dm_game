@@ -300,6 +300,127 @@ app.controllerProvider
 								alert(err.message);
 							});
 
+					// GOT FROM dm-garp-ui --> home.js
+					$http
+							.get(
+									'supersede-dm-app/garp/game/games?roleName=Supervisor&processId='
+											+ processId)
+							.success(
+									function(data) {
+										var source = {
+											datatype : "json",
+											datafields : [ {
+												name : 'name'
+											}, {
+												name : 'date'
+											}, {
+												name : 'status'
+											}, {
+												name : 'id'
+											} ],
+											localdata : data
+										};
+										var cellsrenderer = function(row,
+												columnfield, value,
+												defaulthtml, columnproperties) {
+											var r = '<div class="jqx-grid-cell-left-align" style="margin-top: 4px; margin-bottom: 4px;">';
+											r = r
+													.concat('<jqx-button jqx-width="110" jqx-height="25" style="margin-left: 10px; margin-right: 10px;" ');
+											r = r
+													.concat('ng-click="gameDetails('
+															+ value
+															+ ')">Details</jqx-button></div>');
+											return r;
+										};
+										var dataAdapter = new $.jqx.dataAdapter(
+												source);
+										$("#supervisorGames")
+												.jqxGrid(
+														{
+															width : '100%',
+															autoheight : true,
+															pageable : true,
+															altrows : true,
+															source : dataAdapter,
+															rowsheight : 32,
+															/** AG1263 */
+															showstatusbar : true,
+															renderstatusbar : function(
+																	statusbar) {
+																// appends
+																// buttons to
+																// the status
+																// bar.
+																var container = $("<div style='overflow: hidden; position: relative; margin: 5px;'></div>");
+																var exportButton = $("<button>New Game</button>");
+																container
+																		.append(exportButton);
+																var requiredRow = "<strong> No games available</strong>";
+																var datainformations = $(
+																		"#supervisorGames")
+																		.jqxGrid(
+																				"getdatainformation");
+																var rowscounts = datainformations.rowscount;
+																if (rowscounts == 0) {
+																	container
+																			.append(requiredRow);
+																	$scope.gamesWarning = "[No games available]";
+																}
+																statusbar
+																		.append(container);
+																exportButton
+																		.jqxButton({
+																			width : 100,
+																			height : 25
+																		});
+																// add new row.
+																exportButton
+																		.click(function(
+																				event) {
+																			$location
+																					.url("supersede-dm-app/garp/create_game?processId="
+																							+ processId);
+																			$scope
+																					.$apply();
+																		});
+															},
+															/** end AG1263 */
+															columns : [
+																	{
+																		text : 'Name',
+																		datafield : 'name',
+																		width : '50%',
+																		align : 'center',
+																		cellsalign : 'center'
+																	},
+																	{
+																		text : 'Date',
+																		datafield : 'date',
+																		width : '25%',
+																		align : 'center',
+																		cellsalign : 'center'
+																	},
+																	{
+																		text : 'Status',
+																		datafield : 'status',
+																		width : '10%',
+																		align : 'center',
+																		cellsalign : 'center'
+																	},
+																	{
+																		text : '',
+																		datafield : 'id',
+																		width : '15%',
+																		align : 'center',
+																		cellsalign : 'center',
+																		cellsrenderer : cellsrenderer
+																	} ]
+														// /supersede-dm-app/garp/create_game?processId=5580
+														});
+									}).error(function(err) {
+								alert(err.message);
+							});
+
 					// Get the activities of the process
 					function loadActivities() {
 						$http
@@ -324,6 +445,8 @@ app.controllerProvider
 																	if (datarecord === undefined) {
 																		return "";
 																	}
+																	console
+																			.log(datarecord);
 																	var imgurl = 'supersede-dm-app/img/process.png';
 																	var img = '<img height="50" width="50" src="'
 																			+ imgurl
@@ -458,13 +581,15 @@ app.controllerProvider
 					}
 				});
 
-$('.col-expander-users').click(function(){
-    $('.col-content-users').slideToggle('slow');
+$('.col-expander-users').click(function() {
+	$('.col-content-users').slideToggle('slow');
 });
-$('.col-expander-criteria').click(function(){
-    $('.col-content-criteria').slideToggle('slow');
+$('.col-expander-criteria').click(function() {
+	$('.col-content-criteria').slideToggle('slow');
 });
-$('.col-expander-requirements').click(function(){
-    $('.col-content-requirements').slideToggle('slow');
+$('.col-expander-requirements').click(function() {
+	$('.col-content-requirements').slideToggle('slow');
 });
-
+$('.col-expander-games').click(function() {
+	$('.col-content-games').slideToggle('slow');
+});
