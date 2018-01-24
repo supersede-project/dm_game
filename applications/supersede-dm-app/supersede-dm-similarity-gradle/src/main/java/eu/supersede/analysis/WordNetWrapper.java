@@ -54,7 +54,7 @@ public class WordNetWrapper {
 	private StanfordCoreNLP pipeline;
 	private AnalysisType analysisType;
 
-	private String stopWordsFile = "stopwords.txt";
+	private String stopWordsFile = "/stopwords.txt";
 	private Set<String> stopWords;
 
 	public WordNetWrapper(OntologyWrapper ow) {
@@ -63,7 +63,7 @@ public class WordNetWrapper {
 		stopWords = Utils.readStopWords(url.getFile());
 		
 		// set WordNet db path
-		WORDNET_DB_PATH = classLoader.getResource("WordNet-3.0-dict").getFile();
+		WORDNET_DB_PATH = classLoader.getResource("/WordNet-3.0-dict").getFile();
 		
 		ontologyWrapper = ow;
 		System.setProperty("wordnet.database.dir", WORDNET_DB_PATH);
