@@ -52,4 +52,4 @@ echo -e "\nBuilding supersede-dm-similarity-gradle...\n"
 
 cd ../
 echo -e "\nBuilding supersede-dm-app...\n"
-./gradlew build
+./gradlew build -x test
