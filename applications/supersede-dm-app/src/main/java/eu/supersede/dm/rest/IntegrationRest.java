@@ -26,6 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.supersede.analysis.similarity.FeedbackSimilarity;
+import eu.supersede.analysis.similarity.FeedbackSimilarity.SimilarityMeasure;
+import eu.supersede.analysis.similarity.pojo.RequestObject;
+import eu.supersede.analysis.similarity.pojo.SimilarityResult;
 import eu.supersede.dm.DMGame;
 import eu.supersede.fe.exception.InternalServerErrorException;
 import eu.supersede.gr.model.HAlert;
@@ -40,6 +44,18 @@ import eu.supersede.integration.api.replan.controller.types.FeatureWP3;
 @RequestMapping("/api")
 public class IntegrationRest
 {
+	@RequestMapping(value="/public/similarity", method=RequestMethod.POST)
+	public List<SimilarityResult> similarity (@RequestBody RequestObject request){
+		/*
+		 * Currently three similarity measures are implemented: HammingDistance-based, Jaccard-based, KNN-based.
+		 * The default is Jaccard-based. The enum SimilarityMeasure contains the possible values.
+		 */
+		SimilarityMeasure sm = SimilarityMeasure.JACCARD;
+		FeedbackSimilarity feedbackSimilarity = new FeedbackSimilarity(sm);
+		List<SimilarityResult> similarRequirements = feedbackSimilarity.getSimilarRequirements(request);
+		return similarRequirements;
+	}
+	
     @RequestMapping(value = "/public/monitoring/alert", method = RequestMethod.POST)
     public void notifyPublicAlert(@RequestBody Alert alert)
     {
