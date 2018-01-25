@@ -17,10 +17,9 @@ public class UtilsTest {
 
 	@Test
 	public void testReadStopWords() {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URL url = classLoader.getResource("stopwords.txt");
-		Set<String> stopWords = Utils.readStopWords(url.getFile());
+		Set<String> stopWords = Utils.readStopWords("stopwords.txt");
 		assertNotNull(stopWords);
+		assertFalse(stopWords.isEmpty());
 		assertFalse(stopWords.isEmpty());
 	}
 

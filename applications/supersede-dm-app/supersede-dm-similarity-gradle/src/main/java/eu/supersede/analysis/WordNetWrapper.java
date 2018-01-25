@@ -58,13 +58,15 @@ public class WordNetWrapper {
 	private Set<String> stopWords;
 
 	public WordNetWrapper(OntologyWrapper ow) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URL url = classLoader.getResource(stopWordsFile);
-		stopWords = Utils.readStopWords(url.getFile());
+		
+		stopWords = Utils.readStopWords(stopWordsFile);
+		
+		// get resources path from current Jar
+//		String resourcesDir = (new Utils()).extractResourcesToTempFolder();
 		
 		// set WordNet db path
-		WORDNET_DB_PATH = classLoader.getResource("WordNet-3.0-dict").getFile();
-		
+		WORDNET_DB_PATH = Thread.currentThread().getContextClassLoader().getResource("WordNet-3.0-dict").getFile();
+//		System.out.println("WordnetDbPath: " + WORDNET_DB_PATH);
 		ontologyWrapper = ow;
 		System.setProperty("wordnet.database.dir", WORDNET_DB_PATH);
 

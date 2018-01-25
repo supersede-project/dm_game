@@ -50,8 +50,7 @@ public class OntologyWrapper {
 	public OntologyWrapper(String ontology) {
 		rdfFileName = ontology;
 
-		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream in = classLoader.getResourceAsStream(rdfFileName);
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(rdfFileName);
 //		InputStream in = FileManager.get().open(rdfFileName);
 		if (in == null) {
 			throw new IllegalArgumentException("File: " + rdfFileName + " not found");
@@ -72,7 +71,7 @@ public class OntologyWrapper {
 		
 		// TODO this is added to handle classes with owl:Classs, rather than rdf:Class. Is there a better way?
 		if (classes.isEmpty()) {
-			in = classLoader.getResourceAsStream(rdfFileName);
+			in = Thread.currentThread().getContextClassLoader().getResourceAsStream(rdfFileName);
 			ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 			ontModel.read(in, null, "TTL");
 			classes = getAllClasses();
