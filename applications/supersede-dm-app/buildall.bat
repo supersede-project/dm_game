@@ -31,5 +31,5 @@ cd ..
 #cd supersede-dm-orchestrator
 #gradle build --refresh-dependencies
 #cd ..
-gradle build --refresh-dependencies
+gradle build -x test --refresh-dependencies
 cd ..

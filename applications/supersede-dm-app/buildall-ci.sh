@@ -55,4 +55,4 @@ echo -e "\nBuilding supersede-dm-similarity-gradle...\n"
 
 cd ../
 echo -e "\nBuilding supersede-dm-app...\n"
-./gradlew build --refresh-dependencies
+./gradlew build -x test --refresh-dependencies
