@@ -54,7 +54,7 @@ public class WordNetWrapper {
 	private StanfordCoreNLP pipeline;
 	private AnalysisType analysisType;
 
-	private String stopWordsFile = "/stopwords.txt";
+	private String stopWordsFile = "stopwords.txt";
 	private Set<String> stopWords;
 
 	public WordNetWrapper(OntologyWrapper ow) {
