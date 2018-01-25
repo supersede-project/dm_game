@@ -300,6 +300,11 @@ app.controllerProvider
 								alert(err.message);
 							});
 
+					$scope.gameDetails = function(gameId) {
+						$location.url('supersede-dm-app/garp/game_details')
+								.search('gameId', gameId).search('processId',
+										processId);
+					};
 					// GOT FROM dm-garp-ui --> home.js
 					$http
 							.get(
@@ -592,4 +597,5 @@ $('.col-expander-requirements').click(function() {
 });
 $('.col-expander-games').click(function() {
 	$('.col-content-games').slideToggle('slow');
+
 });
