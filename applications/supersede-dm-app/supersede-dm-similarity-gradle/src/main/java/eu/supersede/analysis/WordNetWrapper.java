@@ -2,16 +2,12 @@ package eu.supersede.analysis;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.item.POS;
@@ -27,13 +23,12 @@ import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.CoreMap;
 import eu.supersede.analysis.FeedbackAnnotator.AnalysisType;
+import javassist.Loader;
 
 /**
  * 
@@ -62,8 +57,9 @@ public class WordNetWrapper {
 		stopWords = Utils.readStopWords(stopWordsFile);
 		
 		// set WordNet db path
-		WORDNET_DB_PATH = Thread.currentThread().getContextClassLoader().getResource("WordNet-3.0-dict").getFile();
-//		System.out.println("WordnetDbPath: " + WORDNET_DB_PATH);
+		
+		WORDNET_DB_PATH = getResource("WordNet-3.0-dict").getFile();
+		System.out.println("WordnetDbPath: " + WORDNET_DB_PATH);
 		ontologyWrapper = ow;
 		System.setProperty("wordnet.database.dir", WORDNET_DB_PATH);
 
@@ -89,6 +85,32 @@ public class WordNetWrapper {
 		pipeline = new StanfordCoreNLP(props);
 	}
 
+	public URL getResource(String resource){
+
+	    URL url ;
+
+	    //Try with the Thread Context Loader. 
+	    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	    if(classLoader != null){
+	        url = classLoader.getResource(resource);
+	        if(url != null){
+	            return url;
+	        }
+	    }
+
+	    //Let's now try with the classloader that loaded this class.
+	    classLoader = Loader.class.getClassLoader();
+	    if(classLoader != null){
+	        url = classLoader.getResource(resource);
+	        if(url != null){
+	            return url;
+	        }
+	    }
+
+	    //Last ditch attempt. Get the resource from the classpath.
+	    return ClassLoader.getSystemResource(resource);
+	}
+	
 	public Synset[] getAllSenses (String term){
 		Synset[] synsets = database.getSynsets(term);
 		return synsets;
