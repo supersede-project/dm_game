@@ -42,10 +42,14 @@ cd ../supersede-dm-planning-jmetal
 echo -e "\nBuilding supersede-dm-planning-jmetal...\n"
 ./gradlew build
 
+cd ../supersede-dm-similarity-gradle
+echo -e "\nBuilding supersede-dm-similarity-gradle...\n"
+./gradlew build -x test
+
 #cd ../supersede-dm-orchestrator
 #echo -e "\nBuilding supersede-dm-orchestrator...\n"
 #./gradlew build
 
 cd ../
 echo -e "\nBuilding supersede-dm-app...\n"
-./gradlew build
+./gradlew build -x test

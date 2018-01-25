@@ -42,334 +42,289 @@ import eu.supersede.gr.model.RequirementStatus;
 
 @RestController
 @RequestMapping("processes/requirements")
-public class ProcessRequirementsRest
-{
-    @Autowired
-    private RequirementsJpa requirementsJpa;
+public class ProcessRequirementsRest {
+	@Autowired
+	private RequirementsJpa requirementsJpa;
 
-    @Autowired
-    private RequirementsDependenciesJpa requirementsDependenciesJpa;
+	@Autowired
+	private RequirementsDependenciesJpa requirementsDependenciesJpa;
 
-    @Autowired
-    private RequirementsPropertiesJpa requirementsPropertiesJpa;
+	@Autowired
+	private RequirementsPropertiesJpa requirementsPropertiesJpa;
 
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name)
-    {
-        Requirement r = new Requirement();
-        r.setName(name);
-        r.setStatus(RequirementStatus.Editable.getValue());
-        r = DMGame.get().getJpa().requirements.save(r);
-        DMGame.get().getProcessManager(processId).addRequirement(r);
-        return r;
-    }
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public Requirement createRequirement(@RequestParam Long processId, @RequestParam String name,
+			@RequestParam(required = false) String description) {
+		Requirement r = new Requirement();
+		r.setName(name);
+		r.setStatus(RequirementStatus.Editable.getValue());
+		if(description != null && !"".equals(description)) {
+			r.setDescription(description);
+		}
+		r = DMGame.get().getJpa().requirements.save(r);
+		DMGame.get().getProcessManager(processId).addRequirement(r);
+		return r;
+	}
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public void deleteRequirement(@RequestParam Long requirementId)
-    {
-        Requirement requirement = requirementsJpa.getOne(requirementId);
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public void deleteRequirement(@RequestParam Long requirementId) {
+		Requirement requirement = requirementsJpa.getOne(requirementId);
 
-        if (requirement == null)
-        {
-            throw new NotFoundException(
-                    "Can't delete requirement with id " + requirementId + " because it does not exist");
-        }
+		if (requirement == null) {
+			throw new NotFoundException(
+					"Can't delete requirement with id " + requirementId + " because it does not exist");
+		}
 
-        // Do not delete the requirement if at least another requirement depends on it
-        List<HRequirementDependency> dependencies = requirementsDependenciesJpa.findByDependencyId(requirementId);
+		// Do not delete the requirement if at least another requirement depends
+		// on it
+		List<HRequirementDependency> dependencies = requirementsDependenciesJpa.findByDependencyId(requirementId);
 
-        if (dependencies != null && dependencies.size() > 0)
-        {
-            throw new InternalServerErrorException("Unable to delete requirement " + requirement.getName() + "("
-                    + requirement.getDescription() + "): at least another requirement depends on it");
-        }
+		if (dependencies != null && dependencies.size() > 0) {
+			throw new InternalServerErrorException("Unable to delete requirement " + requirement.getName() + "("
+					+ requirement.getDescription() + "): at least another requirement depends on it");
+		}
 
-        // Delete all the dependencies of the requirement
-        dependencies = requirementsDependenciesJpa.findByRequirementId(requirementId);
+		// Delete all the dependencies of the requirement
+		dependencies = requirementsDependenciesJpa.findByRequirementId(requirementId);
 
-        for (HRequirementDependency requirementDependency : dependencies)
-        {
-            requirementsDependenciesJpa.delete(requirementDependency);
-        }
+		for (HRequirementDependency requirementDependency : dependencies) {
+			requirementsDependenciesJpa.delete(requirementDependency);
+		}
 
-        // Delete all the properties of the requirement
-        for (HRequirementProperty requirementProperty : requirementsPropertiesJpa
-                .findPropertiesByRequirementId(requirementId))
-        {
-            requirementsPropertiesJpa.delete(requirementProperty);
-        }
+		// Delete all the properties of the requirement
+		for (HRequirementProperty requirementProperty : requirementsPropertiesJpa
+				.findPropertiesByRequirementId(requirementId)) {
+			requirementsPropertiesJpa.delete(requirementProperty);
+		}
 
-        requirementsJpa.delete(requirement);
-    }
+		requirementsJpa.delete(requirement);
+	}
 
-    @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public void importRequirements(@RequestParam Long processId,
-            @RequestParam(required = false) List<Long> requirementsId)
-    {
-        ProcessManager proc = DMGame.get().getProcessManager(processId);
-        List<Requirement> requirements = proc.getRequirements();
+	@RequestMapping(value = "/import", method = RequestMethod.POST)
+	public void importRequirements(@RequestParam Long processId,
+			@RequestParam(required = false) List<Long> requirementsId) {
+		ProcessManager proc = DMGame.get().getProcessManager(processId);
+		List<Requirement> requirements = proc.getRequirements();
 
-        for (Requirement requirement : requirements)
-        {
-            proc.removeRequirement(requirement.getRequirementId());
-        }
+		for (Requirement requirement : requirements) {
+			proc.removeRequirement(requirement.getRequirementId());
+		}
 
-        if (requirementsId == null)
-        {
-            // No requirement has been added to the process
-            return;
-        }
+		if (requirementsId == null) {
+			// No requirement has been added to the process
+			return;
+		}
 
-        for (Long requirementId : requirementsId)
-        {
-            Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
+		for (Long requirementId : requirementsId) {
+			Requirement requirement = DMGame.get().getJpa().requirements.findOne(requirementId);
 
-            if (requirement == null)
-            {
-                throw new NotFoundException(
-                        "Can't add requirement with id " + requirementId + " to the process because it does not exist");
-            }
+			if (requirement == null) {
+				throw new NotFoundException(
+						"Can't add requirement with id " + requirementId + " to the process because it does not exist");
+			}
 
-            proc.addRequirement(requirement);
-        }
-    }
+			proc.addRequirement(requirement);
+		}
+	}
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Requirement> getRequirementsList(@RequestParam Long processId)
-    {
-        return DMGame.get().getProcessManager(processId).getRequirements();
-    }
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public List<Requirement> getRequirementsList(@RequestParam Long processId) {
+		return DMGame.get().getProcessManager(processId).getRequirements();
+	}
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public Requirement getRequirement(@RequestParam Long processId, @RequestParam Long reqId)
-    {
-        return DMGame.get().getProcessManager(processId).getRequirement(reqId);
-    }
+	@RequestMapping(value = "/get", method = RequestMethod.GET)
+	public Requirement getRequirement(@RequestParam Long processId, @RequestParam Long reqId) {
+		return DMGame.get().getProcessManager(processId).getRequirement(reqId);
+	}
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int getRequirementsCount(@RequestParam Long processId)
-    {
-        return DMGame.get().getProcessManager(processId).getRequirementsCount();
-    }
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	public int getRequirementsCount(@RequestParam Long processId) {
+		return DMGame.get().getProcessManager(processId).getRequirementsCount();
+	}
 
-    // Checks if a certain status pertains ALL the requirements
-    @RequestMapping(value = "/stablestatus", method = RequestMethod.GET, produces = "text/plain")
-    public String getRequirementsStableStatus(@RequestParam Long processId)
-    {
-        ProcessManager proc = DMGame.get().getProcessManager(processId);
-        Map<String, Integer> count = new HashMap<>();
-        List<Requirement> requirements = proc.getRequirements();
+	// Checks if a certain status pertains ALL the requirements
+	@RequestMapping(value = "/stablestatus", method = RequestMethod.GET, produces = "text/plain")
+	public String getRequirementsStableStatus(@RequestParam Long processId) {
+		ProcessManager proc = DMGame.get().getProcessManager(processId);
+		Map<String, Integer> count = new HashMap<>();
+		List<Requirement> requirements = proc.getRequirements();
 
-        for (Requirement r : requirements)
-        {
-            RequirementStatus s = RequirementStatus.valueOf(r.getStatus());
-            Integer n = count.get(r.getStatus());
+		for (Requirement r : requirements) {
+			RequirementStatus s = RequirementStatus.valueOf(r.getStatus());
+			Integer n = count.get(r.getStatus());
 
-            if (n == null)
-            {
-                n = 0;
-            }
+			if (n == null) {
+				n = 0;
+			}
 
-            count.put(s.name(), n + 1);
-        }
+			count.put(s.name(), n + 1);
+		}
 
-        if (count.size() != 1)
-        {
-            return "";
-        }
+		if (count.size() != 1) {
+			return "";
+		}
 
-        return count.keySet().toArray()[0].toString();
-    }
+		return count.keySet().toArray()[0].toString();
+	}
 
-    // Sets a same status to ALL the requirements
-    @RequestMapping(value = "/stablestatus", method = RequestMethod.POST, produces = "text/plain")
-    public void setRequirementsStableStatus(@RequestParam Long processId,
-            @RequestParam(name = "status") String statusString)
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
-        RequirementStatus status = RequirementStatus.valueOf(statusString);
+	// Sets a same status to ALL the requirements
+	@RequestMapping(value = "/stablestatus", method = RequestMethod.POST, produces = "text/plain")
+	public void setRequirementsStableStatus(@RequestParam Long processId,
+			@RequestParam(name = "status") String statusString) {
+		ProcessManager mgr = DMGame.get().getProcessManager(processId);
+		RequirementStatus status = RequirementStatus.valueOf(statusString);
 
-        for (Requirement r : mgr.getRequirements())
-        {
-            r.setStatus(status.getValue());
-            DMGame.get().getJpa().requirements.save(r);
-        }
-    }
+		for (Requirement r : mgr.getRequirements()) {
+			r.setStatus(status.getValue());
+			DMGame.get().getJpa().requirements.save(r);
+		}
+	}
 
-    @RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
-    public String getRequirementsStatus(@RequestParam Long processId)
-    {
-        ProcessManager proc = DMGame.get().getProcessManager(processId);
-        Map<Integer, Integer> count = new HashMap<>();
-        count.put(RequirementStatus.Unconfirmed.getValue(), 0);
-        count.put(RequirementStatus.Editable.getValue(), 0);
-        count.put(RequirementStatus.Confirmed.getValue(), 0);
-        count.put(RequirementStatus.Enacted.getValue(), 0);
-        count.put(RequirementStatus.Discarded.getValue(), 0);
-        List<Requirement> requirements = proc.getRequirements();
+	@RequestMapping(value = "/status", method = RequestMethod.GET, produces = "text/plain")
+	public String getRequirementsStatus(@RequestParam Long processId) {
+		ProcessManager proc = DMGame.get().getProcessManager(processId);
+		Map<Integer, Integer> count = new HashMap<>();
+		count.put(RequirementStatus.Unconfirmed.getValue(), 0);
+		count.put(RequirementStatus.Editable.getValue(), 0);
+		count.put(RequirementStatus.Confirmed.getValue(), 0);
+		count.put(RequirementStatus.Enacted.getValue(), 0);
+		count.put(RequirementStatus.Discarded.getValue(), 0);
+		List<Requirement> requirements = proc.getRequirements();
 
-        if (requirements.size() < 1)
-        {
-            return RequirementStatus.Unconfirmed.name();
-        }
+		if (requirements.size() < 1) {
+			return RequirementStatus.Unconfirmed.name();
+		}
 
-        for (Requirement r : requirements)
-        {
-            Integer n = count.get(r.getStatus());
+		for (Requirement r : requirements) {
+			Integer n = count.get(r.getStatus());
 
-            if (n == null)
-            {
-                continue;
-            }
+			if (n == null) {
+				continue;
+			}
 
-            count.put(r.getStatus(), n + 1);
-        }
+			count.put(r.getStatus(), n + 1);
+		}
 
-        if (count.get(RequirementStatus.Unconfirmed.getValue()) > 0)
-        {
-            return RequirementStatus.Unconfirmed.name();
-        }
+		if (count.get(RequirementStatus.Unconfirmed.getValue()) > 0) {
+			return RequirementStatus.Unconfirmed.name();
+		}
 
-        if (count.get(RequirementStatus.Enacted.getValue()) > 0)
-        {
-            return RequirementStatus.Enacted.name();
-        }
+		if (count.get(RequirementStatus.Enacted.getValue()) > 0) {
+			return RequirementStatus.Enacted.name();
+		}
 
-        if (count.get(RequirementStatus.Discarded.getValue()) > 0)
-        {
-            return RequirementStatus.Discarded.name();
-        }
+		if (count.get(RequirementStatus.Discarded.getValue()) > 0) {
+			return RequirementStatus.Discarded.name();
+		}
 
-        return RequirementStatus.Confirmed.name();
-    }
+		return RequirementStatus.Confirmed.name();
+	}
 
-    @RequestMapping(value = "/statusmap", method = RequestMethod.GET, produces = "application/json")
-    public Map<String, Integer> getRequirementsStatusMap(@RequestParam Long processId)
-    {
-        ProcessManager proc = DMGame.get().getProcessManager(processId);
-        Map<String, Integer> count = new HashMap<>();
+	@RequestMapping(value = "/statusmap", method = RequestMethod.GET, produces = "application/json")
+	public Map<String, Integer> getRequirementsStatusMap(@RequestParam Long processId) {
+		ProcessManager proc = DMGame.get().getProcessManager(processId);
+		Map<String, Integer> count = new HashMap<>();
 
-        for (Requirement r : proc.getRequirements())
-        {
-            String str = RequirementStatus.valueOf(r.getStatus()).name();
-            Integer n = count.get(str);
+		for (Requirement r : proc.getRequirements()) {
+			String str = RequirementStatus.valueOf(r.getStatus()).name();
+			Integer n = count.get(str);
 
-            if (n == null)
-            {
-                n = 0;
-            }
+			if (n == null) {
+				n = 0;
+			}
 
-            count.put(str, n + 1);
-        }
+			count.put(str, n + 1);
+		}
 
-        return count;
-    }
+		return count;
+	}
 
-    @RequestMapping(value = "/confirm", method = RequestMethod.PUT)
-    public void confirmRequirements(@RequestParam Long processId)
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+	@RequestMapping(value = "/confirm", method = RequestMethod.PUT)
+	public void confirmRequirements(@RequestParam Long processId) {
+		ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
-        for (Requirement r : mgr.getRequirements())
-        {
-            RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
+		for (Requirement r : mgr.getRequirements()) {
+			RequirementStatus oldStatus = RequirementStatus.valueOf(r.getStatus());
 
-            if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Confirmed))
-            {
-                r.setStatus(RequirementStatus.Confirmed.getValue());
-                DMGame.get().getJpa().requirements.save(r);
-            }
-        }
-    }
+			if (RequirementStatus.next(oldStatus).contains(RequirementStatus.Confirmed)) {
+				r.setStatus(RequirementStatus.Confirmed.getValue());
+				DMGame.get().getJpa().requirements.save(r);
+			}
+		}
+	}
 
-    @RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
-    public void setDependencies(@RequestParam Long processId, @RequestParam Long requirementId,
-            @RequestParam(required = false) List<Long> dependencies)
-    {
-        // Delete previously stored dependencies
-        for (HRequirementDependency storedDependency : requirementsDependenciesJpa.findByRequirementId(requirementId))
-        {
-            requirementsDependenciesJpa.delete(storedDependency);
-        }
+	@RequestMapping(value = "/dependencies/submit", method = RequestMethod.POST)
+	public void setDependencies(@RequestParam Long processId, @RequestParam Long requirementId,
+			@RequestParam(required = false) List<Long> dependencies) {
+		// Delete previously stored dependencies
+		for (HRequirementDependency storedDependency : requirementsDependenciesJpa.findByRequirementId(requirementId)) {
+			requirementsDependenciesJpa.delete(storedDependency);
+		}
 
-        if (dependencies == null || dependencies.size() == 0)
-        {
-            // No dependencies to add
-            return;
-        }
+		if (dependencies == null || dependencies.size() == 0) {
+			// No dependencies to add
+			return;
+		}
 
-        // Store new dependencies
-        for (Long dependencyId : dependencies)
-        {
-            HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
-            requirementsDependenciesJpa.save(requirementDependency);
-        }
-    }
+		// Store new dependencies
+		for (Long dependencyId : dependencies) {
+			HRequirementDependency requirementDependency = new HRequirementDependency(requirementId, dependencyId);
+			requirementsDependenciesJpa.save(requirementDependency);
+		}
+	}
 
-    @RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
-    public List<Long> getDependencies(@RequestParam Long processId, @RequestParam Long requirementId)
-    {
-        Requirement requirement = requirementsJpa.findOne(requirementId);
+	@RequestMapping(value = "/dependencies/list", method = RequestMethod.GET)
+	public List<Long> getDependencies(@RequestParam Long processId, @RequestParam Long requirementId) {
+		Requirement requirement = requirementsJpa.findOne(requirementId);
 
-        if (requirement == null)
-        {
-            throw new NotFoundException("Unable to find dependencies of requirement with id " + requirementId
-                    + " because it does not exist");
-        }
+		if (requirement == null) {
+			throw new NotFoundException("Unable to find dependencies of requirement with id " + requirementId
+					+ " because it does not exist");
+		}
 
-        List<Long> requirementDependencies = new ArrayList<>();
-        List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
-                .findByRequirementId(requirementId);
+		List<Long> requirementDependencies = new ArrayList<>();
+		List<HRequirementDependency> storedDependencies = requirementsDependenciesJpa
+				.findByRequirementId(requirementId);
 
-        for (HRequirementDependency dependency : storedDependencies)
-        {
-            requirementDependencies.add(dependency.getDependencyId());
-        }
+		for (HRequirementDependency dependency : storedDependencies) {
+			requirementDependencies.add(dependency.getDependencyId());
+		}
 
-        return requirementDependencies;
-    }
+		return requirementDependencies;
+	}
 
-    @RequestMapping(value = "/property/submit", method = RequestMethod.POST)
-    public void setProperties(@RequestParam Long processId, @RequestParam Long requirementId,
-            @RequestParam String propertyName, @RequestParam String propertyValue)
-    {
-        HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
-        requirementsPropertiesJpa.save(requirementProperty);
-    }
+	@RequestMapping(value = "/property/submit", method = RequestMethod.POST)
+	public void setProperties(@RequestParam Long processId, @RequestParam Long requirementId,
+			@RequestParam String propertyName, @RequestParam String propertyValue) {
+		HRequirementProperty requirementProperty = new HRequirementProperty(requirementId, propertyName, propertyValue);
+		requirementsPropertiesJpa.save(requirementProperty);
+	}
 
-    @RequestMapping(value = "/properties", method = RequestMethod.GET)
-    public List<HRequirementProperty> getProperties(@RequestParam Long processId, @RequestParam Long requirementId)
-    {
-        return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
-    }
+	@RequestMapping(value = "/properties", method = RequestMethod.GET)
+	public List<HRequirementProperty> getProperties(@RequestParam Long processId, @RequestParam Long requirementId) {
+		return requirementsPropertiesJpa.findPropertiesByRequirementId(requirementId);
+	}
 
-    @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)
-    public List<HActivity> getRequirementsEditingSession(@RequestParam Long processId)
-    {
-        return DMGame.get().getProcessManager(processId).getOngoingActivities(AccessRequirementsEditingSession.NAME);
-    }
+	@RequestMapping(value = "/edit/collaboratively", method = RequestMethod.GET)
+	public List<HActivity> getRequirementsEditingSession(@RequestParam Long processId) {
+		return DMGame.get().getProcessManager(processId).getOngoingActivities(AccessRequirementsEditingSession.NAME);
+	}
 
-    @RequestMapping(value = "/edit/collaboratively", method = RequestMethod.POST)
-    public void createRequirementsEditingSession(@RequestParam(required = false) String act,
-            @RequestParam Long processId)
-    {
-        ProcessManager mgr = DMGame.get().getProcessManager(processId);
+	@RequestMapping(value = "/edit/collaboratively", method = RequestMethod.POST)
+	public void createRequirementsEditingSession(@RequestParam(required = false) String act,
+			@RequestParam Long processId) {
+		ProcessManager mgr = DMGame.get().getProcessManager(processId);
 
-        if ("close".equals(act))
-        {
-            List<HActivity> activities = mgr.getOngoingActivities(AccessRequirementsEditingSession.NAME);
+		if ("close".equals(act)) {
+			List<HActivity> activities = mgr.getOngoingActivities(AccessRequirementsEditingSession.NAME);
 
-            for (HActivity a : activities)
-            {
-                mgr.deleteActivity(a);
-            }
-        }
-        else
-        {
-            for (HProcessMember m : mgr.getProcessMembers())
-            {
-                mgr.createActivity(AccessRequirementsEditingSession.NAME, m.getUserId());
-            }
-        }
-    }
+			for (HActivity a : activities) {
+				mgr.deleteActivity(a);
+			}
+		} else {
+			for (HProcessMember m : mgr.getProcessMembers()) {
+				mgr.createActivity(AccessRequirementsEditingSession.NAME, m.getUserId());
+			}
+		}
+	}
 }

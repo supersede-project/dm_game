@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -102,8 +103,8 @@ public class AlertsRest
         return list;
     }
 
-    @RequestMapping(value = "/discard", method = RequestMethod.PUT)
-    public void discard(@RequestParam String alertId)
+    @RequestMapping(value = "/discard/{alertId}", method = RequestMethod.DELETE)
+    public void discard(@PathVariable String alertId)
     {
         HAlert alert = alertsJpa.findOne(alertId);
 
@@ -111,7 +112,6 @@ public class AlertsRest
         {
             throw new NotFoundException("Can't delete alert with id " + alertId + " because it does not exist");
         }
-
         alertsJpa.delete(alert);
     }
 
