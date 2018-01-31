@@ -147,7 +147,11 @@ public class FeedbackSimilarity {
 		// compute ranks based on the distances
 		computeRanks (result);
 		
-		return result.subList(0, k);
+		if (result.size() <= k) {
+			return result;
+		}else {
+			return result.subList(0, k);
+		}
 	}
 	
 	
