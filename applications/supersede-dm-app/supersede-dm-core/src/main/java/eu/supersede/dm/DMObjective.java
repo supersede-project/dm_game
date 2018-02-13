@@ -5,6 +5,11 @@ public enum DMObjective {
 	PrioritizeRequirements, 
 	TagItemsAsRequirements, 
 	EstablishRequirementDependencies, 
-	AssignRequirementTopics
+	AssignRequirementTopics;
+	
+	//changed in order to get 
+    public String toString() {
+        return name().replace("Requirement", "Feature");
+    }
 	
 }
