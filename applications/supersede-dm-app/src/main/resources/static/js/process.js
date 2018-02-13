@@ -263,7 +263,7 @@ app.controllerProvider
 																// the status
 																// bar.
 																var container = $("<div style='overflow: hidden; position: relative; margin: 5px;'></div>");
-																var requiredRow = "<strong> It is not recommended to start a process with less than 2 requirements </strong>";
+																var requiredRow = "<strong> You cannot start a process with less than 2 features </strong>";
 																var datainformations = $(
 																		"#requirements")
 																		.jqxGrid(
@@ -272,7 +272,7 @@ app.controllerProvider
 																if (rowscounts < 2) {
 																	container
 																			.append(requiredRow);
-																	$scope.requirementWarning = "[You must select at least 2 requirements]";
+																	$scope.requirementWarning = "[You must select at least 2 features]";
 																}
 																statusbar
 																		.append(container);
