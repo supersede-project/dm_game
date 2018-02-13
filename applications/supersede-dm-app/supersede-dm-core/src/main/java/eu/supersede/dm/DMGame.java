@@ -234,7 +234,7 @@ public class DMGame
     public HProcess createEmptyProcess(String name)
     {
         HProcess proc = new HProcess();
-        proc.setObjective(DMObjective.PrioritizeRequirements.name());
+        proc.setObjective(DMObjective.PrioritizeRequirements.toString());
         proc.setStartTime(new Date(System.currentTimeMillis()));
         proc.setPhaseName(lifecycle.getInitPhase().getName());
         proc = jpa.processes.save(proc);
