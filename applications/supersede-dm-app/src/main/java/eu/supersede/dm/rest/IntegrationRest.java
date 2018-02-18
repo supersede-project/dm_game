@@ -51,8 +51,8 @@ public class IntegrationRest
 		 * The default is Jaccard-based. The enum SimilarityMeasure contains the possible values.
 		 */
 		SimilarityMeasure sm = SimilarityMeasure.JACCARD;
-		FeedbackSimilarity feedbackSimilarity = new FeedbackSimilarity(sm);
-		List<SimilarityResult> similarRequirements = feedbackSimilarity.getSimilarRequirements(request);
+		FeedbackSimilarity feedbackSimilarity = new FeedbackSimilarity(request, sm);
+		List<SimilarityResult> similarRequirements = feedbackSimilarity.getSimilarRequirements();
 		return similarRequirements;
 	}
 	

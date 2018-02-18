@@ -31,8 +31,8 @@ import eu.supersede.analysis.similarity.pojo.SimilarityResult;
  */
 public class FeedbackSimilarityTest {
 
-	String ontologyFile = "SDO_ontology.ttl";
-	FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile);
+//	String ontologyFile = "SDO_ontology.ttl";
+//	FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile);
 	Feedback fm = new Feedback();
 	
 	Requirement r1 = new Requirement();
@@ -81,6 +81,7 @@ public class FeedbackSimilarityTest {
 		
 		
 		request = new RequestObject();
+		request.setTenant("senercon");
 		request.setFeedback(fm);
 		request.setK(k);
 		request.setRequirements(requirements);
@@ -93,7 +94,8 @@ public class FeedbackSimilarityTest {
 	 */
 	@Test
 	public void testFeedbackSimilarity() {
-		FeedbackSimilarity sim = new FeedbackSimilarity();
+		SimilarityMeasure sm = SimilarityMeasure.JACCARD;
+		FeedbackSimilarity sim = new FeedbackSimilarity(request, sm);
 		assertNotNull(sim);
 	}
 
@@ -107,8 +109,9 @@ public class FeedbackSimilarityTest {
 
 		
 		
-		FeedbackSimilarity similarity = new FeedbackSimilarity();
-		List<SimilarityResult> similarRequirements = similarity.getSimilarRequirements(request);
+		SimilarityMeasure sm = SimilarityMeasure.JACCARD;
+		FeedbackSimilarity sim = new FeedbackSimilarity(request, sm);
+		List<SimilarityResult> similarRequirements = sim.getSimilarRequirements();
 
 		for (SimilarityResult qr : similarRequirements) {
 			System.out.println(qr.getRank() + " : " + qr.getId() + " : " + qr.getScore());
@@ -155,8 +158,9 @@ public class FeedbackSimilarityTest {
 	
 	@Test
 	public void testKNN() {
-		FeedbackSimilarity similarity = new FeedbackSimilarity(SimilarityMeasure.KNN);
-		List<SimilarityResult> similarRequirements = similarity.getSimilarRequirements(request);
+		SimilarityMeasure sm = SimilarityMeasure.JACCARD;
+		FeedbackSimilarity sim = new FeedbackSimilarity(request, sm);
+		List<SimilarityResult> similarRequirements = sim.getSimilarRequirements();
 		assertTrue(request.getK() == similarRequirements.size());
 		assertTrue(similarRequirements.get(0).getScore() >= similarRequirements.get(similarRequirements.size()-1).getScore());
 	}

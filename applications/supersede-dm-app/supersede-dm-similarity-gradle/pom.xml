@@ -34,7 +34,7 @@
 			<artifactId>json</artifactId>
 			<version>20171018</version>
 		</dependency>
-<!-- library for accessting wordnet database -->
+		<!-- library for accessting wordnet database -->
 		<dependency>
 			<groupId>com.github.jaytaylor</groupId>
 			<artifactId>jaws</artifactId>
@@ -92,6 +92,13 @@
 			<artifactId>weka-stable</artifactId>
 			<version>3.8.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/javassist/javassist -->
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
+
 	</dependencies>
 
 	<properties>
