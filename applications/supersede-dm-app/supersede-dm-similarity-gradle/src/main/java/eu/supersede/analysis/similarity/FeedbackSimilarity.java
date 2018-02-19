@@ -29,13 +29,19 @@ import eu.supersede.analysis.similarity.pojo.SimilarityResult;
  *
  */
 public class FeedbackSimilarity {
-	
+
 	public enum SimilarityMeasure {
 		HAMMING, JACCARD, KNN
+	}
+
+	public enum Tenants {
+		ATOS, SENERCON, SIEMENS
 	}
 	
 	private SimilarityMeasure similarityMeasure = SimilarityMeasure.JACCARD;
 	private String ontologyFile = "SDO_ontology.ttl";
+
+	RequestObject request;
 	
 	/**
 	 * 
@@ -44,49 +50,76 @@ public class FeedbackSimilarity {
 		ontologyFile = ontologyFilePath;
 		similarityMeasure = sm;
 	}
-	
+
 	public FeedbackSimilarity(SimilarityMeasure sm) {
 		similarityMeasure = sm;
 	}
-	
+
 	/**
 	 * 
 	 */
-	public FeedbackSimilarity() {
-		
+	public FeedbackSimilarity(RequestObject request, SimilarityMeasure sm) {
+		this.request = request;
+		ontologyFile = getOntologyFile();
+		similarityMeasure = sm;
 	}
-	
+
+	/**
+	 * @param tenant
+	 * @return the ontology file corresponding to the tenant
+	 */
+	private String getOntologyFile() {
+		Tenants tenant = Tenants.SENERCON;
+		String t = this.request.getTenant();
+		try {
+			tenant = Tenants.valueOf(t.toUpperCase());
+		} catch (Exception e) {
+			// report error, and ignore it. Default tenant will be used.
+			e.printStackTrace();
+		}
+		switch(tenant) {
+		case ATOS:
+			return "ATOS_ontology.ttl";
+		case SENERCON:
+			return "SDO_ontology.ttl";
+		case SIEMENS:
+//			return "SIEM_ontology";
+		default:
+			return "SDO_ontology.ttl";
+		}
+	}
+
 	/*
 	 * returns the top k requirements similar to the given feedback message
 	 */
-	public List<SimilarityResult> getSimilarRequirements (RequestObject request){
+	public List<SimilarityResult> getSimilarRequirements() {
 		List<SimilarityResult> result = new ArrayList<SimilarityResult>();
-		
+
 		Feedback userFeedback = request.getFeedback();
 		int k = request.getK();
 		Requirement[] requirements = request.getRequirements();
-		
+
 		// first find the set of concepts for the feedback and each requirement
 		FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile);
 		OntologyWrapper ontologyWrapper = feedbackAnnotator.getOntologyWrapper();
-		
+
 		// get concepts from the feedback
-		FeedbackMessage feedback = new FeedbackMessage (userFeedback.getText());
+		FeedbackMessage feedback = new FeedbackMessage(userFeedback.getText());
 		Set<OntClass> feedbackConcepts = feedbackAnnotator.annotateFeedback2(feedback);
-		
-		// get concepts from the requirements, map them to feature vectors, and compute the distance from the feedback FV
+
+		// get concepts from the requirements, map them to feature vectors, and compute
+		// the distance from the feedback FV
 		Map<Integer, Set<OntClass>> requirementConcepts = new LinkedHashMap<>();
 		for (Requirement r : requirements) {
-			FeedbackMessage req = new FeedbackMessage (r.getTitle() + " " + r.getDescription());
+			FeedbackMessage req = new FeedbackMessage(r.getTitle() + " " + r.getDescription());
 			Set<OntClass> reqConcepts = feedbackAnnotator.annotateFeedback2(req);
 			requirementConcepts.put(r.get_id(), reqConcepts);
 		}
 
-
 		// compute similar requirements
-		
+
 		// use the k-nearest neighbor algorithm in Weka
-		
+
 		/*
 		 * FIXME this should be handled better
 		 * when mapping concepts to FV, the following approach is used:
@@ -106,44 +139,44 @@ public class FeedbackSimilarity {
 			}
 			// delete last \n
 			reqFvs.deleteCharAt(reqFvs.length() - 1);
-			
+
 			String fbFv = ontologyWrapper.conceptsToFeatureVectorString(feedbackConcepts, true, true);
 			NearestNeighbor nn = new NearestNeighbor(reqFvs.toString(), fbFv);
 			result.addAll(nn.computeNearestNeighbors(k));
-		}else {
+		} else {
 			for (Entry<Integer, Set<OntClass>> entry : requirementConcepts.entrySet()) {
 				double d;
-				
+
 				if (similarityMeasure == SimilarityMeasure.HAMMING) {
 					// map feedback and requirement concepts to feature vector
 					int[] feedbackFV = ontologyWrapper.conceptsToFeatureVector(feedbackConcepts);
 					int[] requirementFV = ontologyWrapper.conceptsToFeatureVector(entry.getValue());
-					
+
 					/*
 					 * Compute the similarity based on Hamming distance between the FV of the feedback and each requirement.
 					 * Hamming distance is basically the count of the number of times corresponding vector values differ.
 					 * Since we want similarity, the method returns d / (d+1)
 					 */
-					d = Utils.computeHammingSimilarity (feedbackFV, requirementFV);
+					d = Utils.computeHammingSimilarity(feedbackFV, requirementFV);
 				} else if (similarityMeasure == SimilarityMeasure.JACCARD) {
 					/*
 					 *  compute Jaccard similarity index: size of intersection divided by size of union
 					 */
-					d = Utils.computeJaccardSimilarity (feedbackConcepts, entry.getValue());
+					d = Utils.computeJaccardSimilarity(feedbackConcepts, entry.getValue());
 				} else {
 					throw new RuntimeException("Unknown similarity measure: " + similarityMeasure);
 				}
-				
+
 				// save to results
 				SimilarityResult qr = new SimilarityResult();
 				qr.setId(entry.getKey());
 				qr.setScore(d);
-				
+
 				result.add(qr);
-				
+
 			}
 		}
-		
+
 		// compute ranks based on the distances
 		computeRanks (result);
 		
@@ -153,15 +186,14 @@ public class FeedbackSimilarity {
 			return result.subList(0, k);
 		}
 	}
-	
-	
+
 	/**
 	 * @param result
 	 */
 	private void computeRanks(List<SimilarityResult> results) {
 		// TODO for now just sorting is enough, since the objects implement Comparable
 		Collections.sort(results, Collections.reverseOrder());
-		
+
 		// assign the index as ranks
 		int rank = 1;
 		for (SimilarityResult result : results) {
@@ -173,7 +205,7 @@ public class FeedbackSimilarity {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
 	}
 
 }

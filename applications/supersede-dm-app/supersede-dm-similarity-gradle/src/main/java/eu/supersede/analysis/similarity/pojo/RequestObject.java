@@ -10,6 +10,7 @@ package eu.supersede.analysis.similarity.pojo;
 
 
 public class RequestObject {
+	private String tenant;
 	private Feedback feedback;
 	private int k;
 	private Requirement[] requirements;
@@ -30,5 +31,11 @@ public class RequestObject {
 	}
 	public void setRequirements(Requirement[] requirements) {
 		this.requirements = requirements;
+	}
+	public String getTenant() {
+		return tenant;
+	}
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
 	}
 }
