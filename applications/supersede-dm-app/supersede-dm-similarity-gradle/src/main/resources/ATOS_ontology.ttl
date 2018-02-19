@@ -1,0 +1,885 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann: <http://purl.org/vocab/vann/> . 
+@prefix G: <http://www.essi.upc.edu/~snadal/BDIOntology/Global/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix saref: <https://w3id.org/saref#> .
+@prefix suo: <https://www.supersede.eu/the-consortium/suo/> . 
+
+@prefix schema: <http://schema.org/> .
+@prefix sport: <http://www.bbc.co.uk/ontologies/sport/> .
+@prefix gender: <http://www.bbc.co.uk/things/event-gender/> .
+@prefix bio: <http://purl.org/vocab/bio/0.1/> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix dbr: <http://dbpedia.org/resource/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix atos: <https://www.supersede.eu/ontologies/atos/> .
+
+
+<https://www.supersede.eu/ontologies/atos/> rdf:type voaf:Vocabulary ;
+	vann:preferredNamespacePrefix "atos";
+	vann:preferredNamespaceUri "https://www.supersede.eu/ontologies/atos/";
+	rdfs:label "Atos domain ontology"@en ;
+	rdfs:label "Atos Ontología de dominio"@es ;
+	dcterms:created "2018-02-12"^^xsd:date ;
+	dcterms:modified "2018-02-12"^^xsd:date ;
+	dcterms:title "Atos Domain Ontology" ;
+	rdfs:comment "Atos Domain Ontology developed for the SUPERSEDE project." .
+	
+################################################################################################################################
+####################################################       DOMAIN           ####################################################	
+################################################################################################################################
+
+#################################################### Domain related classes ####################################################
+sport:Competition rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Competition"@en ;
+	rdfs:label "La competición"@es . 
+	
+sport:EventGender rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Event gender"@en ;
+	rdfs:label "Género del evento"@es . 	
+	
+sport:UnitCompetition rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf sport:Competition ;
+	rdfs:label "Unit Competition"@en ;
+	rdfs:label "Competencia por unidad"@es . 
+
+sport:MedalCompetition rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf sport:Competition ;
+	rdfs:label "Medal Competition"@en ;
+	rdfs:label "Competencia por la medalla"@es . 
+
+sport:Round rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf sport:UnitCompetition ;
+	rdfs:label "Round"@en ;
+	rdfs:label "Ronda"@es .
+
+sport:Match rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Match"@en ;
+	rdfs:label "Partido"@es .	
+	
+sport:SportsDiscipline rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Sports discipline"@en ;
+	rdfs:label "Disciplina deportiva"@es .	
+	
+foaf:Agent rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Agent"@en ;
+	rdfs:label "Agente"@es .
+	
+foaf:Organization rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf foaf:Agent ;
+	rdfs:label "Organization"@en ;
+	rdfs:label "Organizacion"@es .	
+	
+foaf:Person rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf foaf:Agent ;
+	rdfs:label "Person"@en ;
+	rdfs:label "Persona"@es .		
+	
+schema:SportsOrganization rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf foaf:Organization ;
+	rdfs:label "Sports organization"@en ;
+	rdfs:label "Organizacion deportiva"@es .	
+
+schema:SportsTeam rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf schema:SportsOrganization ;
+	rdfs:label "Sports team"@en ;
+	rdfs:label "Equipo deportivo"@es .	
+
+dbo:SportCompetitionResult rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Sport competition result"@en ;
+	rdfs:label "Resultado de la competición deportiva"@es .
+
+time:TemporalEntity rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Temporal Entity"@en ;
+	rdfs:label "Entidad temporal"@es .
+	
+atos:Calendar rdf:type G:Concept, rdfs:Class, suo:Domain ;
+    rdfs:label "Calendar"@en ;
+	rdfs:label "Calendario"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+schema:Schedule rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Schedule"@en ;
+	rdfs:label "Horario"@es .	
+	
+schema:ScheduleAction rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Schedule action"@en ;
+	rdfs:label "Accion horario"@es .		
+	
+schema:Country rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Country"@en ;
+	rdfs:label "Pais"@es .
+	
+schema:PublicationEvent rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Publication event"@en ;
+	rdfs:label "Evento de publicacion"@es .	
+	
+schema:BroadcastEvent rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf schema:PublicationEvent ;
+	rdfs:label "Broadcast event"@en ;
+	rdfs:label "Transmision en vivo de un evento"@es .	
+	
+schema:OnDemandEvent rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:subClassOf schema:PublicationEvent ;
+	rdfs:label "On demand event"@en ;
+	rdfs:label "Transmision en demanda de un evento"@es .		
+	
+atos:Statistics rdf:type G:Concept, rdfs:Class, suo:Domain ;
+    rdfs:label "Statistics"@en ;
+	rdfs:label "Estadistica"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+schema:NewsArticle rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "News Article"@en ;
+	rdfs:label "Noticia"@es .	
+	
+schema:VideoObject rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Video"@en ;
+	rdfs:label "Video"@es .		
+	
+time:TemporalDuration rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Temporal duration"@en ;
+	rdfs:label "Duracion temporal"@es .	
+	
+schema:ImageObject rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Image"@en ;
+	rdfs:label "Imagen"@es .		
+	
+schema:ImageGallery rdf:type G:Concept, rdfs:Class, suo:Domain ;
+	rdfs:label "Image gallery"@en ;
+	rdfs:label "Galeria de imagenes"@es .	
+		
+	
+	
+#################################################### Domain related properties ####################################################
+#event gender property 
+sport:eventGender 
+	rdfs:label "Event gender"@en ;
+	rdfs:label "Género del evento"@es .
+sport:Competition sport:eventGender sport:EventGender .
+
+#has match property 
+sport:hasMatch 
+	rdfs:label "Has match"@en ;
+	rdfs:label "Tiene partido"@es .	
+sport:Round sport:hasMatch sport:Match .
+
+#discipline property 
+sport:discipline 
+	rdfs:label "Discipline"@en ;
+	rdfs:label "Disciplina"@es .	
+sport:MedalCompetition sport:discipline sport:SportsDiscipline .
+sport:Match sport:discipline sport:SportsDiscipline .	
+sport:UnitCompetition sport:discipline sport:SportsDiscipline .
+	
+#home competitor property 	
+sport:homeCompetitor 
+	rdfs:label "Home competitor"@en ;
+	rdfs:label "Competidor local"@es .	
+sport:Match sport:homeCompetitor foaf:Agent .
+
+#away competitor property 	
+sport:awayCompetitor 
+	rdfs:label "Away competitor"@en ;
+	rdfs:label "Competidor invitado"@es .	
+sport:Match sport:awayCompetitor foaf:Agent .
+	
+#athlete property	
+schema:athlete 
+	rdfs:label "Athlete"@en ;
+	rdfs:label "Atleta"@es .	
+foaf:SportsTeam schema:athlete foaf:Person .
+	
+#result property
+atos:result rdf:type rdf:Property ;
+	rdfs:label "result"@en ;
+	rdfs:label "resultado"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain foaf:Agent ;
+	rdfs:range dbo:SportCompetitionResult .		
+	
+#number of gold medals won property	
+dbo:numberOfGoldMedalsWon 
+	rdfs:label "Number of gold medals won"@en ;
+	rdfs:label "Número de medallas de oro ganadas"@es .	
+dbo:SportCompetitionResult dbo:numberOfGoldMedalsWon xsd:nonNegativeInteger .
+	
+#number of silver medals won property	
+dbo:numberOfSilverMedalsWon 
+	rdfs:label "Number of silver medals won"@en ;
+	rdfs:label "Número de medallas de plata ganadas"@es .	
+dbo:SportCompetitionResult dbo:numberOfSilverMedalsWon xsd:nonNegativeInteger .	
+	
+#number of bronze medals won property	
+dbo:numberOfBronzeMedalsWon 
+	rdfs:label "Number of bronze medals won"@en ;
+	rdfs:label "Número de medallas de bronce ganadas"@es .	
+dbo:SportCompetitionResult dbo:numberOfBronzeMedalsWon xsd:nonNegativeInteger .
+	
+#time property	
+event:time 
+	rdfs:label "Time"@en ;
+	rdfs:label "Tiempo"@es .	
+sport:Competition event:time time:TemporalEntity .	
+	
+#competition schedule property	
+atos:competitionSchedule rdf:type rdf:Property ;
+	rdfs:label "Competition schedule"@en ;
+	rdfs:label "Horario de competicion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain sport:Competition ;
+	rdfs:range schema:Schedule .		
+	
+#schedule in calendar property	
+atos:scheduleInCalendar rdf:type rdf:Property ;
+	rdfs:label "Schedule in calendar"@en ;
+	rdfs:label "Horario en el calendario"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:Schedule ;
+	rdfs:range schema:Calendar .			
+	
+#scheduled event property	
+atos:scheduledEvent rdf:type rdf:Property ;
+	rdfs:label "Scheduled event"@en ;
+	rdfs:label "Evento programado"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:Schedule ;
+	rdfs:range schema:ScheduleAction .		
+	
+#event time property	
+atos:eventTime rdf:type rdf:Property ;
+	rdfs:label "Event time"@en ;
+	rdfs:label "Tiempo del evento"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:ScheduleAction ;
+	rdfs:range time:TemporalEntity .	
+
+#event property	
+atos:event rdf:type rdf:Property ;
+	rdfs:label "Event"@en ;
+	rdfs:label "Evento"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:ScheduleAction ;
+	rdfs:range sport:Match .
+
+#competition location property	
+atos:competitionLocation rdf:type rdf:Property ;
+	rdfs:label "Competition location"@en ;
+	rdfs:label "Ubicación de la competencia"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain sport:Competition ;
+	rdfs:range schema:Country .
+
+#has competitor property	
+sport:hasCompetitor 
+	rdfs:label "Has competitor"@en ;
+	rdfs:label "Tiene competidor"@es .
+sport:Competition sport:hasCompetitor foaf:Agent .	
+	
+#agent country property	
+atos:agentCountry rdf:type rdf:Property ;
+	rdfs:label "Agent country"@en ;
+	rdfs:label "Pais de agente"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain foaf:Agent ;
+	rdfs:range schema:Country .	
+	
+#published event property	
+atos:publishedEvent rdf:type rdf:Property ;
+	rdfs:label "Published event"@en ;
+	rdfs:label "Evento publicado"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:PublicationEvent ;
+	rdfs:range sport:Competition .	
+	
+#event statistics property	
+atos:eventStatistics rdf:type rdf:Property ;
+	rdfs:label "Event statistics"@en ;
+	rdfs:label "Estadistica de evento"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:PublicationEvent ;
+	rdfs:range atos:Statistics .		
+	
+#loading time property	
+atos:loadingTime rdf:type rdf:Property ;
+	rdfs:label "Loading time"@en ;
+	rdfs:label "Tiempo de carga"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:VideoObject ;
+	rdfs:range time:TemporalDuration .		
+		
+#latency property	
+atos:latency rdf:type rdf:Property ;
+	rdfs:label "Latency"@en ;
+	rdfs:label "Estado latente"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:VideoObject ;
+	rdfs:range time:TemporalDuration .	
+	
+#publication property	
+schema:publication 
+	rdfs:label "Publication"@en ;
+	rdfs:label "Publicacion"@es .	
+schema:VideoObject schema:publication schema:PublicationEvent .
+schema:NewsArticle schema:publication schema:PublicationEvent .	
+schema:ImageObject schema:publication schema:PublicationEvent .	
+	
+#image property	
+schema:image
+	rdfs:label "Image"@en ;
+	rdfs:label "Imagen"@es .	
+schema:ImageGallery schema:image schema:ImageObject .	
+	
+#caption property	
+schema:caption
+	rdfs:label "Caption"@en ;
+	rdfs:label "Titulo"@es .	
+schema:VideoObject schema:caption schema:Text .	
+	
+#available property	
+atos:available rdf:type rdf:Property ;
+	rdfs:label "Available"@en ;
+	rdfs:label "Disponible"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:VideoObject ;
+	rdfs:range schema:Boolean .	
+	
+#resolution in pixels property	
+atos:resolutionInPixels rdf:type rdf:Property ;
+	rdfs:label "Resolution in pixels"@en ;
+	rdfs:label "Resolucion en pixeles"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain schema:VideoObject ;
+	rdfs:range schema:Text .	
+
+#competition property	
+atos:competition rdf:type rdf:Property ;
+	rdfs:label "Competition"@en ;
+	rdfs:label "Competicion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain dbo:SportCompetitionResult ;
+	rdfs:range sport:MedalCompetition .	
+	
+#biography property	
+bio:biography
+	rdfs:label "Biography"@en ;
+	rdfs:label "Biografia"@es .	
+foaf:Person bio:biography schema:ProfilePage .		
+	
+	
+################################################################################################################################
+####################################################       SOFTWARE         ####################################################	
+################################################################################################################################	
+	
+#################################################### Software related classes ####################################################
+schema:WebApplication rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:label "Web application"@en ;
+	rdfs:label "Aplicacion web"@es . 
+
+atos:SmartPlayerWebApplication rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebApplication ;
+	rdfs:label "Smart player web application"@en ;
+	rdfs:label "Smart player aplicacion web"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> . 	
+	
+schema:WebPage rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:label "Web page"@en ;
+	rdfs:label "Pagina web"@es . 	
+	
+schema:SearchResultsPage rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebPage ;
+	rdfs:label "Search results page"@en ;
+	rdfs:label "Pagina de resultados de busqueda"@es .	
+	
+schema:ProfilePage rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebPage ;
+	rdfs:label "Profile page"@en ;
+	rdfs:label "Pagina de perfil"@es .		
+	
+dbr:Computer_network rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:label "Computer network"@en ;
+	rdfs:label "Red de computadores"@es . 	
+	
+schema:SoftwareApplication rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:label "Software application"@en ;
+	rdfs:label "Aplicacion de software"@es . 
+
+atos:Browser rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:SoftwareApplication ;
+	rdfs:label "Browser"@en ;
+	rdfs:label "Navegador"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> . 	
+	
+schema:WebPageElement rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:label "Web page element"@en ;
+	rdfs:label "Elemento de la pagina web"@es . 
+
+atos:FlashPlayer rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebPageElement ;
+	rdfs:label "Flash player"@en ;
+	rdfs:label "Flash player"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:NavigationMenu rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebPageElement ;
+	rdfs:label "Navigation menu"@en ;
+	rdfs:label "Menu de navegacion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:VerticalMenu rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf atos:NavigationMenu ;
+	rdfs:label "Vertical menu"@en ;
+	rdfs:label "Menu vertical"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:HorizontalMenu rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf atos:NavigationMenu ;
+	rdfs:label "Horizontal menu"@en ;
+	rdfs:label "Menu horizontal"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:FeedbackForm rdf:type G:Concept, rdfs:Class, suo:Software ;
+	rdfs:subClassOf schema:WebPageElement ;
+    rdfs:label "Feedback form"@en ;
+	rdfs:label "Formulario de comentarios"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+	
+#################################################### Software related properties ####################################################	
+
+#video property	
+schema:video 
+	rdfs:label "Video"@en ;
+	rdfs:label "Video"@es .	
+atos:SmartPlayerWebApplication schema:video schema:VideoObject .
+
+#has part property	
+schema:hasPart 
+	rdfs:label "Has part"@en ;
+	rdfs:label "Tiene parte"@es .	
+atos:SmartPlayerWebApplication schema:hasPart schema:SearchResultsPage .
+atos:SmartPlayerWebApplication schema:hasPart schema:ImageGallery .
+atos:SmartPlayerWebApplication schema:hasPart atos:FlashPlayer . 
+atos:SmartPlayerWebApplication schema:hasPart atos:NavigationMenu .
+atos:SmartPlayerWebApplication schema:hasPart atos:FeedbackForm .
+
+#news property	
+atos:news rdf:type rdf:Property ;
+	rdfs:label "News"@en ;
+	rdfs:label "Noticia"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:SmartPlayerWebApplication ;
+	rdfs:range schema:NewsArticle .
+	
+#network connection property	
+atos:networkConnection rdf:type rdf:Property ;
+	rdfs:label "Network connection"@en ;
+	rdfs:label "Conexion de red"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:SmartPlayerWebApplication ;
+	rdfs:range dbr:Computer_network .	
+	
+#network connection property	
+atos:homePage rdf:type rdf:Property ;
+	rdfs:label "Home page"@en ;
+	rdfs:label "Pagina inicial"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:SmartPlayerWebApplication ;
+	rdfs:range schema:WebPage .		
+	
+#software help property	
+schema:softwareHelp 
+	rdfs:label "Software help"@en ;
+	rdfs:label "Ayuda de software"@es .	
+atos:SmartPlayerWebApplication schema:softwareHelp schema:WebPage .	
+
+#version property	
+schema:version 
+	rdfs:label "Version"@en ;
+	rdfs:label "Version"@es .	
+atos:FlashPlayer schema:version schema:Text .	
+
+#compatible with property	
+atos:compatibleWith rdf:type rdf:Property ;
+	rdfs:label "Compatible with"@en ;
+	rdfs:label "Compatible con"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:FlashPlayer ;
+	rdfs:range atos:Browser .	
+
+#has user property	
+atos:hasUser rdf:type rdf:Property ;
+	rdfs:label "Has user"@en ;
+	rdfs:label "Tiene usuario"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:SmartPlayerWebApplication ;
+	rdfs:range atos:User .		
+	
+#produces property	
+atos:produces rdf:type rdf:Property ;
+	rdfs:label "Produces"@en ;
+	rdfs:label "Produce"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:FeedbackForm ;
+	rdfs:range atos:FeedbackMessage .	
+	
+	
+################################################################################################################################
+####################################################       USER         ####################################################	
+################################################################################################################################	
+	
+#################################################### User related classes ####################################################
+atos:User rdf:type G:Concept, rdfs:Class, suo:User ;
+	rdfs:label "User"@en ;
+	rdfs:label "Usuario"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> . 		
+	
+#################################################### User related properties ####################################################	
+
+#recommended video property	
+atos:recommendedVideo rdf:type rdf:Property ;
+	rdfs:label "Recommended video"@en ;
+	rdfs:label "Video de recomendacion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:User ;
+	rdfs:range schema:VideoObject .	
+	
+#user country property	
+atos:userCountry rdf:type rdf:Property ;
+	rdfs:label "User country"@en ;
+	rdfs:label "Pais de usuario"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:User ;
+	rdfs:range schema:Country .	
+	
+	
+################################################################################################################################
+####################################################       FEEDBACK         ####################################################	
+################################################################################################################################	
+	
+#################################################### Feedback related classes ####################################################	
+
+atos:FeedbackMessage rdf:type G:Concept, rdfs:Class, suo:Feedback ;
+    rdfs:label "Feedback message"@en ;
+	rdfs:label "Mensaje de respuesta"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:FeedbackTopic rdf:type G:Concept, rdfs:Class, suo:Feedback ;
+    rdfs:label "Feedback topic"@en ;
+	rdfs:label "Tema de respuesta"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+#################################################### Feedback related properties ####################################################	
+
+#provided by property	
+atos:providedBy rdf:type rdf:Property ;
+	rdfs:label "Provided by"@en ;
+	rdfs:label "Proporcionado por"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:FeedbackMessage ;
+	rdfs:range atos:User .	
+	
+#has feedback topic property	
+atos:hasFeedbackTopic rdf:type rdf:Property ;
+	rdfs:label "Has feedback topic"@en ;
+	rdfs:label "Tiene tema de respuesta"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> ;
+	rdfs:domain atos:FeedbackMessage ;
+	rdfs:range atos:FeedbackTopic .		
+
+
+################################################################################################################################
+####################################################       INSTANCES         ####################################################	
+################################################################################################################################	
+
+####################################################       Sports Discipline instances         ####################################################	
+	
+atos:Archery rdf:type sport:SportsDiscipline ;
+	rdfs:label "Archery"@en ;
+	rdfs:label "Tiro al arco"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .
+	
+atos:ArtisticGymnastics rdf:type sport:SportsDiscipline ;
+	rdfs:label "Artistic Gymnastics"@en ;
+	rdfs:label "Gimnasia artistica"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:Athletics rdf:type sport:SportsDiscipline ;
+	rdfs:label "Athletics"@en ;
+	rdfs:label "Atletismo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:BMX rdf:type sport:SportsDiscipline ;
+	rdfs:label "BMX"@en ;
+	rdfs:label "BMX"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .			
+	
+atos:Badminton rdf:type sport:SportsDiscipline ;
+	rdfs:label "Badminton"@en ;
+	rdfs:label "Badminton"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:Basketball rdf:type sport:SportsDiscipline ;
+	rdfs:label "Basketball"@en ;
+	rdfs:label "Baloncesto"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:BeachVolleyball rdf:type sport:SportsDiscipline ;
+	rdfs:label "Beach volleyball"@en ;
+	rdfs:label "Voleibol de playa"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Boxing rdf:type sport:SportsDiscipline ;
+	rdfs:label "Boxing"@en ;
+	rdfs:label "Boxeo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:CanoeSlalom rdf:type sport:SportsDiscipline ;
+	rdfs:label "Canoe slalom"@en ;
+	rdfs:label "Eslalon de canoa"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:CanoeSprint rdf:type sport:SportsDiscipline ;
+	rdfs:label "Canoe sprint"@en ;
+	rdfs:label "Canoa sprint"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:CyclingRoad rdf:type sport:SportsDiscipline ;
+	rdfs:label "Cycling road"@en ;
+	rdfs:label "Camino de ciclismo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:CyclingTrack rdf:type sport:SportsDiscipline ;
+	rdfs:label "Cycling track"@en ;
+	rdfs:label "Pista de ciclismo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Diving rdf:type sport:SportsDiscipline ;
+	rdfs:label "Diving"@en ;
+	rdfs:label "Buceo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:Equestrian rdf:type sport:SportsDiscipline ;
+	rdfs:label "Equestrian"@en ;
+	rdfs:label "Ecuestre"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Fencing rdf:type sport:SportsDiscipline ;
+	rdfs:label "Fencing"@en ;
+	rdfs:label "Esgrima"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Football rdf:type sport:SportsDiscipline ;
+	rdfs:label "Football"@en ;
+	rdfs:label "Futbal"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:Golf rdf:type sport:SportsDiscipline ;
+	rdfs:label "Golf"@en ;
+	rdfs:label "Golf"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:Handball rdf:type sport:SportsDiscipline ;
+	rdfs:label "Handball"@en ;
+	rdfs:label "Balonmano"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:Hockey rdf:type sport:SportsDiscipline ;
+	rdfs:label "Hockey"@en ;
+	rdfs:label "Hockey"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:Judo rdf:type sport:SportsDiscipline ;
+	rdfs:label "Judo"@en ;
+	rdfs:label "Judo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:MarathonSwimming rdf:type sport:SportsDiscipline ;
+	rdfs:label "Marathon swimming"@en ;
+	rdfs:label "Maraton de natacion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:ModernPentathlon rdf:type sport:SportsDiscipline ;
+	rdfs:label "Modern pentathlon"@en ;
+	rdfs:label "Pentatlon moderno"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+atos:MountainBike rdf:type sport:SportsDiscipline ;
+	rdfs:label "Mountain bike"@en ;
+	rdfs:label "Bicicleta de montana"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:RhytmicGymnastics rdf:type sport:SportsDiscipline ;
+	rdfs:label "Rhytmic gymnastics"@en ;
+	rdfs:label "Gimnasia ritmica"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:Rowing rdf:type sport:SportsDiscipline ;
+	rdfs:label "Rowing"@en ;
+	rdfs:label "Remo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:RugbySevens rdf:type sport:SportsDiscipline ;
+	rdfs:label "Rugby sevens"@en ;
+	rdfs:label "Rugby sevens"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Sailing rdf:type sport:SportsDiscipline ;
+	rdfs:label "Sailing"@en ;
+	rdfs:label "Navegacion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:Shooting rdf:type sport:SportsDiscipline ;
+	rdfs:label "Shooting"@en ;
+	rdfs:label "Disparo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Swimming rdf:type sport:SportsDiscipline ;
+	rdfs:label "Swimming"@en ;
+	rdfs:label "Natacion"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:SynchronizedSwimming rdf:type sport:SportsDiscipline ;
+	rdfs:label "Synchronized swimming"@en ;
+	rdfs:label "Natacion sincronizada"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:TableTennis rdf:type sport:SportsDiscipline ;
+	rdfs:label "Table tennis"@en ;
+	rdfs:label "Tenis de mesa"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Taekwondo rdf:type sport:SportsDiscipline ;
+	rdfs:label "Taekwondo"@en ;
+	rdfs:label "Taekwondo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:Tennis rdf:type sport:SportsDiscipline ;
+	rdfs:label "Tennis"@en ;
+	rdfs:label "Tenis"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+atos:Trampoline rdf:type sport:SportsDiscipline ;
+	rdfs:label "Trampoline"@en ;
+	rdfs:label "Trampolin"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Triathlon rdf:type sport:SportsDiscipline ;
+	rdfs:label "Triathlon"@en ;
+	rdfs:label "Triatlon"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Volleyball rdf:type sport:SportsDiscipline ;
+	rdfs:label "Volleyball"@en ;
+	rdfs:label "voleibol"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:WaterPolo rdf:type sport:SportsDiscipline ;
+	rdfs:label "Water Polo"@en ;
+	rdfs:label "Waterpolo"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Weightlifting rdf:type sport:SportsDiscipline ;
+	rdfs:label "Weightlifting"@en ;
+	rdfs:label "Halterofilia"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Wrestling rdf:type sport:SportsDiscipline ;
+	rdfs:label "Wrestling"@en ;
+	rdfs:label "Lucha"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+
+####################################################       Event gender instances         ####################################################	
+	
+gender:womens rdf:type sport:EventGender ;
+	rdfs:label "Womens"@en ;
+	rdfs:label "Femenino"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+	
+gender:mens rdf:type sport:EventGender ;
+	rdfs:label "Mens"@en ;
+	rdfs:label "Masculino"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+gender:mixed rdf:type sport:EventGender ;
+	rdfs:label "Mixed"@en ;
+	rdfs:label "Mixto"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+####################################################       Browser instances         ####################################################	
+	
+atos:InternetExplorer rdf:type atos:Browser ;
+	rdfs:label "Internet explorer"@en ;
+	rdfs:label "Internet explorer"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+atos:Firefox rdf:type atos:Browser ;
+	rdfs:label "Firefox"@en ;
+	rdfs:label "Firefox"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:Chrome rdf:type atos:Browser ;
+	rdfs:label "Chrome"@en ;
+	rdfs:label "Chrome"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:Safari rdf:type atos:Browser ;
+	rdfs:label "Safari"@en ;
+	rdfs:label "Safari"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .	
+
+atos:Opera rdf:type atos:Browser ;
+	rdfs:label "Opera"@en ;
+	rdfs:label "Opera"@es ;
+	rdfs:isDefinedBy <https://www.supersede.eu/ontologies/atos/> .		
+	
+	
+################################################################################################################################
+####################################################       METAMODEL        ####################################################	
+################################################################################################################################	
+	
+	
+# SOFTWARE USAGE METAMODEL #
+
+
+suo:SoftwareUsageElement rdf:type rdfs:Class ;
+	rdfs:label "Software usage element"@en ;
+	rdfs:label "Software-Nutzungselement"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .	
+	
+suo:Feedback rdf:type rdfs:Class ;
+	rdfs:subClassOf suo:SoftwareUsageElement ;
+	rdfs:label "Feedback"@en ;
+	rdfs:label "Feedback"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .		
+	
+suo:Monitoring rdf:type rdfs:Class ;
+	rdfs:subClassOf suo:SoftwareUsageElement ;
+	rdfs:label "Monitoring"@en ;
+	rdfs:label "Überwachung"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .		
+
+suo:Software rdf:type rdfs:Class ;
+	rdfs:subClassOf suo:SoftwareUsageElement ;
+	rdfs:label "Software"@en ;
+	rdfs:label "Software"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .	
+
+suo:Domain rdf:type rdfs:Class ;
+	rdfs:subClassOf suo:SoftwareUsageElement ;
+	rdfs:label "Domain"@en ;
+	rdfs:label "Domain"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .	
+	
+suo:User rdf:type rdfs:Class ;
+	rdfs:subClassOf suo:SoftwareUsageElement ;
+	rdfs:label "User"@en ;
+	rdfs:label "Benutzer"@de ;
+	rdfs:isDefinedBy <https://www.supersede.eu/the-consortium/suo/> .		
