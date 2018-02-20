@@ -38,7 +38,7 @@ dependencies {
     compile("org.apache.httpcomponents:httpclient:4.3.6")
     compile("org.apache.commons:commons-csv:1.0")
 
-    compile("eu.supersede.if:eu.supersede.if.api:0.3.0-SNAPSHOT"){changing = true}
+    compile("eu.supersede.if:eu.supersede.if.api:0.4.0-SNAPSHOT"){changing = true}
     compile("eu.supersede:supersede-frontend-core:0.2.1-SNAPSHOT"){changing = true}
 }
 
