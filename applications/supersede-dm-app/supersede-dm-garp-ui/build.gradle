@@ -88,7 +88,7 @@ dependencies {
 
     compile files("../supersede-dm-core/build/libs/supersede-dm-core-0.0.2-SNAPSHOT.jar")
     compile files("../supersede-dm-garp/build/libs/supersede-dm-garp-0.0.2-SNAPSHOT.jar")
-    compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.0.2-SNAPSHOT.jar")
+    compile files("../supersede-dm-integration/build/libs/supersede-dm-integration-0.4.0-SNAPSHOT.jar")
 
     compile files("../supersede-dm-datastore/build/libs/supersede-dm-datastore-0.0.2-SNAPSHOT.jar")
 
