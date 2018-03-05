@@ -357,7 +357,7 @@ app.controllerProvider
 																// the status
 																// bar.
 																var container = $("<div style='overflow: hidden; position: relative; margin: 5px;'></div>");
-																var GAButton = $("<button>New GA Game</button>");
+																var GAButton = $("<button>New GA Game</button> </br>");
 																var AHPButton = $("<button>New AHP Game</button>");
 																container
 																		.append(GAButton);
