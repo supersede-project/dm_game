@@ -357,9 +357,12 @@ app.controllerProvider
 																// the status
 																// bar.
 																var container = $("<div style='overflow: hidden; position: relative; margin: 5px;'></div>");
-																var exportButton = $("<button>New Game</button>");
+																var GAButton = $("<button>New GA Game</button>");
+																var AHPButton = $("<button>New AHP Game</button>");
 																container
-																		.append(exportButton);
+																		.append(GAButton);
+																container
+																		.append(AHPButton);
 																var requiredRow = "<strong> No games available</strong>";
 																var datainformations = $(
 																		"#supervisorGames")
@@ -373,17 +376,26 @@ app.controllerProvider
 																}
 																statusbar
 																		.append(container);
-																exportButton
+																GAButton
 																		.jqxButton({
 																			width : 100,
 																			height : 25
 																		});
 																// add new row.
-																exportButton
+																GAButton
 																		.click(function(
 																				event) {
 																			$location
 																					.url("supersede-dm-app/garp/create_game?processId="
+																							+ processId);
+																			$scope
+																					.$apply();
+																		});
+																AHPButton
+																		.click(function(
+																				event) {
+																			$location
+																					.url("supersede-dm-app/ahprp/create_game?processId="
 																							+ processId);
 																			$scope
 																					.$apply();
