@@ -134,6 +134,7 @@ exclude(module: 'commons-logging')
     
    compile("com.google.code.gson:gson:2.3.1");
 
+compile("eu.supersede.feedbackanalysis:FeedbackAnalysis:0.1.0-SNAPSHOT");
  }
 
 eclipse {

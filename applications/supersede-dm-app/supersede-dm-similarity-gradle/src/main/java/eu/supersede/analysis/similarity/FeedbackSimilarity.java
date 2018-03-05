@@ -15,15 +15,15 @@ import java.util.Set;
 
 import org.apache.jena.ontology.OntClass;
 
-import eu.supersede.analysis.FeedbackAnnotator;
-import eu.supersede.analysis.FeedbackMessage;
-import eu.supersede.analysis.OntologyWrapper;
-import eu.supersede.analysis.Utils;
 import eu.supersede.analysis.similarity.pojo.Feedback;
 import eu.supersede.analysis.similarity.pojo.RequestObject;
 import eu.supersede.analysis.similarity.pojo.Requirement;
 import eu.supersede.analysis.similarity.pojo.SimilarityResult;
 
+import eu.supersede.feedbackanalysis.clustering.FeedbackAnnotator;
+import eu.supersede.feedbackanalysis.clustering.FeedbackMessage;
+import eu.supersede.feedbackanalysis.clustering.OntologyWrapper;
+import eu.supersede.feedbackanalysis.clustering.Utils;
 /**
  * @author fitsum
  *
@@ -98,9 +98,13 @@ public class FeedbackSimilarity {
 		Feedback userFeedback = request.getFeedback();
 		int k = request.getK();
 		Requirement[] requirements = request.getRequirements();
+		String language = request.getLanguage();
+		if (language == null || language.isEmpty()) {
+			language = "en";
+		}
 
 		// first find the set of concepts for the feedback and each requirement
-		FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile);
+		FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile, language, false, true);
 		OntologyWrapper ontologyWrapper = feedbackAnnotator.getOntologyWrapper();
 
 		// get concepts from the feedback

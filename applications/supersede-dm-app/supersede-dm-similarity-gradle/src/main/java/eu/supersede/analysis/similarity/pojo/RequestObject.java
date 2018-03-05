@@ -11,6 +11,7 @@ package eu.supersede.analysis.similarity.pojo;
 
 public class RequestObject {
 	private String tenant;
+	private String language;
 	private Feedback feedback;
 	private int k;
 	private Requirement[] requirements;
@@ -37,5 +38,11 @@ public class RequestObject {
 	}
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 }

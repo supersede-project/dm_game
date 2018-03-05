@@ -64,8 +64,8 @@ public class IGAAlgorithmTest
         ranksc1.add(r2);
         ranksc1.add(r3);
         List<String> ranksc2 = new ArrayList<>();
-        ranksc2.add(r3);
         ranksc2.add(r1);
+        ranksc2.add(r3);
         ranksc2.add(r2);
         rankP1.put(c1, ranksc1);
         rankP1.put(c2, ranksc2);
@@ -104,6 +104,21 @@ public class IGAAlgorithmTest
         List<GARequirementsRanking> rankings = igaAlgorithm.calc();
 
         for (GARequirementsRanking ranking : rankings)
+        {
+            System.out.println("Ranking: " + ranking.getRequirements());
+
+            for (Entry<String, Double> entry : ranking.getObjectiveValues().entrySet())
+            {
+                System.out.println("[" + entry.getKey() + " = " + entry.getValue() + "]");
+            }
+        }
+    }
+    
+    @Test 
+    public void testCalcSinglePlayer() {
+    	igaAlgorithm.rankings.remove("P2");
+    	List<GARequirementsRanking> rankings = igaAlgorithm.calc();
+    	for (GARequirementsRanking ranking : rankings)
         {
             System.out.println("Ranking: " + ranking.getRequirements());
 
