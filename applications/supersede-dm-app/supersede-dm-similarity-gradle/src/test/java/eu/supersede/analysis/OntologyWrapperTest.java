@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.junit.Before;
 import org.junit.Test;
 
+import eu.supersede.feedbackanalysis.clustering.OntologyWrapper;
 /**
  * 
  * @author fitsum
@@ -23,7 +24,8 @@ public class OntologyWrapperTest {
 	@Before
 	public void init() {
 		String ontologyFile = "SDO_ontology.ttl"; //"saref.ttl"; //
-		ontologyWrapper = new OntologyWrapper(ontologyFile);
+		String lang = "en";
+		ontologyWrapper = new OntologyWrapper(ontologyFile, lang, false, true);
 	}
 	
 	@Test
