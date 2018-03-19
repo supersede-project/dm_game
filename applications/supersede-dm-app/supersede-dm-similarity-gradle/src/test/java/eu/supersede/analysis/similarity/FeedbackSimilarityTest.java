@@ -17,8 +17,7 @@ import org.apache.jena.ontology.OntClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import eu.supersede.analysis.FeedbackAnnotator;
-import eu.supersede.analysis.Utils;
+import eu.supersede.feedbackanalysis.clustering.Utils;
 import eu.supersede.analysis.similarity.FeedbackSimilarity.SimilarityMeasure;
 import eu.supersede.analysis.similarity.pojo.Feedback;
 import eu.supersede.analysis.similarity.pojo.RequestObject;

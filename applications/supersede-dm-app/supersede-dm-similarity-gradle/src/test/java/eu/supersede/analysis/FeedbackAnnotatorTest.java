@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import eu.supersede.analysis.FeedbackAnnotator.AnalysisType;
+import eu.supersede.feedbackanalysis.clustering.*;
 
 /**
  * 

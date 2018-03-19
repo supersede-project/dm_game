@@ -13,6 +13,8 @@ import edu.mit.jwi.item.POS;
 import edu.smu.tspell.wordnet.SynsetType;
 import edu.stanford.nlp.ling.TaggedWord;
 
+import eu.supersede.feedbackanalysis.clustering.*;
+
 /**
  * 
  * @author fitsum
@@ -25,8 +27,9 @@ public class WordNetWrapperTest {
 	@Before
 	public void init() {
 		String ontologyFile = "SDO_ontology.ttl";
-		OntologyWrapper ow = new OntologyWrapper(ontologyFile);
-		wordnet = new WordNetWrapper(ow );
+		String lang = "en";
+		OntologyWrapper ow = new OntologyWrapper(ontologyFile, lang, false, false);
+		wordnet = new WordNetWrapper(ow, lang);
 	}
 	
 	@Test
