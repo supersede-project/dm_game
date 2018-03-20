@@ -28,8 +28,9 @@ public class WordNetWrapperTest {
 	public void init() {
 		String ontologyFile = "SDO_ontology.ttl";
 		String lang = "en";
+		String wordnetDbPath = null; // null => will be looked up from classpath
 		OntologyWrapper ow = new OntologyWrapper(ontologyFile, lang, false, false);
-		wordnet = new WordNetWrapper(ow, lang);
+		wordnet = new WordNetWrapper(ow, wordnetDbPath, lang);
 	}
 	
 	@Test

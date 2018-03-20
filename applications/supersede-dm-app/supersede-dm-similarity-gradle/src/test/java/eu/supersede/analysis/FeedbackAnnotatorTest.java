@@ -27,7 +27,8 @@ public class FeedbackAnnotatorTest {
 
 	List<FeedbackMessage> feedbackMessages = null;
 	String ontologyFile = "SDO_ontology.ttl";
-	FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile);
+	String wordnetDbPath = null; // null => will be looked up from classpath
+	FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile, wordnetDbPath);
 	
 	@Before
 	public void init() {

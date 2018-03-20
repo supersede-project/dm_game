@@ -104,7 +104,8 @@ public class FeedbackSimilarity {
 		}
 
 		// first find the set of concepts for the feedback and each requirement
-		FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile, language, false, true);
+		String wordnetDbPath = null; // null => it will be looked up from classpath
+		FeedbackAnnotator feedbackAnnotator = new FeedbackAnnotator(ontologyFile, wordnetDbPath, language, false, true);
 		OntologyWrapper ontologyWrapper = feedbackAnnotator.getOntologyWrapper();
 
 		// get concepts from the feedback
