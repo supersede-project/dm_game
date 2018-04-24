@@ -22,19 +22,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### How to get the code
 
-Two different distributions of SYNAPTIC are provided: Jar Distribution and Java Source Distribution; the first distribution can be used for running SYNAPTIC from CLI, while the second distribution can be used when you want to use SYNAPTIC as a library from your java code.
+Two different distributions of SYNAPTIC are possible: Jar Distribution and Java Source Distribution; the first distribution can be used for running SYNAPTIC from CLI, while the second distribution can be used when you want to use SYNAPTIC as a library from your java code.
 
 #### Jar Distribution (CLI)
 
-This is a jar file containing all the Java code for training and testing. It can be download from this address: 
-
-https://github.com/rzanoli/synaptic/releases/download/v1.0/synaptic-1.0-SNAPSHOT-jar-with-dependencies.jar
+To prepare the jar file containing all the Java code for training and testing you first need to get the source code from this repository and then once in the project directory you have to run the command 'mvn package' that will produce the file synaptic-1.0-SNAPSHOT-jar-with-dependencies.jar.
 
 #### Java Source Distribution (API)
 
-The zip file of the Maven project containing the project source code:
-
-https://github.com/rzanoli/synaptic/archive/v1.0.zip
+Download the maven project and its source code form this repository.
 
 ### Dataset format
 
