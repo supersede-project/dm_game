@@ -1,6 +1,15 @@
 # synaptic
 
-The SYNAPTIC library consists of components for pre-processing data (e.g., tokenization), extracting relevant features and for 'sentiment' and 'type' classification for German. Training and classification operations are accessible via the SYNAPTIC Application Program Interface (API). In addition, a Command Line Interface (CLI) is provided for convenience of experiments and training.
+SYNAPTIC (Sentiment and Type Classifier) is an open source library for 'sentiment' and 'type' classification for German, which consists of components for pre-processing data, extracting relevant features and classification. To achieve its objectives, the system uses state-of-the-art machine learning techniques such as Support Vector Machines (SVM) and standard tools like LIBSVM and OpenNLP. SYNAPTIC has been designed to meet the following requirements:
+
+- Distribution: distributed through its GitHub repository.
+- Efficiency: uses LIBSVM that is an efficient implementation of SVM for multi-class classifications, including also various interfaces with java.
+- Licence: licensed under the Apache License v2.0.
+- Portability:  written in Java to be portable across different platforms such as Linux, Windows, and MacOS.
+- Simplicity:  implemented as a maven project to make it easy to install, configure and use. Training and classification operations are accessible via an Application Program Interface (API), while a Command Line Interface (CLI) is provided for convenience of experiments and training. Eventually, the  README.txt file included in the distribution describes the main steps to set the system up, and shows how to learn new models and how to use them to annotate new data to be annotated.
+
+The implemented system consists of 3 main components namely pre-processor, features extractor and classifier. The pre-processor reads the documents in the dataset one at a time and splits raw text into tokens and punctuation. Then uninformative tokens (e.g., be, have) are removed. After that the feature extractor generates bigram tokens from input unigram tokens and encodes both unigrams and bigrams as a features vector. The features in the features vector are weighted by their Inverse Document Frequency (IDF) values calculated using a large and external documents collection. Finally, the classifier is fit to the documents and their categories, saved to disk and used to make predictions in the future.
+
 
 ## Getting started
 
@@ -215,7 +224,6 @@ public class LearnAndClassifyTest {
 
 		try {
 			SentimentClassify semanticClassify = new SentimentClassify(model);
-			File file = new File(dataSet);
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(testDataset), "UTF8"));
 			String str;
 			while ((str = in.readLine()) != null) {
@@ -240,8 +248,8 @@ public class LearnAndClassifyTest {
 	public static void main(String[] args) {
 
 		try {
-			LearnClassifyTest.Learn();
-			LearnClassifyTest.Classify();
+			LearnAndClassifyTest.Learn();
+			LearnAndClassifyTest.Classify();
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
 		}
@@ -252,6 +260,9 @@ public class LearnAndClassifyTest {
 ```
 
 ## Authors
+
+- Claudio Giuliano
+- Roberto Zanoli
 
 ## License
 
