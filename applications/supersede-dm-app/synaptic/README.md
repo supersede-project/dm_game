@@ -26,11 +26,11 @@ Two different distributions of SYNAPTIC are possible: Jar Distribution and Java 
 
 #### Jar Distribution (CLI)
 
-To prepare the jar file containing all the Java code for training and testing you first need to get the source code from this repository and then once in the project directory you have to run the command 'mvn package' that will produce the file synaptic-1.0-SNAPSHOT-jar-with-dependencies.jar.
+To prepare the jar file containing all the Java code for training and testing you first need to get the source code from this repository and save it into your working directory. Then once in the project directory you have to run the command 'mvn package' that will produce the file synaptic-1.0-SNAPSHOT-jar-with-dependencies.jar.
 
 #### Java Source Distribution (API)
 
-Download the maven project and its source code form this repository.
+Download the maven project and its source code from this repository and save it into your working directory.
 
 ### Dataset format
 
